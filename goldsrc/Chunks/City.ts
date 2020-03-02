@@ -30,17 +30,17 @@ export class City {
 
 		this.old = Points.Copy(this.new);
 
-		this.chunksOff();
-		this.chunksOn();
+		this.off();
+		this.on();
 
 		for (let chunk of this.chunks) {
-			chunk.Update();
+			chunk.update();
 		}
 	}
 
 	// Find chunks outside the wide span
 	// and turn them off with a negative for-loop
-	chunksOff() {
+	off() {
 		const to = this.new;
 
 		let i = this.chunks.length;
@@ -48,7 +48,7 @@ export class City {
 			let ch = this.chunks[i];
 			if (!Chunks.Vis(ch, to)) {
 				this.chunks.splice(i, 1);
-				ch.DestroyRemove();
+				ch.destroyRemove();
 			}
 		}
 
@@ -56,7 +56,7 @@ export class City {
 
 	// Now turn on any new areas inside
 	// the small span
-	chunksOn() {
+	on() {
 		const to = this.new;
 
 		const m = Math.floor(City.spanUneven / 2);
@@ -73,7 +73,7 @@ export class City {
 
 				if (!ch.currentlyActive) {
 					this.chunks.push(ch);
-					ch.MakeAdd();
+					ch.makeAdd();
 					Chunks.Vis(ch, to);
 				}
 			}

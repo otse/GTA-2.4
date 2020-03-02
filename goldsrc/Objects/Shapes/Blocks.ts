@@ -35,7 +35,7 @@ export namespace Blocks {
 		return box.clone();
 	}
 
-	export function Show(block: Block) {
+	export function show(block: Block) {
 		four.scene.add(block.mesh);
 	}
 

@@ -24,10 +24,10 @@ export var Blocks;
         return box.clone();
     }
     Blocks.GetBox = GetBox;
-    function Show(block) {
+    function show(block) {
         four.scene.add(block.mesh);
     }
-    Blocks.Show = Show;
+    Blocks.show = show;
     function Hide(block) {
         four.scene.remove(block.mesh);
     }

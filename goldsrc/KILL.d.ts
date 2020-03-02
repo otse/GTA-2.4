@@ -4,8 +4,8 @@ declare type Zx = [number, number]
 
 declare class Object2 {
     data: any
-    Destroy()
-    Update()
+    destroy()
+    update()
 }
 
 declare interface Data2 {

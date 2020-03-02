@@ -22,14 +22,14 @@ export class Block extends Object2 {
 		// the Defaults
 		if (!this.data.faces) this.data.faces = [];
 
-		this.Make();
+		this.make();
 
-		Blocks.Show(this);
+		Blocks.show(this);
 	}
 
 	// Override
-	Destroy() {
-		super.Destroy();
+	destroy() {
+		super.destroy();
 
 		this.geometry.dispose();
 
@@ -39,7 +39,7 @@ export class Block extends Object2 {
 		}
 	}
 
-	Make() {
+	make() {
 		this.materials = [];
 
 		const boxCutting = true;

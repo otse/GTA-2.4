@@ -30,12 +30,12 @@ export class Chunk {
 		//Chunks.Scaffold(this);
 	}
 
-	Update() {
+	update() {
 		for (let object of this.objects)
-			object.Update();
+			object.update();
 	}
 
-	Fabricate(data: Data2) {
+	fabricate(data: Data2) {
 		let object = Objects.MakeNullable(data);
 
 		if (!object)
@@ -44,14 +44,14 @@ export class Chunk {
 		this.objects.push(object);
 	}
 
-	Add(data: Data2) {
+	add(data: Data2) {
 		this.datas.push(data);
 
 		if (this.currentlyActive)
-			this.Fabricate(data);
+			this.fabricate(data);
 	}
 
-	Remove(data: Data2) {
+	remove(data: Data2) {
 		this.datas.splice(this.datas.indexOf(data), 1);
 
 		let object = data.object2;
@@ -59,27 +59,27 @@ export class Chunk {
 		if (!object)
 			return;
 
-		object.Destroy();
+		object.destroy();
 
 		this.objects.splice(this.objects.indexOf(object), 1);
 	}
 
-	MakeAdd() {
+	makeAdd() {
 		//console.log('Chunk make n add');
 
 		for (let data of this.datas)
-			this.Fabricate(data);
+			this.fabricate(data);
 
 		this.currentlyActive = true;
 
 		four.scene.add(this.group);
 	}
 
-	DestroyRemove() {
+	destroyRemove() {
 		//console.log('Chunk destroy n remove');
 
 		for (let object of this.objects)
-			object.Destroy();
+			object.destroy();
 
 		this.objects.length = 0; // Reset array
 		this.currentlyActive = false;

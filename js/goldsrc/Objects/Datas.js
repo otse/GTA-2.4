@@ -20,7 +20,7 @@ export var Datas;
     Datas.GetChunk = GetChunk;
     function Deliver(data) {
         let chunk = GetChunk(data);
-        chunk.Add(data);
+        chunk.add(data);
     }
     Datas.Deliver = Deliver;
     function ReplaceDeliver(A) {
@@ -31,9 +31,9 @@ export var Datas;
             if (A.x == B.x &&
                 A.y == B.y &&
                 A.z == B.z)
-                chunk.Remove(B);
+                chunk.remove(B);
         }
-        chunk.Add(A);
+        chunk.add(A);
     }
     Datas.ReplaceDeliver = ReplaceDeliver;
     // for testing

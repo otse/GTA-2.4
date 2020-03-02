@@ -10,19 +10,19 @@ export class Block extends Object2 {
         // the Defaults
         if (!this.data.faces)
             this.data.faces = [];
-        this.Make();
-        Blocks.Show(this);
+        this.make();
+        Blocks.show(this);
     }
     // Override
-    Destroy() {
-        super.Destroy();
+    destroy() {
+        super.destroy();
         this.geometry.dispose();
         let i = 0;
         for (; i < 6; i++) {
             this.materials[i].dispose();
         }
     }
-    Make() {
+    make() {
         this.materials = [];
         const boxCutting = true;
         if (!boxCutting) {

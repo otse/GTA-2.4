@@ -20,11 +20,11 @@ export class Object2 {
             data.r += 4;
         this.data = data;
     }
-    Destroy() {
+    destroy() {
         this.destroyed = true;
         this.data.object2 = null;
     }
-    Update() {
+    update() {
     }
 }
 export default Object2;

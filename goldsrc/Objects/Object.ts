@@ -23,12 +23,12 @@ export class Object2 {
         this.data = data;
     }
 
-    Destroy() {
+    destroy() {
         this.destroyed = true;
         this.data.object2 = null;
     }
 
-    Update() {
+    update() {
 
     }
 }

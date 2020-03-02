@@ -10,14 +10,14 @@ export namespace Rectangles {
 
 	}
 
-	export function Show(rectangle: Rectangle) {
+	export function show(rectangle: Rectangle) {
 		console.log('Rectangles Add ' + rectangle.data.type);
 
 		four.scene.add(rectangle.mesh);
 		four.scene.add(rectangle.meshShadow);
 	}
 
-	export function Hide(rectangle: Rectangle) {
+	export function hide(rectangle: Rectangle) {
 		four.scene.remove(rectangle.mesh);
 		four.scene.remove(rectangle.meshShadow);
 	}

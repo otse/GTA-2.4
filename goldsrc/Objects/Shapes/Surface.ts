@@ -24,7 +24,7 @@ export class Surface extends Object2 {
 
 	// Override
 	Destroy() {
-		super.Destroy();
+		super.destroy();
 
 		Surfaces.Hide(this);
 

@@ -38,15 +38,15 @@ export class Rectangle extends Object2 {
 		//Ready(); // used by consumer class
 	}
 
-	MakeRectangle(params: Info) {
-		this.MakeMeshes(params);
+	makeRectangle(params: Info) {
+		this.makeMeshes(params);
 
-		this.UpdatePosition();
+		this.updatePosition();
 
-		Rectangles.Show(this);
+		Rectangles.show(this);
 	}
 
-	private MakeMeshes(info: Info) {
+	private makeMeshes(info: Info) {
 
 		this.geometry = new PlaneBufferGeometry(
 			this.data.width, this.data.height, 1);
@@ -75,20 +75,20 @@ export class Rectangle extends Object2 {
 		this.meshShadow.frustumCulled = false;
 	}
 
-	Destroy() {
-		super.Destroy();
+	destroy() {
+		super.destroy();
 
-		Rectangles.Hide(this);
+		Rectangles.hide(this);
 
 		this.geometry.dispose();
 		this.material.dispose();
 	}
 
-	Update() {
-		super.Update();
+	update() {
+		super.update();
 	}
 
-	UpdatePosition() {
+	updatePosition() {
 		this.where.set(
 			this.data.x * 64, this.data.y * 64, this.data.z! * 64);
 

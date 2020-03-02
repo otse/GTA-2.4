@@ -31,7 +31,7 @@ export namespace Datas {
 	export function Deliver(data: Data2): void {
 		let chunk = GetChunk(data);
 
-		chunk.Add(data);
+		chunk.add(data);
 	}
 
 	export function ReplaceDeliver(A: Data2): void {
@@ -45,10 +45,10 @@ export namespace Datas {
 				A.y == B.y &&
 				A.z == B.z)
 
-				chunk.Remove(B);
+				chunk.remove(B);
 		}
 
-		chunk.Add(A);
+		chunk.add(A);
 	}
 
 	// for testing

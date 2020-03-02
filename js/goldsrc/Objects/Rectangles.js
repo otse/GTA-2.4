@@ -5,16 +5,16 @@ export var Rectangles;
     function Init() {
     }
     Rectangles.Init = Init;
-    function Show(rectangle) {
+    function show(rectangle) {
         console.log('Rectangles Add ' + rectangle.data.type);
         four.scene.add(rectangle.mesh);
         four.scene.add(rectangle.meshShadow);
     }
-    Rectangles.Show = Show;
-    function Hide(rectangle) {
+    Rectangles.show = show;
+    function hide(rectangle) {
         four.scene.remove(rectangle.mesh);
         four.scene.remove(rectangle.meshShadow);
     }
-    Rectangles.Hide = Hide;
+    Rectangles.hide = hide;
 })(Rectangles || (Rectangles = {}));
 export default Rectangles;

@@ -15,12 +15,12 @@ export class Rectangle extends Object2 {
         this.where = new Vector3;
         //Ready(); // used by consumer class
     }
-    MakeRectangle(params) {
-        this.MakeMeshes(params);
-        this.UpdatePosition();
-        Rectangles.Show(this);
+    makeRectangle(params) {
+        this.makeMeshes(params);
+        this.updatePosition();
+        Rectangles.show(this);
     }
-    MakeMeshes(info) {
+    makeMeshes(info) {
         this.geometry = new PlaneBufferGeometry(this.data.width, this.data.height, 1);
         this.material = Phong2.Make({
             map: Util.loadTexture(this.data.sty),
@@ -41,16 +41,16 @@ export class Rectangle extends Object2 {
         this.meshShadow = new THREE.Mesh(this.geometry, materialShadow);
         this.meshShadow.frustumCulled = false;
     }
-    Destroy() {
-        super.Destroy();
-        Rectangles.Hide(this);
+    destroy() {
+        super.destroy();
+        Rectangles.hide(this);
         this.geometry.dispose();
         this.material.dispose();
     }
-    Update() {
-        super.Update();
+    update() {
+        super.update();
     }
-    UpdatePosition() {
+    updatePosition() {
         this.where.set(this.data.x * 64, this.data.y * 64, this.data.z * 64);
         this.mesh.position.copy(this.where);
         this.mesh.position.z += this.lift;
