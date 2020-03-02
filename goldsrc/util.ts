@@ -1,4 +1,4 @@
-import { Data2, Object2, Spritesheet } from "@app/exports";
+import { Data2, Object2, Spritesheet } from "@app/defs";
 
 import { default as THREE, Texture, TextureLoader, NearestFilter } from 'three';
 

@@ -1,9 +1,67 @@
-var gta_kill = (function (exports, three) {
+var gta_kill = (function (exports, three, defs, four$2) {
     'use strict';
+
+    four$2 = four$2 && four$2.hasOwnProperty('default') ? four$2['default'] : four$2;
+
+    class City {
+        constructor() {
+            this.chunks = [];
+            this.chunkList = new defs.ChunkList;
+            this.new = defs.Points.Make(0, 0);
+            this.old = defs.Points.Make(100, 100);
+        }
+        update(p) {
+            this.new = defs.Datas.Big(p);
+            if (defs.Points.Same(this.new, this.old))
+                return;
+            console.log(`${this.old.x} & ${this.old.y} different to ${this.new.x} & ${this.new.y}`);
+            this.old = defs.Points.Copy(this.new);
+            this.off();
+            this.on();
+            for (let chunk of this.chunks) {
+                chunk.update();
+            }
+        }
+        // Find chunks outside the wide span
+        // and turn them off with a negative for-loop
+        off() {
+            const to = this.new;
+            let i = this.chunks.length;
+            while (i--) {
+                let ch = this.chunks[i];
+                if (!defs.Chunks.Vis(ch, to)) {
+                    this.chunks.splice(i, 1);
+                    ch.destroyRemove();
+                }
+            }
+        }
+        // Now turn on any new areas inside
+        // the small span
+        on() {
+            const to = this.new;
+            const m = Math.floor(City.spanUneven / 2);
+            for (let y = 0; y < City.spanUneven; y++) {
+                for (let x = 0; x < City.spanUneven; x++) {
+                    let z = defs.Points.Make(x - m + to.x, y - m + to.y);
+                    let ch = this.chunkList.GetNullable(z);
+                    if (!ch)
+                        continue;
+                    if (!ch.currentlyActive) {
+                        this.chunks.push(ch);
+                        ch.makeAdd();
+                        defs.Chunks.Vis(ch, to);
+                    }
+                }
+            }
+        }
+    }
+    City.spanUneven = 5;
 
     var KILL;
     (function (KILL) {
         function init() {
+            console.log('gta init');
+            KILL.city = new City;
         }
         KILL.init = init;
         function update() {
@@ -54,6 +112,40 @@ var gta_kill = (function (exports, three) {
         }
     })(four || (four = {}));
     var four$1 = four;
+
+    var Chunks;
+    (function (Chunks) {
+        Chunks.tileSpan = 7;
+        let geometry;
+        let blue;
+        let purple;
+        const N = 64 * Chunks.tileSpan;
+        function Init() {
+            geometry = new three.BoxGeometry(N, N, 0);
+            blue = new three.MeshBasicMaterial({ wireframe: true, color: 'blue' });
+            purple = new three.MeshBasicMaterial({ wireframe: true, color: 'purple' });
+        }
+        Chunks.Init = Init;
+        function Scaffold(chunk) {
+            chunk.wireframe = new three.Mesh(geometry, purple);
+            chunk.wireframe.position.set(((chunk.w.x + 1) * N) - N / 2, ((chunk.w.y + 1) * N) - N / 2, 0);
+            chunk.group.add(chunk.wireframe);
+        }
+        Chunks.Scaffold = Scaffold;
+        // This is the visibility test
+        function Vis(chunk, p) {
+            const m = Math.ceil(defs.City.spanUneven / 2);
+            const d = defs.Points.Make(Math.abs(p.x - chunk.w.x), Math.abs(p.y - chunk.w.y));
+            const outside = !(d.x > m || d.y > m);
+            const wideSpan = d.x >= m || d.y >= m;
+            const insideSpan = d.x <= m && d.y <= m;
+            if (chunk.wireframe)
+                chunk.wireframe.material =
+                    wideSpan ? purple : blue;
+            return insideSpan;
+        }
+        Chunks.Vis = Vis;
+    })(Chunks || (Chunks = {}));
 
     (function (app) {
         app.map = {};
@@ -123,4 +215,4 @@ var gta_kill = (function (exports, three) {
 
     return exports;
 
-}({}, THREE));
+}({}, THREE, defs, four$2));

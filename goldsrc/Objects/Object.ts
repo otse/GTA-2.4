@@ -1,4 +1,4 @@
-import { Data2 } from "@app/exports";
+import { Data2 } from "@app/defs";
 
 // in 22 this separation was called the whatsit-thing;
 // for 2.3 its renamed object-data

@@ -13,7 +13,10 @@ export default {
 		file: 'js/bundle.js',
 		format: 'iife', // immediately-invoked function expression — suitable for <script> tags
 		sourcemap: false,
-		globals: { 'three': 'THREE' }
+		//exports: 'named',
+		globals: {
+			'three': 'THREE'
+		}
 	}/*,
 	plugins: [
 		resolve(), // tells Rollup how to find date-fns in node_modules

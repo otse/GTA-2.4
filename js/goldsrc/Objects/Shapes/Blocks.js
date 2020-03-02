@@ -1,4 +1,4 @@
-import { BoxCutter } from "@app/exports";
+import { BoxCutter } from "@app/defs";
 import { BoxBufferGeometry } from "three";
 import four from "@app/four";
 import Util from "@app/util";

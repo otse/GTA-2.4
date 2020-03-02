@@ -1,4 +1,4 @@
-import { Data2, Object2, Block, Surface } from "@app/exports";
+import { Data2, Object2, Block, Surface } from "@app/defs";
 
 export namespace Objects {
 	function Factory(data: Data2): Object2 | null {

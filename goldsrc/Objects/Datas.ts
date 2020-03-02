@@ -1,4 +1,5 @@
-import { Data2, Object2, Chunks, Chunk, Points } from "@app/exports";
+import { Data2, Object2, Chunks, Chunk, Points } from "@app/defs";
+
 import KILL from "@app/KILL";
 
 // aka data maker

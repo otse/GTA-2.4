@@ -1,4 +1,4 @@
-import { Data2, Objects } from "@app/exports";
+import { Data2, Objects } from "@app/defs";
 
 import { Group } from "three";
 import four from "@app/four";

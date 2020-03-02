@@ -2,6 +2,12 @@ import four from "./four";
 
 import KILL from "./KILL";
 
+import "./Chunks/Chunk list";
+import "./Chunks/Chunk";
+import "./Chunks/Chunks";
+import "./Chunks/City";
+
+
 //import { default as THREE } from 'three';
 //export { THREE };
 
@@ -19,9 +25,9 @@ export namespace app {
 	export var wheel = 0;
 
 	export var move: Zx = [0, 0];
-	
+
 	export var left = false;
- 
+
 	function onkeys(event) {
 		const key = event.key;
 
@@ -85,7 +91,7 @@ export namespace app {
 
 			else if (KEY.UP == map[i])
 				delete map[i];
-		} 
+		}
 	}
 
 	const loop = (timestamp) => {

@@ -1,9 +1,9 @@
-import { Data2, Object2 } from "@app/exports";
+import { Data2, Object2 } from "@app/defs";
 
 import four from "../four";
 import { default as THREE, Mesh, Vector3, ShaderMaterial, PlaneBufferGeometry, MeshPhongMaterial } from 'three';
 
-import { Rectangles } from "@app/exports";
+import { Rectangles } from "@app/defs";
 
 import Phong2 from "@app/Shaders/Phong2";
 

@@ -1,12 +1,14 @@
-import { City } from "./exports";
+import City from "./Chunks/City";
 
-namespace KILL {
+export namespace KILL {
 
     //export var ply: Player = null;
     export var city: City;
     
     export function init() {
-
+        console.log('gta init');
+        
+        city = new City;
     }
 
     export function update() {

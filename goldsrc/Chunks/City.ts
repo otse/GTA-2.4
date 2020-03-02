@@ -1,4 +1,4 @@
-import { Datas, Chunk, Chunks, ChunkList, Points } from "@app/exports";
+import { Datas, Chunk, Chunks, ChunkList, Points } from "@app/defs";
 
 export class City {
 
@@ -20,7 +20,6 @@ export class City {
 	}
 
 	update(p: Point) {
-
 		this.new = Datas.Big(p);
 
 		if (Points.Same(this.new, this.old))

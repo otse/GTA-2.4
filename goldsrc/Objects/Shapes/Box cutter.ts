@@ -1,4 +1,4 @@
-import { Blocks } from "@app/exports";
+import { Blocks } from "@app/defs";
 
 export namespace BoxCutter {
 

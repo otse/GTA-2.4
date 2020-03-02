@@ -1,4 +1,4 @@
-import { Chunks, Points } from "@app/exports";
+import { Chunks, Points } from "@app/defs";
 import KILL from "@app/KILL";
 // aka data maker
 export var Datas;

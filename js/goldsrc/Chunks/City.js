@@ -1,4 +1,4 @@
-import { Datas, Chunks, ChunkList, Points } from "@app/exports";
+import { Datas, Chunks, ChunkList, Points } from "@app/defs";
 export class City {
     constructor() {
         this.chunks = [];
