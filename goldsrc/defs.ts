@@ -1,3 +1,4 @@
+/*
 import { Data2 } from "@app/Objects/Data"
 import { Object2 } from "@app/Objects/Object"
 export { Data2, Object2 }
@@ -33,3 +34,4 @@ import { Chunk } from "@app/Chunks/Chunk"
 import { Chunks } from "@app/Chunks/Chunks"
 import { ChunkList } from "@app/Chunks/Chunk list"
 export { City, Chunk, Chunks, ChunkList }
+*/

@@ -1,4 +1,4 @@
-import { Spritesheet } from "@app/defs";
+import Spritesheet from "./Spritesheet";
 
 export namespace Spritesheets {
 

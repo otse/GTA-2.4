@@ -1,4 +1,4 @@
-import { Chunk } from "@app/defs";
+import Chunk from "./Chunk";
 // Simple getters and chunk creation
 export class ChunkList {
     constructor() {

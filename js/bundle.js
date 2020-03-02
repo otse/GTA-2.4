@@ -1,21 +1,135 @@
-var gta_kill = (function (exports, three, defs, four$2) {
+var gta_kill = (function (exports, three, Points, Objects, four$2, Datas) {
     'use strict';
 
+    Points = Points && Points.hasOwnProperty('default') ? Points['default'] : Points;
+    Objects = Objects && Objects.hasOwnProperty('default') ? Objects['default'] : Objects;
     four$2 = four$2 && four$2.hasOwnProperty('default') ? four$2['default'] : four$2;
+    Datas = Datas && Datas.hasOwnProperty('default') ? Datas['default'] : Datas;
+
+    var Chunks;
+    (function (Chunks) {
+        Chunks.tileSpan = 7;
+        let geometry;
+        let blue;
+        let purple;
+        const N = 64 * Chunks.tileSpan;
+        function Init() {
+            geometry = new three.BoxGeometry(N, N, 0);
+            blue = new three.MeshBasicMaterial({ wireframe: true, color: 'blue' });
+            purple = new three.MeshBasicMaterial({ wireframe: true, color: 'purple' });
+        }
+        Chunks.Init = Init;
+        function Scaffold(chunk) {
+            chunk.wireframe = new three.Mesh(geometry, purple);
+            chunk.wireframe.position.set(((chunk.w.x + 1) * N) - N / 2, ((chunk.w.y + 1) * N) - N / 2, 0);
+            chunk.group.add(chunk.wireframe);
+        }
+        Chunks.Scaffold = Scaffold;
+        // This is the visibility test
+        function Vis(chunk, p) {
+            const m = Math.ceil(City.spanUneven / 2);
+            const d = Points.Make(Math.abs(p.x - chunk.w.x), Math.abs(p.y - chunk.w.y));
+            const outside = !(d.x > m || d.y > m);
+            const wideSpan = d.x >= m || d.y >= m;
+            const insideSpan = d.x <= m && d.y <= m;
+            if (chunk.wireframe)
+                chunk.wireframe.material =
+                    wideSpan ? purple : blue;
+            return insideSpan;
+        }
+        Chunks.Vis = Vis;
+    })(Chunks || (Chunks = {}));
+    var Chunks$1 = Chunks;
+
+    // A chunk makes / destroys its datas / objects
+    class Chunk {
+        constructor(w) {
+            //console.log(`chunk ${w.x} & ${w.y}`);
+            this.currentlyActive = false;
+            this.group = new three.Group;
+            this.w = w;
+            this.datas = [];
+            this.objects = [];
+            //Chunks.Scaffold(this);
+        }
+        update() {
+            for (let object of this.objects)
+                object.update();
+        }
+        fabricate(data) {
+            let object = Objects.MakeNullable(data);
+            if (!object)
+                return;
+            this.objects.push(object);
+        }
+        add(data) {
+            this.datas.push(data);
+            if (this.currentlyActive)
+                this.fabricate(data);
+        }
+        remove(data) {
+            this.datas.splice(this.datas.indexOf(data), 1);
+            let object = data.object2;
+            if (!object)
+                return;
+            object.destroy();
+            this.objects.splice(this.objects.indexOf(object), 1);
+        }
+        makeAdd() {
+            //console.log('Chunk make n add');
+            for (let data of this.datas)
+                this.fabricate(data);
+            this.currentlyActive = true;
+            four$2.scene.add(this.group);
+        }
+        destroyRemove() {
+            //console.log('Chunk destroy n remove');
+            for (let object of this.objects)
+                object.destroy();
+            this.objects.length = 0; // Reset array
+            this.currentlyActive = false;
+            four$2.scene.remove(this.group);
+        }
+    }
+    Chunk._tileSpan = 7; // use Chunks.tileSpan
+
+    // Simple getters and chunk creation
+    class ChunkList {
+        constructor() {
+            this.dict = {};
+        }
+        GetNullable(w) {
+            let z = `${w.x} & ${w.y}`;
+            let chunk = this.dict[z];
+            return chunk || null;
+        }
+        Get2(x, y) {
+            return this.Get({ x: x, y: y });
+        }
+        Get(w) {
+            let z = `${w.x} & ${w.y}`;
+            let chunk = this.dict[z];
+            if (!chunk) {
+                chunk = new Chunk(w);
+                this.dict[z] = chunk;
+            }
+            return chunk;
+        }
+    }
 
     class City {
         constructor() {
             this.chunks = [];
-            this.chunkList = new defs.ChunkList;
-            this.new = defs.Points.Make(0, 0);
-            this.old = defs.Points.Make(100, 100);
+            this.chunkList = new ChunkList;
+            this.new = Points.Make(0, 0);
+            this.old = Points.Make(100, 100);
         }
         update(p) {
-            this.new = defs.Datas.Big(p);
-            if (defs.Points.Same(this.new, this.old))
+            this.new = Datas.Big(p);
+            if (Points.Same(this.new, this.old))
                 return;
             console.log(`${this.old.x} & ${this.old.y} different to ${this.new.x} & ${this.new.y}`);
-            this.old = defs.Points.Copy(this.new);
+            this.old = Points.Copy(this.new);
             this.off();
             this.on();
             for (let chunk of this.chunks) {
@@ -29,7 +143,7 @@ var gta_kill = (function (exports, three, defs, four$2) {
             let i = this.chunks.length;
             while (i--) {
                 let ch = this.chunks[i];
-                if (!defs.Chunks.Vis(ch, to)) {
+                if (!Chunks$1.Vis(ch, to)) {
                     this.chunks.splice(i, 1);
                     ch.destroyRemove();
                 }
@@ -42,14 +156,14 @@ var gta_kill = (function (exports, three, defs, four$2) {
             const m = Math.floor(City.spanUneven / 2);
             for (let y = 0; y < City.spanUneven; y++) {
                 for (let x = 0; x < City.spanUneven; x++) {
-                    let z = defs.Points.Make(x - m + to.x, y - m + to.y);
+                    let z = Points.Make(x - m + to.x, y - m + to.y);
                     let ch = this.chunkList.GetNullable(z);
                     if (!ch)
                         continue;
                     if (!ch.currentlyActive) {
                         this.chunks.push(ch);
                         ch.makeAdd();
-                        defs.Chunks.Vis(ch, to);
+                        Chunks$1.Vis(ch, to);
                     }
                 }
             }
@@ -112,40 +226,6 @@ var gta_kill = (function (exports, three, defs, four$2) {
         }
     })(four || (four = {}));
     var four$1 = four;
-
-    var Chunks;
-    (function (Chunks) {
-        Chunks.tileSpan = 7;
-        let geometry;
-        let blue;
-        let purple;
-        const N = 64 * Chunks.tileSpan;
-        function Init() {
-            geometry = new three.BoxGeometry(N, N, 0);
-            blue = new three.MeshBasicMaterial({ wireframe: true, color: 'blue' });
-            purple = new three.MeshBasicMaterial({ wireframe: true, color: 'purple' });
-        }
-        Chunks.Init = Init;
-        function Scaffold(chunk) {
-            chunk.wireframe = new three.Mesh(geometry, purple);
-            chunk.wireframe.position.set(((chunk.w.x + 1) * N) - N / 2, ((chunk.w.y + 1) * N) - N / 2, 0);
-            chunk.group.add(chunk.wireframe);
-        }
-        Chunks.Scaffold = Scaffold;
-        // This is the visibility test
-        function Vis(chunk, p) {
-            const m = Math.ceil(defs.City.spanUneven / 2);
-            const d = defs.Points.Make(Math.abs(p.x - chunk.w.x), Math.abs(p.y - chunk.w.y));
-            const outside = !(d.x > m || d.y > m);
-            const wideSpan = d.x >= m || d.y >= m;
-            const insideSpan = d.x <= m && d.y <= m;
-            if (chunk.wireframe)
-                chunk.wireframe.material =
-                    wideSpan ? purple : blue;
-            return insideSpan;
-        }
-        Chunks.Vis = Vis;
-    })(Chunks || (Chunks = {}));
 
     (function (app) {
         app.map = {};
@@ -215,4 +295,4 @@ var gta_kill = (function (exports, three, defs, four$2) {
 
     return exports;
 
-}({}, THREE, defs, four$2));
+}({}, THREE, Points, Objects, four$2, Datas));

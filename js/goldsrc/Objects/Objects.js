@@ -1,4 +1,5 @@
-import { Block, Surface } from "@app/defs";
+import Block from "./Shapes/Block";
+import Surface from "./Shapes/Surface";
 export var Objects;
 (function (Objects) {
     function Factory(data) {

@@ -1,4 +1,4 @@
-import { Blocks } from "@app/defs";
+import Blocks from "./Blocks";
 export var BoxCutter;
 (function (BoxCutter) {
     const picks = [

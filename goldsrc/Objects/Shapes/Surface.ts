@@ -1,4 +1,9 @@
-import { Data2, Object2, Surfaces, Spritesheet, Spritesheets } from "@app/defs";
+import Data2 from "../Data";
+import Object2 from "../Object";
+
+import Surfaces from "./Surfaces";
+
+import { Spritesheets } from "@app/Sprites/Spritesheets";
 
 import { Mesh, Material, PlaneBufferGeometry, MeshPhongMaterial, Color, DoubleSide } from "three";
 

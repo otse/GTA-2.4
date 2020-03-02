@@ -1,4 +1,5 @@
-import { Object2, Blocks } from "@app/defs";
+import Object2 from '../Object';
+import Blocks from './Blocks';
 import { MeshPhongMaterial, Color, Mesh } from 'three';
 import Util from "@app/util";
 export let FACEWORDS = ['right', 'left', 'front', 'back', 'top', 'bottom'];

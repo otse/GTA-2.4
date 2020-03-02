@@ -1,7 +1,7 @@
-import { Object2 } from "@app/defs";
-import { default as THREE, Vector3, PlaneBufferGeometry } from 'three';
-import { Rectangles } from "@app/defs";
+import Object2 from "./Object";
+import Rectangles from "./Rectangles";
 import Phong2 from "@app/Shaders/Phong2";
+import { default as THREE, Vector3, PlaneBufferGeometry } from 'three';
 import Util from "@app/util";
 export class Rectangle extends Object2 {
     constructor(data) {

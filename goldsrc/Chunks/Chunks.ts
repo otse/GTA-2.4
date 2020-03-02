@@ -1,4 +1,7 @@
-import { Chunk, Points, City } from "@app/defs";
+import City from "./City";
+import Chunk from "./Chunk";
+
+import Points from "@app/Objects/Points";
 
 import { Mesh, BoxGeometry, MeshBasicMaterial } from "three";
 

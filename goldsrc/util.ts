@@ -1,4 +1,5 @@
-import { Data2, Object2, Spritesheet } from "@app/defs";
+import Spritesheet from './Sprites/Spritesheet';
+
 
 import { default as THREE, Texture, TextureLoader, NearestFilter } from 'three';
 

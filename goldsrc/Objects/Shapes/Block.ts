@@ -1,4 +1,6 @@
-import { Data2, Object2, Blocks } from "@app/defs";
+import Data2 from '../Data';
+import Object2 from '../Object';
+import Blocks from './Blocks';
 
 import { default as THREE, Clock, Scene, MeshPhongMaterial, Color, Mesh } from 'three';
 

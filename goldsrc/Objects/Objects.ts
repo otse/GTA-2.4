@@ -1,4 +1,9 @@
-import { Data2, Object2, Block, Surface } from "@app/defs";
+import Data2 from "./Data";
+import Object2 from "./Object";
+
+import Block from "./Shapes/Block";
+import Surface from "./Shapes/Surface";
+
 
 export namespace Objects {
 	function Factory(data: Data2): Object2 | null {

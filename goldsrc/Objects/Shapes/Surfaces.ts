@@ -1,7 +1,8 @@
+import Surface from "./Surface";
+
 import four from '@app/four';
 import { default as THREE, Clock, Scene, Mesh, Vector3, ShaderMaterial, PlaneBufferGeometry, MeshPhongMaterial } from 'three';
 
-import Surface from "./Surface";
 
 export namespace Surfaces {
       export var geometry: THREE.PlaneBufferGeometry

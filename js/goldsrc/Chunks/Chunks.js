@@ -1,4 +1,5 @@
-import { Points, City } from "@app/defs";
+import City from "./City";
+import Points from "@app/Objects/Points";
 import { Mesh, BoxGeometry, MeshBasicMaterial } from "three";
 export var Chunks;
 (function (Chunks) {

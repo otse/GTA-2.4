@@ -1,6 +1,11 @@
-import { Data2, Object2, Chunks, Chunk, Points } from "@app/defs";
+import Data2 from "./Data";
+import Points from "./Points";
+
+import Chunks from "@app/Chunks/Chunks";
+import Chunk from "@app/Chunks/Chunk";
 
 import KILL from "@app/KILL";
+
 
 // aka data maker
 

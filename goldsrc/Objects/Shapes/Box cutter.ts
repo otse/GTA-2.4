@@ -1,4 +1,6 @@
-import { Blocks } from "@app/defs";
+import Blocks from "./Blocks";
+
+import { BoxBufferGeometry } from "three";
 
 export namespace BoxCutter {
 
@@ -13,7 +15,7 @@ export namespace BoxCutter {
 		"OO|||", "|O|||", "O||||", "|||||"
 	];
 
-	export let geometries: THREE.BoxBufferGeometry[] = [];
+	export let geometries: BoxBufferGeometry[] = [];
 
 	// Remove faces from a Box Buffer Geometry
 	export function Init() {

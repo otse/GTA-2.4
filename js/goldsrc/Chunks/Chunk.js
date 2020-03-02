@@ -1,4 +1,4 @@
-import { Objects } from "@app/defs";
+import Objects from "@app/Objects/Objects";
 import { Group } from "three";
 import four from "@app/four";
 // A chunk makes / destroys its datas / objects

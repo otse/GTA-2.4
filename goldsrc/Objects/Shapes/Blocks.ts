@@ -1,4 +1,7 @@
-import { Data2, Object2, BoxCutter, Block } from "@app/defs";
+import Data2 from "../Data";
+
+import Block from "./Block";
+import BoxCutter from "./Box cutter";
 
 import { BoxBufferGeometry } from "three";
 

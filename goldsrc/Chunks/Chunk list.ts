@@ -1,4 +1,5 @@
-import { Chunk } from "@app/defs";
+import Chunk from "./Chunk";
+
 
 type Dict = { [index: string]: Chunk }
 

@@ -1,4 +1,6 @@
-import { Object2, Surfaces, Spritesheets } from "@app/defs";
+import Object2 from "../Object";
+import Surfaces from "./Surfaces";
+import { Spritesheets } from "@app/Sprites/Spritesheets";
 import { Mesh, MeshPhongMaterial, Color, DoubleSide } from "three";
 import Util from "@app/util";
 const defaultSty = 'sty/commercial/storefront/577.bmp';
