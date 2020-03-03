@@ -4,9 +4,9 @@ import Rectangles from "../Objects/Rectangles";
 
 import Phong2 from "../Shaders/Phong2";
 
-import Util from "../util";
+import Util from "../Random";
 
-import four from "../four";
+import Four from "../Renderer";
 import { default as THREE, Mesh, Vector3, ShaderMaterial, PlaneBufferGeometry, MeshPhongMaterial } from 'three';
 
 

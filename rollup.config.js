@@ -7,7 +7,7 @@
 const production = !process.env.ROLLUP_WATCH;
 
 export default {
-	input: 'js/goldsrc/app.js',
+	input: 'js/goldsrc/Appp.js',
 	output: {
 		name: 'gta_kill',
 		file: 'js/bundle.js',

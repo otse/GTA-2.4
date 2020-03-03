@@ -7,37 +7,37 @@ type Dict = { [index: string]: Chunk }
 
 class ChunkList {
 
-    private dict: Dict = {}
+	private dict: Dict = {}
 
-    constructor() {
-        (window as any)['test'] = 1;
-    }
+	constructor() {
+		(window as any)['test'] = 1;
+	}
 
-    GetNullable(w: Point): Chunk | null {
-        let z = `${w.x} & ${w.y}`;
+	GetNullable(w: Point): Chunk | null {
+		let z = `${w.x} & ${w.y}`;
 
-        let chunk = this.dict[z];
+		let chunk = this.dict[z];
 
-        return chunk || null;
-    }
+		return chunk || null;
+	}
 
-    Get2(x: number, y: number): Chunk {
-        return this.Get({ x: x, y: y });
-    }
-    
-    Get(w: Point): Chunk {
-        let z = `${w.x} & ${w.y}`;
+	Get2(x: number, y: number): Chunk {
+		return this.Get({ x: x, y: y });
+	}
+	
+	Get(w: Point): Chunk {
+		let z = `${w.x} & ${w.y}`;
 
-        let chunk = this.dict[z];
+		let chunk = this.dict[z];
 
-        if (!chunk) {
-            chunk = new Chunk(w);
+		if (!chunk) {
+			chunk = new Chunk(w);
 
-            this.dict[z] = chunk;
-        }
+			this.dict[z] = chunk;
+		}
 
-        return chunk;
-    }
+		return chunk;
+	}
 
 }
 

@@ -1,7 +1,7 @@
 import Object2 from '../Object';
 import Blocks from './Blocks';
 import { MeshPhongMaterial, Color, Mesh } from 'three';
-import Util from '../../util';
+import Util from '../../Random';
 export let FACEWORDS = ['right', 'left', 'front', 'back', 'top', 'bottom'];
 export let FACEWORDSINV = ['left', 'right', 'back', 'front', 'bottom', 'top'];
 const defaultSty = 'sty/commercial/storefront/577.bmp';

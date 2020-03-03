@@ -1,7 +1,7 @@
 import Object2 from "../Objects/Object";
 import Rectangles from "../Objects/Rectangles";
 import Phong2 from "../Shaders/Phong2";
-import Util from "../util";
+import Util from "../Random";
 import { default as THREE, Vector3, PlaneBufferGeometry } from 'three';
 class Rectangle extends Object2 {
     constructor(data) {

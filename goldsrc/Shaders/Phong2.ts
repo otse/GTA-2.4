@@ -1,4 +1,4 @@
-import four from "../four";
+import Four from "../Renderer";
 import { default as THREE, Vector3, MeshPhongMaterial } from 'three';
 
 namespace Phong2 {

@@ -5,7 +5,7 @@ import Blocks from './Blocks';
 
 import { default as THREE, Clock, Scene, MeshPhongMaterial, Color, Mesh } from 'three';
 
-import Util from '../../util';
+import Util from '../../Random';
 
 
 export let FACEWORDS = ['right', 'left', 'front', 'back', 'top', 'bottom'];

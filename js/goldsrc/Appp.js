@@ -1,39 +1,39 @@
-import four from "./four";
+import Four from "./Renderer";
 import KILL from "./KILL";
-export var app;
-(function (app) {
-    app.map = {};
-    app.wheel = 0;
-    app.move = [0, 0];
-    app.left = false;
+export var App;
+(function (App) {
+    App.map = {};
+    App.wheel = 0;
+    App.move = [0, 0];
+    App.left = false;
     function onkeys(event) {
         const key = event.key;
         //console.log(event);
         if ('keydown' == event.type)
-            app.map[key] = (undefined == app.map[key])
+            App.map[key] = (undefined == App.map[key])
                 ? 1 /* PRESSED */
                 : 3 /* AGAIN */;
         else if ('keyup' == event.type)
-            app.map[key] = 0 /* UP */;
+            App.map[key] = 0 /* UP */;
         if (key == 114) // f3
             event.preventDefault();
         return;
     }
     function onwheel(event) {
         let up = event.deltaY < 0;
-        app.wheel = up ? 1 : -1;
+        App.wheel = up ? 1 : -1;
     }
     function onmove(event) {
-        app.move[0] = event.clientX;
-        app.move[1] = event.clientY;
+        App.move[0] = event.clientX;
+        App.move[1] = event.clientY;
     }
     function ondown(event) {
         if (event.button == 0)
-            app.left = true;
+            App.left = true;
     }
     function onup(event) {
         if (event.button == 0)
-            app.left = false;
+            App.left = false;
     }
     function boot() {
         document.onkeydown = document.onkeyup = onkeys;
@@ -41,26 +41,26 @@ export var app;
         document.onmousedown = ondown;
         document.onmouseup = onup;
         document.onwheel = onwheel;
-        four.init();
+        Four.init();
         KILL.init();
         loop(0);
     }
-    app.boot = boot;
+    App.boot = boot;
     const delay = () => {
-        for (let i in app.map) {
-            if (1 /* PRESSED */ == app.map[i])
-                app.map[i] = 2 /* DELAY */;
-            else if (0 /* UP */ == app.map[i])
-                delete app.map[i];
+        for (let i in App.map) {
+            if (1 /* PRESSED */ == App.map[i])
+                App.map[i] = 2 /* DELAY */;
+            else if (0 /* UP */ == App.map[i])
+                delete App.map[i];
         }
     };
     const loop = (timestamp) => {
         requestAnimationFrame(loop);
         KILL.update();
-        four.render();
-        app.wheel = 0;
+        Four.render();
+        App.wheel = 0;
         delay();
     };
-})(app || (app = {}));
-window['app'] = app;
-export default app;
+})(App || (App = {}));
+window['app'] = App;
+export default App;

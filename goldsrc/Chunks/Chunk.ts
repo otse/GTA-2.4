@@ -4,7 +4,7 @@ import Data2 from "../Objects/Data"
 import Object2 from "../Objects/Object"
 import Objects from "../Objects/Objects"
 
-import four from "../four"
+import Four from "../Renderer"
 
 // A chunk makes / destroys its datas / objects
 
@@ -75,7 +75,7 @@ export class Chunk {
 
 		this.currentlyActive = true;
 
-		four.scene.add(this.group);
+		Four.scene.add(this.group);
 	}
 
 	destroyRemove() {
@@ -87,7 +87,7 @@ export class Chunk {
 		this.objects.length = 0; // Reset array
 		this.currentlyActive = false;
 
-		four.scene.remove(this.group);
+		Four.scene.remove(this.group);
 	}
 }
 

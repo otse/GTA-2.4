@@ -5,8 +5,8 @@ import BoxCutter from "./Box cutter";
 
 import { BoxBufferGeometry } from "three";
 
-import four from "../../four";
-import Util from "../../util";
+import Four from "../../Renderer";
+import Util from "../../Random";
 
 export namespace Blocks {
 	export var geometry: BoxBufferGeometry
@@ -39,11 +39,11 @@ export namespace Blocks {
 	}
 
 	export function show(block: Block) {
-		four.scene.add(block.mesh);
+		Four.scene.add(block.mesh);
 	}
 
 	export function Hide(block: Block) {
-		four.scene.remove(block.mesh);
+		Four.scene.remove(block.mesh);
 	}
 }
 

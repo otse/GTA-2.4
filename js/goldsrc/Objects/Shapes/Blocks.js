@@ -1,7 +1,7 @@
 import BoxCutter from "./Box cutter";
 import { BoxBufferGeometry } from "three";
-import four from "../../four";
-import Util from "../../util";
+import Four from "../../Renderer";
+import Util from "../../Random";
 export var Blocks;
 (function (Blocks) {
     function Init() {
@@ -25,11 +25,11 @@ export var Blocks;
     }
     Blocks.GetBox = GetBox;
     function show(block) {
-        four.scene.add(block.mesh);
+        Four.scene.add(block.mesh);
     }
     Blocks.show = show;
     function Hide(block) {
-        four.scene.remove(block.mesh);
+        Four.scene.remove(block.mesh);
     }
     Blocks.Hide = Hide;
 })(Blocks || (Blocks = {}));

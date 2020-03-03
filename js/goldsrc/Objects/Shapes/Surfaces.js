@@ -1,4 +1,4 @@
-import four from "../../four";
+import Four from "../../Renderer";
 import { default as THREE } from 'three';
 export var Surfaces;
 (function (Surfaces) {
@@ -7,11 +7,11 @@ export var Surfaces;
     }
     Surfaces.Init = Init;
     function Show(plane) {
-        four.scene.add(plane.mesh);
+        Four.scene.add(plane.mesh);
     }
     Surfaces.Show = Show;
     function Hide(plane) {
-        four.scene.remove(plane.mesh);
+        Four.scene.remove(plane.mesh);
     }
     Surfaces.Hide = Hide;
 })(Surfaces || (Surfaces = {}));

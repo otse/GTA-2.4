@@ -322,11 +322,11 @@ var gta_kill = (function (exports, THREE) {
         }
         Blocks.GetBox = GetBox;
         function show(block) {
-            four$1.scene.add(block.mesh);
+            Four$1.scene.add(block.mesh);
         }
         Blocks.show = show;
         function Hide(block) {
-            four$1.scene.remove(block.mesh);
+            Four$1.scene.remove(block.mesh);
         }
         Blocks.Hide = Hide;
     })(Blocks || (Blocks = {}));
@@ -392,11 +392,11 @@ var gta_kill = (function (exports, THREE) {
         }
         Surfaces.Init = Init;
         function Show(plane) {
-            four$1.scene.add(plane.mesh);
+            Four$1.scene.add(plane.mesh);
         }
         Surfaces.Show = Show;
         function Hide(plane) {
-            four$1.scene.remove(plane.mesh);
+            Four$1.scene.remove(plane.mesh);
         }
         Surfaces.Hide = Hide;
     })(Surfaces || (Surfaces = {}));
@@ -708,7 +708,7 @@ var gta_kill = (function (exports, THREE) {
             for (let data of this.datas)
                 this.fabricate(data);
             this.currentlyActive = true;
-            four$1.scene.add(this.group);
+            Four$1.scene.add(this.group);
         }
         destroyRemove() {
             //console.log('Chunk destroy n remove');
@@ -716,7 +716,7 @@ var gta_kill = (function (exports, THREE) {
                 object.destroy();
             this.objects.length = 0; // Reset array
             this.currentlyActive = false;
-            four$1.scene.remove(this.group);
+            Four$1.scene.remove(this.group);
         }
     }
     Chunk._tileSpan = 7; // use Chunks.tileSpan
@@ -841,95 +841,561 @@ var gta_kill = (function (exports, THREE) {
     }
     City.spanUneven = 5;
 
+    // "C API" LOL
+    var Rectangles;
+    (function (Rectangles) {
+        function Init() {
+        }
+        Rectangles.Init = Init;
+        function show(rectangle) {
+            console.log('Rectangles Add ' + rectangle.data.type);
+            Four$1.scene.add(rectangle.mesh);
+            Four$1.scene.add(rectangle.meshShadow);
+        }
+        Rectangles.show = show;
+        function hide(rectangle) {
+            Four$1.scene.remove(rectangle.mesh);
+            Four$1.scene.remove(rectangle.meshShadow);
+        }
+        Rectangles.hide = hide;
+    })(Rectangles || (Rectangles = {}));
+    var Rectangles$1 = Rectangles;
+
+    var Phong2;
+    (function (Phong2) {
+        // Taken from
+        // https://raw.githubusercontent.com/mrdoob/three.js/dev/src/renderers/shaders/ShaderLib/meshphong_frag.glsl.js
+        //var customMaterial: THREE.ShaderMaterial;
+        function Rig() {
+        }
+        Phong2.Rig = Rig;
+        function Make(p) {
+            let o = {
+                name: 'Phong2',
+                transparent: true,
+                map: p.map,
+            };
+            let customMaterial = new THREE.MeshPhongMaterial(o);
+            customMaterial.onBeforeCompile = (shader) => {
+                if (p.BLUR)
+                    shader.uniforms.blurMap = { value: p.blurMap };
+                shader.uniforms.pink = { value: new THREE.Vector3(1, 0, 1) };
+                shader.fragmentShader = shader.fragmentShader.replace(`#define PHONG`, `
+				#define PHONG
+				#define PHONG2
+				`
+                    +
+                        (p.BLUR ? '#define BLUR \n' : '') +
+                    (p.PINK ? '#define PINK \n' : '') +
+                    `
+
+				#ifdef BLUR
+					uniform sampler2D blurMap;
+				#endif
+			`);
+                shader.fragmentShader = shader.fragmentShader.replace(`#include <map_fragment>`, `
+				#ifdef USE_MAP
+				
+					vec4 texelColor = vec4(0);
+					
+					vec4 mapColor = texture2D( map, vUv );
+
+					#ifdef PINK
+						// Pink pixels
+						if ( mapColor.rgb == vec3(1, 0, 1) ) {
+							mapColor.a = 0.0;
+							mapColor.rgb *= 0.0;
+						}
+					#endif
+
+					#ifdef BLUR
+						vec4 blurColor = texture2D( blurMap, vUv );
+						blurColor.rgb *= 0.0;
+						blurColor.a /= 1.5;
+						texelColor = blurColor + mapColor;
+					#else
+						texelColor = mapColor;
+					#endif
+
+					texelColor = mapTexelToLinear( texelColor );
+
+					diffuseColor *= texelColor;
+
+
+				#endif
+			`);
+            }; // onBeforeCompile
+            return customMaterial;
+        }
+        Phong2.Make = Make;
+    })(Phong2 || (Phong2 = {}));
+    var Phong2$1 = Phong2;
+
+    class Rectangle extends Object2 {
+        constructor(data) {
+            super(data);
+            this.lift = 2;
+            // the Defaults
+            if (!this.data.width)
+                this.data.width = 20;
+            if (!this.data.height)
+                this.data.height = 20;
+            this.where = new THREE.Vector3;
+            //Ready(); // used by consumer class
+        }
+        makeRectangle(params) {
+            this.makeMeshes(params);
+            this.updatePosition();
+            Rectangles$1.show(this);
+        }
+        makeMeshes(info) {
+            this.geometry = new THREE.PlaneBufferGeometry(this.data.width, this.data.height, 1);
+            this.material = Phong2$1.Make({
+                map: Util$1.loadTexture(this.data.sty),
+                blurMap: Util$1.loadTexture(info.blur),
+                PINK: true,
+                BLUR: true,
+            });
+            let materialShadow = Phong2$1.Make({
+                map: Util$1.loadTexture(info.shadow),
+                PINK: true,
+                DARKEN: true
+            });
+            materialShadow.opacity = 0.25;
+            materialShadow.color = new THREE__default.Color('black');
+            this.mesh = new THREE__default.Mesh(this.geometry, this.material);
+            this.mesh.frustumCulled = false;
+            this.mesh.receiveShadow = true;
+            this.meshShadow = new THREE__default.Mesh(this.geometry, materialShadow);
+            this.meshShadow.frustumCulled = false;
+        }
+        destroy() {
+            super.destroy();
+            Rectangles$1.hide(this);
+            this.geometry.dispose();
+            this.material.dispose();
+        }
+        update() {
+            super.update();
+        }
+        updatePosition() {
+            this.where.set(this.data.x * 64, this.data.y * 64, this.data.z * 64);
+            this.mesh.position.copy(this.where);
+            this.mesh.position.z += this.lift;
+            // Shade
+            this.meshShadow.position.copy(this.where);
+            this.meshShadow.position.x += 3;
+            this.meshShadow.position.y -= 3;
+            this.mesh.rotation.z = this.data.r;
+            this.meshShadow.rotation.z = this.data.r;
+        }
+    }
+
+    //import { three } from "../three";
+    var Peds;
+    (function (Peds) {
+        function play(ped, word, square = undefined) {
+            const timer = ped.timers[word];
+            //Anims.Update(timer);
+            Util$1.UV.fromSheet(ped.geometry, square || timer.def.tiles[timer.i], Peds.sheet);
+            return timer;
+        }
+        Peds.play = play;
+        Peds.sheet = {
+            file: 'ped/template_24.png',
+            width: 33 * 8,
+            height: 33 * 23,
+            squares: {
+                lol: { x: 0, y: 0 }
+            },
+            piece: {
+                w: 33,
+                h: 33
+            }
+        };
+    })(Peds || (Peds = {}));
+    var Peds$1 = Peds;
+
+    const walkSquares = [
+        { x: 1, y: 1 },
+        { x: 2, y: 1 },
+        { x: 3, y: 1 },
+        { x: 4, y: 1 },
+        { x: 5, y: 1 },
+        { x: 6, y: 1 },
+        { x: 7, y: 1 },
+        { x: 8, y: 1 }
+    ];
+    const runSquares = [
+        { x: 1, y: 2 },
+        { x: 2, y: 2 },
+        { x: 3, y: 2 },
+        { x: 4, y: 2 },
+        { x: 5, y: 2 },
+        { x: 6, y: 2 },
+        { x: 7, y: 2 },
+        { x: 8, y: 2 }
+    ];
+    const scratchSquares = [
+        { x: 1, y: 8 },
+        { x: 2, y: 8 },
+        { x: 3, y: 8 },
+        { x: 4, y: 8 },
+        { x: 5, y: 8 },
+        { x: 6, y: 8 },
+        { x: 7, y: 8 },
+        { x: 8, y: 8 },
+        { x: 1, y: 9 },
+        { x: 2, y: 9 },
+        { x: 3, y: 9 },
+        { x: 4, y: 9 }
+    ];
+    const m = .11;
+    const pedDefs = {
+        other: { frames: 8, moment: .08 },
+        walk: { frames: 8, moment: .11, tiles: walkSquares },
+        run: { frames: 8, moment: .08, tiles: runSquares },
+        scratch: { frames: 12, moment: .16, tiles: scratchSquares },
+        punch: { frames: 8, moment: m },
+        walkpunch: { frames: 8, moment: m },
+        runpunch: { frames: 8, moment: .08 },
+        walkgun: { frames: 8, moment: m },
+        rungun: { frames: 8, moment: .08 },
+        jump: { frames: 8, moment: m },
+        door: { frames: 8, moment: .14 },
+        sit: { frames: 5, moment: m },
+        drop: { frames: 8, moment: m },
+        trip1: { frames: 9, moment: m },
+        trip2: { frames: 8, moment: m },
+        drown: { frames: 8, moment: m },
+        cardoor: { frames: 8, moment: .13 }
+    };
+
+    var Anims;
+    (function (Anims) {
+        function zero(a) {
+            a.timer = 0;
+            a.i = 0;
+        }
+        Anims.zero = zero;
+        function update(a) {
+            a.timer += Four$1.delta;
+            if (a.timer < a.def.moment)
+                return;
+            const end = a.i + 1 == a.def.frames;
+            !end ? a.i++ : a.i = 0;
+            a.timer = 0;
+        }
+        Anims.update = update;
+    })(Anims || (Anims = {}));
+    var Anims$1 = Anims;
+
+    const idleSquare = { x: 1, y: 8 };
+    class Ped extends Rectangle {
+        constructor(data) {
+            super(data);
+            this.idle = true;
+            this.run = false;
+            this.move = true;
+            this.timers = {};
+            // Defaults
+            if (!data.remap)
+                data.remap = 15 + Math.floor(Math.random() * 53 - 15);
+            data.height = data.width = 33;
+            if (data.sty) ;
+            data.sty = `sty/ped/template_${data.remap}.png`;
+            // Todo, Avarage ped only uses two
+            // maybe make a Get for this in Anims
+            for (let property in pedDefs) {
+                this.timers[property] =
+                    {
+                        def: pedDefs[property],
+                        i: 0,
+                        timer: 0
+                    };
+            }
+            this.makeRectangle({
+                blur: 'sty/ped/blur.png',
+                shadow: data.sty
+            });
+            Anims$1.zero(this.timers.walk);
+            Anims$1.zero(this.timers.run);
+            Util$1.UV.fromSheet(this.geometry, idleSquare, Peds$1.sheet);
+        }
+        // kind of a hacky function
+        Change(remap) {
+            this.data.remap = remap;
+            this.data.sty = `sty/ped/template_${this.data.remap}.png`;
+            //this.material.map = three.LoadTexture(this.data.sty);
+        }
+        update() {
+            super.update();
+            if (this.move) {
+                Peds$1.play(this, this.run ? 'run' : 'walk');
+                this.idle = false;
+            }
+            else if (!this.idle) {
+                Anims$1.zero(this.timers.walk);
+                Anims$1.zero(this.timers.run);
+                Util$1.UV.fromSheet(this.geometry, idleSquare, Peds$1.sheet);
+                this.idle = true;
+            }
+            //this.Gravitate();
+            this.updatePosition();
+        }
+    }
+
+    class Ply extends Ped {
+        constructor(data) {
+            super(data);
+            console.log('ply');
+            window.ply = this;
+        }
+        update() {
+            //super.Update();
+            const skooma = App.map[88]; // x
+            if (App.map[16] == 1)
+                this.run = !this.run;
+            const A = App.map[65] && !App.map[68];
+            const S = App.map[83] && !App.map[87];
+            const W = App.map[87] && !App.map[83];
+            const D = App.map[68] && !App.map[65];
+            if (A || D) {
+                const r = this.idle ? 50 : !this.run ? 55 : 60;
+                this.data.r += A ? Math.PI / r : Math.PI / -r;
+            }
+            if (W || S) {
+                const dist = !this.run ? 0.5 / 64 : 1.5 / 64;
+                let speed = W ? -dist : dist / 2;
+                if (skooma)
+                    speed *= 2;
+                this.data.x += speed * Math.sin(-this.data.r);
+                this.data.y += speed * Math.cos(-this.data.r);
+                Peds$1.play(this, this.run ? 'run' : 'walk');
+                //sc.sprite_and_anim_to_uv(this.sprite, anim.i, anim.def, this.geometry);
+                this.idle = false;
+            }
+            else if (!this.idle) {
+                ///Anims.Zero(this.timers.walk);
+                ///Anims.Zero(this.timers.run);
+                Util$1.UV.fromSheet(this.geometry, { x: 1, y: 8 }, Peds$1.sheet);
+                this.idle = true;
+            }
+            ////this.gravitate();
+            this.updatePosition();
+        }
+    }
+
+    var EasingFunctions;
+    (function (EasingFunctions) {
+        // no easing, no acceleration
+        function linear(t) {
+            return t;
+        }
+        EasingFunctions.linear = linear;
+        // Accelerating from zero velocity
+        function inQuad(t) {
+            return t * t;
+        }
+        EasingFunctions.inQuad = inQuad;
+        // Decelerating to zero velocity
+        function easeOutQuad(t) {
+            return t * (2 - t);
+        }
+        EasingFunctions.easeOutQuad = easeOutQuad;
+        // Acceleration until halfway, then deceleration
+        function inOutQuad(t) {
+            return t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+        }
+        EasingFunctions.inOutQuad = inOutQuad;
+        // Accelerating from zero velocity 
+        function inCubic(t) {
+            return t * t * t;
+        }
+        EasingFunctions.inCubic = inCubic;
+        // Decelerating to zero velocity 
+        function outCubic(t) {
+            return (--t) * t * t + 1;
+        }
+        EasingFunctions.outCubic = outCubic;
+        // Acceleration until halfway, then deceleration 
+        function inOutCubic(t) {
+            return t < .5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
+        }
+        EasingFunctions.inOutCubic = inOutCubic;
+        // Accelerating from zero velocity 
+        function inQuart(t) {
+            return t * t * t * t;
+        }
+        EasingFunctions.inQuart = inQuart;
+        // Decelerating to zero velocity 
+        function outQuart(t) {
+            return 1 - (--t) * t * t * t;
+        }
+        EasingFunctions.outQuart = outQuart;
+        // Acceleration until halfway, then deceleration
+        function inOutQuart(t) {
+            return t < .5 ? 8 * t * t * t * t : 1 - 8 * (--t) * t * t * t;
+        }
+        EasingFunctions.inOutQuart = inOutQuart;
+        // Accelerating from zero velocity
+        function inQuint(t) {
+            return t * t * t * t * t;
+        }
+        EasingFunctions.inQuint = inQuint;
+        // Decelerating to zero velocity
+        function outQuint(t) {
+            return 1 + (--t) * t * t * t * t;
+        }
+        EasingFunctions.outQuint = outQuint;
+        // Acceleration until halfway, then deceleration 
+        function inOutQuint(t) {
+            return t < .5 ? 16 * t * t * t * t * t : 1 + 16 * (--t) * t * t * t * t;
+        }
+        EasingFunctions.inOutQuint = inOutQuint;
+    })(EasingFunctions || (EasingFunctions = {}));
+    var EasingFunctions$1 = EasingFunctions;
+
+    // todo construct a utility type from the length of the stages array,
+    // so that we can make a cool tuple for the Zoom.Set so that we dont
+    // have to write 0 | 1 | 2 | 3
+    // http://www.typescriptlang.org/docs/handbook/advanced-types.html
+    var Zoom;
+    (function (Zoom) {
+        Zoom.stage = 2;
+        Zoom.stages = [150, 300, 600, 1200];
+        let broom = 600;
+        let zoom = 600;
+        let t = 0;
+        const SECONDS = 1;
+        function set(st) {
+            t = 0;
+            broom = zoom;
+            Zoom.stage = st;
+        }
+        Zoom.set = set;
+        function update() {
+            if (!KILL$1.ply)
+                return;
+            const z = App.map[90] == 1;
+            if (z) {
+                t = 0;
+                broom = zoom;
+                Zoom.stage =
+                    Zoom.stage < Zoom.stages.length - 1 ? Zoom.stage + 1 : 0;
+            }
+            t += Four$1.delta / SECONDS;
+            t = Math.min(Math.max(t, 0.0), 1.0);
+            const difference = Zoom.stages[Zoom.stage] - broom;
+            const T = EasingFunctions$1.inOutCubic(t);
+            zoom = broom + (T * difference);
+            const data = KILL$1.ply.data;
+            Four$1.camera.position.set(data.x * 64, data.y * 64, zoom);
+        }
+        Zoom.update = update;
+    })(Zoom || (Zoom = {}));
+    var Zoom$1 = Zoom;
+
     var KILL;
     (function (KILL) {
         function init() {
             console.log('gta init');
             KILL.city = new City;
+            let data = {
+                type: 'Ply',
+                x: 10.5,
+                y: 1
+            };
+            data.remap = [40, 46, 47, 49, 50, 51][Math.floor(Math.random() * 6)];
+            KILL.ply = new Ply(data);
+            KILL.city.chunkList.Get2(0, 0);
+            KILL.city.chunkList.Get2(0, 1);
         }
         KILL.init = init;
         function update() {
+            Zoom$1.update();
+            KILL.city.update(KILL.ply.data);
         }
         KILL.update = update;
     })(KILL || (KILL = {}));
     var KILL$1 = KILL;
 
     //export { THREE };
-    var four;
-    (function (four) {
-        four.delta = 0;
+    var Four;
+    (function (Four) {
+        Four.delta = 0;
         function render() {
-            four.delta = four.clock.getDelta();
+            Four.delta = Four.clock.getDelta();
             KILL$1.update();
             //if (Movie.enabled) {
             //	Movie.composer.render();
             //}
             //else {
-            four.renderer.clear();
-            four.renderer.render(four.scene, four.camera);
+            Four.renderer.clear();
+            Four.renderer.render(Four.scene, Four.camera);
             //}
         }
-        four.render = render;
+        Four.render = render;
         function init() {
             console.log('four init');
-            four.clock = new THREE.Clock();
-            four.camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 2000);
-            four.camera.position.z = 200;
-            four.scene = new THREE.Scene();
-            four.directionalLight = new THREE.DirectionalLight(0x355886, 0.5);
-            four.ambientLight = new THREE.AmbientLight('#355886'); // #5187cd
-            four.scene.add(four.directionalLight);
-            four.scene.add(four.ambientLight);
-            four.renderer = new THREE.WebGLRenderer({ antialias: false });
-            four.renderer.setPixelRatio(window.devicePixelRatio);
-            four.renderer.setSize(window.innerWidth, window.innerHeight);
-            four.renderer.autoClear = true;
-            four.renderer.setClearColor(0x777777, 1);
-            document.body.appendChild(four.renderer.domElement);
+            Four.clock = new THREE.Clock();
+            Four.camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 2000);
+            Four.camera.position.z = 200;
+            Four.scene = new THREE.Scene();
+            Four.directionalLight = new THREE.DirectionalLight(0x355886, 0.5);
+            Four.ambientLight = new THREE.AmbientLight('#355886'); // #5187cd
+            Four.scene.add(Four.directionalLight);
+            Four.scene.add(Four.ambientLight);
+            Four.renderer = new THREE.WebGLRenderer({ antialias: false });
+            Four.renderer.setPixelRatio(window.devicePixelRatio);
+            Four.renderer.setSize(window.innerWidth, window.innerHeight);
+            Four.renderer.autoClear = true;
+            Four.renderer.setClearColor(0x777777, 1);
+            document.body.appendChild(Four.renderer.domElement);
             window.addEventListener('resize', onWindowResize, false);
         }
-        four.init = init;
+        Four.init = init;
         function onWindowResize() {
-            four.camera.aspect = window.innerWidth / window.innerHeight;
-            four.camera.updateProjectionMatrix();
-            four.renderer.setSize(window.innerWidth, window.innerHeight);
+            Four.camera.aspect = window.innerWidth / window.innerHeight;
+            Four.camera.updateProjectionMatrix();
+            Four.renderer.setSize(window.innerWidth, window.innerHeight);
         }
-    })(four || (four = {}));
-    var four$1 = four;
+    })(Four || (Four = {}));
+    var Four$1 = Four;
 
-    (function (app) {
-        app.map = {};
-        app.wheel = 0;
-        app.move = [0, 0];
-        app.left = false;
+    (function (App) {
+        App.map = {};
+        App.wheel = 0;
+        App.move = [0, 0];
+        App.left = false;
         function onkeys(event) {
             const key = event.key;
             //console.log(event);
             if ('keydown' == event.type)
-                app.map[key] = (undefined == app.map[key])
+                App.map[key] = (undefined == App.map[key])
                     ? 1 /* PRESSED */
                     : 3 /* AGAIN */;
             else if ('keyup' == event.type)
-                app.map[key] = 0 /* UP */;
+                App.map[key] = 0 /* UP */;
             if (key == 114) // f3
                 event.preventDefault();
             return;
         }
         function onwheel(event) {
             let up = event.deltaY < 0;
-            app.wheel = up ? 1 : -1;
+            App.wheel = up ? 1 : -1;
         }
         function onmove(event) {
-            app.move[0] = event.clientX;
-            app.move[1] = event.clientY;
+            App.move[0] = event.clientX;
+            App.move[1] = event.clientY;
         }
         function ondown(event) {
             if (event.button == 0)
-                app.left = true;
+                App.left = true;
         }
         function onup(event) {
             if (event.button == 0)
-                app.left = false;
+                App.left = false;
         }
         function boot() {
             document.onkeydown = document.onkeyup = onkeys;
@@ -937,31 +1403,31 @@ var gta_kill = (function (exports, THREE) {
             document.onmousedown = ondown;
             document.onmouseup = onup;
             document.onwheel = onwheel;
-            four$1.init();
+            Four$1.init();
             KILL$1.init();
             loop();
         }
-        app.boot = boot;
+        App.boot = boot;
         const delay = () => {
-            for (let i in app.map) {
-                if (1 /* PRESSED */ == app.map[i])
-                    app.map[i] = 2 /* DELAY */;
-                else if (0 /* UP */ == app.map[i])
-                    delete app.map[i];
+            for (let i in App.map) {
+                if (1 /* PRESSED */ == App.map[i])
+                    App.map[i] = 2 /* DELAY */;
+                else if (0 /* UP */ == App.map[i])
+                    delete App.map[i];
             }
         };
         const loop = (timestamp) => {
             requestAnimationFrame(loop);
             KILL$1.update();
-            four$1.render();
-            app.wheel = 0;
+            Four$1.render();
+            App.wheel = 0;
             delay();
         };
-    })(exports.app || (exports.app = {}));
-    window['app'] = exports.app;
-    var app = exports.app;
+    })(exports.App || (exports.App = {}));
+    window['app'] = exports.App;
+    var App = exports.App;
 
-    exports.default = app;
+    exports.default = App;
 
     return exports;
 

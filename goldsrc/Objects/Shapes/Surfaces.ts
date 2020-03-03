@@ -1,23 +1,23 @@
 import Surface from "./Surface";
 
-import four from "../../four";
+import Four from "../../Renderer";
 
 import { default as THREE, Clock, Scene, Mesh, Vector3, ShaderMaterial, PlaneBufferGeometry, MeshPhongMaterial } from 'three';
 
 
 export namespace Surfaces {
-      export var geometry: THREE.PlaneBufferGeometry
+	export var geometry: THREE.PlaneBufferGeometry
 
-      export function Init() {
-            this.geometry = new THREE.PlaneBufferGeometry(64, 64, 1, 1);
-      }
+	export function Init() {
+		this.geometry = new THREE.PlaneBufferGeometry(64, 64, 1, 1);
+	}
 
-      export function Show(plane: Surface) {
-		four.scene.add(plane.mesh);
+	export function Show(plane: Surface) {
+		Four.scene.add(plane.mesh);
 	}
 
 	export function Hide(plane: Surface) {
-		four.scene.remove(plane.mesh);
+		Four.scene.remove(plane.mesh);
 	}
 }
 

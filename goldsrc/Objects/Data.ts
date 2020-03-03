@@ -1,7 +1,7 @@
 //import { Object2 } from './object';
 
 export type DataType =
-	'Ignore' |	'Car' |  'Ped' | 'Player' | 'Rectangle' | 'Block' | 'Surface' | 'Lamp';
+	'Ignore' |	'Car' |  'Ped' | 'Ply' | 'Rectangle' | 'Block' | 'Surface' | 'Lamp';
 
 export interface Data2 {
 	type: DataType;

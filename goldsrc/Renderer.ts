@@ -4,7 +4,7 @@ import KILL from './KILL';
 
 //export { THREE };
 
-export namespace four {
+export namespace Four {
 
 	export var delta = 0;
 
@@ -74,4 +74,4 @@ export namespace four {
 	}
 }
 
-export default four;
+export default Four;

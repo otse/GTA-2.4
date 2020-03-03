@@ -2,7 +2,7 @@ import Object2 from "../Object";
 import Surfaces from "../Shapes/Surfaces";
 import Spritesheets from "../../Sprites/Spritesheets";
 import { Mesh, MeshPhongMaterial, Color, DoubleSide } from "three";
-import Util from "../../util";
+import Util from "../../Random";
 const defaultSty = 'sty/commercial/storefront/577.bmp';
 export class Surface extends Object2 {
     constructor(data) {

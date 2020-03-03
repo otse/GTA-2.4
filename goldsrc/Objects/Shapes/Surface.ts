@@ -6,7 +6,7 @@ import Spritesheets from "../../Sprites/Spritesheets";
 
 
 import { Mesh, Material, PlaneBufferGeometry, MeshPhongMaterial, Color, DoubleSide } from "three";
-import Util from "../../util";
+import Util from "../../Random";
 
 const defaultSty = 'sty/commercial/storefront/577.bmp';
 

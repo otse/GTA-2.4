@@ -1,6 +1,6 @@
 import { Group } from "three";
 import Objects from "../Objects/Objects";
-import four from "../four";
+import Four from "../Renderer";
 // A chunk makes / destroys its datas / objects
 export class Chunk {
     constructor(w) {
@@ -40,7 +40,7 @@ export class Chunk {
         for (let data of this.datas)
             this.fabricate(data);
         this.currentlyActive = true;
-        four.scene.add(this.group);
+        Four.scene.add(this.group);
     }
     destroyRemove() {
         //console.log('Chunk destroy n remove');
@@ -48,7 +48,7 @@ export class Chunk {
             object.destroy();
         this.objects.length = 0; // Reset array
         this.currentlyActive = false;
-        four.scene.remove(this.group);
+        Four.scene.remove(this.group);
     }
 }
 Chunk._tileSpan = 7; // use Chunks.tileSpan

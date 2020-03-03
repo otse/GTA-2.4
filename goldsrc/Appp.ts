@@ -1,4 +1,4 @@
-import four from "./four";
+import Four from "./Renderer";
 
 import KILL from "./KILL";
 
@@ -14,7 +14,7 @@ export const enum KEY {
 	AGAIN
 }
 
-export namespace app {
+export namespace App {
 
 	export var map = {};
 	export var wheel = 0;
@@ -70,7 +70,7 @@ export namespace app {
 		document.onmouseup = onup;
 		document.onwheel = onwheel;
 
-		four.init();
+		Four.init();
 
 		KILL.init();
 
@@ -95,7 +95,7 @@ export namespace app {
 
 		KILL.update();
 
-		four.render();
+		Four.render();
 
 		wheel = 0;
 
@@ -103,6 +103,6 @@ export namespace app {
 	}
 }
 
-window['app'] = app;
+window['app'] = App;
 
-export default app;
+export default App;
