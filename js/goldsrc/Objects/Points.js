@@ -8,21 +8,34 @@ export var Points;
         return { x: x, y: y };
     }
     Points.make = make;
-    function copy(src) {
-        return { x: src.x, y: src.y };
+    function copy(a) {
+        return { x: a.x, y: a.y };
     }
     Points.copy = copy;
-    function same(a, b) {
-        return !different(a, b);
-    }
-    Points.same = same;
-    function different(a, b) {
-        return a.x - b.x || a.y - b.y;
-    }
-    Points.different = different;
     function floor(a) {
         return make(Math.floor(a.x), Math.floor(a.y));
     }
     Points.floor = floor;
+    function floor2(x, y) {
+        return make(Math.floor(x), Math.floor(y));
+    }
+    Points.floor2 = floor2;
+    function different(a, b) {
+        return a.x - b.x || a.y - b.y;
+    }
+    Points.different = different;
+    function same(a, b) {
+        return !different(a, b);
+    }
+    Points.same = same;
+    function multp(a, n) {
+        let b = copy(a);
+        return make(b.x * n, b.y * n);
+    }
+    Points.multp = multp;
+    function region(a, n) {
+        return floor2(a.x / n, a.y / n);
+    }
+    Points.region = region;
 })(Points || (Points = {}));
 export default Points;

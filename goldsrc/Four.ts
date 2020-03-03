@@ -2,6 +2,7 @@ import { default as THREE, Clock, Scene, WebGLRenderer, PerspectiveCamera, Direc
 
 import KILL from './KILL';
 import Points from './Objects/Points';
+import { Movie } from './Unsorted/RGB Shift';
 
 //export { THREE };
 
@@ -24,25 +25,13 @@ export namespace Four {
 
 		KILL.update();
 
-		if (KILL.ply) {
-			let data = KILL.ply.data;
+		if (Movie.enabled)
 
-			let w = Points.make(
-				Math.floor(data.x) * 64,
-				Math.floor(data.y) * 64
-			);
-	
-			directionalLight.position.set(w.x, w.y, 400);
-			directionalLight.target.position.set(w.x - 80, w.y - 80, 0);
-		}
-		
-		//if (Movie.enabled) {
-		//	Movie.composer.render();
-		//}
-		//else {
-		renderer.clear();
-		renderer.render(scene, camera);
-		//}
+			Movie.composer.render();
+
+		else
+
+			renderer.render(scene, camera);
 	}
 
 	export function init() {
@@ -57,7 +46,8 @@ export namespace Four {
 
 		scene = new Scene();
 
-		directionalLight = new DirectionalLight(0x355886, 0.5);
+		directionalLight = new DirectionalLight(0x355886, 0.8);
+		directionalLight.position.set(0, 0, 1);
 		ambientLight = new AmbientLight('#355886'); // #5187cd
 
 		scene.add(directionalLight);

@@ -11,7 +11,7 @@ export namespace Rectangles {
 	}
 
 	export function show(rectangle: Rectangle) {
-		console.log('Rectangles Add ' + rectangle.data.type);
+		console.log('Rectangles add ' + rectangle.data.type);
 
 		Four.scene.add(rectangle.mesh);
 		Four.scene.add(rectangle.meshShadow);

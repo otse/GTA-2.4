@@ -1,12 +1,13 @@
 import City from "./Chunks/City";
 import Ply from "./Pawns/Ply";
-import Zoom from "./Unsorted/Zoom";
 import Phong2 from "./Shaders/Phong2";
 import Rectangles from "./Objects/Rectangles";
 import Surfaces from "./Objects/Shapes/Surfaces";
 import Blocks from "./Objects/Shapes/Blocks";
 import BoxCutter from "./Objects/Shapes/Box cutter";
 import Spritesheets from "./Sprites/Spritesheets";
+import Zoom from "./Unsorted/Zoom";
+import { Movie } from "./Unsorted/RGB Shift";
 export var KILL;
 (function (KILL) {
     function init() {
@@ -17,6 +18,7 @@ export var KILL;
         Blocks.init();
         BoxCutter.init();
         Spritesheets.init();
+        Movie.init();
         KILL.city = new City;
         let data = {
             type: 'Ply',

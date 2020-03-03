@@ -13,22 +13,35 @@ var gta_kill = (function (exports, THREE) {
             return { x: x, y: y };
         }
         Points.make = make;
-        function copy(src) {
-            return { x: src.x, y: src.y };
+        function copy(a) {
+            return { x: a.x, y: a.y };
         }
         Points.copy = copy;
-        function same(a, b) {
-            return !different(a, b);
-        }
-        Points.same = same;
-        function different(a, b) {
-            return a.x - b.x || a.y - b.y;
-        }
-        Points.different = different;
         function floor(a) {
             return make(Math.floor(a.x), Math.floor(a.y));
         }
         Points.floor = floor;
+        function floor2(x, y) {
+            return make(Math.floor(x), Math.floor(y));
+        }
+        Points.floor2 = floor2;
+        function different(a, b) {
+            return a.x - b.x || a.y - b.y;
+        }
+        Points.different = different;
+        function same(a, b) {
+            return !different(a, b);
+        }
+        Points.same = same;
+        function multp(a, n) {
+            let b = copy(a);
+            return make(b.x * n, b.y * n);
+        }
+        Points.multp = multp;
+        function region(a, n) {
+            return floor2(a.x / n, a.y / n);
+        }
+        Points.region = region;
     })(Points || (Points = {}));
     var Points$1 = Points;
 
@@ -416,7 +429,7 @@ var gta_kill = (function (exports, THREE) {
         function init() {
             Spritesheets.canvas = document.createElement('canvas');
             document.body.appendChild(Spritesheets.canvas);
-            console.log('spritessheets init ');
+            console.log('Spritesheets init ');
         }
         Spritesheets.init = init;
         const sheets = {
@@ -853,7 +866,7 @@ var gta_kill = (function (exports, THREE) {
         }
         Rectangles.init = init;
         function show(rectangle) {
-            console.log('Rectangles Add ' + rectangle.data.type);
+            console.log('Rectangles add ' + rectangle.data.type);
             Four$1.scene.add(rectangle.mesh);
             Four$1.scene.add(rectangle.meshShadow);
         }
@@ -1298,6 +1311,126 @@ var gta_kill = (function (exports, THREE) {
     })(Zoom || (Zoom = {}));
     var Zoom$1 = Zoom;
 
+    const TWO = THREE__default;
+    var Movie;
+    (function (Movie) {
+        Movie.enabled = true;
+        function cityView() {
+            Zoom$1.set(2);
+            Movie.effect.uniforms["pixelSize"].value = 3.0;
+            Movie.effect.uniforms["zoom"].value = 0.0;
+        }
+        Movie.cityView = cityView;
+        function Resize() {
+            Movie.effect.uniforms["resolution"].value.set(window.innerWidth, window.innerHeight).multiplyScalar(window.devicePixelRatio);
+        }
+        Movie.Resize = Resize;
+        function init() {
+            Movie.composer = new TWO.EffectComposer(Four$1.renderer);
+            Movie.renderPass = new TWO.RenderPass(Four$1.scene, Four$1.camera);
+            Movie.composer.addPass(Movie.renderPass);
+            Movie.effect = new TWO.ShaderPass(Movie.retroShader);
+            Movie.effect.uniforms['redblue'].value = 0.0015 * 0.5;
+            Movie.effect.uniforms["resolution"].value =
+                new THREE.Vector2(window.innerWidth, window.innerHeight);
+            Movie.effect.uniforms["resolution"].value.multiplyScalar(window.devicePixelRatio);
+            Movie.effect.renderToScreen = true;
+            Movie.composer.addPass(Movie.effect);
+        }
+        Movie.init = init;
+        Movie.retroShader = {
+            uniforms: {
+                "tDiffuse": { value: null },
+                "redblue": { value: 0.005 },
+                "angle": { value: 0.0 },
+                "resolution": { value: null },
+                "pixelSize": { value: 1.0 },
+                "zoom": { value: 1.0 }
+            },
+            defines: {
+                'XXX': '',
+            },
+            vertexShader: `
+            varying vec2 vUv;
+            uniform float zoom;
+
+            void main() {
+
+                vUv = uv;
+
+                //if (zoom > 0.0) {
+                //    vUv.x -= zoom / 300.0;
+                //}
+
+                gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+
+            }`,
+            fragmentShader: `
+            uniform sampler2D tDiffuse;
+            uniform float redblue;
+            uniform float angle;
+
+            uniform float zoom;
+            uniform float pixelSize;
+            uniform vec2 resolution;
+
+            varying vec2 vUv;
+
+            float reduce(float p) {
+                float DIVIDE = 4.0;
+                return (ceil((p * 255.0) / DIVIDE) * DIVIDE) / 255.0;
+                // ceil is lighter, floor is darker
+            }
+
+            vec4 R2D2(vec2 v) {
+                vec4 rgb = texture2D(tDiffuse, v);
+                rgb.r = reduce(rgb.r);
+                rgb.g = reduce(rgb.g);
+                rgb.b = reduce(rgb.b);
+                return rgb;
+            }
+
+            void main() {
+
+                // cinematic retro city view
+                if (pixelSize > 1.0) {
+
+                    vec2 dxy = pixelSize / resolution;
+                    vec2 coord = dxy * floor( vUv / dxy );
+
+                    vec2 uuu = coord; //coord; // vUv
+
+                    vec2 offset = redblue * vec2( cos(angle), sin(angle));
+                    vec4 cr = R2D2(uuu + offset);
+                    vec4 cga = R2D2(uuu);
+                    vec4 cb = R2D2(uuu - offset);
+
+                    vec4 shifty = vec4(cr.r, cga.g, cb.b, cga.a);
+                    gl_FragColor = shifty;
+
+                    //gl_FragColor = R2D2(uuu);
+                }
+                else {
+                    vec2 offset = redblue * vec2( cos(angle), sin(angle));
+                    vec4 cr = texture2D(tDiffuse, vUv + offset);
+                    vec4 cga = texture2D(tDiffuse, vUv);
+                    vec4 cb = texture2D(tDiffuse, vUv - offset);
+
+                    vec4 shifty = vec4(cr.r, cga.g, cb.b, cga.a);
+                    gl_FragColor = shifty;
+                    //gl_FragColor = texture2D(tDiffuse, vUv);
+
+                }
+
+                #ifdef MAKE_BLACK
+                    
+                    gl_FragColor.rgb *= 0.0;
+
+                #endif
+            }`
+        };
+    })(Movie || (Movie = {}));
+
     var KILL;
     (function (KILL) {
         function init() {
@@ -1308,6 +1441,7 @@ var gta_kill = (function (exports, THREE) {
             Blocks$1.init();
             BoxCutter$1.init();
             Spritesheets$1.init();
+            Movie.init();
             KILL.city = new City;
             let data = {
                 type: 'Ply',
@@ -1337,19 +1471,10 @@ var gta_kill = (function (exports, THREE) {
         function update() {
             Four.delta = Four.clock.getDelta();
             KILL$1.update();
-            if (KILL$1.ply) {
-                let data = KILL$1.ply.data;
-                let w = Points$1.make(Math.floor(data.x) * 64, Math.floor(data.y) * 64);
-                Four.directionalLight.position.set(w.x, w.y, 400);
-                Four.directionalLight.target.position.set(w.x - 80, w.y - 80, 0);
-            }
-            //if (Movie.enabled) {
-            //	Movie.composer.render();
-            //}
-            //else {
-            Four.renderer.clear();
-            Four.renderer.render(Four.scene, Four.camera);
-            //}
+            if (Movie.enabled)
+                Movie.composer.render();
+            else
+                Four.renderer.render(Four.scene, Four.camera);
         }
         Four.update = update;
         function init() {
@@ -1358,7 +1483,8 @@ var gta_kill = (function (exports, THREE) {
             Four.camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 2000);
             Four.camera.position.z = 200;
             Four.scene = new THREE.Scene();
-            Four.directionalLight = new THREE.DirectionalLight(0x355886, 0.5);
+            Four.directionalLight = new THREE.DirectionalLight(0x355886, 0.8);
+            Four.directionalLight.position.set(0, 0, 1);
             Four.ambientLight = new THREE.AmbientLight('#355886'); // #5187cd
             Four.scene.add(Four.directionalLight);
             Four.scene.add(Four.directionalLight.target);

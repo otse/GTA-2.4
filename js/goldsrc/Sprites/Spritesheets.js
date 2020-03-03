@@ -12,7 +12,7 @@ export var Spritesheets;
     function init() {
         Spritesheets.canvas = document.createElement('canvas');
         document.body.appendChild(Spritesheets.canvas);
-        console.log('spritessheets init ');
+        console.log('Spritesheets init ');
     }
     Spritesheets.init = init;
     const sheets = {

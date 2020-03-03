@@ -23,7 +23,7 @@ export namespace Spritesheets {
 
 		document.body.appendChild(canvas);
 
-		console.log('spritessheets init ');
+		console.log('Spritesheets init ');
 	}
 
     const sheets: Readonly<List> = {
