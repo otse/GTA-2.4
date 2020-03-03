@@ -168,3 +168,5 @@ export namespace Spritesheets {
 	}
     
 }
+
+export default Spritesheets;

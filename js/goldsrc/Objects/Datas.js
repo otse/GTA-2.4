@@ -1,8 +1,8 @@
 import Points from "./Points";
-import Chunks from "@app/Chunks/Chunks";
-import KILL from "@app/KILL";
+import Chunks from "../Chunks/Chunks";
+import KILL from "../KILL";
 // aka data maker
-export var Datas;
+var Datas;
 (function (Datas) {
     //export function Floor(data: Data2) {
     //	data.x = Math.floor(data.x);

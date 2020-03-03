@@ -2,8 +2,8 @@ import Chunk from "./Chunk"
 import Chunks from "./Chunks"
 import ChunkList from "./Chunk list"
 
-import Datas from "@app/Objects/Datas"
-import Points from "@app/Objects/Points"
+import Datas from "../Objects/Datas"
+import Points from "../Objects/Points"
 
 
 export class City {

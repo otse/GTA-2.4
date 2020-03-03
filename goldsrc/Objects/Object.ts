@@ -1,6 +1,5 @@
 import Data2 from "./Data";
 
-
 // in 22 this separation was called the whatsit-thing;
 // for 2.3 its renamed object-data
 

@@ -1,9 +1,10 @@
-import Data2 from "@app/Objects/Data";
-import Object2 from "@app/Objects/Object";
-import Objects from "@app/Objects/Objects";
+import { Group } from "three"
 
-import { Group } from "three";
-import four from "@app/four";
+import Data2 from "../Objects/Data"
+import Object2 from "../Objects/Object"
+import Objects from "../Objects/Objects"
+
+import four from "../four"
 
 // A chunk makes / destroys its datas / objects
 

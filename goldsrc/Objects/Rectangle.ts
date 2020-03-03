@@ -1,20 +1,21 @@
-import Data2 from "./Data";
-import Object2 from "./Object";
-import Rectangles from "./Rectangles";
+import Data2 from "../Objects/Data";
+import Object2 from "../Objects/Object";
+import Rectangles from "../Objects/Rectangles";
 
-import Phong2 from "@app/Shaders/Phong2";
+import Phong2 from "../Shaders/Phong2";
+
+import Util from "../util";
 
 import four from "../four";
 import { default as THREE, Mesh, Vector3, ShaderMaterial, PlaneBufferGeometry, MeshPhongMaterial } from 'three';
 
-import Util from "@app/util";
 
 interface Info {
 	blur: string;
 	shadow: string;
 }
 
-export class Rectangle extends Object2 {
+class Rectangle extends Object2 {
 
 	mesh: Mesh
 	meshShadow: Mesh

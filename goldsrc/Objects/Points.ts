@@ -1,9 +1,9 @@
 export namespace Points {
 
-    export interface Point {
+    /*export interface Point {
         x: number;
         y: number;
-    }
+    }*/
 
     export function Make(x: number, y: number) {
         return { x: x, y: y }

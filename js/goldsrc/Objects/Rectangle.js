@@ -1,9 +1,9 @@
-import Object2 from "./Object";
-import Rectangles from "./Rectangles";
-import Phong2 from "@app/Shaders/Phong2";
+import Object2 from "../Objects/Object";
+import Rectangles from "../Objects/Rectangles";
+import Phong2 from "../Shaders/Phong2";
+import Util from "../util";
 import { default as THREE, Vector3, PlaneBufferGeometry } from 'three';
-import Util from "@app/util";
-export class Rectangle extends Object2 {
+class Rectangle extends Object2 {
     constructor(data) {
         super(data);
         this.lift = 2;

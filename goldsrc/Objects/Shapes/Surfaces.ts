@@ -1,6 +1,7 @@
 import Surface from "./Surface";
 
-import four from '@app/four';
+import four from "../../four";
+
 import { default as THREE, Clock, Scene, Mesh, Vector3, ShaderMaterial, PlaneBufferGeometry, MeshPhongMaterial } from 'three';
 
 

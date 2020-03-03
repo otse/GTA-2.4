@@ -1,4 +1,4 @@
-export interface Spritesheet {
+interface Spritesheet {
     file: string
     squares: Readonly<object>
     padding?: number
@@ -8,7 +8,7 @@ export interface Spritesheet {
     piece: { w; h; }
 };
 
-export namespace Spritesheet {
+namespace Spritesheet {
 
 	type List = Spritesheet['file']
     

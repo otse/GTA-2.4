@@ -1,13 +1,12 @@
 import Data2 from "../Data";
 import Object2 from "../Object";
 
-import Surfaces from "./Surfaces";
+import Surfaces from "../Shapes/Surfaces";
+import Spritesheets from "../../Sprites/Spritesheets";
 
-import { Spritesheets } from "@app/Sprites/Spritesheets";
 
 import { Mesh, Material, PlaneBufferGeometry, MeshPhongMaterial, Color, DoubleSide } from "three";
-
-import Util from "@app/util";
+import Util from "../../util";
 
 const defaultSty = 'sty/commercial/storefront/577.bmp';
 

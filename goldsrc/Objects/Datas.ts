@@ -1,15 +1,14 @@
 import Data2 from "./Data";
 import Points from "./Points";
 
-import Chunks from "@app/Chunks/Chunks";
-import Chunk from "@app/Chunks/Chunk";
+import Chunk from "../Chunks/Chunk";
+import Chunks from "../Chunks/Chunks";
 
-import KILL from "@app/KILL";
-
+import KILL from "../KILL";
 
 // aka data maker
 
-export namespace Datas {
+namespace Datas {
 	type z = number;
 
 	//export function Floor(data: Data2) {

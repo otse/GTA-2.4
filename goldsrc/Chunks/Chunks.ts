@@ -1,7 +1,7 @@
-import City from "./City";
 import Chunk from "./Chunk";
+import City from "./City";
 
-import Points from "@app/Objects/Points";
+import Points from "../Objects/Points";
 
 import { Mesh, BoxGeometry, MeshBasicMaterial } from "three";
 

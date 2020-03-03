@@ -1,4 +1,4 @@
-import Chunks from "@app/Chunks/Chunks";
+import Chunks from "../Chunks/Chunks";
 // uneven works well
 const CELL_SPAN = 7;
 // Coordination system for gta 22, 2.3

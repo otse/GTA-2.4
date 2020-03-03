@@ -149,3 +149,4 @@ export var Spritesheets;
         }
     };
 })(Spritesheets || (Spritesheets = {}));
+export default Spritesheets;

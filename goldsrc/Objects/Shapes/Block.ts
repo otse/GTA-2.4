@@ -1,11 +1,12 @@
 import Data2 from '../Data';
 import Object2 from '../Object';
+
 import Blocks from './Blocks';
 
 import { default as THREE, Clock, Scene, MeshPhongMaterial, Color, Mesh } from 'three';
 
-import four from "@app/four";
-import Util from "@app/util";
+import Util from '../../util';
+
 
 export let FACEWORDS = ['right', 'left', 'front', 'back', 'top', 'bottom'];
 export let FACEWORDSINV = ['left', 'right', 'back', 'front', 'bottom', 'top'];

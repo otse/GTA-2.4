@@ -5,8 +5,8 @@ import BoxCutter from "./Box cutter";
 
 import { BoxBufferGeometry } from "three";
 
-import four from "@app/four";
-import Util from "@app/util";
+import four from "../../four";
+import Util from "../../util";
 
 export namespace Blocks {
 	export var geometry: BoxBufferGeometry

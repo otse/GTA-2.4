@@ -2,11 +2,6 @@ import four from "./four";
 
 import KILL from "./KILL";
 
-import "./Chunks/Chunk list";
-import "./Chunks/Chunk";
-import "./Chunks/Chunks";
-import "./Chunks/City";
-
 
 //import { default as THREE } from 'three';
 //export { THREE };

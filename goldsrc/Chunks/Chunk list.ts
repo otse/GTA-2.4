@@ -5,11 +5,13 @@ type Dict = { [index: string]: Chunk }
 
 // Simple getters and chunk creation
 
-export class ChunkList {
+class ChunkList {
 
     private dict: Dict = {}
 
-    constructor() { }
+    constructor() {
+        (window as any)['test'] = 1;
+    }
 
     GetNullable(w: Point): Chunk | null {
         let z = `${w.x} & ${w.y}`;

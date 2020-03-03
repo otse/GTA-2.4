@@ -1,8 +1,9 @@
 import Chunk from "./Chunk";
 // Simple getters and chunk creation
-export class ChunkList {
+class ChunkList {
     constructor() {
         this.dict = {};
+        window['test'] = 1;
     }
     GetNullable(w) {
         let z = `${w.x} & ${w.y}`;

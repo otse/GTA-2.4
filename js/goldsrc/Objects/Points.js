@@ -1,5 +1,9 @@
 export var Points;
 (function (Points) {
+    /*export interface Point {
+        x: number;
+        y: number;
+    }*/
     function Make(x, y) {
         return { x: x, y: y };
     }

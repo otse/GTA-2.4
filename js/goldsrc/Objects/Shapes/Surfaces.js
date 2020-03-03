@@ -1,4 +1,4 @@
-import four from '@app/four';
+import four from "../../four";
 import { default as THREE } from 'three';
 export var Surfaces;
 (function (Surfaces) {
