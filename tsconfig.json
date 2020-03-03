@@ -1,3 +1,5 @@
+// this is for goldsrc / le game
+
 {
 	"compilerOptions": {
 		"sourceMap": false,
@@ -9,8 +11,8 @@
 			"es6"
 		],
 		"outDir": "js/",
-		"allowSyntheticDefaultImports": true,
 		"moduleResolution": "node",
+		"allowSyntheticDefaultImports": true,
 		"strictNullChecks": true,
 		"forceConsistentCasingInFileNames": true,
 

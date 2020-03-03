@@ -6,6 +6,7 @@ import Surfaces from "./Objects/Shapes/Surfaces";
 import Blocks from "./Objects/Shapes/Blocks";
 import BoxCutter from "./Objects/Shapes/Box cutter";
 import Spritesheets from "./Sprites/Spritesheets";
+import GenStrip from "./Generators/The strip";
 import Zoom from "./Unsorted/Zoom";
 import { Movie } from "./Unsorted/RGB Shift";
 export var KILL;
@@ -20,6 +21,7 @@ export var KILL;
         Spritesheets.init();
         Movie.init();
         KILL.city = new City;
+        GenStrip.aptsOffice();
         let data = {
             type: 'Ply',
             x: 10.5,

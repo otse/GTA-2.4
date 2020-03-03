@@ -42,9 +42,9 @@ export namespace BoxCutter {
 				uv.splice(i * 8, 8);
 				normal.splice(i * 12, 12);
 
-				//attribs.position.count -= 4;
-				//attribs.uv.count -= 4;
-				//attribs.normal.count -= 4;
+				(attribs.position.count as any) -= 4;
+				(attribs.uv.count as any) -= 4;
+				(attribs.normal.count as any) -= 4;
 
 				geometry.groups.splice(i, 1);
 
@@ -56,9 +56,9 @@ export namespace BoxCutter {
 					group.start -= 6;
 				}
 
-				//attribs.position.array = new Float32Array(position);
-				//attribs.uv.array = new Float32Array(uv);
-				//attribs.normal.array = new Float32Array(normal);
+				(attribs.position.array as any) = new Float32Array(position);
+				(attribs.uv.array as any) = new Float32Array(uv);
+				(attribs.normal.array as any) = new Float32Array(normal);
 			}
 
 		}

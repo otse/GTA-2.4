@@ -28,9 +28,9 @@ export var BoxCutter;
                 position.splice(i * 12, 12);
                 uv.splice(i * 8, 8);
                 normal.splice(i * 12, 12);
-                //attribs.position.count -= 4;
-                //attribs.uv.count -= 4;
-                //attribs.normal.count -= 4;
+                attribs.position.count -= 4;
+                attribs.uv.count -= 4;
+                attribs.normal.count -= 4;
                 geometry.groups.splice(i, 1);
                 // three.js has .addGroup
                 for (let j = 0; j < geometry.groups.length; j++) {
@@ -39,9 +39,9 @@ export var BoxCutter;
                         continue;
                     group.start -= 6;
                 }
-                //attribs.position.array = new Float32Array(position);
-                //attribs.uv.array = new Float32Array(uv);
-                //attribs.normal.array = new Float32Array(normal);
+                attribs.position.array = new Float32Array(position);
+                attribs.uv.array = new Float32Array(uv);
+                attribs.normal.array = new Float32Array(normal);
             }
         }
     }

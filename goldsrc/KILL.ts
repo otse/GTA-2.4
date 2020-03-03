@@ -9,6 +9,8 @@ import Blocks from "./Objects/Shapes/Blocks";
 import BoxCutter from "./Objects/Shapes/Box cutter";
 import Spritesheets from "./Sprites/Spritesheets";
 
+import GenStrip from "./Generators/The strip";
+
 import Zoom from "./Unsorted/Zoom";
 import { Movie } from "./Unsorted/RGB Shift";
 
@@ -29,6 +31,8 @@ export namespace KILL {
 		Movie.init();
 		
 		city = new City;
+
+		GenStrip.aptsOffice();
 
 		let data: Data2 = {
 			type: 'Ply',

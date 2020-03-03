@@ -1,0 +1,45 @@
+import GenRoads from "./Gen roads";
+import GenPavements from "./Gen pavements";
+import GenFlats from "./Gen flats";
+import GenDeline from "./Gen deline";
+import GenParking from "./Gen parking";
+export var GenStrip;
+(function (GenStrip) {
+    function aptsOffice() {
+        // Note: Generate roads that merge last
+        // This section is called Apts
+        // Big roads on either side
+        GenPavements.Vert(-1, -50, 0, 100, 1);
+        GenPavements.Vert(3, -50, 0, 100, 1);
+        GenPavements.Vert(12, -50, 0, 100, 1);
+        GenPavements.Vert(9, -50, 0, 100, 1);
+        GenRoads.highwayVert([0, -25, 0], 50, 3);
+        GenRoads.twolane(1, [10, -25, 0], 50, 'badRoads'); // vert
+        GenFlats.Type1([4, 7, 0], [6, 6, 3]); // Apts above
+        GenFlats.Type1([4, 0, 0], [4, 4, 4]); // Office
+        GenPavements.Fill([4, 4, 0], 4, 1);
+        // The roads around the vert office
+        GenRoads.twolane(0, [2, 5, 0], 9, 'mixedRoads'); // horz
+        GenRoads.twolane(0, [2, -2, 0], 9, 'mixedRoads'); // horz
+        //Deline.mixedToBad([2, 4, 0], 9, 4);
+        //Deline.mixedToBad([2, -3, 0], 9, 4);
+        GenParking.OnewayRightVert([8, -1, 0], 7, 2, 'mixedRoads');
+        GenDeline.Horz([7, 0, 0], 3, 4);
+        // Deline around the apts
+        GenDeline.Horz([2, 4, 0], 9, 4);
+        GenDeline.Horz([2, -3, 0], 9, 4);
+        //Pavements.Horz(3, -50, 0, 100, 1);
+        //FillerBuildings.Type1([13, 5, 0], [5, 2, 2]);
+        // Big parking lot with skyscraper
+        GenFlats.Type1([13, 6, 0], [8, 8, 16]);
+        GenPavements.Vert(21, -50, 0, 100, 1);
+        GenPavements.Fill([12, 0, 0], 10, 6);
+        GenParking.LeftBigHorz([11, 1, 0], 10, 3, 'greyRoads');
+        GenDeline.Horz([11, 1, 0], 3, 4); // Dash It!
+        GenRoads.twolaneVert([22, -25, 0], 50, 'badRoads');
+        GenRoads.twolaneHorz([11, -2, 0], 12, 'badRoads');
+        GenPavements.Fill([12, -3, 0], 9, 1);
+    }
+    GenStrip.aptsOffice = aptsOffice;
+})(GenStrip || (GenStrip = {}));
+export default GenStrip;

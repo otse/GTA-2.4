@@ -2,7 +2,6 @@ import Four from "./Four";
 
 import KILL from "./KILL";
 
-
 //import { default as THREE } from 'three';
 //export { THREE };
 

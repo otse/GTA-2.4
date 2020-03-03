@@ -137,9 +137,9 @@ var gta_kill = (function (exports, THREE) {
                     position.splice(i * 12, 12);
                     uv.splice(i * 8, 8);
                     normal.splice(i * 12, 12);
-                    //attribs.position.count -= 4;
-                    //attribs.uv.count -= 4;
-                    //attribs.normal.count -= 4;
+                    attribs.position.count -= 4;
+                    attribs.uv.count -= 4;
+                    attribs.normal.count -= 4;
                     geometry.groups.splice(i, 1);
                     // three.js has .addGroup
                     for (let j = 0; j < geometry.groups.length; j++) {
@@ -148,9 +148,9 @@ var gta_kill = (function (exports, THREE) {
                             continue;
                         group.start -= 6;
                     }
-                    //attribs.position.array = new Float32Array(position);
-                    //attribs.uv.array = new Float32Array(uv);
-                    //attribs.normal.array = new Float32Array(normal);
+                    attribs.position.array = new Float32Array(position);
+                    attribs.uv.array = new Float32Array(uv);
+                    attribs.normal.array = new Float32Array(normal);
                 }
             }
         }
@@ -1201,6 +1201,744 @@ var gta_kill = (function (exports, THREE) {
         }
     }
 
+    class StagingArea {
+        constructor() {
+            this.datas = [];
+        }
+        addData(data) {
+            this.datas.push(data);
+            this.findExtents();
+        }
+        addDatas(datas) {
+            this.datas = this.datas.concat(datas);
+            this.findExtents();
+        }
+        deliverAll() {
+            for (let data of this.datas)
+                Datas$1.replaceDeliver(data);
+        }
+        findExtents() {
+            let set = false;
+            for (let data of this.datas) {
+                // aabb
+                if (!set) {
+                    this.min = [data.x, data.y, data.z];
+                    this.max = [data.x, data.y, data.z];
+                    set = true;
+                }
+                this.min[0] = Math.min(data.x, this.min[0]);
+                this.min[1] = Math.min(data.y, this.min[1]);
+                this.min[2] = Math.min(data.z, this.min[2]);
+                this.max[0] = Math.max(data.x, this.max[0]);
+                this.max[1] = Math.max(data.y, this.max[1]);
+                this.max[2] = Math.max(data.z, this.max[2]);
+            }
+        }
+        turnCCW(turns) {
+            this.findExtents();
+            for (let y = 0; y < this.max[1]; y++) {
+                for (let x = 0; x < this.min[0]; x++) {
+                }
+            }
+        }
+    }
+
+    var GenRoads;
+    (function (GenRoads) {
+        function oneway(w, segs, sheet) {
+        }
+        GenRoads.oneway = oneway;
+        function onewayVert(w, segs, sheet) {
+            let seg = 0;
+            for (; seg < segs; seg++) {
+                let road = {
+                    type: 'Surface',
+                    sheet: sheet,
+                    square: 'single',
+                    x: w[0],
+                    y: seg + w[1],
+                    z: w[2],
+                    r: 3
+                };
+                if (!seg || seg == segs - 1) {
+                    road.square = 'singleOpen';
+                    if (!seg)
+                        road.r += 1;
+                    else if (seg == segs - 1)
+                        road.r -= 1;
+                }
+                Datas$1.replaceDeliver(road);
+            }
+        }
+        GenRoads.onewayVert = onewayVert;
+        function onewayHorz(w, segs) {
+            /*const lanes = 1;
+
+            let seg = 0;
+            for (; seg < segs; seg++) {
+
+                let road: Data2 = {
+                    type: 'Surface',
+                    sheet: 'badRoads',
+                    square: 'single',
+                    x: seg + x,
+                    y: y,
+                    r: 0
+                };
+
+                Datas.Deliver(road);
+
+                if (!seg || seg == segs - 1)
+                    road.square = 'singleOpen';
+                
+                if (!seg)
+                    road.r += 1;
+                
+                else if(seg == segs - 1)
+                    road.r -= 1;
+
+            }*/
+        }
+        GenRoads.onewayHorz = onewayHorz;
+        function twolane(axis, w, segs, sheet) {
+            // Go 0 or 1
+            console.log('twolane axis ', axis);
+            let staging = new StagingArea;
+            let datas = twolaneVert(w, segs, sheet);
+            staging.addDatas(datas);
+            staging.deliverAll();
+        }
+        GenRoads.twolane = twolane;
+        function twolaneVert(w, segs, sheet) {
+            let datas = [];
+            const lanes = 2;
+            let seg = 0;
+            for (; seg < segs; seg++) {
+                let lane = 0;
+                for (; lane < lanes; lane++) {
+                    let road = {
+                        type: 'Surface',
+                        sheet: sheet,
+                        square: 'sideLine',
+                        x: lane + w[0],
+                        y: seg + w[1],
+                        r: !lane ? 3 : 1
+                    };
+                    if (!seg || seg == segs - 1) {
+                        road.square = 'convexLine';
+                        if (!seg && !lane ||
+                            seg == segs - 1 && lane)
+                            road.r += 1;
+                    }
+                    else if (lane == lanes - 1 && seg == 1 ||
+                        !lane && seg == segs - 2) {
+                        road.square = 'sideStopLine';
+                    }
+                    datas.push(road);
+                    ///Datas.replaceDeliver(road);
+                }
+            }
+            return datas;
+        }
+        GenRoads.twolaneVert = twolaneVert;
+        function twolaneHorz(w, segs, sheet) {
+            const lanes = 2;
+            let seg = 0;
+            for (; seg < segs; seg++) {
+                let lane = 0;
+                for (; lane < lanes; lane++) {
+                    let road = {
+                        type: 'Surface',
+                        sheet: sheet,
+                        square: 'sideLine',
+                        x: seg + w[0],
+                        y: lane + w[1],
+                        r: !lane ? 2 : 0
+                    };
+                    if (!seg || seg == segs - 1) {
+                        road.square = 'convexLine';
+                        if (!seg && lane ||
+                            seg == segs - 1 && !lane)
+                            road.r += 1;
+                    }
+                    else if (lane == lanes - 1 && seg == 1 ||
+                        !lane && seg == segs - 2) {
+                        road.square = 'sideStopLine'; // sideStopLine
+                        road.f = true;
+                    }
+                    ///Datas.replaceDeliver(road);
+                }
+            }
+        }
+        GenRoads.twolaneHorz = twolaneHorz;
+        // This is a same-way road
+        function highwayVert(w, segs, lanes) {
+            let seg = 0;
+            for (; seg < segs; seg++) {
+                let lane = 0;
+                for (; lane < lanes; lane++) {
+                    let road = {
+                        type: 'Surface',
+                        sheet: 'badRoads',
+                        square: 'sideLine',
+                        x: lane + w[0],
+                        y: seg + w[1],
+                        r: !lane ? 3 : 1
+                    };
+                    if (lane > 0 && lane < lanes - 1)
+                        road.square = 'middleTracks';
+                    else if (!seg || seg == segs - 1) {
+                        road.square = 'convexLine';
+                        if (!seg && !lane ||
+                            seg == segs - 1 && lane)
+                            road.r += 1;
+                    }
+                    /*else if (lane == lanes - 1 && seg == 1 ||
+                        !lane && seg == segs - 2) {
+                        road.square = 'sideStopLine';
+                    }*/
+                    ///Datas.replaceDeliver(road);
+                }
+            }
+        }
+        GenRoads.highwayVert = highwayVert;
+    })(GenRoads || (GenRoads = {}));
+    var GenRoads$1 = GenRoads;
+
+    var GenPavements;
+    (function (GenPavements) {
+        function Fill(w, width, height) {
+            //const lanes = 1;
+            let x = 0;
+            for (; x < width; x++) {
+                let y = 0;
+                for (; y < height; y++) {
+                    let pav = {
+                        type: 'Surface',
+                        sheet: 'yellowyPavement',
+                        square: 'middle',
+                        //sty: 'sty/floors/blue/256.bmp',
+                        x: x + w[0],
+                        y: y + w[1],
+                        z: w[2],
+                    };
+                    Datas$1.deliver(pav);
+                }
+            }
+        }
+        GenPavements.Fill = Fill;
+        function Vert(x, y, z, segs, lanes) {
+            //const lanes = 1;
+            let seg = 0;
+            for (; seg < segs; seg++) {
+                let lane = 0;
+                for (; lane < lanes; lane++) {
+                    let pav = {
+                        type: 'Surface',
+                        sheet: 'yellowyPavement',
+                        square: 'middle',
+                        //sty: 'sty/floors/blue/256.bmp',
+                        x: lane + x,
+                        y: seg + y
+                    };
+                    Datas$1.deliver(pav);
+                }
+            }
+        }
+        GenPavements.Vert = Vert;
+        function Horz(x, y, z, segs, lanes) {
+            //const lanes = 1;
+            let seg = 0;
+            for (; seg < segs; seg++) {
+                let lane = 0;
+                for (; lane < lanes; lane++) {
+                    let pav = {
+                        type: 'Surface',
+                        sheet: 'yellowyPavement',
+                        square: 'middle',
+                        //sty: 'sty/floors/blue/256.bmp',
+                        x: seg + y,
+                        y: lane + x,
+                    };
+                    Datas$1.deliver(pav);
+                }
+            }
+        }
+        GenPavements.Horz = Horz;
+    })(GenPavements || (GenPavements = {}));
+    var GenPavements$1 = GenPavements;
+
+    var Gen;
+    (function (Gen) {
+        let Axis;
+        (function (Axis) {
+            Axis[Axis["Horz"] = 0] = "Horz";
+            Axis[Axis["Vert"] = 1] = "Vert";
+        })(Axis = Gen.Axis || (Gen.Axis = {}));
+        function invert(data, axis, w) {
+            let x = data.x;
+            let y = data.y;
+            data.x = axis ? y : x;
+            data.y = axis ? x : y;
+            data.r = axis;
+            data.x += w[0];
+            data.y += w[1];
+        }
+        Gen.invert = invert;
+        function loop(min, max, func) {
+            let x = 0;
+            for (; x < max[0]; x++) {
+                let y = 0;
+                for (; y < max[1]; y++) {
+                    let z = 0;
+                    for (; z < max[2]; z++) {
+                        func([min[0] + x, min[1] + y, min[2] + z]);
+                    }
+                }
+            }
+        }
+        Gen.loop = loop;
+    })(Gen || (Gen = {}));
+    var Gen$1 = Gen;
+
+    var GenFlats;
+    (function (GenFlats) {
+        GenFlats.blueMetal = [
+            'sty/metal/blue/340.bmp',
+            'sty/metal/blue/340.bmp',
+            'sty/metal/blue/340.bmp',
+            'sty/metal/blue/340.bmp',
+            'sty/metal/blue/340.bmp'
+        ];
+        const roofFunc = (block, w, min, max) => {
+            if (w[2] == max[2] - min[2] - 1) {
+                block.faces[4] = 'sty/roofs/green/793.bmp';
+                if (w[0] == min[0] && w[1] == min[1]) { // lb
+                    block.faces[4] = 'sty/roofs/green/784.bmp';
+                    block.r = 3;
+                }
+                else if (w[0] == min[0] + max[0] - 1 && w[1] == min[1] + max[1] - 1) { // rt
+                    block.faces[4] = 'sty/roofs/green/784.bmp';
+                    block.f = true;
+                    block.r = 0;
+                }
+                else if (w[0] == min[0] && w[1] == min[1] + max[1] - 1) { // lt
+                    block.faces[4] = 'sty/roofs/green/784.bmp';
+                    block.r = 0;
+                }
+                else if (w[0] == min[0] + max[0] - 1 && w[1] == min[1]) { // rb
+                    block.faces[4] = 'sty/roofs/green/784.bmp';
+                    block.r = 2;
+                }
+                else if (w[0] == min[0]) {
+                    block.faces[4] = 'sty/roofs/green/790.bmp';
+                    block.r = 1;
+                }
+                else if (w[1] == min[1] + max[1] - 1) {
+                    block.faces[4] = 'sty/roofs/green/790.bmp';
+                    block.f = true;
+                    block.r = 2;
+                }
+                else if (w[0] == min[0] + max[0] - 1) {
+                    block.faces[4] = 'sty/roofs/green/790.bmp';
+                    block.r = 3;
+                }
+                else if (w[1] == min[1]) {
+                    block.faces[4] = 'sty/roofs/green/790.bmp';
+                    block.r = 0;
+                }
+            }
+        };
+        function Type1(min, max) {
+            const func = (w) => {
+                let bmp = 'sty/metal/blue/340.bmp';
+                let block = {
+                    type: 'Block',
+                    x: w[0],
+                    y: w[1],
+                    z: w[2]
+                };
+                block.faces = [];
+                if (w[0] > min[0] &&
+                    w[0] < min[0] + max[0] - 1 &&
+                    w[1] > min[1] &&
+                    w[1] < min[1] + max[1] - 1 &&
+                    w[2] < min[2] + max[2] - 1)
+                    return;
+                roofFunc(block, w, min, max);
+                if (w[0] == min[0])
+                    block.faces[1] = bmp;
+                if (w[1] == min[1] + max[1] - 1)
+                    block.faces[2] = bmp;
+                if (w[0] == min[0] + max[0] - 1)
+                    block.faces[0] = bmp;
+                if (w[1] == min[1])
+                    block.faces[3] = bmp;
+                Datas$1.deliver(block);
+            };
+            Gen$1.loop(min, max, func);
+        }
+        GenFlats.Type1 = Type1;
+    })(GenFlats || (GenFlats = {}));
+    var GenFlats$1 = GenFlats;
+
+    var GenDeline;
+    (function (GenDeline) {
+        function Horz(w, width, height) {
+            let x = 0;
+            for (; x < width; x++) {
+                let y = 0;
+                for (; y < height; y++) {
+                    let point = { x: w[0] + x, y: w[1] + y };
+                    let chunk = Datas$1.getChunk(point);
+                    //if (chunked.includes(chunk))
+                    //continue;
+                    //chunked.push(chunk);
+                    for (let data of chunk.datas) {
+                        if ('Surface' != data.type)
+                            continue;
+                        if (Points$1.different(data, point))
+                            continue;
+                        if (data.square == 'sideLine') {
+                            data.square = 'sideClear';
+                            if (point.x == w[0] || point.x == w[0] + width - 1) {
+                                data.square = 'sideDash';
+                                if (point.x == w[0] + width - 1 && point.y == w[1])
+                                    data.f = true;
+                                if (point.x == w[0] && point.y == w[1] + height - 1)
+                                    data.f = true;
+                            }
+                        }
+                        if (data.square == 'convexLine')
+                            data.square = 'convex';
+                        if (data.square == 'sideStopLine') {
+                            data.square = 'sideStop';
+                        }
+                    }
+                }
+            }
+        }
+        GenDeline.Horz = Horz;
+        function mixedToBad(w, width, height) {
+            let x = 0;
+            for (; x < width; x++) {
+                let y = 0;
+                for (; y < height; y++) {
+                    let point = { x: w[0] + x, y: w[1] + y };
+                    let chunk = Datas$1.getChunk(point);
+                    //if (chunked.includes(chunk))
+                    //continue;
+                    //chunked.push(chunk);
+                    for (let data of chunk.datas) {
+                        if ('Surface' != data.type)
+                            continue;
+                        if (Points$1.different(data, point))
+                            continue;
+                        if (Math.random() > .5)
+                            continue;
+                        if (data.sheet == 'mixedRoads' &&
+                            data.square.indexOf('side') > -1) {
+                            data.sheet = 'badRoads';
+                            //if (Math.random() > .25)
+                            //continue;
+                            //if (data.square != 'sideDash')
+                            //data.square = Math.random() > .5 ? 'sideDecal' : 'sideDecal_2';
+                        }
+                    }
+                }
+            }
+        }
+        GenDeline.mixedToBad = mixedToBad;
+        // To swap tile at ply in console
+        // Deline__.Swap([Math.floor(ply.data.x), Math.floor(ply.data.y), 0], 'sideDash')
+        function Edit(w, assign) {
+            let point = { x: w[0], y: w[1] };
+            let chunk = Datas$1.getChunk(point);
+            for (let data of chunk.datas) {
+                if ('Surface' != data.type)
+                    continue;
+                if (Points$1.different(data, point))
+                    continue;
+                Object.assign(data, assign);
+                console.log('Deline Swap complete');
+                // Rebuild idiom
+                chunk.remove(data);
+                chunk.add(data);
+                break;
+            }
+        }
+        GenDeline.Edit = Edit;
+        function EditMultiple(w, width, height, square_a, square_b) {
+            let x = 0;
+            for (; x < width; x++) {
+                let y = 0;
+                for (; y < height; y++) {
+                    let point = { x: w[0] + x, y: w[1] + y };
+                    let chunk = Datas$1.getChunk(point);
+                    //if (chunked.includes(chunk))
+                    //continue;
+                    //chunked.push(chunk);
+                    for (let data of chunk.datas) {
+                        if ('Surface' != data.type)
+                            continue;
+                        if (Points$1.different(data, point))
+                            continue;
+                        if (data.square == 'sideLine')
+                            data.square = 'sideClear';
+                        else if (data.square == 'sideStopLine')
+                            data.square = 'sideStop';
+                    }
+                }
+            }
+        }
+        GenDeline.EditMultiple = EditMultiple;
+        window.Deline__ = GenDeline;
+    })(GenDeline || (GenDeline = {}));
+    var GenDeline$1 = GenDeline;
+
+    //import { parkedCarNames } from "../Cars/Script codes";
+    //import Cars from "../cars/cars";
+    var GenParking;
+    (function (GenParking) {
+        function OnewayRightVert(w, segs, lanes, sheet) {
+            if (lanes < 2)
+                console.warn('OnewayRightVert less than 2 lanes');
+            let seg = 0;
+            for (; seg < segs; seg++) {
+                let lane = 0;
+                for (; lane < lanes; lane++) {
+                    let road = {
+                        type: 'Surface',
+                        sheet: sheet,
+                        square: 'sideLine',
+                        x: lane + w[0],
+                        y: seg + w[1],
+                        z: w[2],
+                        r: !lane ? 3 : 1
+                    };
+                    let parkedCar = {
+                        type: 'Car',
+                        ///carName: Cars.GetRandomName(),
+                        x: road.x,
+                        y: road.y,
+                        z: road.z
+                    };
+                    let parkHere = false;
+                    if (!seg || seg == segs - 1) {
+                        if (!lane) {
+                            road.square = 'singleOpen';
+                            if (!seg)
+                                road.r += 1;
+                            else if (seg == segs - 1)
+                                road.r -= 1;
+                        }
+                        else {
+                            //road.square = 'sideLine';
+                            //road.r = !seg ? 0 : 2;
+                            continue; // Skip
+                        }
+                    }
+                    else if (seg == 1 || seg == segs - 2) {
+                        if (!lane) {
+                            road.square = 'customNotch';
+                            road.r = 1;
+                            if (seg == 1)
+                                road.f = true;
+                        }
+                        else if (lane == lanes - 1) {
+                            road.square = 'corner';
+                            road.r = seg == 1 ? 0 : 3;
+                            if (seg != 1) {
+                                parkedCar.r = Math.PI / 4;
+                                parkedCar.x = road.x + .5;
+                                parkedCar.y = road.y - .11;
+                                parkHere = true;
+                            }
+                        }
+                        else {
+                            road.r = seg == 1 ? 2 : 0;
+                        }
+                    }
+                    else if (lane) {
+                        if (lane == lanes - 1) {
+                            road.square = 'parkingSpot';
+                            parkedCar.r = Math.PI / 4;
+                            parkedCar.x = road.x + .5;
+                            parkedCar.y = road.y - .11;
+                            parkHere = true;
+                        }
+                        else
+                            road.square = 'clear';
+                    }
+                    if (parkHere && Math.random() < .75)
+                        Datas$1.deliver(parkedCar);
+                    Datas$1.replaceDeliver(road);
+                }
+            }
+        }
+        GenParking.OnewayRightVert = OnewayRightVert;
+        function Big(w, segs, lanes, r, sheet) {
+        }
+        GenParking.Big = Big;
+        function LeftBigHorz(w, segs, lanes, sheet) {
+            lanes = 4;
+            let seg = 0;
+            for (; seg < segs; seg++) {
+                let lane = 0;
+                for (; lane < lanes; lane++) {
+                    let road = {
+                        type: 'Surface',
+                        sheet: sheet,
+                        square: 'sideLine',
+                        x: seg + w[0],
+                        y: lane + w[1],
+                        z: w[2],
+                        r: 1
+                    };
+                    let parkedCar = {
+                        type: 'Car',
+                        ///carName: Cars.GetRandomName(),
+                        x: road.x,
+                        y: road.y,
+                        z: road.z
+                    };
+                    let parkHere = false;
+                    if (!seg) {
+                        if (lane == 1) {
+                            road.square = 'convexLine';
+                            road.r += 1;
+                        }
+                        else if (lane == 2) {
+                            road.square = 'convexLine';
+                        }
+                        else {
+                            continue;
+                        }
+                    }
+                    else if (seg == 1) {
+                        if (lane == 1) {
+                            road.square = 'sideLine';
+                            road.r += 1;
+                        }
+                        else if (lane == 2) {
+                            road.square = 'sideLine';
+                            road.r -= 1;
+                        }
+                        else {
+                            continue;
+                        }
+                    }
+                    else if (seg == 2) {
+                        if (lane == 0) {
+                            road.square = 'corner';
+                            parkHere = true;
+                            parkedCar.r = Math.PI / 4;
+                            parkedCar.x = road.x + 0.5 + 0.6;
+                            parkedCar.y = road.y + 0.5;
+                        }
+                        else if (lane == 1) {
+                            road.square = 'convexLine';
+                            road.r += 2;
+                        }
+                        else if (lane == 2) {
+                            road.square = 'convexLine';
+                            road.r -= 1;
+                        }
+                        else if (lane == 3) {
+                            road.square = 'corner';
+                            road.r += 1;
+                            parkHere = true;
+                            parkedCar.r = Math.PI - Math.PI / 4;
+                            parkedCar.x = road.x + 0.5 + 0.6;
+                            parkedCar.y = road.y + 0.5;
+                        }
+                    }
+                    else if (seg == segs - 1) {
+                        if (lane == 0) {
+                            road.square = 'corner';
+                            road.r -= 1;
+                        }
+                        else if (lane == 3) {
+                            road.square = 'corner';
+                            road.r += 2;
+                        }
+                        else {
+                            road.square = 'sideClear';
+                        }
+                    }
+                    else if (lane == 1 || lane == 2) {
+                        road.square = 'clear';
+                    }
+                    else if (lane != 1) {
+                        road.square = 'parkingSpot';
+                        parkHere = true;
+                        // Bottom
+                        if (!lane) {
+                            road.r += 1;
+                            road.f = true;
+                            parkedCar.r = Math.PI / 4;
+                            parkedCar.x = road.x + 0.5 + 0.6;
+                            parkedCar.y = road.y + 0.5;
+                        }
+                        // Top
+                        else {
+                            road.r -= 1;
+                            parkedCar.r = Math.PI - Math.PI / 4;
+                            parkedCar.x = road.x + 0.5 + 0.6;
+                            parkedCar.y = road.y + 0.5;
+                        }
+                    }
+                    if (parkHere && Math.random() > .5)
+                        Datas$1.deliver(parkedCar);
+                    Datas$1.replaceDeliver(road);
+                }
+            }
+        }
+        GenParking.LeftBigHorz = LeftBigHorz;
+    })(GenParking || (GenParking = {}));
+    var GenParking$1 = GenParking;
+
+    var GenStrip;
+    (function (GenStrip) {
+        function aptsOffice() {
+            // Note: Generate roads that merge last
+            // This section is called Apts
+            // Big roads on either side
+            GenPavements$1.Vert(-1, -50, 0, 100, 1);
+            GenPavements$1.Vert(3, -50, 0, 100, 1);
+            GenPavements$1.Vert(12, -50, 0, 100, 1);
+            GenPavements$1.Vert(9, -50, 0, 100, 1);
+            GenRoads$1.highwayVert([0, -25, 0], 50, 3);
+            GenRoads$1.twolane(1, [10, -25, 0], 50, 'badRoads'); // vert
+            GenFlats$1.Type1([4, 7, 0], [6, 6, 3]); // Apts above
+            GenFlats$1.Type1([4, 0, 0], [4, 4, 4]); // Office
+            GenPavements$1.Fill([4, 4, 0], 4, 1);
+            // The roads around the vert office
+            GenRoads$1.twolane(0, [2, 5, 0], 9, 'mixedRoads'); // horz
+            GenRoads$1.twolane(0, [2, -2, 0], 9, 'mixedRoads'); // horz
+            //Deline.mixedToBad([2, 4, 0], 9, 4);
+            //Deline.mixedToBad([2, -3, 0], 9, 4);
+            GenParking$1.OnewayRightVert([8, -1, 0], 7, 2, 'mixedRoads');
+            GenDeline$1.Horz([7, 0, 0], 3, 4);
+            // Deline around the apts
+            GenDeline$1.Horz([2, 4, 0], 9, 4);
+            GenDeline$1.Horz([2, -3, 0], 9, 4);
+            //Pavements.Horz(3, -50, 0, 100, 1);
+            //FillerBuildings.Type1([13, 5, 0], [5, 2, 2]);
+            // Big parking lot with skyscraper
+            GenFlats$1.Type1([13, 6, 0], [8, 8, 16]);
+            GenPavements$1.Vert(21, -50, 0, 100, 1);
+            GenPavements$1.Fill([12, 0, 0], 10, 6);
+            GenParking$1.LeftBigHorz([11, 1, 0], 10, 3, 'greyRoads');
+            GenDeline$1.Horz([11, 1, 0], 3, 4); // Dash It!
+            GenRoads$1.twolaneVert([22, -25, 0], 50, 'badRoads');
+            GenRoads$1.twolaneHorz([11, -2, 0], 12, 'badRoads');
+            GenPavements$1.Fill([12, -3, 0], 9, 1);
+        }
+        GenStrip.aptsOffice = aptsOffice;
+    })(GenStrip || (GenStrip = {}));
+    var GenStrip$1 = GenStrip;
+
     var EasingFunctions;
     (function (EasingFunctions) {
         // no easing, no acceleration
@@ -1443,6 +2181,7 @@ var gta_kill = (function (exports, THREE) {
             Spritesheets$1.init();
             Movie.init();
             KILL.city = new City;
+            GenStrip$1.aptsOffice();
             let data = {
                 type: 'Ply',
                 x: 10.5,
