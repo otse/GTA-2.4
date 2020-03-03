@@ -6,7 +6,7 @@ import { default as THREE, Clock, Scene } from 'three';
 // "C API" LOL
 export namespace Rectangles {
 
-	export function Init() {
+	export function init() {
 
 	}
 

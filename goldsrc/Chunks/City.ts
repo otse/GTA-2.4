@@ -21,19 +21,19 @@ export class City {
 		
 		this.chunkList = new ChunkList;
 
-		this.new = Points.Make(0, 0);
-		this.old = Points.Make(100, 100);
+		this.new = Points.make(0, 0);
+		this.old = Points.make(100, 100);
 	}
 
 	update(p: Point) {
-		this.new = Datas.Big(p);
+		this.new = Datas.big(p);
 
-		if (Points.Same(this.new, this.old))
+		if (Points.same(this.new, this.old))
 			return;
 		
 		console.log(`${this.old.x} & ${this.old.y} different to ${this.new.x} & ${this.new.y}`);
 
-		this.old = Points.Copy(this.new);
+		this.old = Points.copy(this.new);
 
 		this.off();
 		this.on();
@@ -70,7 +70,7 @@ export class City {
 
 			for (let x = 0; x < City.spanUneven; x++) {
 
-				let z = Points.Make(x - m + to.x, y - m + to.y);
+				let z = Points.make(x - m + to.x, y - m + to.y);
 
 				let ch = this.chunkList.GetNullable(z);
 				if (!ch)

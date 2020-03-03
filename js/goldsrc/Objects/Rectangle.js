@@ -22,13 +22,13 @@ class Rectangle extends Object2 {
     }
     makeMeshes(info) {
         this.geometry = new PlaneBufferGeometry(this.data.width, this.data.height, 1);
-        this.material = Phong2.Make({
+        this.material = Phong2.make({
             map: Util.loadTexture(this.data.sty),
             blurMap: Util.loadTexture(info.blur),
             PINK: true,
             BLUR: true,
         });
-        let materialShadow = Phong2.Make({
+        let materialShadow = Phong2.make({
             map: Util.loadTexture(info.shadow),
             PINK: true,
             DARKEN: true

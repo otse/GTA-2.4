@@ -1,8 +1,8 @@
 import Object2 from "../Object";
 import Surfaces from "../Shapes/Surfaces";
 import Spritesheets from "../../Sprites/Spritesheets";
-import { Mesh, MeshPhongMaterial, Color, DoubleSide } from "three";
 import Util from "../../Random";
+import { Mesh, MeshPhongMaterial, Color, DoubleSide } from "three";
 const defaultSty = 'sty/commercial/storefront/577.bmp';
 export class Surface extends Object2 {
     constructor(data) {
@@ -10,19 +10,19 @@ export class Surface extends Object2 {
         // the Defaults
         //if (!this.data.color) this.data.color = 'white';
         //if (!this.data2.faces) this.data2.faces = [];
-        this.Make();
+        this.make();
     }
     // Override
-    Destroy() {
+    destroy() {
         super.destroy();
-        Surfaces.Hide(this);
+        Surfaces.hide(this);
         this.geometry.dispose();
         this.material.dispose();
         delete this.mesh;
         delete this.geometry;
         delete this.material;
     }
-    Make() {
+    make() {
         this.geometry = Surfaces.geometry.clone();
         const hasSheet = this.data.sheet && this.data.square;
         // Cutting can prevent texture bleeding
@@ -61,10 +61,10 @@ export class Surface extends Object2 {
         this.mesh.position.set(this.data.x * 64 + 32, this.data.y * 64 + 32, this.data.z * 64);
         this.mesh.updateMatrix();
         if (this.data.f)
-            Util.UV.FlipPlane(this.geometry, 0, true);
+            Util.UV.flipPlane(this.geometry, 0, true);
         if (this.data.r)
-            Util.UV.RotatePlane(this.geometry, 0, this.data.r);
-        Surfaces.Show(this);
+            Util.UV.rotatePlane(this.geometry, 0, this.data.r);
+        Surfaces.show(this);
     }
     slope() {
         if (!this.data.slope)

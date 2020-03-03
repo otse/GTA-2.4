@@ -1,13 +1,12 @@
 import Data2 from "../Objects/Data"
 import Rectangle from "../Objects/Rectangle"
 
+import Anims from "../Sprites/Anims"
 import Peds from "./Peds"
-
 import Util from "../Random"
 
 import { pedDefs } from "./Anim defs"
 
-import Anims from "../Sprites/Anims"
 
 const idleSquare = { x: 1, y: 8 }
 
@@ -56,8 +55,7 @@ export class Ped extends Rectangle {
 		Util.UV.fromSheet(this.geometry, idleSquare, Peds.sheet);
 	}
 
-	// kind of a hacky function
-	Change(remap: number) {
+	change(remap: number) {
 		this.data.remap = remap;
 
 		this.data.sty = `sty/ped/template_${this.data.remap}.png`;

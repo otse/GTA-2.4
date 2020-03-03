@@ -44,10 +44,10 @@ export namespace Util {
 				y += (corrected_y) * sheet.padding / sheet.height;
 			}
 
-			UV.PlanarUV(geometry, 0, x, y, w, h);
+			UV.planarUV(geometry, 0, x, y, w, h);
 		}
 
-		export function PlanarUV(geom, face, x, y, w, h) {
+		export function planarUV(geom, face, x, y, w, h) {
 
 			let o = face * 8;
 			// 0 1, 1 1, 0 0, 1 0
@@ -62,7 +62,7 @@ export namespace Util {
 			geom.attributes.uv.needsUpdate = true;
 		}
 
-		export function FlipPlane(geom, face, flip) {
+		export function flipPlane(geom, face, flip) {
 
 			const o = face * 8;
 
@@ -79,7 +79,7 @@ export namespace Util {
 			geom.attributes.uv.needsUpdate = true;
 		}
 
-		export function RotatePlane(geom, face, turns) {
+		export function rotatePlane(geom, face, turns) {
 
 			const o = face * 8;
 			// 0 1, 1 1, 0 0, 1 0
@@ -108,7 +108,7 @@ export namespace Util {
 			geom.attributes.uv.needsUpdate = true;
 		}
 
-		export function RotateUVs(uvs, o, turns) {
+		export function rotateUVs(uvs, o, turns) {
 
 			let newy: Array<object> = new Array(o);
 
@@ -161,7 +161,7 @@ export namespace Util {
 
 		}
 
-		export function FlipUVs(uvs, o, flip) {
+		export function flipUVs(uvs, o, flip) {
 
 			let a = [[[0, 1], [0, 0], [1, 1]], [[0, 0], [1, 0], [1, 1]]];
 			let b = [[[1, 1], [1, 0], [0, 1]], [[1, 0], [0, 0], [0, 1]]];

@@ -17,7 +17,7 @@ export class Chunk {
             object.update();
     }
     fabricate(data) {
-        let object = Objects.MakeNullable(data);
+        let object = Objects.makeNullable(data);
         if (!object)
             return;
         this.objects.push(object);

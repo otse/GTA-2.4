@@ -17,23 +17,23 @@ export namespace Space {
 	export interface Point { x; y; z?; }
 
 	// Aka Chunk-span
-	export function Big(a: Point): Point {
+	export function big(a: Point): Point {
 		return {
 			x: Math.floor(a.x / Chunks.tileSpan),
 			y: Math.floor(a.y / Chunks.tileSpan) };
 	}
 
-	export function Add(a: Point, b: Point): Point {
+	export function add(a: Point, b: Point): Point {
 		return { x: a.x + b.x, y: a.y + b.y };
 	}
 
-	export function Dist(a: Point, b: Point): number {
+	export function dist(a: Point, b: Point): number {
 		const dx = a.x - b.x, dy = a.y - b.y, dz = a.z - b.z;
 
 		return dx * dx + dy * dy;// + dz * dz;
 	}
 
-	export function FwdByAngle(object: Object2, dist, angle) {
+	export function fwdByAngle(object: Object2, dist, angle) {
 		object.data.r = angle + Math.PI / 2;
 		object.data.x += dist * Math.cos(angle);
 		object.data.y += dist * Math.sin(angle);

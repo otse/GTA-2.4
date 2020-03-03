@@ -1,8 +1,8 @@
 import Rectangle from "../Objects/Rectangle";
+import Anims from "../Sprites/Anims";
 import Peds from "./Peds";
 import Util from "../Random";
 import { pedDefs } from "./Anim defs";
-import Anims from "../Sprites/Anims";
 const idleSquare = { x: 1, y: 8 };
 export class Ped extends Rectangle {
     constructor(data) {
@@ -36,8 +36,7 @@ export class Ped extends Rectangle {
         Anims.zero(this.timers.run);
         Util.UV.fromSheet(this.geometry, idleSquare, Peds.sheet);
     }
-    // kind of a hacky function
-    Change(remap) {
+    change(remap) {
         this.data.remap = remap;
         this.data.sty = `sty/ped/template_${this.data.remap}.png`;
         //this.material.map = three.LoadTexture(this.data.sty);

@@ -9,26 +9,26 @@ var gta_kill = (function (exports, THREE) {
             x: number;
             y: number;
         }*/
-        function Make(x, y) {
+        function make(x, y) {
             return { x: x, y: y };
         }
-        Points.Make = Make;
-        function Copy(src) {
+        Points.make = make;
+        function copy(src) {
             return { x: src.x, y: src.y };
         }
-        Points.Copy = Copy;
-        function Same(a, b) {
-            return !Different(a, b);
+        Points.copy = copy;
+        function same(a, b) {
+            return !different(a, b);
         }
-        Points.Same = Same;
-        function Different(a, b) {
+        Points.same = same;
+        function different(a, b) {
             return a.x - b.x || a.y - b.y;
         }
-        Points.Different = Different;
-        function Floor(a) {
-            return Make(Math.floor(a.x), Math.floor(a.y));
+        Points.different = different;
+        function floor(a) {
+            return make(Math.floor(a.x), Math.floor(a.y));
         }
-        Points.Floor = Floor;
+        Points.floor = floor;
     })(Points || (Points = {}));
     var Points$1 = Points;
 
@@ -54,7 +54,7 @@ var gta_kill = (function (exports, THREE) {
         // This is the visibility test
         function Vis(chunk, p) {
             const m = Math.ceil(City.spanUneven / 2);
-            const d = Points$1.Make(Math.abs(p.x - chunk.w.x), Math.abs(p.y - chunk.w.y));
+            const d = Points$1.make(Math.abs(p.x - chunk.w.x), Math.abs(p.y - chunk.w.y));
             const outside = !(d.x > m || d.y > m);
             const wideSpan = d.x >= m || d.y >= m;
             const insideSpan = d.x <= m && d.y <= m;
@@ -109,7 +109,7 @@ var gta_kill = (function (exports, THREE) {
         ];
         BoxCutter.geometries = [];
         // Remove faces from a Box Buffer Geometry
-        function Init() {
+        function init() {
             for (let bits of picks) {
                 const geometry = Blocks$1.geometry.clone();
                 BoxCutter.geometries[bits] = geometry;
@@ -141,7 +141,7 @@ var gta_kill = (function (exports, THREE) {
                 }
             }
         }
-        BoxCutter.Init = Init;
+        BoxCutter.init = init;
     })(BoxCutter || (BoxCutter = {}));
     var BoxCutter$1 = BoxCutter;
 
@@ -175,10 +175,10 @@ var gta_kill = (function (exports, THREE) {
                     x += (square.x - 1) * sheet.padding / sheet.width;
                     y += (corrected_y) * sheet.padding / sheet.height;
                 }
-                UV.PlanarUV(geometry, 0, x, y, w, h);
+                UV.planarUV(geometry, 0, x, y, w, h);
             }
             UV.fromSheet = fromSheet;
-            function PlanarUV(geom, face, x, y, w, h) {
+            function planarUV(geom, face, x, y, w, h) {
                 let o = face * 8;
                 // 0 1, 1 1, 0 0, 1 0
                 // left top, right top, left bottom, right bottom
@@ -188,8 +188,8 @@ var gta_kill = (function (exports, THREE) {
                     geom.attributes.uv.array[o + i] = a[i];
                 geom.attributes.uv.needsUpdate = true;
             }
-            UV.PlanarUV = PlanarUV;
-            function FlipPlane(geom, face, flip) {
+            UV.planarUV = planarUV;
+            function flipPlane(geom, face, flip) {
                 const o = face * 8;
                 const a = geom.attributes.uv.array;
                 const flips = [[a[o + 0], a[o + 1], a[o + 2], a[o + 3], a[o + 4], a[o + 5], a[o + 6], a[o + 7]],
@@ -199,8 +199,8 @@ var gta_kill = (function (exports, THREE) {
                     geom.attributes.uv.array[o + i] = flips[yn][i];
                 geom.attributes.uv.needsUpdate = true;
             }
-            UV.FlipPlane = FlipPlane;
-            function RotatePlane(geom, face, turns) {
+            UV.flipPlane = flipPlane;
+            function rotatePlane(geom, face, turns) {
                 const o = face * 8;
                 // 0 1, 1 1, 0 0, 1 0
                 // left top, right top, left bottom, right bottom
@@ -220,8 +220,8 @@ var gta_kill = (function (exports, THREE) {
                     geom.attributes.uv.array[o + i] = a[i];
                 geom.attributes.uv.needsUpdate = true;
             }
-            UV.RotatePlane = RotatePlane;
-            function RotateUVs(uvs, o, turns) {
+            UV.rotatePlane = rotatePlane;
+            function rotateUVs(uvs, o, turns) {
                 let newy = new Array(o);
                 newy.fill({});
                 let f = o;
@@ -270,8 +270,8 @@ var gta_kill = (function (exports, THREE) {
                         uvs[j][i].x = newy[j][i].x
                         uvs[j][i].y = newy[j][i].y*/
             }
-            UV.RotateUVs = RotateUVs;
-            function FlipUVs(uvs, o, flip) {
+            UV.rotateUVs = rotateUVs;
+            function flipUVs(uvs, o, flip) {
                 let a = [[[0, 1], [0, 0], [1, 1]], [[0, 0], [1, 0], [1, 1]]];
                 let b = [[[1, 1], [1, 0], [0, 1]], [[1, 0], [0, 0], [0, 1]]];
                 let c = (flip) ? b : a;
@@ -294,7 +294,7 @@ var gta_kill = (function (exports, THREE) {
                 uvs[o + 1][2].x = c[1][2][0];
                 uvs[o + 1][2].y = c[1][2][1];
             }
-            UV.FlipUVs = FlipUVs;
+            UV.flipUVs = flipUVs;
         })(UV = Util.UV || (Util.UV = {}));
     })(Util || (Util = {}));
     var Util$1 = Util;
@@ -303,32 +303,32 @@ var gta_kill = (function (exports, THREE) {
     (function (Blocks) {
         function Init() {
             Blocks.geometry = new THREE.BoxBufferGeometry(64, 64, 64);
-            Util$1.UV.RotatePlane(Blocks.geometry, 0, 3);
-            Util$1.UV.RotatePlane(Blocks.geometry, 1, 1);
-            Util$1.UV.RotatePlane(Blocks.geometry, 2, 2);
+            Util$1.UV.rotatePlane(Blocks.geometry, 0, 3);
+            Util$1.UV.rotatePlane(Blocks.geometry, 1, 1);
+            Util$1.UV.rotatePlane(Blocks.geometry, 2, 2);
         }
         Blocks.Init = Init;
-        function GetBits(data) {
+        function getBits(data) {
             let str = '';
             for (let i = 0; i < 5; i++)
                 str += data.faces[i] ? '|' : 'O';
             str = str.toString().replace(/[\s,]/g, '');
             return str;
         }
-        function GetBox(block) {
-            let bits = GetBits(block);
+        function getBox(block) {
+            let bits = getBits(block);
             let box = BoxCutter$1.geometries[bits];
             return box.clone();
         }
-        Blocks.GetBox = GetBox;
+        Blocks.getBox = getBox;
         function show(block) {
             Four$1.scene.add(block.mesh);
         }
         Blocks.show = show;
-        function Hide(block) {
+        function hide(block) {
             Four$1.scene.remove(block.mesh);
         }
-        Blocks.Hide = Hide;
+        Blocks.hide = hide;
     })(Blocks || (Blocks = {}));
     var Blocks$1 = Blocks;
 
@@ -353,7 +353,7 @@ var gta_kill = (function (exports, THREE) {
         make() {
             this.materials = [];
             {
-                this.geometry = Blocks$1.GetBox(this.data);
+                this.geometry = Blocks$1.getBox(this.data);
             }
             let i = 0;
             let faceCount = -1;
@@ -371,9 +371,9 @@ var gta_kill = (function (exports, THREE) {
                 if (this.geometry.groups[faceCount].materialIndex != 4)
                     continue;
                 if (this.data.f)
-                    Util$1.UV.FlipPlane(this.geometry, faceCount, true);
+                    Util$1.UV.flipPlane(this.geometry, faceCount, true);
                 if (this.data.r)
-                    Util$1.UV.RotatePlane(this.geometry, faceCount, this.data.r);
+                    Util$1.UV.rotatePlane(this.geometry, faceCount, this.data.r);
             }
             this.mesh = new THREE.Mesh(this.geometry, this.materials);
             this.mesh.matrixAutoUpdate = false;
@@ -387,18 +387,18 @@ var gta_kill = (function (exports, THREE) {
 
     var Surfaces;
     (function (Surfaces) {
-        function Init() {
+        function init() {
             this.geometry = new THREE__default.PlaneBufferGeometry(64, 64, 1, 1);
         }
-        Surfaces.Init = Init;
-        function Show(plane) {
+        Surfaces.init = init;
+        function show(plane) {
             Four$1.scene.add(plane.mesh);
         }
-        Surfaces.Show = Show;
-        function Hide(plane) {
+        Surfaces.show = show;
+        function hide(plane) {
             Four$1.scene.remove(plane.mesh);
         }
-        Surfaces.Hide = Hide;
+        Surfaces.hide = hide;
     })(Surfaces || (Surfaces = {}));
     var Surfaces$1 = Surfaces;
 
@@ -561,19 +561,19 @@ var gta_kill = (function (exports, THREE) {
             // the Defaults
             //if (!this.data.color) this.data.color = 'white';
             //if (!this.data2.faces) this.data2.faces = [];
-            this.Make();
+            this.make();
         }
         // Override
-        Destroy() {
+        destroy() {
             super.destroy();
-            Surfaces$1.Hide(this);
+            Surfaces$1.hide(this);
             this.geometry.dispose();
             this.material.dispose();
             delete this.mesh;
             delete this.geometry;
             delete this.material;
         }
-        Make() {
+        make() {
             this.geometry = Surfaces$1.geometry.clone();
             const hasSheet = this.data.sheet && this.data.square;
             let map;
@@ -609,10 +609,10 @@ var gta_kill = (function (exports, THREE) {
             this.mesh.position.set(this.data.x * 64 + 32, this.data.y * 64 + 32, this.data.z * 64);
             this.mesh.updateMatrix();
             if (this.data.f)
-                Util$1.UV.FlipPlane(this.geometry, 0, true);
+                Util$1.UV.flipPlane(this.geometry, 0, true);
             if (this.data.r)
-                Util$1.UV.RotatePlane(this.geometry, 0, this.data.r);
-            Surfaces$1.Show(this);
+                Util$1.UV.rotatePlane(this.geometry, 0, this.data.r);
+            Surfaces$1.show(this);
         }
         slope() {
             if (!this.data.slope)
@@ -644,7 +644,7 @@ var gta_kill = (function (exports, THREE) {
 
     var Objects;
     (function (Objects) {
-        function Factory(data) {
+        function factory(data) {
             switch (data.type) {
                 //case 'Ped': return new Ped(data);
                 //case 'Player': return new Player(data);
@@ -656,16 +656,16 @@ var gta_kill = (function (exports, THREE) {
                     return null;
             }
         }
-        function MakeNullable(data) {
+        function makeNullable(data) {
             if (data.object2)
                 console.warn('Data has object2');
-            let object = Factory(data);
+            let object = factory(data);
             if (!object)
                 console.warn('Object2 not typable');
             data.object2 = object;
             return object || null;
         }
-        Objects.MakeNullable = MakeNullable;
+        Objects.makeNullable = makeNullable;
     })(Objects || (Objects = {}));
     var Objects$1 = Objects;
 
@@ -685,7 +685,7 @@ var gta_kill = (function (exports, THREE) {
                 object.update();
         }
         fabricate(data) {
-            let object = Objects$1.MakeNullable(data);
+            let object = Objects$1.makeNullable(data);
             if (!object)
                 return;
             this.objects.push(object);
@@ -753,24 +753,24 @@ var gta_kill = (function (exports, THREE) {
         //	data.x = Math.floor(data.x);
         //	data.y = Math.floor(data.y);
         //}
-        function Big(data) {
-            let w = Points$1.Make(Math.floor(data.x / Chunks$1.tileSpan), Math.floor(data.y / Chunks$1.tileSpan));
+        function big(data) {
+            let w = Points$1.make(Math.floor(data.x / Chunks$1.tileSpan), Math.floor(data.y / Chunks$1.tileSpan));
             return w;
         }
-        Datas.Big = Big;
-        function GetChunk(data) {
-            let w = Big(data);
+        Datas.big = big;
+        function getChunk(data) {
+            let w = big(data);
             let chunk = KILL$1.city.chunkList.Get(w);
             return chunk;
         }
-        Datas.GetChunk = GetChunk;
-        function Deliver(data) {
-            let chunk = GetChunk(data);
+        Datas.getChunk = getChunk;
+        function deliver(data) {
+            let chunk = getChunk(data);
             chunk.add(data);
         }
-        Datas.Deliver = Deliver;
-        function ReplaceDeliver(A) {
-            let chunk = GetChunk(A);
+        Datas.deliver = deliver;
+        function replaceDeliver(A) {
+            let chunk = getChunk(A);
             for (let B of chunk.datas) {
                 if (B.type == 'Car')
                     continue;
@@ -781,7 +781,7 @@ var gta_kill = (function (exports, THREE) {
             }
             chunk.add(A);
         }
-        Datas.ReplaceDeliver = ReplaceDeliver;
+        Datas.replaceDeliver = replaceDeliver;
         // for testing
         window.Datas__ = Datas;
     })(Datas || (Datas = {}));
@@ -791,15 +791,15 @@ var gta_kill = (function (exports, THREE) {
         constructor() {
             this.chunks = [];
             this.chunkList = new ChunkList;
-            this.new = Points$1.Make(0, 0);
-            this.old = Points$1.Make(100, 100);
+            this.new = Points$1.make(0, 0);
+            this.old = Points$1.make(100, 100);
         }
         update(p) {
-            this.new = Datas$1.Big(p);
-            if (Points$1.Same(this.new, this.old))
+            this.new = Datas$1.big(p);
+            if (Points$1.same(this.new, this.old))
                 return;
             console.log(`${this.old.x} & ${this.old.y} different to ${this.new.x} & ${this.new.y}`);
-            this.old = Points$1.Copy(this.new);
+            this.old = Points$1.copy(this.new);
             this.off();
             this.on();
             for (let chunk of this.chunks) {
@@ -826,7 +826,7 @@ var gta_kill = (function (exports, THREE) {
             const m = Math.floor(City.spanUneven / 2);
             for (let y = 0; y < City.spanUneven; y++) {
                 for (let x = 0; x < City.spanUneven; x++) {
-                    let z = Points$1.Make(x - m + to.x, y - m + to.y);
+                    let z = Points$1.make(x - m + to.x, y - m + to.y);
                     let ch = this.chunkList.GetNullable(z);
                     if (!ch)
                         continue;
@@ -844,9 +844,9 @@ var gta_kill = (function (exports, THREE) {
     // "C API" LOL
     var Rectangles;
     (function (Rectangles) {
-        function Init() {
+        function init() {
         }
-        Rectangles.Init = Init;
+        Rectangles.init = init;
         function show(rectangle) {
             console.log('Rectangles Add ' + rectangle.data.type);
             Four$1.scene.add(rectangle.mesh);
@@ -866,10 +866,10 @@ var gta_kill = (function (exports, THREE) {
         // Taken from
         // https://raw.githubusercontent.com/mrdoob/three.js/dev/src/renderers/shaders/ShaderLib/meshphong_frag.glsl.js
         //var customMaterial: THREE.ShaderMaterial;
-        function Rig() {
+        function rig() {
         }
-        Phong2.Rig = Rig;
-        function Make(p) {
+        Phong2.rig = rig;
+        function make(p) {
             let o = {
                 name: 'Phong2',
                 transparent: true,
@@ -927,7 +927,7 @@ var gta_kill = (function (exports, THREE) {
             }; // onBeforeCompile
             return customMaterial;
         }
-        Phong2.Make = Make;
+        Phong2.make = make;
     })(Phong2 || (Phong2 = {}));
     var Phong2$1 = Phong2;
 
@@ -950,13 +950,13 @@ var gta_kill = (function (exports, THREE) {
         }
         makeMeshes(info) {
             this.geometry = new THREE.PlaneBufferGeometry(this.data.width, this.data.height, 1);
-            this.material = Phong2$1.Make({
+            this.material = Phong2$1.make({
                 map: Util$1.loadTexture(this.data.sty),
                 blurMap: Util$1.loadTexture(info.blur),
                 PINK: true,
                 BLUR: true,
             });
-            let materialShadow = Phong2$1.Make({
+            let materialShadow = Phong2$1.make({
                 map: Util$1.loadTexture(info.shadow),
                 PINK: true,
                 DARKEN: true
@@ -990,6 +990,25 @@ var gta_kill = (function (exports, THREE) {
             this.meshShadow.rotation.z = this.data.r;
         }
     }
+
+    var Anims;
+    (function (Anims) {
+        function zero(a) {
+            a.timer = 0;
+            a.i = 0;
+        }
+        Anims.zero = zero;
+        function update(a) {
+            a.timer += Four$1.delta;
+            if (a.timer < a.def.moment)
+                return;
+            const end = a.i + 1 == a.def.frames;
+            !end ? a.i++ : a.i = 0;
+            a.timer = 0;
+        }
+        Anims.update = update;
+    })(Anims || (Anims = {}));
+    var Anims$1 = Anims;
 
     //import { three } from "../three";
     var Peds;
@@ -1071,25 +1090,6 @@ var gta_kill = (function (exports, THREE) {
         cardoor: { frames: 8, moment: .13 }
     };
 
-    var Anims;
-    (function (Anims) {
-        function zero(a) {
-            a.timer = 0;
-            a.i = 0;
-        }
-        Anims.zero = zero;
-        function update(a) {
-            a.timer += Four$1.delta;
-            if (a.timer < a.def.moment)
-                return;
-            const end = a.i + 1 == a.def.frames;
-            !end ? a.i++ : a.i = 0;
-            a.timer = 0;
-        }
-        Anims.update = update;
-    })(Anims || (Anims = {}));
-    var Anims$1 = Anims;
-
     const idleSquare = { x: 1, y: 8 };
     class Ped extends Rectangle {
         constructor(data) {
@@ -1122,8 +1122,7 @@ var gta_kill = (function (exports, THREE) {
             Anims$1.zero(this.timers.run);
             Util$1.UV.fromSheet(this.geometry, idleSquare, Peds$1.sheet);
         }
-        // kind of a hacky function
-        Change(remap) {
+        change(remap) {
             this.data.remap = remap;
             this.data.sty = `sty/ped/template_${this.data.remap}.png`;
             //this.material.map = three.LoadTexture(this.data.sty);

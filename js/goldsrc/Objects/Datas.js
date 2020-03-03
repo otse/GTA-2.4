@@ -8,24 +8,24 @@ var Datas;
     //	data.x = Math.floor(data.x);
     //	data.y = Math.floor(data.y);
     //}
-    function Big(data) {
-        let w = Points.Make(Math.floor(data.x / Chunks.tileSpan), Math.floor(data.y / Chunks.tileSpan));
+    function big(data) {
+        let w = Points.make(Math.floor(data.x / Chunks.tileSpan), Math.floor(data.y / Chunks.tileSpan));
         return w;
     }
-    Datas.Big = Big;
-    function GetChunk(data) {
-        let w = Big(data);
+    Datas.big = big;
+    function getChunk(data) {
+        let w = big(data);
         let chunk = KILL.city.chunkList.Get(w);
         return chunk;
     }
-    Datas.GetChunk = GetChunk;
-    function Deliver(data) {
-        let chunk = GetChunk(data);
+    Datas.getChunk = getChunk;
+    function deliver(data) {
+        let chunk = getChunk(data);
         chunk.add(data);
     }
-    Datas.Deliver = Deliver;
-    function ReplaceDeliver(A) {
-        let chunk = GetChunk(A);
+    Datas.deliver = deliver;
+    function replaceDeliver(A) {
+        let chunk = getChunk(A);
         for (let B of chunk.datas) {
             if (B.type == 'Car')
                 continue;
@@ -36,7 +36,7 @@ var Datas;
         }
         chunk.add(A);
     }
-    Datas.ReplaceDeliver = ReplaceDeliver;
+    Datas.replaceDeliver = replaceDeliver;
     // for testing
     window.Datas__ = Datas;
 })(Datas || (Datas = {}));

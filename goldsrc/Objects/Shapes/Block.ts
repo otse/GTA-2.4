@@ -51,7 +51,7 @@ export class Block extends Object2 {
 			this.geometry = Blocks.geometry.clone();
 		}
 		else {
-			this.geometry = Blocks.GetBox(this.data);
+			this.geometry = Blocks.getBox(this.data);
 		}
 
 		let i = 0;
@@ -77,10 +77,10 @@ export class Block extends Object2 {
 				continue;
 
 			if (this.data.f)
-				Util.UV.FlipPlane(this.geometry, faceCount, true);
+				Util.UV.flipPlane(this.geometry, faceCount, true);
 
 			if (this.data.r)
-				Util.UV.RotatePlane(this.geometry, faceCount, this.data.r);
+				Util.UV.rotatePlane(this.geometry, faceCount, this.data.r);
 
 		}
 

@@ -23,7 +23,7 @@ export var Chunks;
     // This is the visibility test
     function Vis(chunk, p) {
         const m = Math.ceil(City.spanUneven / 2);
-        const d = Points.Make(Math.abs(p.x - chunk.w.x), Math.abs(p.y - chunk.w.y));
+        const d = Points.make(Math.abs(p.x - chunk.w.x), Math.abs(p.y - chunk.w.y));
         const outside = !(d.x > m || d.y > m);
         const wideSpan = d.x >= m || d.y >= m;
         const insideSpan = d.x <= m && d.y <= m;

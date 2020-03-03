@@ -13,7 +13,7 @@ export var BoxCutter;
     ];
     BoxCutter.geometries = [];
     // Remove faces from a Box Buffer Geometry
-    function Init() {
+    function init() {
         for (let bits of picks) {
             const geometry = Blocks.geometry.clone();
             BoxCutter.geometries[bits] = geometry;
@@ -45,6 +45,6 @@ export var BoxCutter;
             }
         }
     }
-    BoxCutter.Init = Init;
+    BoxCutter.init = init;
 })(BoxCutter || (BoxCutter = {}));
 export default BoxCutter;

@@ -16,8 +16,8 @@ namespace Datas {
 	//	data.y = Math.floor(data.y);
 	//}
 
-	export function Big(data: Point): Point {
-		let w = Points.Make(
+	export function big(data: Point): Point {
+		let w = Points.make(
 			Math.floor(data.x / Chunks.tileSpan),
 			Math.floor(data.y / Chunks.tileSpan)
 		);
@@ -25,22 +25,22 @@ namespace Datas {
 		return w;
 	}
 
-	export function GetChunk(data: Point): Chunk {
-		let w = Big(data);
+	export function getChunk(data: Point): Chunk {
+		let w = big(data);
 
 		let chunk = KILL.city.chunkList.Get(w);
 
 		return chunk;
 	}
 
-	export function Deliver(data: Data2): void {
-		let chunk = GetChunk(data);
+	export function deliver(data: Data2): void {
+		let chunk = getChunk(data);
 
 		chunk.add(data);
 	}
 
-	export function ReplaceDeliver(A: Data2): void {
-		let chunk = GetChunk(A);
+	export function replaceDeliver(A: Data2): void {
+		let chunk = getChunk(A);
 
 		for (let B of chunk.datas) {
 			if (B.type == 'Car')

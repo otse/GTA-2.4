@@ -6,15 +6,15 @@ export class City {
     constructor() {
         this.chunks = [];
         this.chunkList = new ChunkList;
-        this.new = Points.Make(0, 0);
-        this.old = Points.Make(100, 100);
+        this.new = Points.make(0, 0);
+        this.old = Points.make(100, 100);
     }
     update(p) {
-        this.new = Datas.Big(p);
-        if (Points.Same(this.new, this.old))
+        this.new = Datas.big(p);
+        if (Points.same(this.new, this.old))
             return;
         console.log(`${this.old.x} & ${this.old.y} different to ${this.new.x} & ${this.new.y}`);
-        this.old = Points.Copy(this.new);
+        this.old = Points.copy(this.new);
         this.off();
         this.on();
         for (let chunk of this.chunks) {
@@ -41,7 +41,7 @@ export class City {
         const m = Math.floor(City.spanUneven / 2);
         for (let y = 0; y < City.spanUneven; y++) {
             for (let x = 0; x < City.spanUneven; x++) {
-                let z = Points.Make(x - m + to.x, y - m + to.y);
+                let z = Points.make(x - m + to.x, y - m + to.y);
                 let ch = this.chunkList.GetNullable(z);
                 if (!ch)
                     continue;

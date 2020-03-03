@@ -14,12 +14,12 @@ export namespace Blocks {
 	export function Init() {
 		geometry = new BoxBufferGeometry(64, 64, 64);
 
-		Util.UV.RotatePlane(geometry, 0, 3);
-		Util.UV.RotatePlane(geometry, 1, 1);
-		Util.UV.RotatePlane(geometry, 2, 2);
+		Util.UV.rotatePlane(geometry, 0, 3);
+		Util.UV.rotatePlane(geometry, 1, 1);
+		Util.UV.rotatePlane(geometry, 2, 2);
 	}
 
-	function GetBits(data: Data2): string {
+	function getBits(data: Data2): string {
 		let str = '';
 
 		for (let i = 0; i < 5; i++)
@@ -30,8 +30,8 @@ export namespace Blocks {
 		return str;
 	}
 
-	export function GetBox(block: Data2) {
-		let bits = GetBits(block);
+	export function getBox(block: Data2) {
+		let bits = getBits(block);
 
 		let box = BoxCutter.geometries[bits];
 
@@ -42,7 +42,7 @@ export namespace Blocks {
 		Four.scene.add(block.mesh);
 	}
 
-	export function Hide(block: Block) {
+	export function hide(block: Block) {
 		Four.scene.remove(block.mesh);
 	}
 }

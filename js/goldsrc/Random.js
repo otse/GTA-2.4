@@ -29,10 +29,10 @@ export var Util;
                 x += (square.x - 1) * sheet.padding / sheet.width;
                 y += (corrected_y) * sheet.padding / sheet.height;
             }
-            UV.PlanarUV(geometry, 0, x, y, w, h);
+            UV.planarUV(geometry, 0, x, y, w, h);
         }
         UV.fromSheet = fromSheet;
-        function PlanarUV(geom, face, x, y, w, h) {
+        function planarUV(geom, face, x, y, w, h) {
             let o = face * 8;
             // 0 1, 1 1, 0 0, 1 0
             // left top, right top, left bottom, right bottom
@@ -42,8 +42,8 @@ export var Util;
                 geom.attributes.uv.array[o + i] = a[i];
             geom.attributes.uv.needsUpdate = true;
         }
-        UV.PlanarUV = PlanarUV;
-        function FlipPlane(geom, face, flip) {
+        UV.planarUV = planarUV;
+        function flipPlane(geom, face, flip) {
             const o = face * 8;
             const a = geom.attributes.uv.array;
             const flips = [[a[o + 0], a[o + 1], a[o + 2], a[o + 3], a[o + 4], a[o + 5], a[o + 6], a[o + 7]],
@@ -53,8 +53,8 @@ export var Util;
                 geom.attributes.uv.array[o + i] = flips[yn][i];
             geom.attributes.uv.needsUpdate = true;
         }
-        UV.FlipPlane = FlipPlane;
-        function RotatePlane(geom, face, turns) {
+        UV.flipPlane = flipPlane;
+        function rotatePlane(geom, face, turns) {
             const o = face * 8;
             // 0 1, 1 1, 0 0, 1 0
             // left top, right top, left bottom, right bottom
@@ -74,8 +74,8 @@ export var Util;
                 geom.attributes.uv.array[o + i] = a[i];
             geom.attributes.uv.needsUpdate = true;
         }
-        UV.RotatePlane = RotatePlane;
-        function RotateUVs(uvs, o, turns) {
+        UV.rotatePlane = rotatePlane;
+        function rotateUVs(uvs, o, turns) {
             let newy = new Array(o);
             newy.fill({});
             let f = o;
@@ -124,8 +124,8 @@ export var Util;
                     uvs[j][i].x = newy[j][i].x
                     uvs[j][i].y = newy[j][i].y*/
         }
-        UV.RotateUVs = RotateUVs;
-        function FlipUVs(uvs, o, flip) {
+        UV.rotateUVs = rotateUVs;
+        function flipUVs(uvs, o, flip) {
             let a = [[[0, 1], [0, 0], [1, 1]], [[0, 0], [1, 0], [1, 1]]];
             let b = [[[1, 1], [1, 0], [0, 1]], [[1, 0], [0, 0], [0, 1]]];
             let c = (flip) ? b : a;
@@ -148,7 +148,7 @@ export var Util;
             uvs[o + 1][2].x = c[1][2][0];
             uvs[o + 1][2].y = c[1][2][1];
         }
-        UV.FlipUVs = FlipUVs;
+        UV.flipUVs = flipUVs;
     })(UV = Util.UV || (Util.UV = {}));
 })(Util || (Util = {}));
 export default Util;

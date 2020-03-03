@@ -6,31 +6,31 @@ export var Blocks;
 (function (Blocks) {
     function Init() {
         Blocks.geometry = new BoxBufferGeometry(64, 64, 64);
-        Util.UV.RotatePlane(Blocks.geometry, 0, 3);
-        Util.UV.RotatePlane(Blocks.geometry, 1, 1);
-        Util.UV.RotatePlane(Blocks.geometry, 2, 2);
+        Util.UV.rotatePlane(Blocks.geometry, 0, 3);
+        Util.UV.rotatePlane(Blocks.geometry, 1, 1);
+        Util.UV.rotatePlane(Blocks.geometry, 2, 2);
     }
     Blocks.Init = Init;
-    function GetBits(data) {
+    function getBits(data) {
         let str = '';
         for (let i = 0; i < 5; i++)
             str += data.faces[i] ? '|' : 'O';
         str = str.toString().replace(/[\s,]/g, '');
         return str;
     }
-    function GetBox(block) {
-        let bits = GetBits(block);
+    function getBox(block) {
+        let bits = getBits(block);
         let box = BoxCutter.geometries[bits];
         return box.clone();
     }
-    Blocks.GetBox = GetBox;
+    Blocks.getBox = getBox;
     function show(block) {
         Four.scene.add(block.mesh);
     }
     Blocks.show = show;
-    function Hide(block) {
+    function hide(block) {
         Four.scene.remove(block.mesh);
     }
-    Blocks.Hide = Hide;
+    Blocks.hide = hide;
 })(Blocks || (Blocks = {}));
 export default Blocks;

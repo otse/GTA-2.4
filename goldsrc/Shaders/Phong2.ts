@@ -7,11 +7,11 @@ namespace Phong2 {
 	// https://raw.githubusercontent.com/mrdoob/three.js/dev/src/renderers/shaders/ShaderLib/meshphong_frag.glsl.js
 
 	//var customMaterial: THREE.ShaderMaterial;
-	export function Rig() {
+	export function rig() {
 
 	}
 
-	export function Make(p: any) {
+	export function make(p: any) {
 
 		let o = {
 			name: 'Phong2',

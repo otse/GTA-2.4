@@ -2,7 +2,7 @@ import Block from "./Shapes/Block";
 import Surface from "./Shapes/Surface";
 export var Objects;
 (function (Objects) {
-    function Factory(data) {
+    function factory(data) {
         switch (data.type) {
             //case 'Ped': return new Ped(data);
             //case 'Player': return new Player(data);
@@ -14,15 +14,15 @@ export var Objects;
                 return null;
         }
     }
-    function MakeNullable(data) {
+    function makeNullable(data) {
         if (data.object2)
             console.warn('Data has object2');
-        let object = Factory(data);
+        let object = factory(data);
         if (!object)
             console.warn('Object2 not typable');
         data.object2 = object;
         return object || null;
     }
-    Objects.MakeNullable = MakeNullable;
+    Objects.makeNullable = makeNullable;
 })(Objects || (Objects = {}));
 export default Objects;

@@ -4,25 +4,25 @@ export var Points;
         x: number;
         y: number;
     }*/
-    function Make(x, y) {
+    function make(x, y) {
         return { x: x, y: y };
     }
-    Points.Make = Make;
-    function Copy(src) {
+    Points.make = make;
+    function copy(src) {
         return { x: src.x, y: src.y };
     }
-    Points.Copy = Copy;
-    function Same(a, b) {
-        return !Different(a, b);
+    Points.copy = copy;
+    function same(a, b) {
+        return !different(a, b);
     }
-    Points.Same = Same;
-    function Different(a, b) {
+    Points.same = same;
+    function different(a, b) {
         return a.x - b.x || a.y - b.y;
     }
-    Points.Different = Different;
-    function Floor(a) {
-        return Make(Math.floor(a.x), Math.floor(a.y));
+    Points.different = different;
+    function floor(a) {
+        return make(Math.floor(a.x), Math.floor(a.y));
     }
-    Points.Floor = Floor;
+    Points.floor = floor;
 })(Points || (Points = {}));
 export default Points;

@@ -39,7 +39,7 @@ export namespace Chunks {
 	export function Vis(chunk: Chunk, p: Point) {
 		const m = Math.ceil(City.spanUneven / 2);
 
-		const d = Points.Make(
+		const d = Points.make(
 			Math.abs(p.x - chunk.w.x),
 			Math.abs(p.y - chunk.w.y));
 

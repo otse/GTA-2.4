@@ -8,15 +8,15 @@ import { default as THREE, Clock, Scene, Mesh, Vector3, ShaderMaterial, PlaneBuf
 export namespace Surfaces {
 	export var geometry: THREE.PlaneBufferGeometry
 
-	export function Init() {
+	export function init() {
 		this.geometry = new THREE.PlaneBufferGeometry(64, 64, 1, 1);
 	}
 
-	export function Show(plane: Surface) {
+	export function show(plane: Surface) {
 		Four.scene.add(plane.mesh);
 	}
 
-	export function Hide(plane: Surface) {
+	export function hide(plane: Surface) {
 		Four.scene.remove(plane.mesh);
 	}
 }

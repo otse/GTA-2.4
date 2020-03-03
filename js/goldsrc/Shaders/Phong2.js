@@ -4,10 +4,10 @@ var Phong2;
     // Taken from
     // https://raw.githubusercontent.com/mrdoob/three.js/dev/src/renderers/shaders/ShaderLib/meshphong_frag.glsl.js
     //var customMaterial: THREE.ShaderMaterial;
-    function Rig() {
+    function rig() {
     }
-    Phong2.Rig = Rig;
-    function Make(p) {
+    Phong2.rig = rig;
+    function make(p) {
         let o = {
             name: 'Phong2',
             transparent: true,
@@ -65,6 +65,6 @@ var Phong2;
         }; // onBeforeCompile
         return customMaterial;
     }
-    Phong2.Make = Make;
+    Phong2.make = make;
 })(Phong2 || (Phong2 = {}));
 export default Phong2;

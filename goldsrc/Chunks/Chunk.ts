@@ -39,7 +39,7 @@ export class Chunk {
 	}
 
 	fabricate(data: Data2) {
-		let object = Objects.MakeNullable(data);
+		let object = Objects.makeNullable(data);
 
 		if (!object)
 			return;

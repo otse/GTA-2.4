@@ -18,7 +18,7 @@ export namespace BoxCutter {
 	export let geometries: BoxBufferGeometry[] = [];
 
 	// Remove faces from a Box Buffer Geometry
-	export function Init() {
+	export function init() {
 
 		for (let bits of picks) {
 

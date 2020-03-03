@@ -2,9 +2,9 @@ import Four from "../Renderer";
 // "C API" LOL
 export var Rectangles;
 (function (Rectangles) {
-    function Init() {
+    function init() {
     }
-    Rectangles.Init = Init;
+    Rectangles.init = init;
     function show(rectangle) {
         console.log('Rectangles Add ' + rectangle.data.type);
         Four.scene.add(rectangle.mesh);
