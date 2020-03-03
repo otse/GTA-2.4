@@ -4,7 +4,7 @@ import Data2 from "../Objects/Data"
 import Object2 from "../Objects/Object"
 import Objects from "../Objects/Objects"
 
-import Four from "../Renderer"
+import Four from "../Four"
 
 // A chunk makes / destroys its datas / objects
 

@@ -1,4 +1,4 @@
-import Four from "./Renderer";
+import Four from "./Four";
 import KILL from "./KILL";
 export var App;
 (function (App) {
@@ -15,7 +15,7 @@ export var App;
                 : 3 /* AGAIN */;
         else if ('keyup' == event.type)
             App.map[key] = 0 /* UP */;
-        if (key == 114) // f3
+        if (key == 114) // F3
             event.preventDefault();
         return;
     }

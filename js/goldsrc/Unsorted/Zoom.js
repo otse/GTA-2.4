@@ -1,7 +1,7 @@
 import KILL from "../KILL";
-import Four from "../Renderer";
+import Four from "../Four";
 import EasingFunctions from "./Easing";
-import App from "../Appp";
+import App from "../App";
 // todo construct a utility type from the length of the stages array,
 // so that we can make a cool tuple for the Zoom.Set so that we dont
 // have to write 0 | 1 | 2 | 3

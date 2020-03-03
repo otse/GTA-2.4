@@ -1,6 +1,6 @@
 import Surface from "./Surface";
 
-import Four from "../../Renderer";
+import Four from "../../Four";
 
 import { default as THREE, Clock, Scene, Mesh, Vector3, ShaderMaterial, PlaneBufferGeometry, MeshPhongMaterial } from 'three';
 

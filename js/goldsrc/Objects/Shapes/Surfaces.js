@@ -1,4 +1,4 @@
-import Four from "../../Renderer";
+import Four from "../../Four";
 import { default as THREE } from 'three';
 export var Surfaces;
 (function (Surfaces) {

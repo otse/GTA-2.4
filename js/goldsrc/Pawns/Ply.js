@@ -1,6 +1,6 @@
 import Ped from "./Ped";
 import Peds from "./Peds";
-import App from "../Appp";
+import App from "../App";
 import Util from "../Random";
 import Anims from "../Sprites/Anims";
 export class Ply extends Ped {

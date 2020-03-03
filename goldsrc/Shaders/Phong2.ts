@@ -1,4 +1,4 @@
-import Four from "../Renderer";
+import Four from "../Four";
 import { default as THREE, Vector3, MeshPhongMaterial } from 'three';
 
 namespace Phong2 {
@@ -22,7 +22,7 @@ namespace Phong2 {
 		let customMaterial = new MeshPhongMaterial(o);
 
 		customMaterial.onBeforeCompile = (shader) => {
-
+			
 			if (p.BLUR)
 				shader.uniforms.blurMap = { value: p.blurMap };
 
@@ -65,7 +65,7 @@ namespace Phong2 {
 					#ifdef BLUR
 						vec4 blurColor = texture2D( blurMap, vUv );
 						blurColor.rgb *= 0.0;
-						blurColor.a /= 1.5;
+						blurColor.a *= 3.5;
 						texelColor = blurColor + mapColor;
 					#else
 						texelColor = mapColor;
@@ -74,7 +74,6 @@ namespace Phong2 {
 					texelColor = mapTexelToLinear( texelColor );
 
 					diffuseColor *= texelColor;
-
 
 				#endif
 			`);

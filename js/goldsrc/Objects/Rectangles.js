@@ -1,4 +1,4 @@
-import Four from "../Renderer";
+import Four from "../Four";
 // "C API" LOL
 export var Rectangles;
 (function (Rectangles) {

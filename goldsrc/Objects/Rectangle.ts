@@ -6,7 +6,7 @@ import Phong2 from "../Shaders/Phong2";
 
 import Util from "../Random";
 
-import Four from "../Renderer";
+import Four from "../Four";
 import { default as THREE, Mesh, Vector3, ShaderMaterial, PlaneBufferGeometry, MeshPhongMaterial } from 'three';
 
 

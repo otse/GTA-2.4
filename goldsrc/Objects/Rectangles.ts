@@ -1,6 +1,6 @@
 import Rectangle from "./Rectangle";
 
-import Four from "../Renderer";
+import Four from "../Four";
 import { default as THREE, Clock, Scene } from 'three';
 
 // "C API" LOL

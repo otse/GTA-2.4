@@ -12,7 +12,7 @@ import Spritesheets from "./Sprites/Spritesheets";
 
 export namespace KILL {
 
-	export var ply: Ply;
+	export var ply: Ply | null;
 	export var city: City;
 	
 	export function init() {
@@ -47,7 +47,7 @@ export namespace KILL {
 
 		Zoom.update();
 
-		city.update(ply.data);
+		city.update(ply!.data);
 	}
 
 }

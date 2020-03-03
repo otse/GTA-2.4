@@ -1,6 +1,6 @@
 import { Group } from "three";
 import Objects from "../Objects/Objects";
-import Four from "../Renderer";
+import Four from "../Four";
 // A chunk makes / destroys its datas / objects
 export class Chunk {
     constructor(w) {

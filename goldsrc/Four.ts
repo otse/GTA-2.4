@@ -1,6 +1,7 @@
 import { default as THREE, Clock, Scene, WebGLRenderer, PerspectiveCamera, DirectionalLight, AmbientLight, BoxBufferGeometry } from 'three';
 
 import KILL from './KILL';
+import Points from './Objects/Points';
 
 //export { THREE };
 
@@ -23,6 +24,18 @@ export namespace Four {
 
 		KILL.update();
 
+		if (KILL.ply) {
+			let data = KILL.ply.data;
+
+			let w = Points.make(
+				Math.floor(data.x) * 64,
+				Math.floor(data.y) * 64
+			);
+	
+			directionalLight.position.set(w.x, w.y, 400);
+			directionalLight.target.position.set(w.x - 80, w.y - 80, 0);
+		}
+		
 		//if (Movie.enabled) {
 		//	Movie.composer.render();
 		//}
@@ -45,18 +58,18 @@ export namespace Four {
 		scene = new Scene();
 
 		directionalLight = new DirectionalLight(0x355886, 0.5);
-
 		ambientLight = new AmbientLight('#355886'); // #5187cd
 
 		scene.add(directionalLight);
+		scene.add(directionalLight.target);
 		scene.add(ambientLight);
 
-		renderer = new WebGLRenderer({ antialias: false });
+		renderer = new WebGLRenderer({ antialias: true });
 		renderer.setPixelRatio(window.devicePixelRatio);
 		renderer.setSize(
 			window.innerWidth, window.innerHeight);
 		renderer.autoClear = true;
-		renderer.setClearColor(0x777777, 1);
+		//renderer.setClearColor(0x777777, 1);
 
 		document.body.appendChild(renderer.domElement);
 

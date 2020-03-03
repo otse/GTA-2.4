@@ -1,4 +1,4 @@
-import Four from "../Renderer";
+import Four from "../Four";
 
 export namespace Anims {
 

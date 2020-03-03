@@ -1,4 +1,4 @@
-import Four from "./Renderer";
+import Four from "./Four";
 
 import KILL from "./KILL";
 
@@ -36,7 +36,7 @@ export namespace App {
 		else if ('keyup' == event.type)
 			map[key] = KEY.UP;
 
-		if (key == 114) // f3
+		if (key == 114) // F3
 			event.preventDefault();
 
 		return;

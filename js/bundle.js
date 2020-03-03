@@ -916,7 +916,7 @@ var gta_kill = (function (exports, THREE) {
 					#ifdef BLUR
 						vec4 blurColor = texture2D( blurMap, vUv );
 						blurColor.rgb *= 0.0;
-						blurColor.a /= 1.5;
+						blurColor.a *= 3.5;
 						texelColor = blurColor + mapColor;
 					#else
 						texelColor = mapColor;
@@ -925,7 +925,6 @@ var gta_kill = (function (exports, THREE) {
 					texelColor = mapTexelToLinear( texelColor );
 
 					diffuseColor *= texelColor;
-
 
 				#endif
 			`);
@@ -1338,6 +1337,12 @@ var gta_kill = (function (exports, THREE) {
         function update() {
             Four.delta = Four.clock.getDelta();
             KILL$1.update();
+            if (KILL$1.ply) {
+                let data = KILL$1.ply.data;
+                let w = Points$1.make(Math.floor(data.x) * 64, Math.floor(data.y) * 64);
+                Four.directionalLight.position.set(w.x, w.y, 400);
+                Four.directionalLight.target.position.set(w.x - 80, w.y - 80, 0);
+            }
             //if (Movie.enabled) {
             //	Movie.composer.render();
             //}
@@ -1356,12 +1361,13 @@ var gta_kill = (function (exports, THREE) {
             Four.directionalLight = new THREE.DirectionalLight(0x355886, 0.5);
             Four.ambientLight = new THREE.AmbientLight('#355886'); // #5187cd
             Four.scene.add(Four.directionalLight);
+            Four.scene.add(Four.directionalLight.target);
             Four.scene.add(Four.ambientLight);
-            Four.renderer = new THREE.WebGLRenderer({ antialias: false });
+            Four.renderer = new THREE.WebGLRenderer({ antialias: true });
             Four.renderer.setPixelRatio(window.devicePixelRatio);
             Four.renderer.setSize(window.innerWidth, window.innerHeight);
             Four.renderer.autoClear = true;
-            Four.renderer.setClearColor(0x777777, 1);
+            //renderer.setClearColor(0x777777, 1);
             document.body.appendChild(Four.renderer.domElement);
             window.addEventListener('resize', onWindowResize, false);
         }
@@ -1389,7 +1395,7 @@ var gta_kill = (function (exports, THREE) {
                     : 3 /* AGAIN */;
             else if ('keyup' == event.type)
                 App.map[key] = 0 /* UP */;
-            if (key == 114) // f3
+            if (key == 114) // F3
                 event.preventDefault();
             return;
         }

@@ -1,6 +1,6 @@
 import BoxCutter from "./Box cutter";
 import { BoxBufferGeometry } from "three";
-import Four from "../../Renderer";
+import Four from "../../Four";
 import Util from "../../Random";
 export var Blocks;
 (function (Blocks) {

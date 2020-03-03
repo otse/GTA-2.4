@@ -1,5 +1,6 @@
 import { Clock, Scene, WebGLRenderer, PerspectiveCamera, DirectionalLight, AmbientLight } from 'three';
 import KILL from './KILL';
+import Points from './Objects/Points';
 //export { THREE };
 export var Four;
 (function (Four) {
@@ -7,6 +8,12 @@ export var Four;
     function update() {
         Four.delta = Four.clock.getDelta();
         KILL.update();
+        if (KILL.ply) {
+            let data = KILL.ply.data;
+            let w = Points.make(Math.floor(data.x) * 64, Math.floor(data.y) * 64);
+            Four.directionalLight.position.set(w.x, w.y, 400);
+            Four.directionalLight.target.position.set(w.x - 80, w.y - 80, 0);
+        }
         //if (Movie.enabled) {
         //	Movie.composer.render();
         //}
@@ -25,12 +32,13 @@ export var Four;
         Four.directionalLight = new DirectionalLight(0x355886, 0.5);
         Four.ambientLight = new AmbientLight('#355886'); // #5187cd
         Four.scene.add(Four.directionalLight);
+        Four.scene.add(Four.directionalLight.target);
         Four.scene.add(Four.ambientLight);
-        Four.renderer = new WebGLRenderer({ antialias: false });
+        Four.renderer = new WebGLRenderer({ antialias: true });
         Four.renderer.setPixelRatio(window.devicePixelRatio);
         Four.renderer.setSize(window.innerWidth, window.innerHeight);
         Four.renderer.autoClear = true;
-        Four.renderer.setClearColor(0x777777, 1);
+        //renderer.setClearColor(0x777777, 1);
         document.body.appendChild(Four.renderer.domElement);
         window.addEventListener('resize', onWindowResize, false);
     }
