@@ -11,7 +11,7 @@ import Util from "../../Random";
 export namespace Blocks {
 	export var geometry: BoxBufferGeometry
 
-	export function Init() {
+	export function init() {
 		geometry = new BoxBufferGeometry(64, 64, 64);
 
 		Util.UV.rotatePlane(geometry, 0, 3);

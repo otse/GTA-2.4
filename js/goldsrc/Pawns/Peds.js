@@ -1,10 +1,11 @@
 import Util from "../Random";
+import Anims from "../Sprites/Anims";
 //import { three } from "../three";
 export var Peds;
 (function (Peds) {
     function play(ped, word, square = undefined) {
         const timer = ped.timers[word];
-        //Anims.Update(timer);
+        Anims.update(timer);
         Util.UV.fromSheet(ped.geometry, square || timer.def.tiles[timer.i], Peds.sheet);
         return timer;
     }

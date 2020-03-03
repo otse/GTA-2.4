@@ -42,7 +42,7 @@ export class City {
         for (let y = 0; y < City.spanUneven; y++) {
             for (let x = 0; x < City.spanUneven; x++) {
                 let z = Points.make(x - m + to.x, y - m + to.y);
-                let ch = this.chunkList.GetNullable(z);
+                let ch = this.chunkList.getNullable(z);
                 if (!ch)
                     continue;
                 if (!ch.currentlyActive) {

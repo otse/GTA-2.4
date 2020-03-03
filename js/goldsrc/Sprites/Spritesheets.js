@@ -9,6 +9,12 @@ export var Spritesheets;
         return value;
     }
     Spritesheets.Get = Get;
+    function init() {
+        Spritesheets.canvas = document.createElement('canvas');
+        document.body.appendChild(Spritesheets.canvas);
+        console.log('spritessheets init ');
+    }
+    Spritesheets.init = init;
     const sheets = {
         badRoads: {
             file: 'sty/sheets/bad_roads.png',

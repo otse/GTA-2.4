@@ -301,13 +301,13 @@ var gta_kill = (function (exports, THREE) {
 
     var Blocks;
     (function (Blocks) {
-        function Init() {
+        function init() {
             Blocks.geometry = new THREE.BoxBufferGeometry(64, 64, 64);
             Util$1.UV.rotatePlane(Blocks.geometry, 0, 3);
             Util$1.UV.rotatePlane(Blocks.geometry, 1, 1);
             Util$1.UV.rotatePlane(Blocks.geometry, 2, 2);
         }
-        Blocks.Init = Init;
+        Blocks.init = init;
         function getBits(data) {
             let str = '';
             for (let i = 0; i < 5; i++)
@@ -413,6 +413,12 @@ var gta_kill = (function (exports, THREE) {
             return value;
         }
         Spritesheets.Get = Get;
+        function init() {
+            Spritesheets.canvas = document.createElement('canvas');
+            document.body.appendChild(Spritesheets.canvas);
+            console.log('spritessheets init ');
+        }
+        Spritesheets.init = init;
         const sheets = {
             badRoads: {
                 file: 'sty/sheets/bad_roads.png',
@@ -725,17 +731,16 @@ var gta_kill = (function (exports, THREE) {
     class ChunkList {
         constructor() {
             this.dict = {};
-            window['test'] = 1;
         }
-        GetNullable(w) {
+        getNullable(w) {
             let z = `${w.x} & ${w.y}`;
             let chunk = this.dict[z];
             return chunk || null;
         }
-        Get2(x, y) {
-            return this.Get({ x: x, y: y });
+        get2(x, y) {
+            return this.get({ x: x, y: y });
         }
-        Get(w) {
+        get(w) {
             let z = `${w.x} & ${w.y}`;
             let chunk = this.dict[z];
             if (!chunk) {
@@ -760,7 +765,7 @@ var gta_kill = (function (exports, THREE) {
         Datas.big = big;
         function getChunk(data) {
             let w = big(data);
-            let chunk = KILL$1.city.chunkList.Get(w);
+            let chunk = KILL$1.city.chunkList.get(w);
             return chunk;
         }
         Datas.getChunk = getChunk;
@@ -827,7 +832,7 @@ var gta_kill = (function (exports, THREE) {
             for (let y = 0; y < City.spanUneven; y++) {
                 for (let x = 0; x < City.spanUneven; x++) {
                     let z = Points$1.make(x - m + to.x, y - m + to.y);
-                    let ch = this.chunkList.GetNullable(z);
+                    let ch = this.chunkList.getNullable(z);
                     if (!ch)
                         continue;
                     if (!ch.currentlyActive) {
@@ -1015,7 +1020,7 @@ var gta_kill = (function (exports, THREE) {
     (function (Peds) {
         function play(ped, word, square = undefined) {
             const timer = ped.timers[word];
-            //Anims.Update(timer);
+            Anims$1.update(timer);
             Util$1.UV.fromSheet(ped.geometry, square || timer.def.tiles[timer.i], Peds.sheet);
             return timer;
         }
@@ -1171,12 +1176,11 @@ var gta_kill = (function (exports, THREE) {
                 this.data.x += speed * Math.sin(-this.data.r);
                 this.data.y += speed * Math.cos(-this.data.r);
                 Peds$1.play(this, this.run ? 'run' : 'walk');
-                //sc.sprite_and_anim_to_uv(this.sprite, anim.i, anim.def, this.geometry);
                 this.idle = false;
             }
             else if (!this.idle) {
-                ///Anims.Zero(this.timers.walk);
-                ///Anims.Zero(this.timers.run);
+                Anims$1.zero(this.timers.walk);
+                Anims$1.zero(this.timers.run);
                 Util$1.UV.fromSheet(this.geometry, { x: 1, y: 8 }, Peds$1.sheet);
                 this.idle = true;
             }
@@ -1299,6 +1303,12 @@ var gta_kill = (function (exports, THREE) {
     (function (KILL) {
         function init() {
             console.log('gta init');
+            Phong2$1.rig();
+            Rectangles$1.init();
+            Surfaces$1.init();
+            Blocks$1.init();
+            BoxCutter$1.init();
+            Spritesheets$1.init();
             KILL.city = new City;
             let data = {
                 type: 'Ply',
@@ -1307,11 +1317,13 @@ var gta_kill = (function (exports, THREE) {
             };
             data.remap = [40, 46, 47, 49, 50, 51][Math.floor(Math.random() * 6)];
             KILL.ply = new Ply(data);
-            KILL.city.chunkList.Get2(0, 0);
-            KILL.city.chunkList.Get2(0, 1);
+            KILL.city.chunkList.get2(0, 0);
+            KILL.city.chunkList.get2(0, 1);
         }
         KILL.init = init;
         function update() {
+            if (KILL.ply)
+                KILL.ply.update();
             Zoom$1.update();
             KILL.city.update(KILL.ply.data);
         }
@@ -1323,7 +1335,7 @@ var gta_kill = (function (exports, THREE) {
     var Four;
     (function (Four) {
         Four.delta = 0;
-        function render() {
+        function update() {
             Four.delta = Four.clock.getDelta();
             KILL$1.update();
             //if (Movie.enabled) {
@@ -1334,7 +1346,7 @@ var gta_kill = (function (exports, THREE) {
             Four.renderer.render(Four.scene, Four.camera);
             //}
         }
-        Four.render = render;
+        Four.update = update;
         function init() {
             console.log('four init');
             Four.clock = new THREE.Clock();
@@ -1360,6 +1372,7 @@ var gta_kill = (function (exports, THREE) {
             Four.renderer.setSize(window.innerWidth, window.innerHeight);
         }
     })(Four || (Four = {}));
+    window['Four'] = Four;
     var Four$1 = Four;
 
     (function (App) {
@@ -1368,7 +1381,7 @@ var gta_kill = (function (exports, THREE) {
         App.move = [0, 0];
         App.left = false;
         function onkeys(event) {
-            const key = event.key;
+            const key = event.keyCode;
             //console.log(event);
             if ('keydown' == event.type)
                 App.map[key] = (undefined == App.map[key])
@@ -1417,13 +1430,12 @@ var gta_kill = (function (exports, THREE) {
         };
         const loop = (timestamp) => {
             requestAnimationFrame(loop);
-            KILL$1.update();
-            Four$1.render();
+            Four$1.update();
             App.wheel = 0;
             delay();
         };
     })(exports.App || (exports.App = {}));
-    window['app'] = exports.App;
+    window['App'] = exports.App;
     var App = exports.App;
 
     exports.default = App;

@@ -24,7 +24,7 @@ export namespace App {
 	export var left = false;
 
 	function onkeys(event) {
-		const key = event.key;
+		const key = event.keyCode;
 
 		//console.log(event);
 
@@ -93,9 +93,7 @@ export namespace App {
 
 		requestAnimationFrame(loop);
 
-		KILL.update();
-
-		Four.render();
+		Four.update();
 
 		wheel = 0;
 
@@ -103,6 +101,6 @@ export namespace App {
 	}
 }
 
-window['app'] = App;
+window['App'] = App;
 
 export default App;

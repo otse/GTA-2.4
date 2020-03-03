@@ -5,6 +5,7 @@ import Peds from "./Peds";
 
 import App from "../Appp";
 import Util from "../Random";
+import Anims from "../Sprites/Anims";
 
 export class Ply extends Ped {
 
@@ -47,14 +48,12 @@ export class Ply extends Ped {
 
 			Peds.play(this, this.run ? 'run' : 'walk');
 
-			//sc.sprite_and_anim_to_uv(this.sprite, anim.i, anim.def, this.geometry);
-
 			this.idle = false;
 		}
 		else if (!this.idle) {
 
-			///Anims.Zero(this.timers.walk);
-			///Anims.Zero(this.timers.run);
+			Anims.zero(this.timers.walk);
+			Anims.zero(this.timers.run);
 
 			Util.UV.fromSheet(this.geometry, { x: 1, y: 8 }, Peds.sheet);
 

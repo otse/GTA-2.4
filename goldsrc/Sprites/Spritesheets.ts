@@ -14,7 +14,17 @@ export namespace Spritesheets {
 			console.warn('Spritesheet not found');
 
 		return value;
-    }
+	}
+	
+	export var canvas;
+
+	export function init() {
+		canvas = document.createElement('canvas');
+
+		document.body.appendChild(canvas);
+
+		console.log('spritessheets init ');
+	}
 
     const sheets: Readonly<List> = {
 		badRoads: {

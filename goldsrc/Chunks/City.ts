@@ -72,7 +72,7 @@ export class City {
 
 				let z = Points.make(x - m + to.x, y - m + to.y);
 
-				let ch = this.chunkList.GetNullable(z);
+				let ch = this.chunkList.getNullable(z);
 				if (!ch)
 					continue;
 

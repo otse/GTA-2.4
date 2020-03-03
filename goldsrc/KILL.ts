@@ -3,6 +3,12 @@ import City from "./Chunks/City";
 import Ply from "./Pawns/Ply";
 
 import Zoom from "./Unsorted/Zoom";
+import Phong2 from "./Shaders/Phong2";
+import Rectangles from "./Objects/Rectangles";
+import Surfaces from "./Objects/Shapes/Surfaces";
+import Blocks from "./Objects/Shapes/Blocks";
+import BoxCutter from "./Objects/Shapes/Box cutter";
+import Spritesheets from "./Sprites/Spritesheets";
 
 export namespace KILL {
 
@@ -11,6 +17,13 @@ export namespace KILL {
 	
 	export function init() {
 		console.log('gta init');
+
+		Phong2.rig();
+		Rectangles.init();
+		Surfaces.init();
+		Blocks.init();
+		BoxCutter.init();
+		Spritesheets.init();
 		
 		city = new City;
 
@@ -23,11 +36,15 @@ export namespace KILL {
 
 		ply = new Ply(data);
 
-		city.chunkList.Get2(0, 0);
-		city.chunkList.Get2(0, 1);
+		city.chunkList.get2(0, 0);
+		city.chunkList.get2(0, 1);
 	}
 
 	export function update() {
+		
+		if (ply)
+			ply.update();
+
 		Zoom.update();
 
 		city.update(ply.data);

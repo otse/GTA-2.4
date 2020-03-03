@@ -3,17 +3,16 @@ import Chunk from "./Chunk";
 class ChunkList {
     constructor() {
         this.dict = {};
-        window['test'] = 1;
     }
-    GetNullable(w) {
+    getNullable(w) {
         let z = `${w.x} & ${w.y}`;
         let chunk = this.dict[z];
         return chunk || null;
     }
-    Get2(x, y) {
-        return this.Get({ x: x, y: y });
+    get2(x, y) {
+        return this.get({ x: x, y: y });
     }
-    Get(w) {
+    get(w) {
         let z = `${w.x} & ${w.y}`;
         let chunk = this.dict[z];
         if (!chunk) {

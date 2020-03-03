@@ -9,11 +9,7 @@ class ChunkList {
 
 	private dict: Dict = {}
 
-	constructor() {
-		(window as any)['test'] = 1;
-	}
-
-	GetNullable(w: Point): Chunk | null {
+	getNullable(w: Point): Chunk | null {
 		let z = `${w.x} & ${w.y}`;
 
 		let chunk = this.dict[z];
@@ -21,11 +17,11 @@ class ChunkList {
 		return chunk || null;
 	}
 
-	Get2(x: number, y: number): Chunk {
-		return this.Get({ x: x, y: y });
+	get2(x: number, y: number): Chunk {
+		return this.get({ x: x, y: y });
 	}
 	
-	Get(w: Point): Chunk {
+	get(w: Point): Chunk {
 		let z = `${w.x} & ${w.y}`;
 
 		let chunk = this.dict[z];

@@ -4,7 +4,7 @@ import KILL from './KILL';
 export var Four;
 (function (Four) {
     Four.delta = 0;
-    function render() {
+    function update() {
         Four.delta = Four.clock.getDelta();
         KILL.update();
         //if (Movie.enabled) {
@@ -15,7 +15,7 @@ export var Four;
         Four.renderer.render(Four.scene, Four.camera);
         //}
     }
-    Four.render = render;
+    Four.update = update;
     function init() {
         console.log('four init');
         Four.clock = new Clock();
@@ -41,4 +41,5 @@ export var Four;
         Four.renderer.setSize(window.innerWidth, window.innerHeight);
     }
 })(Four || (Four = {}));
+window['Four'] = Four;
 export default Four;

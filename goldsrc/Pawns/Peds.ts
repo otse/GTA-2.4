@@ -6,6 +6,8 @@ import Util from "../Random";
 
 import { ShaderMaterial, MeshBasicMaterial } from "three";
 
+import Anims from "../Sprites/Anims";
+
 //import { three } from "../three";
 
 export namespace Peds {
@@ -14,7 +16,7 @@ export namespace Peds {
 
 		const timer = ped.timers[word];
 
-		//Anims.Update(timer);
+		Anims.update(timer);
 
 		Util.UV.fromSheet(ped.geometry,
 			square || timer.def.tiles![timer.i],

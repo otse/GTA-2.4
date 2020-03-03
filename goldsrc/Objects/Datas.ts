@@ -28,7 +28,7 @@ namespace Datas {
 	export function getChunk(data: Point): Chunk {
 		let w = big(data);
 
-		let chunk = KILL.city.chunkList.Get(w);
+		let chunk = KILL.city.chunkList.get(w);
 
 		return chunk;
 	}

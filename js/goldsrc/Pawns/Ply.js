@@ -2,6 +2,7 @@ import Ped from "./Ped";
 import Peds from "./Peds";
 import App from "../Appp";
 import Util from "../Random";
+import Anims from "../Sprites/Anims";
 export class Ply extends Ped {
     constructor(data) {
         super(data);
@@ -29,12 +30,11 @@ export class Ply extends Ped {
             this.data.x += speed * Math.sin(-this.data.r);
             this.data.y += speed * Math.cos(-this.data.r);
             Peds.play(this, this.run ? 'run' : 'walk');
-            //sc.sprite_and_anim_to_uv(this.sprite, anim.i, anim.def, this.geometry);
             this.idle = false;
         }
         else if (!this.idle) {
-            ///Anims.Zero(this.timers.walk);
-            ///Anims.Zero(this.timers.run);
+            Anims.zero(this.timers.walk);
+            Anims.zero(this.timers.run);
             Util.UV.fromSheet(this.geometry, { x: 1, y: 8 }, Peds.sheet);
             this.idle = true;
         }

@@ -4,13 +4,13 @@ import Four from "../../Renderer";
 import Util from "../../Random";
 export var Blocks;
 (function (Blocks) {
-    function Init() {
+    function init() {
         Blocks.geometry = new BoxBufferGeometry(64, 64, 64);
         Util.UV.rotatePlane(Blocks.geometry, 0, 3);
         Util.UV.rotatePlane(Blocks.geometry, 1, 1);
         Util.UV.rotatePlane(Blocks.geometry, 2, 2);
     }
-    Blocks.Init = Init;
+    Blocks.init = init;
     function getBits(data) {
         let str = '';
         for (let i = 0; i < 5; i++)

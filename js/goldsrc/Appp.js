@@ -7,7 +7,7 @@ export var App;
     App.move = [0, 0];
     App.left = false;
     function onkeys(event) {
-        const key = event.key;
+        const key = event.keyCode;
         //console.log(event);
         if ('keydown' == event.type)
             App.map[key] = (undefined == App.map[key])
@@ -56,11 +56,10 @@ export var App;
     };
     const loop = (timestamp) => {
         requestAnimationFrame(loop);
-        KILL.update();
-        Four.render();
+        Four.update();
         App.wheel = 0;
         delay();
     };
 })(App || (App = {}));
-window['app'] = App;
+window['App'] = App;
 export default App;

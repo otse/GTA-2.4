@@ -17,7 +17,7 @@ export namespace Four {
 	export var ambientLight: AmbientLight
 	export var directionalLight: DirectionalLight
 
-	export function render() {
+	export function update() {
 
 		delta = clock.getDelta();
 
@@ -73,5 +73,7 @@ export namespace Four {
 			window.innerWidth, window.innerHeight);
 	}
 }
+
+window['Four'] = Four;
 
 export default Four;

@@ -15,7 +15,7 @@ var Datas;
     Datas.big = big;
     function getChunk(data) {
         let w = big(data);
-        let chunk = KILL.city.chunkList.Get(w);
+        let chunk = KILL.city.chunkList.get(w);
         return chunk;
     }
     Datas.getChunk = getChunk;
