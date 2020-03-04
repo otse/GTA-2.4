@@ -11,7 +11,7 @@ export namespace GenRoads {
 	export function oneway(
 		w: Gen.Truple, segs: number, sheet: Strings
 	) {
-		
+
 	}
 
 	export function onewayVert(
@@ -86,17 +86,22 @@ export namespace GenRoads {
 
 		let staging = new StagingArea;
 
-		let datas = twolaneVert(w, segs, sheet);
+		let datas;
+
+		datas = twolaneHorz(w, segs, sheet);
 
 		staging.addDatas(datas);
+		
+		if (axis == 1)
+			staging.turnCcw(1);
 
 		staging.deliverAll();
 	}
 
+	// only write horz generators from now on
 	export function twolaneVert(
 		w: Gen.Truple, segs: number, sheet: Strings
 	) {
-
 		let datas: Data2[] = [];
 
 		const lanes = 2;
@@ -135,12 +140,13 @@ export namespace GenRoads {
 		}
 
 		return datas;
-
 	}
 
 	export function twolaneHorz(
 		w: Gen.Truple, segs: number, sheet: Strings
-		) {
+	) {
+
+		let datas: Data2[] = [];
 
 		const lanes = 2;
 
@@ -173,9 +179,13 @@ export namespace GenRoads {
 					road.f = true;
 				}
 
+				datas.push(road);
+
 				///Datas.replaceDeliver(road);
 			}
 		}
+
+		return datas;
 	}
 
 	// This is a same-way road

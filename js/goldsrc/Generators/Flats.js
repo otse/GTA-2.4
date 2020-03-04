@@ -73,9 +73,9 @@ export var GenFlats;
                 block.faces[0] = bmp;
             if (w[1] == min[1])
                 block.faces[3] = bmp;
-            Datas.Deliver(block);
+            Datas.deliver(block);
         };
-        Gen.Generate(min, max, func);
+        Gen.loop(min, max, func);
     }
     GenFlats.Type1 = Type1;
 })(GenFlats || (GenFlats = {}));

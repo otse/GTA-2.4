@@ -5,8 +5,6 @@ import Chunk from "../Chunks/Chunk";
 
 export namespace GenDeline {
 
-	export function Horz(w: [number, number, number], width, height) {
-
 		let chunked: Chunk[] = [];
 
 		let x = 0;

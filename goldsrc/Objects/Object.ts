@@ -3,7 +3,7 @@ import Data2 from "./Data";
 // in 22 this separation was called the whatsit-thing;
 // for 2.3 its renamed object-data
 
-var ignoreData: Data2 = { x: 0, y: 0, type: 'Ignore' };
+var ignoreData: Data2 = { x: 0, y: 0, z: 0, r: 0, type: 'Ignore' };
 
 export class Object2 {
 	data: Data2

@@ -1201,6 +1201,9 @@ var gta_kill = (function (exports, THREE) {
         }
     }
 
+    // For making vertical ~> horizontal
+    // So you only need to make one
+    // vertical generator
     class StagingArea {
         constructor() {
             this.datas = [];
@@ -1234,13 +1237,23 @@ var gta_kill = (function (exports, THREE) {
                 this.max[2] = Math.max(data.z, this.max[2]);
             }
         }
-        turnCCW(turns) {
+        turnCcw(n) {
             this.findExtents();
             for (let y = 0; y < this.max[1]; y++) {
                 for (let x = 0; x < this.min[0]; x++) {
                 }
             }
+            for (let data of this.datas) {
+                let p = rotate(this.min[0], this.min[1], data.x, data.y, n * 90);
+                data.r += n;
+                data.x = p[0];
+                data.y = p[1] + (this.max[0] - this.min[0]);
+            }
         }
+    }
+    function rotate(cx, cy, x, y, angle) {
+        var radians = (Math.PI / 180) * angle, cos = Math.cos(radians), sin = Math.sin(radians), nx = (cos * (x - cx)) + (sin * (y - cy)) + cx, ny = (cos * (y - cy)) - (sin * (x - cx)) + cy;
+        return [Math.round(nx), Math.round(ny)];
     }
 
     var GenRoads;
@@ -1304,11 +1317,15 @@ var gta_kill = (function (exports, THREE) {
             // Go 0 or 1
             console.log('twolane axis ', axis);
             let staging = new StagingArea;
-            let datas = twolaneVert(w, segs, sheet);
+            let datas;
+            datas = twolaneHorz(w, segs, sheet);
             staging.addDatas(datas);
+            if (axis == 1)
+                staging.turnCcw(1);
             staging.deliverAll();
         }
         GenRoads.twolane = twolane;
+        // only write horz generators from now on
         function twolaneVert(w, segs, sheet) {
             let datas = [];
             const lanes = 2;
@@ -1342,6 +1359,7 @@ var gta_kill = (function (exports, THREE) {
         }
         GenRoads.twolaneVert = twolaneVert;
         function twolaneHorz(w, segs, sheet) {
+            let datas = [];
             const lanes = 2;
             let seg = 0;
             for (; seg < segs; seg++) {
@@ -1366,9 +1384,11 @@ var gta_kill = (function (exports, THREE) {
                         road.square = 'sideStopLine'; // sideStopLine
                         road.f = true;
                     }
+                    datas.push(road);
                     ///Datas.replaceDeliver(road);
                 }
             }
+            return datas;
         }
         GenRoads.twolaneHorz = twolaneHorz;
         // This is a same-way road
@@ -1913,11 +1933,11 @@ var gta_kill = (function (exports, THREE) {
             GenFlats$1.Type1([4, 7, 0], [6, 6, 3]); // Apts above
             GenFlats$1.Type1([4, 0, 0], [4, 4, 4]); // Office
             GenPavements$1.Fill([4, 4, 0], 4, 1);
-            // The roads around the vert office
+            // The roads around the office with parking
             GenRoads$1.twolane(0, [2, 5, 0], 9, 'mixedRoads'); // horz
             GenRoads$1.twolane(0, [2, -2, 0], 9, 'mixedRoads'); // horz
-            //Deline.mixedToBad([2, 4, 0], 9, 4);
-            //Deline.mixedToBad([2, -3, 0], 9, 4);
+            //GenDeline.mixedToBad([2, 4, 0], 9, 4);
+            //GenDeline.mixedToBad([2, -3, 0], 9, 4);
             GenParking$1.OnewayRightVert([8, -1, 0], 7, 2, 'mixedRoads');
             GenDeline$1.Horz([7, 0, 0], 3, 4);
             // Deline around the apts
@@ -1932,7 +1952,7 @@ var gta_kill = (function (exports, THREE) {
             GenParking$1.LeftBigHorz([11, 1, 0], 10, 3, 'greyRoads');
             GenDeline$1.Horz([11, 1, 0], 3, 4); // Dash It!
             GenRoads$1.twolaneVert([22, -25, 0], 50, 'badRoads');
-            GenRoads$1.twolaneHorz([11, -2, 0], 12, 'badRoads');
+            GenRoads$1.twolane(0, [11, -2, 0], 12, 'badRoads');
             GenPavements$1.Fill([12, -3, 0], 9, 1);
         }
         GenStrip.aptsOffice = aptsOffice;

@@ -1,6 +1,6 @@
 // in 22 this separation was called the whatsit-thing;
 // for 2.3 its renamed object-data
-var ignoreData = { x: 0, y: 0, type: 'Ignore' };
+var ignoreData = { x: 0, y: 0, z: 0, r: 0, type: 'Ignore' };
 export class Object2 {
     constructor(data) {
         // the Defaults

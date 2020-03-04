@@ -61,7 +61,12 @@ export var GenRoads;
         // Go 0 or 1
         console.log('twolane axis ', axis);
         let staging = new StagingArea;
-        let datas = twolaneVert(w, segs, sheet);
+        let datas;
+        if (axis == 0) {
+            datas = twolaneVert(w, segs, sheet);
+        }
+        else
+            datas = twolaneVert(w, segs, sheet);
         staging.addDatas(datas);
         staging.deliverAll();
     }
@@ -99,6 +104,7 @@ export var GenRoads;
     }
     GenRoads.twolaneVert = twolaneVert;
     function twolaneHorz(w, segs, sheet) {
+        let datas = [];
         const lanes = 2;
         let seg = 0;
         for (; seg < segs; seg++) {
@@ -123,9 +129,11 @@ export var GenRoads;
                     road.square = 'sideStopLine'; // sideStopLine
                     road.f = true;
                 }
+                datas.push(road);
                 ///Datas.replaceDeliver(road);
             }
         }
+        return datas;
     }
     GenRoads.twolaneHorz = twolaneHorz;
     // This is a same-way road

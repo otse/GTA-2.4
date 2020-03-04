@@ -1,4 +1,4 @@
-import Datas from "../objects/datas";
+import Datas from "../Objects/Datas";
 export var GenPlaza;
 (function (GenPlaza) {
     function Fill(w, width, height) {
@@ -16,7 +16,7 @@ export var GenPlaza;
                     y: y + w[1],
                     z: w[2],
                 };
-                Datas.Deliver(pav);
+                Datas.deliver(pav);
             }
         }
     }

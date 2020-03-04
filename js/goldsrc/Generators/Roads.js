@@ -2,10 +2,10 @@ import Datas from '../Objects/Datas';
 import StagingArea from './Staging area';
 export var GenRoads;
 (function (GenRoads) {
-    function Oneway(w, segs, sheet) {
+    function oneway(w, segs, sheet) {
     }
-    GenRoads.Oneway = Oneway;
-    function OnewayVert(w, segs, sheet) {
+    GenRoads.oneway = oneway;
+    function onewayVert(w, segs, sheet) {
         let seg = 0;
         for (; seg < segs; seg++) {
             let road = {
@@ -27,8 +27,8 @@ export var GenRoads;
             Datas.replaceDeliver(road);
         }
     }
-    GenRoads.OnewayVert = OnewayVert;
-    function OnewayHorz(w, segs) {
+    GenRoads.onewayVert = onewayVert;
+    function onewayHorz(w, segs) {
         /*const lanes = 1;
 
         let seg = 0;
@@ -56,15 +56,21 @@ export var GenRoads;
 
         }*/
     }
-    GenRoads.OnewayHorz = OnewayHorz;
-    function Twolane(axis, w, segs, sheet) {
+    GenRoads.onewayHorz = onewayHorz;
+    function twolane(axis, w, segs, sheet) {
         // Go 0 or 1
+        console.log('twolane axis ', axis);
         let staging = new StagingArea;
-        let datas = TwolaneVert(w, segs, sheet);
+        let datas;
+        datas = twolaneHorz(w, segs, sheet);
         staging.addDatas(datas);
+        if (axis == 1)
+            staging.turnCcw(1);
+        staging.deliverAll();
     }
-    GenRoads.Twolane = Twolane;
-    function TwolaneVert(w, segs, sheet) {
+    GenRoads.twolane = twolane;
+    // only write horz generators from now on
+    function twolaneVert(w, segs, sheet) {
         let datas = [];
         const lanes = 2;
         let seg = 0;
@@ -90,13 +96,14 @@ export var GenRoads;
                     road.square = 'sideStopLine';
                 }
                 datas.push(road);
-                //Datas.ReplaceDeliver(road);
+                ///Datas.replaceDeliver(road);
             }
         }
         return datas;
     }
-    GenRoads.TwolaneVert = TwolaneVert;
-    function TwolaneHorz(w, segs, sheet) {
+    GenRoads.twolaneVert = twolaneVert;
+    function twolaneHorz(w, segs, sheet) {
+        let datas = [];
         const lanes = 2;
         let seg = 0;
         for (; seg < segs; seg++) {
@@ -121,13 +128,15 @@ export var GenRoads;
                     road.square = 'sideStopLine'; // sideStopLine
                     road.f = true;
                 }
-                Datas.replaceDeliver(road);
+                datas.push(road);
+                ///Datas.replaceDeliver(road);
             }
         }
+        return datas;
     }
-    GenRoads.TwolaneHorz = TwolaneHorz;
+    GenRoads.twolaneHorz = twolaneHorz;
     // This is a same-way road
-    function HighwayVert(w, segs, lanes) {
+    function highwayVert(w, segs, lanes) {
         let seg = 0;
         for (; seg < segs; seg++) {
             let lane = 0;
@@ -152,10 +161,10 @@ export var GenRoads;
                     !lane && seg == segs - 2) {
                     road.square = 'sideStopLine';
                 }*/
-                Datas.replaceDeliver(road);
+                ///Datas.replaceDeliver(road);
             }
         }
     }
-    GenRoads.HighwayVert = HighwayVert;
+    GenRoads.highwayVert = highwayVert;
 })(GenRoads || (GenRoads = {}));
 export default GenRoads;

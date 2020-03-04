@@ -3,6 +3,11 @@ import Datas from "../Objects/Datas";
 
 import Gen from "./Gen";
 
+// For making vertical ~> horizontal
+
+// So you only need to make one
+// vertical generator
+
 class StagingArea {
 
 	min: [number, number, number]
@@ -11,7 +16,7 @@ class StagingArea {
 	datas: Data2[] = []
 
 	constructor() {
-		
+
 	}
 
 	addData(data: Data2) {
@@ -35,7 +40,7 @@ class StagingArea {
 		let set = false;
 
 		for (let data of this.datas) {
-			
+
 			// aabb
 			if (!set) {
 				this.min = [data.x, data.y, data.z!];
@@ -52,17 +57,34 @@ class StagingArea {
 		}
 	}
 
-	turnCCW(turns: number) {
+	turnCcw(n: 1 | 2 | 3) {
+		
 		this.findExtents();
 
 		let newDatas: Data2[] = [];
 
 		for (let y = 0; y < this.max[1]; y++) {
 			for (let x = 0; x < this.min[0]; x++) {
-
 			}
 		}
+
+		for (let data of this.datas) {
+			let p = rotate(this.min[0], this.min[1], data.x, data.y, n * 90);
+
+			data.r! += n;
+			data.x = p[0];
+			data.y = p[1] + (this.max[0] - this.min[0]);
+		}
 	}
+}
+
+function rotate(cx, cy, x, y, angle) {
+	var radians = (Math.PI / 180) * angle,
+		cos = Math.cos(radians),
+		sin = Math.sin(radians),
+		nx = (cos * (x - cx)) + (sin * (y - cy)) + cx,
+		ny = (cos * (y - cy)) - (sin * (x - cx)) + cy;
+	return [Math.round(nx), Math.round(ny)];
 }
 
 

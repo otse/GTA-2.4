@@ -1,4 +1,7 @@
 import Datas from "../Objects/Datas";
+// For making vertical ~> horizontal
+// So you only need to make one
+// vertical generator
 class StagingArea {
     constructor() {
         this.datas = [];
@@ -32,13 +35,23 @@ class StagingArea {
             this.max[2] = Math.max(data.z, this.max[2]);
         }
     }
-    turnCCW(turns) {
+    turnCcw(n) {
         this.findExtents();
         let newDatas = [];
         for (let y = 0; y < this.max[1]; y++) {
             for (let x = 0; x < this.min[0]; x++) {
             }
         }
+        for (let data of this.datas) {
+            let p = rotate(this.min[0], this.min[1], data.x, data.y, n * 90);
+            data.r += n;
+            data.x = p[0];
+            data.y = p[1] + (this.max[0] - this.min[0]);
+        }
     }
+}
+function rotate(cx, cy, x, y, angle) {
+    var radians = (Math.PI / 180) * angle, cos = Math.cos(radians), sin = Math.sin(radians), nx = (cos * (x - cx)) + (sin * (y - cy)) + cx, ny = (cos * (y - cy)) - (sin * (x - cx)) + cy;
+    return [Math.round(nx), Math.round(ny)];
 }
 export default StagingArea;

@@ -1,4 +1,4 @@
-import Datas from "../objects/datas";
+import Datas from "../Objects/Datas";
 export var GenPavements;
 (function (GenPavements) {
     function Fill(w, width, height) {
@@ -16,7 +16,7 @@ export var GenPavements;
                     y: y + w[1],
                     z: w[2],
                 };
-                Datas.Deliver(pav);
+                Datas.deliver(pav);
             }
         }
     }
@@ -35,7 +35,7 @@ export var GenPavements;
                     x: lane + x,
                     y: seg + y
                 };
-                Datas.Deliver(pav);
+                Datas.deliver(pav);
             }
         }
     }
@@ -54,7 +54,7 @@ export var GenPavements;
                     x: seg + y,
                     y: lane + x,
                 };
-                Datas.Deliver(pav);
+                Datas.deliver(pav);
             }
         }
     }

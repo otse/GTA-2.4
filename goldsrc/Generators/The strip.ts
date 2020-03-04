@@ -1,8 +1,8 @@
-import GenRoads from "./Gen roads";
-import GenPavements from "./Gen pavements";
-import GenFlats from "./Gen flats";
-import GenDeline from "./Gen deline";
-import GenParking from "./Gen parking";
+import GenRoads from "./Roads";
+import GenPavements from "./Pavements";
+import GenFlats from "./Flats";
+import GenDeline from "./Deline";
+import GenParking from "./Parking";
 
 export namespace GenStrip {
 	export function aptsOffice() {
@@ -23,12 +23,12 @@ export namespace GenStrip {
 		GenFlats.Type1([4, 0, 0], [4, 4, 4]); // Office
 		GenPavements.Fill([4, 4, 0], 4, 1);
 		
-		// The roads around the vert office
+		// The roads around the office with parking
 		GenRoads.twolane(0, [2, 5, 0], 9, 'mixedRoads'); // horz
 		GenRoads.twolane(0, [2, -2, 0], 9, 'mixedRoads'); // horz
 		
-		//Deline.mixedToBad([2, 4, 0], 9, 4);
-		//Deline.mixedToBad([2, -3, 0], 9, 4);
+		//GenDeline.mixedToBad([2, 4, 0], 9, 4);
+		//GenDeline.mixedToBad([2, -3, 0], 9, 4);
 		
 		GenParking.OnewayRightVert([8, -1, 0], 7, 2, 'mixedRoads');
 		GenDeline.Horz([7, 0, 0], 3, 4);
@@ -49,7 +49,7 @@ export namespace GenStrip {
 
 		GenRoads.twolaneVert([22, -25, 0], 50, 'badRoads');
 
-		GenRoads.twolaneHorz([11, -2, 0], 12, 'badRoads');
+		GenRoads.twolane(0, [11, -2, 0], 12, 'badRoads');
 		GenPavements.Fill([12, -3, 0], 9, 1);
 
 	}

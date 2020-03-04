@@ -2,7 +2,7 @@ import Data2 from "../Objects/Data";
 import Datas from "../Objects/Datas";
 
 import Gen from "./Gen";
-import GenRoads from "./Gen roads";
+import GenRoads from "./Roads";
 
 //import { parkedCarNames } from "../Cars/Script codes";
 //import Cars from "../cars/cars";
