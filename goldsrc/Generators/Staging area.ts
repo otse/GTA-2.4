@@ -1,7 +1,7 @@
 import Data2 from "../Objects/Data";
 import Datas from "../Objects/Datas";
 
-import Gen1 from "./Generators";
+import Gen1 from "./Generators1";
 
 // For making vertical ~> horizontal
 

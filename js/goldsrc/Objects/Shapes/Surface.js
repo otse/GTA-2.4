@@ -2,7 +2,7 @@ import Object2 from "../Object";
 import Surfaces from "../Shapes/Surfaces";
 import Spritesheets from "../../Sprites/Spritesheets";
 import Util from "../../Random";
-import { Mesh, MeshPhongMaterial, Color, DoubleSide } from "three";
+import { default as THREE, Mesh, MeshPhongMaterial, Color, DoubleSide } from "three";
 const defaultSty = 'sty/commercial/storefront/577.bmp';
 export class Surface extends Object2 {
     constructor(data) {
@@ -41,6 +41,8 @@ export class Surface extends Object2 {
             }*/
             //else {
             map = Util.loadTexture(spritesheet.file);
+            map.wrapS = THREE.ClampToEdgeWrapping;
+            map.wrapT = THREE.ClampToEdgeWrapping;
             Util.UV.fromSheet(this.geometry, square, spritesheet);
             //}
         }

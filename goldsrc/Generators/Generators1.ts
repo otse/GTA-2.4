@@ -2,6 +2,8 @@ import Data2 from "../Objects/Data";
 import Datas from "../Objects/Datas";
 import StagingArea from "./Staging area";
 
+import Cars from "../Cars/Cars";
+
 export namespace Gen1 {
 
 	type RoadMode = 'Normal' | 'Adapt';
@@ -299,7 +301,7 @@ export namespace Gen1 {
 
 	export namespace GenParking {
 
-		export function onewayRightVert(
+		export function onewayRight(
 			w: [number, number, number], segs: number, lanes: number, sheet: GenRoads.Strings) {
 
 			let staging = new StagingArea;
@@ -316,7 +318,7 @@ export namespace Gen1 {
 					let road: Data2 = {
 						type: 'Surface',
 						sheet: sheet,
-						square: 'sideLine',
+						square: 'sideClear',
 						x: lane + w[0],
 						y: seg + w[1],
 						z: w[2],
@@ -325,7 +327,7 @@ export namespace Gen1 {
 
 					let parkedCar: Data2 = {
 						type: 'Car',
-						///carName: Cars.GetRandomName(),
+						carName: Cars.GetRandomName(),
 						x: road.x,
 						y: road.y,
 						z: road.z
@@ -426,7 +428,7 @@ export namespace Gen1 {
 
 					let parkedCar: Data2 = {
 						type: 'Car',
-						///carName: Cars.GetRandomName(),
+						carName: Cars.GetRandomName(),
 						x: road.x,
 						y: road.y,
 						z: road.z

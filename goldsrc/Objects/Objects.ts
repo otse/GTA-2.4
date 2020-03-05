@@ -3,6 +3,7 @@ import Object2 from "./Object";
 
 import Block from "./Shapes/Block";
 import Surface from "./Shapes/Surface";
+import Car from "../Cars/Car";
 
 export namespace Objects {
 	function factory(data: Data2): Object2 | null {
@@ -11,7 +12,7 @@ export namespace Objects {
 			//case 'Ped': return new Ped(data);
 			//case 'Player': return new Player(data);
 
-			//case 'Car': return new Car(data);
+			case 'Car': return new Car(data);
 			case 'Block': return new Block(data);
 			case 'Surface': return new Surface(data);
 			//case 'Lamp': return new Lamp(data);

@@ -7,7 +7,7 @@ import Phong2 from "../Shaders/Phong2";
 import Util from "../Random";
 
 import Four from "../Four";
-import { default as THREE, Mesh, Vector3, ShaderMaterial, PlaneBufferGeometry, MeshPhongMaterial } from 'three';
+import { default as THREE, Mesh, Vector3, ShaderMaterial, PlaneBufferGeometry, MeshPhongMaterial, MeshBasicMaterial } from 'three';
 
 
 interface Info {
@@ -49,28 +49,43 @@ class Rectangle extends Object2 {
 
 	private makeMeshes(info: Info) {
 
+		let map = Util.loadTexture(this.data.sty);
+		let blurMap = Util.loadTexture(info.blur);
+		let shadowMap = Util.loadTexture(info.shadow);
+
 		this.geometry = new PlaneBufferGeometry(
 			this.data.width, this.data.height, 1);
 
 		this.material = Phong2.make({
-			map: Util.loadTexture(this.data.sty),
-			blurMap: Util.loadTexture(info.blur),
-			PINK: true,
-			BLUR: true,
+			name: 'Phong2',
+			transparent: true,
+			map: map,
+		}, {
+			blurMap: blurMap,
+			PINK: true
 		});
 
+		/*let materialShadow = new MeshBasicMaterial({
+			map: Util.loadTexture(this.data.sty),
+			//color: 0x0,
+			transparent: true
+		});*/
+
 		let materialShadow = Phong2.make({
-			map: Util.loadTexture(info.shadow),
+			name: 'Phong2',
+			transparent: true,
+			map: map,
+		}, {
+			map: shadowMap,
 			PINK: true,
 			DARKEN: true
 		});
 
-		materialShadow.opacity = 0.25;
-		materialShadow.color = new THREE.Color('black');
+		materialShadow.opacity = 0.4;
+		materialShadow.color = new THREE.Color(0x0);
 
 		this.mesh = new THREE.Mesh(this.geometry, this.material);
 		this.mesh.frustumCulled = false;
-		this.mesh.receiveShadow = true;
 
 		this.meshShadow = new THREE.Mesh(this.geometry, materialShadow);
 		this.meshShadow.frustumCulled = false;
@@ -99,8 +114,9 @@ class Rectangle extends Object2 {
 		// Shade
 		this.meshShadow.position.copy(this.where);
 
-		this.meshShadow.position.x += 3;
-		this.meshShadow.position.y -= 3;
+		this.meshShadow.position.x += 4;
+		this.meshShadow.position.y -= 2;
+		//this.meshShadow.position.z += 3;
 
 		this.mesh.rotation.z = this.data.r!;
 		this.meshShadow.rotation.z = this.data.r!;

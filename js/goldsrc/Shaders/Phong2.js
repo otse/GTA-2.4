@@ -7,15 +7,10 @@ var Phong2;
     function rig() {
     }
     Phong2.rig = rig;
-    function make(p) {
-        let o = {
-            name: 'Phong2',
-            transparent: true,
-            map: p.map,
-        };
-        let customMaterial = new MeshPhongMaterial(o);
+    function make(phongProperties, p) {
+        let customMaterial = new MeshPhongMaterial(phongProperties);
         customMaterial.onBeforeCompile = (shader) => {
-            if (p.BLUR)
+            if (p.blurMap)
                 shader.uniforms.blurMap = { value: p.blurMap };
             shader.uniforms.pink = { value: new Vector3(1, 0, 1) };
             shader.fragmentShader = shader.fragmentShader.replace(`#define PHONG`, `
@@ -23,10 +18,10 @@ var Phong2;
 				#define PHONG2
 				`
                 +
-                    (p.BLUR ? '#define BLUR \n' : '') +
+                    (p.blurMap ? '#define BLUR \n' : '') +
                 (p.PINK ? '#define PINK \n' : '') +
                 `
-
+				
 				#ifdef BLUR
 					uniform sampler2D blurMap;
 				#endif
@@ -49,7 +44,7 @@ var Phong2;
 					#ifdef BLUR
 						vec4 blurColor = texture2D( blurMap, vUv );
 						blurColor.rgb *= 0.0;
-						blurColor.a *= 3.5;
+						blurColor.a /= 1.5;
 						texelColor = blurColor + mapColor;
 					#else
 						texelColor = mapColor;

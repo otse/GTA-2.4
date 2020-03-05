@@ -610,6 +610,8 @@ var gta_kill = (function (exports, THREE) {
                 }*/
                 //else {
                 map = Util$1.loadTexture(spritesheet.file);
+                map.wrapS = THREE__default.ClampToEdgeWrapping;
+                map.wrapT = THREE__default.ClampToEdgeWrapping;
                 Util$1.UV.fromSheet(this.geometry, square, spritesheet);
                 //}
             }
@@ -663,13 +665,2518 @@ var gta_kill = (function (exports, THREE) {
         }
     }
 
+    // "C API" LOL
+    var Rectangles;
+    (function (Rectangles) {
+        function init() {
+        }
+        Rectangles.init = init;
+        function show(rectangle) {
+            console.log('Rectangles add ' + rectangle.data.type);
+            Four$1.scene.add(rectangle.mesh);
+            Four$1.scene.add(rectangle.meshShadow);
+        }
+        Rectangles.show = show;
+        function hide(rectangle) {
+            Four$1.scene.remove(rectangle.mesh);
+            Four$1.scene.remove(rectangle.meshShadow);
+        }
+        Rectangles.hide = hide;
+    })(Rectangles || (Rectangles = {}));
+    var Rectangles$1 = Rectangles;
+
+    var Phong2;
+    (function (Phong2) {
+        // Taken from
+        // https://raw.githubusercontent.com/mrdoob/three.js/dev/src/renderers/shaders/ShaderLib/meshphong_frag.glsl.js
+        //var customMaterial: THREE.ShaderMaterial;
+        function rig() {
+        }
+        Phong2.rig = rig;
+        function make(phongProperties, p) {
+            let customMaterial = new THREE.MeshPhongMaterial(phongProperties);
+            customMaterial.onBeforeCompile = (shader) => {
+                if (p.blurMap)
+                    shader.uniforms.blurMap = { value: p.blurMap };
+                shader.uniforms.pink = { value: new THREE.Vector3(1, 0, 1) };
+                shader.fragmentShader = shader.fragmentShader.replace(`#define PHONG`, `
+				#define PHONG
+				#define PHONG2
+				`
+                    +
+                        (p.blurMap ? '#define BLUR \n' : '') +
+                    (p.PINK ? '#define PINK \n' : '') +
+                    `
+				
+				#ifdef BLUR
+					uniform sampler2D blurMap;
+				#endif
+			`);
+                shader.fragmentShader = shader.fragmentShader.replace(`#include <map_fragment>`, `
+				#ifdef USE_MAP
+				
+					vec4 texelColor = vec4(0);
+					
+					vec4 mapColor = texture2D( map, vUv );
+
+					#ifdef PINK
+						// Pink pixels
+						if ( mapColor.rgb == vec3(1, 0, 1) ) {
+							mapColor.a = 0.0;
+							mapColor.rgb *= 0.0;
+						}
+					#endif
+
+					#ifdef BLUR
+						vec4 blurColor = texture2D( blurMap, vUv );
+						blurColor.rgb *= 0.0;
+						blurColor.a /= 1.5;
+						texelColor = blurColor + mapColor;
+					#else
+						texelColor = mapColor;
+					#endif
+
+					texelColor = mapTexelToLinear( texelColor );
+
+					diffuseColor *= texelColor;
+
+				#endif
+			`);
+            }; // onBeforeCompile
+            return customMaterial;
+        }
+        Phong2.make = make;
+    })(Phong2 || (Phong2 = {}));
+    var Phong2$1 = Phong2;
+
+    class Rectangle extends Object2 {
+        constructor(data) {
+            super(data);
+            this.lift = 2;
+            // the Defaults
+            if (!this.data.width)
+                this.data.width = 20;
+            if (!this.data.height)
+                this.data.height = 20;
+            this.where = new THREE.Vector3;
+            //Ready(); // used by consumer class
+        }
+        makeRectangle(params) {
+            this.makeMeshes(params);
+            this.updatePosition();
+            Rectangles$1.show(this);
+        }
+        makeMeshes(info) {
+            let map = Util$1.loadTexture(this.data.sty);
+            let blurMap = Util$1.loadTexture(info.blur);
+            let shadowMap = Util$1.loadTexture(info.shadow);
+            this.geometry = new THREE.PlaneBufferGeometry(this.data.width, this.data.height, 1);
+            this.material = Phong2$1.make({
+                name: 'Phong2',
+                transparent: true,
+                map: map,
+            }, {
+                blurMap: blurMap,
+                PINK: true
+            });
+            /*let materialShadow = new MeshBasicMaterial({
+                map: Util.loadTexture(this.data.sty),
+                //color: 0x0,
+                transparent: true
+            });*/
+            let materialShadow = Phong2$1.make({
+                name: 'Phong2',
+                transparent: true,
+                map: map,
+            }, {
+                map: shadowMap,
+                PINK: true,
+                DARKEN: true
+            });
+            materialShadow.opacity = 0.4;
+            materialShadow.color = new THREE__default.Color(0x0);
+            this.mesh = new THREE__default.Mesh(this.geometry, this.material);
+            this.mesh.frustumCulled = false;
+            this.meshShadow = new THREE__default.Mesh(this.geometry, materialShadow);
+            this.meshShadow.frustumCulled = false;
+        }
+        destroy() {
+            super.destroy();
+            Rectangles$1.hide(this);
+            this.geometry.dispose();
+            this.material.dispose();
+        }
+        update() {
+            super.update();
+        }
+        updatePosition() {
+            this.where.set(this.data.x * 64, this.data.y * 64, this.data.z * 64);
+            this.mesh.position.copy(this.where);
+            this.mesh.position.z += this.lift;
+            // Shade
+            this.meshShadow.position.copy(this.where);
+            this.meshShadow.position.x += 4;
+            this.meshShadow.position.y -= 2;
+            //this.meshShadow.position.z += 3;
+            this.mesh.rotation.z = this.data.r;
+            this.meshShadow.rotation.z = this.data.r;
+        }
+    }
+
+    var CarMetas;
+    (function (CarMetas) {
+        function getNullable(name) {
+            const meta = list[name];
+            if (!meta) {
+                console.warn('Car Metas null');
+                return null;
+            }
+            return meta;
+        }
+        CarMetas.getNullable = getNullable;
+        const list = {
+            "Romero": {
+                "IMG_WIDTH": 62,
+                "IMG_HEIGHT": 64,
+                "GOOD": "ye"
+            },
+            "Wellard": {
+                "IMG_WIDTH": 44,
+                "IMG_HEIGHT": 64,
+                "GOOD": "ye",
+                "ENGINE_TYPE": 3
+            },
+            "Aniston BD4": {
+                "IMG_WIDTH": 62,
+                "IMG_HEIGHT": 64,
+                "GOOD": "ye",
+                "ENGINE_TYPE": 2
+            },
+            "Pacifier": {
+                "IMG_WIDTH": 50,
+                "IMG_HEIGHT": 98,
+                "GOOD": "ye",
+                "COLORLESS": true,
+                "DELTA_TRANSPARENCY": [
+                    1,
+                    1,
+                    1
+                ],
+                "ENGINE_TYPE": 6,
+                "AIR_BRAKES": true
+            },
+            "G4 Bank Van": {
+                "IMG_WIDTH": 60,
+                "IMG_HEIGHT": 104,
+                "GOOD": "ye",
+                "COLORLESS": true,
+                "ENGINE_TYPE": 4
+            },
+            "Beamer": {
+                "IMG_WIDTH": 62,
+                "IMG_HEIGHT": 64,
+                "GOOD": "ye"
+            },
+            "Box Car": {
+                "IMG_WIDTH": 42,
+                "IMG_HEIGHT": 128,
+                "NOTE": "the box car is a train",
+                "GOOD": "ye",
+                "COLORLESS": true,
+                "NO_SPAWN": true
+            },
+            "Box Truck": {
+                "IMG_WIDTH": 52,
+                "IMG_HEIGHT": 128,
+                "ENGINE_TYPE": 5,
+                "AIR_BRAKES": true
+            },
+            "Bug": {
+                "IMG_WIDTH": 50,
+                "IMG_HEIGHT": 52,
+                "GOOD": "ye",
+                "ENGINE_TYPE": 1
+            },
+            "Bulwark": {
+                "IMG_WIDTH": 64,
+                "IMG_HEIGHT": 64
+            },
+            "Bus": {
+                "IMG_WIDTH": 52,
+                "IMG_HEIGHT": 128,
+                "GOOD": "ye",
+                "AIR_BRAKES": true,
+                "COLORLESS": true
+            },
+            "Cop Car": {
+                "IMG_WIDTH": 58,
+                "IMG_HEIGHT": 64,
+                "GOOD": "ye",
+                "COLORLESS": true
+            },
+            "Minx": {
+                "IMG_WIDTH": 58,
+                "IMG_HEIGHT": 58,
+                "GOOD": "ye"
+            },
+            "Eddy": {
+                "IMG_WIDTH": 54,
+                "IMG_HEIGHT": 62,
+                "GOOD": "ye",
+                "COLORLESS": true
+            },
+            "Panto": {
+                "IMG_WIDTH": 62,
+                "IMG_HEIGHT": 56,
+                "GOOD": "ye",
+                "ENGINE_TYPE": 1
+            },
+            "Fire Truck": {
+                "IMG_WIDTH": 58,
+                "IMG_HEIGHT": 124,
+                "ENGINE_TYPE": 5,
+                "AIR_BRAKES": true,
+                "GOOD": "ye",
+                "COLORLESS": true
+            },
+            "Shark": {
+                "IMG_WIDTH": 54,
+                "IMG_HEIGHT": 64,
+                "GOOD": "ye"
+            },
+            "GT-A1": {
+                "IMG_WIDTH": 54,
+                "IMG_HEIGHT": 64
+            },
+            "Garbage Truck": {
+                "IMG_WIDTH": 52,
+                "IMG_HEIGHT": 86,
+                "GOOD": "ye",
+                "COLORLESS": true,
+                "ENGINE_TYPE": 5,
+                "AIR_BRAKES": true
+            },
+            "Armed Land Roamer": {
+                "IMG_WIDTH": 42,
+                "IMG_HEIGHT": 48,
+                "GOOD": "ye",
+                "COLORLESS": true
+            },
+            "Hot Dog Van": {
+                "IMG_WIDTH": 58,
+                "IMG_HEIGHT": 88,
+                "GOOD": "ye",
+                "COLORLESS": true,
+                "ENGINE_TYPE": 4
+            },
+            "Ice-Cream Van": {
+                "IMG_WIDTH": 58,
+                "IMG_HEIGHT": 88,
+                "GOOD": "ye",
+                "COLORLESS": true,
+                "ENGINE_TYPE": 4
+            },
+            "Dementia Limousine": {
+                "IMG_WIDTH": 48,
+                "IMG_HEIGHT": 78,
+                "GOOD": "ye"
+            },
+            "Dementia": {
+                "IMG_WIDTH": 50,
+                "IMG_HEIGHT": 46,
+                "GOOD": "ye"
+            },
+            "Land Roamer": {
+                "IMG_WIDTH": 42,
+                "IMG_HEIGHT": 48,
+                "GOOD": "ye",
+                "COLORLESS": true
+            },
+            "Jefferson": {
+                "IMG_WIDTH": 46,
+                "IMG_HEIGHT": 62,
+                "ENGINE_TYPE": 3
+            },
+            "Stretch Limousine": {
+                "IMG_WIDTH": 60,
+                "IMG_HEIGHT": 112
+            },
+            "Sports Limousine": {
+                "IMG_WIDTH": 56,
+                "IMG_HEIGHT": 110
+            },
+            "Medicar": {
+                "IMG_WIDTH": 62,
+                "IMG_HEIGHT": 114,
+                "GOOD": "ye",
+                "COLORLESS": true
+            },
+            "Benson": {
+                "IMG_WIDTH": 38,
+                "IMG_HEIGHT": 64,
+                "ENGINE_TYPE": 2
+            },
+            "Schmidt": {
+                "IMG_WIDTH": 38,
+                "IMG_HEIGHT": 56,
+                "ENGINE_TYPE": 1
+            },
+            "Miara": {
+                "IMG_WIDTH": 62,
+                "IMG_HEIGHT": 64,
+                "GOOD": "ye",
+                "ENGINE_TYPE": 3
+            },
+            "Big Bug": {
+                "IMG_WIDTH": 58,
+                "IMG_HEIGHT": 58,
+                "ENGINE_TYPE": 1
+            },
+            "Morton": {
+                "IMG_WIDTH": 48,
+                "IMG_HEIGHT": 60,
+                "ENGINE_TYPE": 1
+            },
+            "Maurice": {
+                "IMG_WIDTH": 56,
+                "IMG_HEIGHT": 58
+            },
+            "Pickup": {
+                "IMG_WIDTH": 58,
+                "IMG_HEIGHT": 64,
+                "ENGINE_TYPE": 1
+            },
+            "A-Type": {
+                "IMG_WIDTH": 60,
+                "IMG_HEIGHT": 64
+            },
+            "Arachnid": {
+                "IMG_WIDTH": 54,
+                "IMG_HEIGHT": 62
+            },
+            "Spritzer": {
+                "IMG_WIDTH": 60,
+                "IMG_HEIGHT": 56,
+                "ENGINE_TYPE": 0
+            },
+            "Stinger": {
+                "IMG_WIDTH": 52,
+                "IMG_HEIGHT": 62,
+                "ENGINE_TYPE": 2
+            },
+            "Meteor": {
+                "IMG_WIDTH": 60,
+                "IMG_HEIGHT": 64,
+                "ENGINE_TYPE": 3
+            },
+            "Meteor Turbo": {
+                "IMG_WIDTH": 60,
+                "IMG_HEIGHT": 64,
+                "ENGINE_TYPE": 3
+            },
+            "Hachura": {
+                "IMG_WIDTH": 64,
+                "IMG_HEIGHT": 64,
+                "ENGINE_TYPE": 3
+            },
+            "B-Type": {
+                "IMG_WIDTH": 56,
+                "IMG_HEIGHT": 64
+            },
+            "Taxi Xpress": {
+                "IMG_WIDTH": 56,
+                "IMG_HEIGHT": 64,
+                "COLORLESS": true
+            },
+            "SWAT Van": {
+                "IMG_WIDTH": 64,
+                "IMG_HEIGHT": 98,
+                "GOOD": "ye",
+                "COLORLESS": true,
+                "ENGINE_TYPE": 4
+            },
+            "Michelli Roadster": {
+                "IMG_WIDTH": 50,
+                "IMG_HEIGHT": 64,
+                "GOOD": "ye"
+            },
+            "Tank": {
+                "IMG_WIDTH": 46,
+                "IMG_HEIGHT": 82,
+                "GOOD": "ye",
+                "COLORLESS": true,
+                "ENGINE_TYPE": 6,
+                "MAX_SPEED_ORIG": 0.1
+            },
+            "Tanker": {
+                "IMG_WIDTH": 40,
+                "IMG_HEIGHT": 128,
+                "NO_SPAWN": true,
+                "COLORLESS": true
+            },
+            "Taxi": {
+                "IMG_WIDTH": 60,
+                "IMG_HEIGHT": 64,
+                "GOOD": "ye",
+                "COLORLESS": true
+            },
+            "T-Rex": {
+                "IMG_WIDTH": 60,
+                "IMG_HEIGHT": 64
+            },
+            "Tow Truck": {
+                "IMG_WIDTH": 58,
+                "IMG_HEIGHT": 80,
+                "GOOD": "ye",
+                "ENGINE_TYPE": 5,
+                "AIR_BRAKES": true,
+                "COLORLESS": true
+            },
+            "Train": {
+                "IMG_WIDTH": 42,
+                "IMG_HEIGHT": 128,
+                "COLORLESS": true,
+                "NO_SPAWN": true
+            },
+            "Train Cab": {
+                "IMG_WIDTH": 40,
+                "IMG_HEIGHT": 128,
+                "COLORLESS": true,
+                "NO_SPAWN": true
+            },
+            "Train FB": {
+                "IMG_WIDTH": 58,
+                "IMG_HEIGHT": 74,
+                "COLORLESS": true,
+                "NO_SPAWN": true
+            },
+            "Trance-Am": {
+                "IMG_WIDTH": 54,
+                "IMG_HEIGHT": 64,
+                "GOOD": "ye",
+                "ENGINE_TYPE": 3
+            },
+            "Truck Cab": {
+                "IMG_WIDTH": 64,
+                "IMG_HEIGHT": 64,
+                "ENGINE_TYPE": 5,
+                "AIR_BRAKES": true,
+                "MAX_SPEED_ORIG": 0.175
+            },
+            "Truck Cab SX": {
+                "IMG_WIDTH": 64,
+                "IMG_HEIGHT": 64,
+                "ENGINE_TYPE": 5,
+                "AIR_BRAKES": true,
+                "MAX_SPEED_ORIG": 0.165
+            },
+            "Container": {
+                "IMG_WIDTH": 42,
+                "IMG_HEIGHT": 128,
+                "COLORLESS": true,
+                "NO_SPAWN": true
+            },
+            "Transporter": {
+                "IMG_WIDTH": 40,
+                "IMG_HEIGHT": 128,
+                "NOTE": "this is a trailer",
+                "COLORLESS": true,
+                "NO_SPAWN": true
+            },
+            "TV Van": {
+                "IMG_WIDTH": 58,
+                "IMG_HEIGHT": 74,
+                "ENGINE_TYPE": 4
+            },
+            "Van": {
+                "IMG_WIDTH": 58,
+                "IMG_HEIGHT": 74,
+                "ENGINE_TYPE": 4
+            },
+            "U-Jerk Truck": {
+                "IMG_WIDTH": 54,
+                "IMG_HEIGHT": 56,
+                "ENGINE_TYPE": 1
+            },
+            "Z-Type": {
+                "IMG_WIDTH": 56,
+                "IMG_HEIGHT": 64,
+                "ENGINE_TYPE": 3
+            },
+            "Rumbler": {
+                "IMG_WIDTH": 56,
+                "IMG_HEIGHT": 64,
+                "ENGINE_TYPE": 3
+            },
+            "Jagular XK": {
+                "IMG_WIDTH": 52,
+                "IMG_HEIGHT": 64
+            },
+            "Furore GT": {
+                "IMG_WIDTH": 50,
+                "IMG_HEIGHT": 64,
+                "ENGINE_TYPE": 3
+            },
+            "Special Agent Car": {
+                "IMG_WIDTH": 64,
+                "IMG_HEIGHT": 64,
+                "NOTE": "this is an eddy with remap 2 (black)",
+                "NO_SPAWN": true
+            },
+            "Karma Bus": {
+                "IMG_WIDTH": 44,
+                "IMG_HEIGHT": 100,
+                "GOOD": "ye",
+                "COLORLESS": true,
+                "AIR_BRAKES": true
+            }
+        };
+    })(CarMetas || (CarMetas = {}));
+
+    var CarPhysics;
+    (function (CarPhysics) {
+        function getNullable(name) {
+            const car = list[name];
+            if (!car) {
+                console.warn('a physic lines are null ' + name);
+                return null;
+            }
+            return car;
+        }
+        CarPhysics.getNullable = getNullable;
+        function List() {
+            return list;
+        }
+        CarPhysics.List = List;
+        const list = {
+            'Romero': {
+                'model': 0,
+                'turbo': 0,
+                'value': 50,
+                'pad': 0,
+                'mass': 16.5,
+                'front drive bias': 1,
+                'front mass bias': 0.5,
+                'brake friction': 1.75,
+                'turn in': 0.145,
+                'turn ratio': 0.45,
+                'rear end stability': 1.25,
+                'handbrake slide value': 0.18,
+                'thrust': 0.152,
+                'max_speed': 0.245,
+                'anti strength': 1,
+                'skid threshhold': 0.065,
+                'gear1 multiplier': 0.55,
+                'gear2 multiplier': 0.68,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.107,
+                'gear3 speed': 0.165,
+            },
+            'Wellard': {
+                'model': 1,
+                'turbo': 0,
+                'value': 50,
+                'pad': 0,
+                'mass': 14.5,
+                'front drive bias': 1,
+                'front mass bias': 0.55,
+                'brake friction': 2,
+                'turn in': 0.65,
+                'turn ratio': 0.35,
+                'rear end stability': 1.5,
+                'handbrake slide value': 0.25,
+                'thrust': 0.22,
+                'max_speed': 0.38,
+                'anti strength': 1,
+                'skid threshhold': 0.139,
+                'gear1 multiplier': 0.5,
+                'gear2 multiplier': 0.65,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.125,
+                'gear3 speed': 0.228,
+            },
+            'Aniston BD4': {
+                'model': 2,
+                'turbo': 0,
+                'value': 50,
+                'pad': 0,
+                'mass': 14.5,
+                'front drive bias': 0.6,
+                'front mass bias': 0.5,
+                'brake friction': 1.75,
+                'turn in': 0.145,
+                'turn ratio': 0.45,
+                'rear end stability': 1.25,
+                'handbrake slide value': 0.18,
+                'thrust': 0.146,
+                'max_speed': 0.3,
+                'anti strength': 1,
+                'skid threshhold': 0.085,
+                'gear1 multiplier': 0.55,
+                'gear2 multiplier': 0.725,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.11,
+                'gear3 speed': 0.175,
+            },
+            'Pacifier': {
+                'model': 3,
+                'turbo': 0,
+                'value': 30,
+                'pad': 0,
+                'mass': 27,
+                'front drive bias': 0.5,
+                'front mass bias': 0.6,
+                'brake friction': 0.9,
+                'turn in': 0.25,
+                'turn ratio': 0.75,
+                'rear end stability': 1.8,
+                'handbrake slide value': 0.15,
+                'thrust': 0.225,
+                'max_speed': 0.247,
+                'anti strength': 0.5,
+                'skid threshhold': 0.1,
+                'gear1 multiplier': 0.55,
+                'gear2 multiplier': 0.8,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.103,
+                'gear3 speed': 0.192,
+            },
+            'G4 Bank Van': {
+                'model': 4,
+                'turbo': 0,
+                'value': 25,
+                'pad': 0,
+                'mass': 24,
+                'front drive bias': 0.5,
+                'front mass bias': 0.5,
+                'brake friction': 1.5,
+                'turn in': 0.5,
+                'turn ratio': 0.4,
+                'rear end stability': 2,
+                'handbrake slide value': 0.75,
+                'thrust': 0.17,
+                'max_speed': 0.186,
+                'anti strength': 0.5,
+                'skid threshhold': 0.075,
+                'gear1 multiplier': 0.55,
+                'gear2 multiplier': 0.675,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.081,
+                'gear3 speed': 0.13,
+            },
+            'Beamer': {
+                'model': 5,
+                'turbo': 1,
+                'value': 40,
+                'pad': 0,
+                'mass': 16,
+                'front drive bias': 1,
+                'front mass bias': 0.6,
+                'brake friction': 3,
+                'turn in': 0.75,
+                'turn ratio': 0.4,
+                'rear end stability': 2,
+                'handbrake slide value': 0.5,
+                'thrust': 0.15,
+                'max_speed': 0.385,
+                'anti strength': 1,
+                'skid threshhold': 0.14,
+                'gear1 multiplier': 0.575,
+                'gear2 multiplier': 0.75,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.185,
+                'gear3 speed': 0.275,
+            },
+            'Box Car': {
+                'model': 6,
+                'turbo': 0,
+                'value': 200,
+                'pad': 0,
+                'mass': 10,
+                'front drive bias': 0,
+                'front mass bias': 0.5,
+                'brake friction': 0.9,
+                'turn in': 0.1,
+                'turn ratio': 0.9,
+                'rear end stability': 2,
+                'handbrake slide value': 0.2,
+                'thrust': 0.143,
+                'max_speed': 0.95,
+                'anti strength': 1,
+                'skid threshhold': 0.139,
+                'gear1 multiplier': 0.6,
+                'gear2 multiplier': 0.8,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.152,
+                'gear3 speed': 0.228,
+            },
+            'Box Truck': {
+                'model': 7,
+                'turbo': 0,
+                'value': 90,
+                'pad': 0,
+                'mass': 28,
+                'front drive bias': 0.5,
+                'front mass bias': 0.7,
+                'brake friction': 2,
+                'turn in': 0.25,
+                'turn ratio': 0.65,
+                'rear end stability': 2.5,
+                'handbrake slide value': 0.45,
+                'thrust': 0.185,
+                'max_speed': 0.175,
+                'anti strength': 0.75,
+                'skid threshhold': 0.065,
+                'gear1 multiplier': 0.545,
+                'gear2 multiplier': 0.675,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.088,
+                'gear3 speed': 0.114,
+            },
+            'Bug': {
+                'model': 8,
+                'turbo': 0,
+                'value': 10,
+                'pad': 0,
+                'mass': 6.3,
+                'front drive bias': 1,
+                'front mass bias': 0.45,
+                'brake friction': 1.265,
+                'turn in': 0.3,
+                'turn ratio': 0.175,
+                'rear end stability': 1.5,
+                'handbrake slide value': 0.65,
+                'thrust': 0.095,
+                'max_speed': 0.235,
+                'anti strength': 1,
+                'skid threshhold': 0.05,
+                'gear1 multiplier': 0.55,
+                'gear2 multiplier': 0.625,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.125,
+                'gear3 speed': 0.152,
+            },
+            'Bulwark': {
+                'model_corrected': 9,
+                'model': 10,
+                'turbo': 0,
+                'value': 50,
+                'pad': 0,
+                'mass': 17,
+                'front drive bias': 1,
+                'front mass bias': 0.5,
+                'brake friction': 2,
+                'turn in': 0.14,
+                'turn ratio': 0.45,
+                'rear end stability': 1.5,
+                'handbrake slide value': 0.35,
+                'thrust': 0.185,
+                'max_speed': 0.307,
+                'anti strength': 0.8,
+                'skid threshhold': 0.075,
+                'gear1 multiplier': 0.65,
+                'gear2 multiplier': 0.8,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.155,
+                'gear3 speed': 0.225,
+            },
+            'Bus': {
+                'model_corrected': 10,
+                'model': 11,
+                'turbo': 0,
+                'value': 60,
+                'pad': 0,
+                'mass': 30,
+                'front drive bias': 0.5,
+                'front mass bias': 0.5,
+                'brake friction': 2,
+                'turn in': 0.25,
+                'turn ratio': 0.65,
+                'rear end stability': 2.5,
+                'handbrake slide value': 0.75,
+                'thrust': 0.235,
+                'max_speed': 0.215,
+                'anti strength': 0.75,
+                'skid threshhold': 0.085,
+                'gear1 multiplier': 0.55,
+                'gear2 multiplier': 0.75,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.1,
+                'gear3 speed': 0.161,
+            },
+            'Cop Car': {
+                'model_corrected': 11,
+                'model': 12,
+                'turbo': 1,
+                'value': 60,
+                'pad': 0,
+                'mass': 14.5,
+                'front drive bias': 1,
+                'front mass bias': 0.5,
+                'brake friction': 2,
+                'turn in': 0.433,
+                'turn ratio': 0.4,
+                'rear end stability': 1.25,
+                'handbrake slide value': 0.4,
+                'thrust': 0.15,
+                'max_speed': 0.415,
+                'anti strength': 1,
+                'skid threshhold': 0.115,
+                'gear1 multiplier': 0.55,
+                'gear2 multiplier': 0.68,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.18,
+                'gear3 speed': 0.29,
+            },
+            'Minx': {
+                'model_corrected': 12,
+                'model': 13,
+                'turbo': 0,
+                'value': 50,
+                'pad': 0,
+                'mass': 14.5,
+                'front drive bias': 0.75,
+                'front mass bias': 0.5,
+                'brake friction': 1.75,
+                'turn in': 0.145,
+                'turn ratio': 0.45,
+                'rear end stability': 1.25,
+                'handbrake slide value': 0.18,
+                'thrust': 0.14,
+                'max_speed': 0.24,
+                'anti strength': 1,
+                'skid threshhold': 0.085,
+                'gear1 multiplier': 0.55,
+                'gear2 multiplier': 0.68,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.12,
+                'gear3 speed': 0.166,
+            },
+            'Eddy': {
+                'model_corrected': 13,
+                'model': 14,
+                'turbo': 0,
+                'value': 50,
+                'pad': 0,
+                'mass': 15,
+                'front drive bias': 1,
+                'front mass bias': 0.5,
+                'brake friction': 2,
+                'turn in': 0.14,
+                'turn ratio': 0.4,
+                'rear end stability': 1.2,
+                'handbrake slide value': 0.35,
+                'thrust': 0.165,
+                'max_speed': 0.3,
+                'anti strength': 0.8,
+                'skid threshhold': 0.085,
+                'gear1 multiplier': 0.55,
+                'gear2 multiplier': 0.7,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.12,
+                'gear3 speed': 0.197,
+            },
+            'Panto': {
+                'model_corrected': 14,
+                'model': 16,
+                'turbo': 0,
+                'value': 10,
+                'pad': 0,
+                'mass': 7,
+                'front drive bias': 1,
+                'front mass bias': 0.5,
+                'brake friction': 1.5,
+                'turn in': 0.25,
+                'turn ratio': 0.3,
+                'rear end stability': 1,
+                'handbrake slide value': 0.2,
+                'thrust': 0.058,
+                'max_speed': 0.165,
+                'anti strength': 1.25,
+                'skid threshhold': 0.04,
+                'gear1 multiplier': 0.55,
+                'gear2 multiplier': 0.75,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.082,
+                'gear3 speed': 0.12,
+            },
+            'Fire Truck': {
+                'model_corrected': 15,
+                'model': 17,
+                'turbo': 0,
+                'value': 60,
+                'pad': 0,
+                'mass': 32,
+                'front drive bias': 0.7,
+                'front mass bias': 0.46,
+                'brake friction': 2.7,
+                'turn in': 0.85,
+                'turn ratio': 0.75,
+                'rear end stability': 0.55,
+                'handbrake slide value': 0.2,
+                'thrust': 0.233,
+                'max_speed': 0.255,
+                'anti strength': 1,
+                'skid threshhold': 0.15,
+                'gear1 multiplier': 0.575,
+                'gear2 multiplier': 0.775,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.124,
+                'gear3 speed': 0.19,
+            },
+            'Shark': {
+                'model_corrected': 16,
+                'model': 18,
+                'turbo': 0,
+                'value': 50,
+                'pad': 0,
+                'mass': 17,
+                'front drive bias': 1,
+                'front mass bias': 0.75,
+                'brake friction': 1.5,
+                'turn in': 0.65,
+                'turn ratio': 0.65,
+                'rear end stability': 1,
+                'handbrake slide value': 0.3,
+                'thrust': 0.23,
+                'max_speed': 0.36,
+                'anti strength': 1,
+                'skid threshhold': 0.1,
+                'gear1 multiplier': 0.5,
+                'gear2 multiplier': 0.6,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.125,
+                'gear3 speed': 0.22,
+            },
+            'GT-A1': {
+                'model_corrected': 17,
+                'model': 19,
+                'turbo': 1,
+                'value': 60,
+                'pad': 0,
+                'mass': 14.5,
+                'front drive bias': 0.5,
+                'front mass bias': 0.5,
+                'brake friction': 1.75,
+                'turn in': 0.4,
+                'turn ratio': 0.35,
+                'rear end stability': 1.25,
+                'handbrake slide value': 0.4,
+                'thrust': 0.175,
+                'max_speed': 0.45,
+                'anti strength': 1,
+                'skid threshhold': 0.115,
+                'gear1 multiplier': 0.55,
+                'gear2 multiplier': 0.725,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.225,
+                'gear3 speed': 0.35,
+            },
+            'Garbage Truck': {
+                'model_corrected': 18,
+                'model': 21,
+                'turbo': 0,
+                'value': 40,
+                'pad': 0,
+                'mass': 28,
+                'front drive bias': 0.5,
+                'front mass bias': 0.3,
+                'brake friction': 2.5,
+                'turn in': 0.25,
+                'turn ratio': 0.55,
+                'rear end stability': 2,
+                'handbrake slide value': 0.35,
+                'thrust': 0.155,
+                'max_speed': 0.162,
+                'anti strength': 1,
+                'skid threshhold': 0.075,
+                'gear1 multiplier': 0.65,
+                'gear2 multiplier': 0.75,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.085,
+                'gear3 speed': 0.12,
+            },
+            'Armed Land Roamer': {
+                'model_corrected': 24,
+                'model': 22,
+                'turbo': 0,
+                'value': 30,
+                'pad': 0,
+                'mass': 12,
+                'front drive bias': 0.5,
+                'front mass bias': 0.6,
+                'brake friction': 1.75,
+                'turn in': 0.55,
+                'turn ratio': 0.35,
+                'rear end stability': 1.3,
+                'handbrake slide value': 0.175,
+                'thrust': 0.13,
+                'max_speed': 0.24,
+                'anti strength': 1,
+                'skid threshhold': 0.115,
+                'gear1 multiplier': 0.55,
+                'gear2 multiplier': 0.6,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.12,
+                'gear3 speed': 0.152,
+            },
+            'Hot Dog Van': {
+                'model_corrected': 20,
+                'model': 23,
+                'turbo': 0,
+                'value': 30,
+                'pad': 0,
+                'mass': 24,
+                'front drive bias': 0.5,
+                'front mass bias': 0.3,
+                'brake friction': 2,
+                'turn in': 0.45,
+                'turn ratio': 0.6,
+                'rear end stability': 1.15,
+                'handbrake slide value': 0.2,
+                'thrust': 0.188,
+                'max_speed': 0.241,
+                'anti strength': 1,
+                'skid threshhold': 0.07,
+                'gear1 multiplier': 0.55,
+                'gear2 multiplier': 0.63,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.094,
+                'gear3 speed': 0.146,
+            },
+            'Ice-Cream Van': {
+                'model_corrected': 21,
+                'model': 27,
+                'turbo': 0,
+                'value': 30,
+                'pad': 0,
+                'mass': 20,
+                'front drive bias': 0.5,
+                'front mass bias': 0.4,
+                'brake friction': 2,
+                'turn in': 0.45,
+                'turn ratio': 0.6,
+                'rear end stability': 1.15,
+                'handbrake slide value': 0.2,
+                'thrust': 0.16,
+                'max_speed': 0.227,
+                'anti strength': 1,
+                'skid threshhold': 0.07,
+                'gear1 multiplier': 0.5,
+                'gear2 multiplier': 0.65,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.08,
+                'gear3 speed': 0.142,
+            },
+            'Dementia Limousine': {
+                'model_corrected': 22,
+                'model': 28,
+                'turbo': 0,
+                'value': 50,
+                'pad': 0,
+                'mass': 16,
+                'front drive bias': 0.5,
+                'front mass bias': 0.5,
+                'brake friction': 2,
+                'turn in': 0.125,
+                'turn ratio': 0.5,
+                'rear end stability': 1.2,
+                'handbrake slide value': 0.2,
+                'thrust': 0.15,
+                'max_speed': 0.235,
+                'anti strength': 1,
+                'skid threshhold': 0.085,
+                'gear1 multiplier': 0.55,
+                'gear2 multiplier': 0.7,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.111,
+                'gear3 speed': 0.173,
+            },
+            'Dementia': {
+                'model_corrected': 23,
+                'model': 29,
+                'turbo': 0,
+                'value': 10,
+                'pad': 0,
+                'mass': 6.3,
+                'front drive bias': 1,
+                'front mass bias': 0.45,
+                'brake friction': 1.265,
+                'turn in': 0.3,
+                'turn ratio': 0.175,
+                'rear end stability': 1.5,
+                'handbrake slide value': 0.65,
+                'thrust': 0.095,
+                'max_speed': 0.235,
+                'anti strength': 1,
+                'skid threshhold': 0.05,
+                'gear1 multiplier': 0.55,
+                'gear2 multiplier': 0.625,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.125,
+                'gear3 speed': 0.152,
+            },
+            'Land Roamer': {
+                'model_corrected': 24,
+                'model': 30,
+                'turbo': 0,
+                'value': 5,
+                'pad': 0,
+                'mass': 12,
+                'front drive bias': 0.5,
+                'front mass bias': 0.6,
+                'brake friction': 1.75,
+                'turn in': 0.55,
+                'turn ratio': 0.35,
+                'rear end stability': 1.3,
+                'handbrake slide value': 0.175,
+                'thrust': 0.13,
+                'max_speed': 0.24,
+                'anti strength': 1,
+                'skid threshhold': 0.115,
+                'gear1 multiplier': 0.55,
+                'gear2 multiplier': 0.6,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.12,
+                'gear3 speed': 0.152,
+            },
+            'Jefferson': {
+                'model_corrected': 25,
+                'model': 31,
+                'turbo': 1,
+                'value': 50,
+                'pad': 0,
+                'mass': 16,
+                'front drive bias': 1,
+                'front mass bias': 0.75,
+                'brake friction': 2,
+                'turn in': 0.65,
+                'turn ratio': 0.45,
+                'rear end stability': 0.9,
+                'handbrake slide value': 0.2,
+                'thrust': 0.15,
+                'max_speed': 0.4,
+                'anti strength': 1,
+                'skid threshhold': 0.115,
+                'gear1 multiplier': 0.55,
+                'gear2 multiplier': 0.7,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.2,
+                'gear3 speed': 0.3,
+            },
+            'Stretch Limousine': {
+                'model_corrected': 27,
+                'model': 32,
+                'turbo': 0,
+                'value': 50,
+                'pad': 0,
+                'mass': 24,
+                'front drive bias': 0.5,
+                'front mass bias': 0.5,
+                'brake friction': 2,
+                'turn in': 0.25,
+                'turn ratio': 0.65,
+                'rear end stability': 0.8,
+                'handbrake slide value': 0.2,
+                'thrust': 0.21,
+                'max_speed': 0.275,
+                'anti strength': 0.75,
+                'skid threshhold': 0.085,
+                'gear1 multiplier': 0.55,
+                'gear2 multiplier': 0.8,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.12,
+                'gear3 speed': 0.215,
+            },
+            'Sports Limousine': {
+                'model_corrected': 28,
+                'model': 33,
+                'turbo': 0,
+                'value': 50,
+                'pad': 0,
+                'mass': 24,
+                'front drive bias': 1,
+                'front mass bias': 0.5,
+                'brake friction': 2,
+                'turn in': 0.2,
+                'turn ratio': 0.6,
+                'rear end stability': 0.75,
+                'handbrake slide value': 0.2,
+                'thrust': 0.22,
+                'max_speed': 0.295,
+                'anti strength': 0.75,
+                'skid threshhold': 0.085,
+                'gear1 multiplier': 0.55,
+                'gear2 multiplier': 0.8,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.135,
+                'gear3 speed': 0.23,
+            },
+            'Medicar': {
+                'model_corrected': 29,
+                'model': 34,
+                'turbo': 0,
+                'value': 50,
+                'pad': 0,
+                'mass': 20,
+                'front drive bias': 0.5,
+                'front mass bias': 0.475,
+                'brake friction': 2.75,
+                'turn in': 0.25,
+                'turn ratio': 0.5,
+                'rear end stability': 0.7,
+                'handbrake slide value': 0.275,
+                'thrust': 0.231,
+                'max_speed': 0.338,
+                'anti strength': 1,
+                'skid threshhold': 0.1,
+                'gear1 multiplier': 0.55,
+                'gear2 multiplier': 0.7,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.135,
+                'gear3 speed': 0.237,
+            },
+            'Benson': {
+                'model_corrected': 30,
+                'model': 35,
+                'turbo': 1,
+                'value': 60,
+                'pad': 0,
+                'mass': 15.5,
+                'front drive bias': 0.5,
+                'front mass bias': 0.35,
+                'brake friction': 2,
+                'turn in': 0.25,
+                'turn ratio': 0.4,
+                'rear end stability': 1.9,
+                'handbrake slide value': 0.35,
+                'thrust': 0.14,
+                'max_speed': 0.35,
+                'anti strength': 1,
+                'skid threshhold': 0.105,
+                'gear1 multiplier': 0.55,
+                'gear2 multiplier': 0.7,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.165,
+                'gear3 speed': 0.251,
+            },
+            'Schmidt': {
+                'model_corrected': 31,
+                'model': 36,
+                'turbo': 0,
+                'value': 50,
+                'pad': 0,
+                'mass': 8,
+                'front drive bias': 0.5,
+                'front mass bias': 0.3,
+                'brake friction': 2,
+                'turn in': 0.55,
+                'turn ratio': 0.25,
+                'rear end stability': 2,
+                'handbrake slide value': 0.15,
+                'thrust': 0.09,
+                'max_speed': 0.2,
+                'anti strength': 1.25,
+                'skid threshhold': 0.03,
+                'gear1 multiplier': 0.6,
+                'gear2 multiplier': 0.8,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.1,
+                'gear3 speed': 0.15,
+            },
+            'Miara': {
+                'model_corrected': 32,
+                'model': 37,
+                'turbo': 0,
+                'value': 50,
+                'pad': 0,
+                'mass': 14.5,
+                'front drive bias': 1,
+                'front mass bias': 0.65,
+                'brake friction': 2,
+                'turn in': 0.25,
+                'turn ratio': 0.4,
+                'rear end stability': 1.25,
+                'handbrake slide value': 0.15,
+                'thrust': 0.195,
+                'max_speed': 0.35,
+                'anti strength': 1,
+                'skid threshhold': 0.12,
+                'gear1 multiplier': 0.55,
+                'gear2 multiplier': 0.75,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.145,
+                'gear3 speed': 0.245,
+            },
+            'Big Bug': {
+                'model_corrected': 33,
+                'model': 38,
+                'turbo': 0,
+                'value': 30,
+                'pad': 0,
+                'mass': 22,
+                'front drive bias': 0.5,
+                'front mass bias': 0.4,
+                'brake friction': 2,
+                'turn in': 0.1,
+                'turn ratio': 0.6,
+                'rear end stability': 1.5,
+                'handbrake slide value': 0.2,
+                'thrust': 0.2,
+                'max_speed': 0.24,
+                'anti strength': 1,
+                'skid threshhold': 0.085,
+                'gear1 multiplier': 0.55,
+                'gear2 multiplier': 0.75,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.104,
+                'gear3 speed': 0.175,
+            },
+            'Morton': {
+                'model_corrected': 34,
+                'model': 39,
+                'turbo': 0,
+                'value': 50,
+                'pad': 0,
+                'mass': 16.5,
+                'front drive bias': 0.5,
+                'front mass bias': 0.6,
+                'brake friction': 2,
+                'turn in': 0.45,
+                'turn ratio': 0.55,
+                'rear end stability': 0.9,
+                'handbrake slide value': 0.2,
+                'thrust': 0.152,
+                'max_speed': 0.265,
+                'anti strength': 1,
+                'skid threshhold': 0.135,
+                'gear1 multiplier': 0.65,
+                'gear2 multiplier': 0.75,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.125,
+                'gear3 speed': 0.19,
+            },
+            'Maurice': {
+                'model_corrected': 35,
+                'model': 40,
+                'turbo': 0,
+                'value': 50,
+                'pad': 0,
+                'mass': 13,
+                'front drive bias': 1,
+                'front mass bias': 0.4,
+                'brake friction': 1.75,
+                'turn in': 0.25,
+                'turn ratio': 0.35,
+                'rear end stability': 1.25,
+                'handbrake slide value': 0.25,
+                'thrust': 0.14,
+                'max_speed': 0.26,
+                'anti strength': 1,
+                'skid threshhold': 0.085,
+                'gear1 multiplier': 0.55,
+                'gear2 multiplier': 0.68,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.12,
+                'gear3 speed': 0.175,
+            },
+            'Pickup': {
+                'model_corrected': 36,
+                'model': 41,
+                'turbo': 0,
+                'value': 15,
+                'pad': 0,
+                'mass': 16,
+                'front drive bias': 0.5,
+                'front mass bias': 0.6,
+                'brake friction': 2,
+                'turn in': 0.5,
+                'turn ratio': 0.45,
+                'rear end stability': 0.5,
+                'handbrake slide value': 0.2,
+                'thrust': 0.135,
+                'max_speed': 0.255,
+                'anti strength': 1,
+                'skid threshhold': 0.08,
+                'gear1 multiplier': 0.55,
+                'gear2 multiplier': 0.8,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.12,
+                'gear3 speed': 0.19,
+            },
+            'A-Type': {
+                'model_corrected': 37,
+                'model': 42,
+                'turbo': 1,
+                'value': 50,
+                'pad': 0,
+                'mass': 15,
+                'front drive bias': 1,
+                'front mass bias': 0.6,
+                'brake friction': 2,
+                'turn in': 0.45,
+                'turn ratio': 0.45,
+                'rear end stability': 1,
+                'handbrake slide value': 0.5,
+                'thrust': 0.126,
+                'max_speed': 0.385,
+                'anti strength': 1,
+                'skid threshhold': 0.118,
+                'gear1 multiplier': 0.55,
+                'gear2 multiplier': 0.75,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.175,
+                'gear3 speed': 0.272,
+            },
+            'Arachnid': {
+                'model_corrected': 38,
+                'model': 44,
+                'turbo': 0,
+                'value': 50,
+                'pad': 0,
+                'mass': 14.5,
+                'front drive bias': 1,
+                'front mass bias': 0.5,
+                'brake friction': 1.75,
+                'turn in': 0.145,
+                'turn ratio': 0.45,
+                'rear end stability': 1,
+                'handbrake slide value': 0.18,
+                'thrust': 0.152,
+                'max_speed': 0.285,
+                'anti strength': 1,
+                'skid threshhold': 0.085,
+                'gear1 multiplier': 0.55,
+                'gear2 multiplier': 0.725,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.135,
+                'gear3 speed': 0.2,
+            },
+            'Spritzer': {
+                'model_corrected': 39,
+                'model': 45,
+                'turbo': 0,
+                'value': 50,
+                'pad': 0,
+                'mass': 14,
+                'front drive bias': 0.5,
+                'front mass bias': 0.55,
+                'brake friction': 2.5,
+                'turn in': 0.145,
+                'turn ratio': 0.4,
+                'rear end stability': 1,
+                'handbrake slide value': 0.55,
+                'thrust': 0.125,
+                'max_speed': 0.235,
+                'anti strength': 1,
+                'skid threshhold': 0.065,
+                'gear1 multiplier': 0.65,
+                'gear2 multiplier': 0.7,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.125,
+                'gear3 speed': 0.162,
+            },
+            'Stinger': {
+                'model_corrected': 40,
+                'model': 46,
+                'turbo': 1,
+                'value': 50,
+                'pad': 0,
+                'mass': 15,
+                'front drive bias': 0.6,
+                'front mass bias': 0.6,
+                'brake friction': 3,
+                'turn in': 0.1,
+                'turn ratio': 0.65,
+                'rear end stability': 1,
+                'handbrake slide value': 0.3,
+                'thrust': 0.14,
+                'max_speed': 0.401,
+                'anti strength': 1,
+                'skid threshhold': 0.115,
+                'gear1 multiplier': 0.55,
+                'gear2 multiplier': 0.7,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.174,
+                'gear3 speed': 0.285,
+            },
+            'Meteor': {
+                'model_corrected': 41,
+                'model': 47,
+                'turbo': 0,
+                'value': 50,
+                'pad': 0,
+                'mass': 13.5,
+                'front drive bias': 0.5,
+                'front mass bias': 0.6,
+                'brake friction': 2,
+                'turn in': 0.35,
+                'turn ratio': 0.5,
+                'rear end stability': 0.9,
+                'handbrake slide value': 0.2,
+                'thrust': 0.16,
+                'max_speed': 0.32,
+                'anti strength': 1,
+                'skid threshhold': 0.115,
+                'gear1 multiplier': 0.7,
+                'gear2 multiplier': 0.85,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.185,
+                'gear3 speed': 0.265,
+            },
+            'Meteor Turbo': {
+                'model_corrected': 42,
+                'model': 48,
+                'turbo': 1,
+                'value': 60,
+                'pad': 0,
+                'mass': 14.5,
+                'front drive bias': 0.5,
+                'front mass bias': 0.6,
+                'brake friction': 1.75,
+                'turn in': 0.45,
+                'turn ratio': 0.4,
+                'rear end stability': 1.3,
+                'handbrake slide value': 0.4,
+                'thrust': 0.175,
+                'max_speed': 0.42,
+                'anti strength': 1,
+                'skid threshhold': 0.115,
+                'gear1 multiplier': 0.55,
+                'gear2 multiplier': 0.725,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.235,
+                'gear3 speed': 0.36,
+            },
+            'Hachura': {
+                'model_corrected': 43,
+                'model': 49,
+                'turbo': 0,
+                'value': 50,
+                'pad': 0,
+                'mass': 14,
+                'front drive bias': 0.75,
+                'front mass bias': 0.6,
+                'brake friction': 2,
+                'turn in': 0.35,
+                'turn ratio': 0.55,
+                'rear end stability': 0.9,
+                'handbrake slide value': 0.2,
+                'thrust': 0.225,
+                'max_speed': 0.4,
+                'anti strength': 1,
+                'skid threshhold': 0.115,
+                'gear1 multiplier': 0.5,
+                'gear2 multiplier': 0.72,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.185,
+                'gear3 speed': 0.3,
+            },
+            'B-Type': {
+                'model_corrected': 44,
+                'model': 50,
+                'turbo': 1,
+                'value': 50,
+                'pad': 0,
+                'mass': 15,
+                'front drive bias': 0.6,
+                'front mass bias': 0.5,
+                'brake friction': 2,
+                'turn in': 0.1,
+                'turn ratio': 0.5,
+                'rear end stability': 0.85,
+                'handbrake slide value': 0.2,
+                'thrust': 0.14,
+                'max_speed': 0.401,
+                'anti strength': 1,
+                'skid threshhold': 0.125,
+                'gear1 multiplier': 0.55,
+                'gear2 multiplier': 0.7,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.174,
+                'gear3 speed': 0.29,
+            },
+            'Taxi Xpress': {
+                'model_corrected': 45,
+                'model': 51,
+                'turbo': 0,
+                'value': 50,
+                'pad': 0,
+                'mass': 15,
+                'front drive bias': 1,
+                'front mass bias': 0.6,
+                'brake friction': 2,
+                'turn in': 0.4,
+                'turn ratio': 0.4,
+                'rear end stability': 0.7,
+                'handbrake slide value': 0.2,
+                'thrust': 0.145,
+                'max_speed': 0.27,
+                'anti strength': 1,
+                'skid threshhold': 0.115,
+                'gear1 multiplier': 0.65,
+                'gear2 multiplier': 0.8,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.135,
+                'gear3 speed': 0.21,
+            },
+            'SWAT Van': {
+                'model_corrected': 46,
+                'model': 52,
+                'turbo': 0,
+                'value': 90,
+                'pad': 0,
+                'mass': 22,
+                'front drive bias': 0.5,
+                'front mass bias': 0.6,
+                'brake friction': 2,
+                'turn in': 0.25,
+                'turn ratio': 0.8,
+                'rear end stability': 1.4,
+                'handbrake slide value': 0.3,
+                'thrust': 0.175,
+                'max_speed': 0.225,
+                'anti strength': 0.5,
+                'skid threshhold': 0.13,
+                'gear1 multiplier': 0.65,
+                'gear2 multiplier': 0.75,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.115,
+                'gear3 speed': 0.166,
+            },
+            'Michelli Roadster': {
+                'model_corrected': 47,
+                'model': 53,
+                'turbo': 0,
+                'value': 50,
+                'pad': 0,
+                'mass': 13,
+                'front drive bias': 1,
+                'front mass bias': 0.8,
+                'brake friction': 1,
+                'turn in': 0.175,
+                'turn ratio': 0.5,
+                'rear end stability': 0.75,
+                'handbrake slide value': 0.35,
+                'thrust': 0.175,
+                'max_speed': 0.388,
+                'anti strength': 1,
+                'skid threshhold': 0.1,
+                'gear1 multiplier': 0.65,
+                'gear2 multiplier': 0.8,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.165,
+                'gear3 speed': 0.275,
+            },
+            'Tank': {
+                'model_corrected': 48,
+                'model': 54,
+                'turbo': 0,
+                'value': 95,
+                'pad': 0,
+                'mass': 45,
+                'front drive bias': 0.5,
+                'front mass bias': 0.5,
+                'brake friction': 4,
+                'turn in': 0.25,
+                'turn ratio': 0.75,
+                'rear end stability': 4,
+                'handbrake slide value': 0,
+                'thrust': 0.29,
+                'max_speed': 0.2,
+                'anti strength': 0.25,
+                'skid threshhold': 0.5,
+                'gear1 multiplier': 0.53,
+                'gear2 multiplier': 0.6,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.05,
+                'gear3 speed': 0.06,
+            },
+            'Tanker': {
+                'model': 55,
+                'turbo': 0,
+                'value': 80,
+                'pad': 0,
+                'mass': 30,
+                'front drive bias': 0,
+                'front mass bias': 0.5,
+                'brake friction': 0.9,
+                'turn in': 0.1,
+                'turn ratio': 0.8,
+                'rear end stability': 2,
+                'handbrake slide value': 0.2,
+                'thrust': 0,
+                'max_speed': 0.3,
+                'anti strength': 1,
+                'skid threshhold': 0.139,
+                'gear1 multiplier': 0.6,
+                'gear2 multiplier': 0.8,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.152,
+                'gear3 speed': 0.228,
+            },
+            'Taxi': {
+                'model_corrected': 50,
+                'model': 56,
+                'turbo': 0,
+                'value': 50,
+                'pad': 0,
+                'mass': 14.5,
+                'front drive bias': 1,
+                'front mass bias': 0.55,
+                'brake friction': 2.5,
+                'turn in': 0.15,
+                'turn ratio': 0.45,
+                'rear end stability': 1,
+                'handbrake slide value': 0.2,
+                'thrust': 0.13,
+                'max_speed': 0.219,
+                'anti strength': 1,
+                'skid threshhold': 0.065,
+                'gear1 multiplier': 0.6,
+                'gear2 multiplier': 0.75,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.125,
+                'gear3 speed': 0.175,
+            },
+            'T-Rex': {
+                'model_corrected': 51,
+                'model': 57,
+                'turbo': 0,
+                'value': 50,
+                'pad': 0,
+                'mass': 15.5,
+                'front drive bias': 1,
+                'front mass bias': 0.55,
+                'brake friction': 2,
+                'turn in': 0.35,
+                'turn ratio': 0.35,
+                'rear end stability': 0.95,
+                'handbrake slide value': 0.35,
+                'thrust': 0.225,
+                'max_speed': 0.405,
+                'anti strength': 1,
+                'skid threshhold': 0.115,
+                'gear1 multiplier': 0.55,
+                'gear2 multiplier': 0.65,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.175,
+                'gear3 speed': 0.255,
+            },
+            'Tow Truck': {
+                'model_corrected': 52,
+                'model': 58,
+                'turbo': 0,
+                'value': 30,
+                'pad': 0,
+                'mass': 22,
+                'front drive bias': 0.5,
+                'front mass bias': 0.8,
+                'brake friction': 2.5,
+                'turn in': 0.5,
+                'turn ratio': 0.8,
+                'rear end stability': 1,
+                'handbrake slide value': 0.85,
+                'thrust': 0.15,
+                'max_speed': 0.2,
+                'anti strength': 1,
+                'skid threshhold': 0.13,
+                'gear1 multiplier': 0.55,
+                'gear2 multiplier': 0.65,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.1,
+                'gear3 speed': 0.133,
+            },
+            'Train': {
+                'model': 59,
+                'turbo': 0,
+                'value': 200,
+                'pad': 0,
+                'mass': 10,
+                'front drive bias': 0,
+                'front mass bias': 0.5,
+                'brake friction': 0.9,
+                'turn in': 0.1,
+                'turn ratio': 0.8,
+                'rear end stability': 2,
+                'handbrake slide value': 0.2,
+                'thrust': 0.143,
+                'max_speed': 0.399,
+                'anti strength': 1,
+                'skid threshhold': 0.139,
+                'gear1 multiplier': 0.6,
+                'gear2 multiplier': 0.8,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.152,
+                'gear3 speed': 0.228,
+            },
+            'Train Cab': {
+                'model': 60,
+                'turbo': 0,
+                'value': 200,
+                'pad': 0,
+                'mass': 10,
+                'front drive bias': 0,
+                'front mass bias': 0.5,
+                'brake friction': 0.9,
+                'turn in': 0.1,
+                'turn ratio': 0.8,
+                'rear end stability': 2,
+                'handbrake slide value': 0.2,
+                'thrust': 0.143,
+                'max_speed': 0.95,
+                'anti strength': 1,
+                'skid threshhold': 0.139,
+                'gear1 multiplier': 0.6,
+                'gear2 multiplier': 0.8,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.152,
+                'gear3 speed': 0.228,
+            },
+            'Train FB': {
+                'model': 61,
+                'turbo': 0,
+                'value': 200,
+                'pad': 0,
+                'mass': 10,
+                'front drive bias': 0,
+                'front mass bias': 0.5,
+                'brake friction': 0.9,
+                'turn in': 0.1,
+                'turn ratio': 0.8,
+                'rear end stability': 2,
+                'handbrake slide value': 0.2,
+                'thrust': 0.143,
+                'max_speed': 0.95,
+                'anti strength': 1,
+                'skid threshhold': 0.139,
+                'gear1 multiplier': 0.6,
+                'gear2 multiplier': 0.8,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.152,
+                'gear3 speed': 0.228,
+            },
+            'Trance-Am': {
+                'model_corrected': 56,
+                'model': 62,
+                'turbo': 0,
+                'value': 50,
+                'pad': 0,
+                'mass': 14,
+                'front drive bias': 1,
+                'front mass bias': 0.5,
+                'brake friction': 3,
+                'turn in': 0.1,
+                'turn ratio': 0.4,
+                'rear end stability': 0.85,
+                'handbrake slide value': 0.3,
+                'thrust': 0.165,
+                'max_speed': 0.34,
+                'anti strength': 1,
+                'skid threshhold': 0.09,
+                'gear1 multiplier': 0.65,
+                'gear2 multiplier': 0.8,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.152,
+                'gear3 speed': 0.25,
+            },
+            'Truck Cab': {
+                'model_corrected': 57,
+                'model': 63,
+                'turbo': 0,
+                'value': 40,
+                'pad': 0,
+                'mass': 19,
+                'front drive bias': 1,
+                'front mass bias': 0.75,
+                'brake friction': 1.75,
+                'turn in': 0.75,
+                'turn ratio': 0.7,
+                'rear end stability': 3,
+                'handbrake slide value': 0.1,
+                'thrust': 0.175,
+                'max_speed': 0.2,
+                'anti strength': 1,
+                'skid threshhold': 0.139,
+                'gear1 multiplier': 0.45,
+                'gear2 multiplier': 0.6,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.075,
+                'gear3 speed': 0.108,
+            },
+            'Truck Cab SX': {
+                'model_corrected': 58,
+                'model': 64,
+                'turbo': 0,
+                'value': 40,
+                'pad': 0,
+                'mass': 19,
+                'front drive bias': 0.487,
+                'front mass bias': 0.189,
+                'brake friction': 2,
+                'turn in': 0,
+                'turn ratio': 0.527,
+                'rear end stability': 2,
+                'handbrake slide value': 0.2,
+                'thrust': 0.3,
+                'max_speed': 0.2,
+                'anti strength': 1,
+                'skid threshhold': 0.139,
+                'gear1 multiplier': 0.6,
+                'gear2 multiplier': 0.8,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.075,
+                'gear3 speed': 0.108,
+            },
+            'Container': {
+                'model_corrected': 59,
+                'model': 65,
+                'turbo': 0,
+                'value': 60,
+                'pad': 0,
+                'mass': 30,
+                'front drive bias': 0,
+                'front mass bias': 0.5,
+                'brake friction': 0.9,
+                'turn in': 0.1,
+                'turn ratio': 0.8,
+                'rear end stability': 2,
+                'handbrake slide value': 0.2,
+                'thrust': 0,
+                'max_speed': 0.2,
+                'anti strength': 1,
+                'skid threshhold': 0.139,
+                'gear1 multiplier': 0.6,
+                'gear2 multiplier': 0.8,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0,
+                'gear3 speed': 0,
+            },
+            'Transporter': {
+                'model_corrected': 60,
+                'model': 66,
+                'turbo': 0,
+                'value': 70,
+                'pad': 0,
+                'mass': 30,
+                'front drive bias': 0,
+                'front mass bias': 0.5,
+                'brake friction': 0.9,
+                'turn in': 0.1,
+                'turn ratio': 0.8,
+                'rear end stability': 2,
+                'handbrake slide value': 0.2,
+                'thrust': 0,
+                'max_speed': 0.2,
+                'anti strength': 1,
+                'skid threshhold': 0.139,
+                'gear1 multiplier': 0.6,
+                'gear2 multiplier': 0.8,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0,
+                'gear3 speed': 0,
+            },
+            'TV Van': {
+                'model_corrected': 61,
+                'model': 67,
+                'turbo': 0,
+                'value': 20,
+                'pad': 0,
+                'mass': 19,
+                'front drive bias': 0.5,
+                'front mass bias': 0.8,
+                'brake friction': 2.5,
+                'turn in': 0.5,
+                'turn ratio': 0.8,
+                'rear end stability': 1,
+                'handbrake slide value': 0.85,
+                'thrust': 0.15,
+                'max_speed': 0.205,
+                'anti strength': 1,
+                'skid threshhold': 0.13,
+                'gear1 multiplier': 0.55,
+                'gear2 multiplier': 0.65,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.1,
+                'gear3 speed': 0.14,
+            },
+            'Van': {
+                'model': 61,
+                'turbo': 0,
+                'value': 20,
+                'pad': 0,
+                'mass': 19,
+                'front drive bias': 0.5,
+                'front mass bias': 0.8,
+                'brake friction': 2.5,
+                'turn in': 0.5,
+                'turn ratio': 0.8,
+                'rear end stability': 1,
+                'handbrake slide value': 0.85,
+                'thrust': 0.15,
+                'max_speed': 0.205,
+                'anti strength': 1,
+                'skid threshhold': 0.13,
+                'gear1 multiplier': 0.55,
+                'gear2 multiplier': 0.65,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.1,
+                'gear3 speed': 0.14,
+            },
+            'U-Jerk Truck': {
+                'model_corrected': 62,
+                'model': 69,
+                'turbo': 0,
+                'value': 20,
+                'pad': 0,
+                'mass': 16,
+                'front drive bias': 0.5,
+                'front mass bias': 0.75,
+                'brake friction': 2,
+                'turn in': 0.75,
+                'turn ratio': 0.5,
+                'rear end stability': 0.25,
+                'handbrake slide value': 0.2,
+                'thrust': 0.11,
+                'max_speed': 0.225,
+                'anti strength': 1,
+                'skid threshhold': 0.11,
+                'gear1 multiplier': 0.55,
+                'gear2 multiplier': 0.75,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.085,
+                'gear3 speed': 0.15,
+            },
+            'Z-Type': {
+                'model_corrected': 44,
+                'model': 70,
+                'turbo': 1,
+                'value': 50,
+                'pad': 0,
+                'mass': 15,
+                'front drive bias': 1,
+                'front mass bias': 0.5,
+                'brake friction': 2,
+                'turn in': 0.4,
+                'turn ratio': 0.35,
+                'rear end stability': 1.175,
+                'handbrake slide value': 0.4,
+                'thrust': 0.145,
+                'max_speed': 0.405,
+                'anti strength': 1,
+                'skid threshhold': 0.12,
+                'gear1 multiplier': 0.6,
+                'gear2 multiplier': 0.7,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.19,
+                'gear3 speed': 0.284,
+            },
+            'Rumbler': {
+                'model_corrected': 64,
+                'model': 71,
+                'turbo': 1,
+                'value': 50,
+                'pad': 0,
+                'mass': 15,
+                'front drive bias': 0.5,
+                'front mass bias': 0.375,
+                'brake friction': 3.5,
+                'turn in': 0.25,
+                'turn ratio': 0.65,
+                'rear end stability': 1.4,
+                'handbrake slide value': 0.35,
+                'thrust': 0.14,
+                'max_speed': 0.401,
+                'anti strength': 1,
+                'skid threshhold': 0.115,
+                'gear1 multiplier': 0.55,
+                'gear2 multiplier': 0.7,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.175,
+                'gear3 speed': 0.27,
+            },
+            /*'Wreck 0': {
+                'model': 72,
+                'turbo': 0,
+                'value': 0,
+                'pad': 0,
+                'mass': 10,
+                'front drive bias': 0,
+                'front mass bias': 0.5,
+                'brake friction': 0.9,
+                'turn in': 0.1,
+                'turn ratio': 0.8,
+                'rear end stability': 2,
+                'handbrake slide value': 0.2,
+                'thrust': 0,
+                'max_speed': 0.95,
+                'anti strength': 1,
+                'skid threshhold': 0.139,
+                'gear1 multiplier': 0.6,
+                'gear2 multiplier': 0.8,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.152,
+                'gear3 speed': 0.228,
+                'image_width': 36,
+                'image_height': 112
+            },
+            'Wreck 1': {
+                'model': 73,
+                'turbo': 0,
+                'value': 0,
+                'pad': 0,
+                'mass': 10,
+                'front drive bias': 0,
+                'front mass bias': 0.5,
+                'brake friction': 0.9,
+                'turn in': 0.1,
+                'turn ratio': 0.8,
+                'rear end stability': 2,
+                'handbrake slide value': 0.2,
+                'thrust': 0,
+                'max_speed': 0.95,
+                'anti strength': 1,
+                'skid threshhold': 0.139,
+                'gear1 multiplier': 0.6,
+                'gear2 multiplier': 0.8,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.152,
+                'gear3 speed': 0.228,
+                'image_width': 40,
+                'image_height': 74
+            },
+            'Wreck 2': {
+                'model': 74,
+                'turbo': 0,
+                'value': 0,
+                'pad': 0,
+                'mass': 10,
+                'front drive bias': 0,
+                'front mass bias': 0.5,
+                'brake friction': 0.9,
+                'turn in': 0.1,
+                'turn ratio': 0.8,
+                'rear end stability': 2,
+                'handbrake slide value': 0.2,
+                'thrust': 0,
+                'max_speed': 0.95,
+                'anti strength': 1,
+                'skid threshhold': 0.139,
+                'gear1 multiplier': 0.6,
+                'gear2 multiplier': 0.8,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.152,
+                'gear3 speed': 0.228,
+                'image_width': 46,
+                'image_height': 82
+            },
+            'Wreck 3': {
+                'model': 75,
+                'turbo': 0,
+                'value': 0,
+                'pad': 0,
+                'mass': 10,
+                'front drive bias': 0,
+                'front mass bias': 0.5,
+                'brake friction': 0.9,
+                'turn in': 0.1,
+                'turn ratio': 0.8,
+                'rear end stability': 2,
+                'handbrake slide value': 0.2,
+                'thrust': 0,
+                'max_speed': 0.95,
+                'anti strength': 1,
+                'skid threshhold': 0.139,
+                'gear1 multiplier': 0.6,
+                'gear2 multiplier': 0.8,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.152,
+                'gear3 speed': 0.228,
+                'image_width': 52,
+                'image_height': 64
+            },
+            'Wreck 4': {
+                'model': 76,
+                'turbo': 0,
+                'value': 0,
+                'pad': 0,
+                'mass': 10,
+                'front drive bias': 0,
+                'front mass bias': 0.5,
+                'brake friction': 0.9,
+                'turn in': 0.1,
+                'turn ratio': 0.8,
+                'rear end stability': 2,
+                'handbrake slide value': 0.2,
+                'thrust': 0,
+                'max_speed': 0.95,
+                'anti strength': 1,
+                'skid threshhold': 0.139,
+                'gear1 multiplier': 0.6,
+                'gear2 multiplier': 0.8,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.152,
+                'gear3 speed': 0.228,
+                'image_width': 50,
+                'image_height': 64
+            },
+            'Wreck 5': {
+                'model': 77,
+                'turbo': 0,
+                'value': 0,
+                'pad': 0,
+                'mass': 10,
+                'front drive bias': 0,
+                'front mass bias': 0.5,
+                'brake friction': 0.9,
+                'turn in': 0.1,
+                'turn ratio': 0.8,
+                'rear end stability': 2,
+                'handbrake slide value': 0.2,
+                'thrust': 0,
+                'max_speed': 0.95,
+                'anti strength': 1,
+                'skid threshhold': 0.139,
+                'gear1 multiplier': 0.6,
+                'gear2 multiplier': 0.8,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.152,
+                'gear3 speed': 0.228,
+                'image_width': 64,
+                'image_height': 64
+            },
+            'Wreck 6': {
+                'model': 78,
+                'turbo': 0,
+                'value': 0,
+                'pad': 0,
+                'mass': 10,
+                'front drive bias': 0,
+                'front mass bias': 0.5,
+                'brake friction': 0.9,
+                'turn in': 0.1,
+                'turn ratio': 0.8,
+                'rear end stability': 2,
+                'handbrake slide value': 0.2,
+                'thrust': 0,
+                'max_speed': 0.95,
+                'anti strength': 1,
+                'skid threshhold': 0.139,
+                'gear1 multiplier': 0.6,
+                'gear2 multiplier': 0.8,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.152,
+                'gear3 speed': 0.228,
+                'image_width': 64,
+                'image_height': 64
+            },
+            'Wreck 7': {
+                'model': 79,
+                'turbo': 0,
+                'value': 0,
+                'pad': 0,
+                'mass': 10,
+                'front drive bias': 0,
+                'front mass bias': 0.5,
+                'brake friction': 0.9,
+                'turn in': 0.1,
+                'turn ratio': 0.8,
+                'rear end stability': 2,
+                'handbrake slide value': 0.2,
+                'thrust': 0,
+                'max_speed': 0.95,
+                'anti strength': 1,
+                'skid threshhold': 0.139,
+                'gear1 multiplier': 0.6,
+                'gear2 multiplier': 0.8,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.152,
+                'gear3 speed': 0.228,
+                'image_width': 64,
+                'image_height': 64
+            },
+            'Wreck 8': {
+                'model': 80,
+                'turbo': 0,
+                'value': 0,
+                'pad': 0,
+                'mass': 10,
+                'front drive bias': 0,
+                'front mass bias': 0.5,
+                'brake friction': 0.9,
+                'turn in': 0.1,
+                'turn ratio': 0.8,
+                'rear end stability': 2,
+                'handbrake slide value': 0.2,
+                'thrust': 0,
+                'max_speed': 0.95,
+                'anti strength': 1,
+                'skid threshhold': 0.139,
+                'gear1 multiplier': 0.6,
+                'gear2 multiplier': 0.8,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.152,
+                'gear3 speed': 0.228,
+                'image_width': 64,
+                'image_height': 64
+            },
+            'Wreck 9': {
+                'model': 81,
+                'turbo': 0,
+                'value': 0,
+                'pad': 0,
+                'mass': 10,
+                'front drive bias': 0,
+                'front mass bias': 0.5,
+                'brake friction': 0.9,
+                'turn in': 0.1,
+                'turn ratio': 0.8,
+                'rear end stability': 2,
+                'handbrake slide value': 0.2,
+                'thrust': 0,
+                'max_speed': 0.95,
+                'anti strength': 1,
+                'skid threshhold': 0.139,
+                'gear1 multiplier': 0.6,
+                'gear2 multiplier': 0.8,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.152,
+                'gear3 speed': 0.228,
+                'image_width': 64,
+                'image_height': 64
+            },*/
+            'Jagular XK': {
+                'model_corrected': 75,
+                'model': 82,
+                'turbo': 0,
+                'value': 50,
+                'pad': 0,
+                'mass': 14,
+                'front drive bias': 0.5,
+                'front mass bias': 0.5,
+                'brake friction': 2,
+                'turn in': 0.35,
+                'turn ratio': 0.45,
+                'rear end stability': 1.4,
+                'handbrake slide value': 0.35,
+                'thrust': 0.185,
+                'max_speed': 0.33,
+                'anti strength': 1,
+                'skid threshhold': 0.105,
+                'gear1 multiplier': 0.65,
+                'gear2 multiplier': 0.8,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.18,
+                'gear3 speed': 0.255,
+            },
+            'Furore GT': {
+                'model_corrected': 76,
+                'model': 83,
+                'turbo': 1,
+                'value': 50,
+                'pad': 0,
+                'mass': 14.104,
+                'front drive bias': 0.156,
+                'front mass bias': 0.61,
+                'brake friction': 2.015,
+                'turn in': 0.063,
+                'turn ratio': 0.993,
+                'rear end stability': 0.85,
+                'handbrake slide value': 0.1,
+                'thrust': 0.142,
+                'max_speed': 0.416,
+                'anti strength': 1,
+                'skid threshhold': 0.142,
+                'gear1 multiplier': 0.626,
+                'gear2 multiplier': 0.797,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.235,
+                'gear3 speed': 0.35,
+            },
+            'Special Agent Car': {
+                'model': 84,
+                'turbo': 0,
+                'value': 70,
+                'pad': 0,
+                'mass': 15,
+                'front drive bias': 1,
+                'front mass bias': 0.6,
+                'brake friction': 2,
+                'turn in': 0.155,
+                'turn ratio': 0.45,
+                'rear end stability': 1.2,
+                'handbrake slide value': 0.35,
+                'thrust': 0.165,
+                'max_speed': 0.3,
+                'anti strength': 0.8,
+                'skid threshhold': 0.085,
+                'gear1 multiplier': 0.55,
+                'gear2 multiplier': 0.7,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.13,
+                'gear3 speed': 0.195,
+            },
+            'Karma Bus': {
+                'model_corrected': 26,
+                'model': 86,
+                'turbo': 0,
+                'value': 30,
+                'pad': 0,
+                'mass': 22,
+                'front drive bias': 0.5,
+                'front mass bias': 0.4,
+                'brake friction': 2,
+                'turn in': 0.45,
+                'turn ratio': 0.6,
+                'rear end stability': 1.15,
+                'handbrake slide value': 0.2,
+                'thrust': 0.165,
+                'max_speed': 0.275,
+                'anti strength': 1,
+                'skid threshhold': 0.07,
+                'gear1 multiplier': 0.55,
+                'gear2 multiplier': 0.75,
+                'gear3 multiplier': 1,
+                'gear2 speed': 0.115,
+                'gear3 speed': 0.165,
+            }
+        };
+    })(CarPhysics || (CarPhysics = {}));
+    var CarPhysics$1 = CarPhysics;
+
+    class Car extends Rectangle {
+        constructor(data) {
+            super(data);
+            console.log('Car ' + data.carName);
+            if (!data.carName)
+                console.warn('Car data has no carName!');
+            // Defaults
+            if (!data.paint)
+                data.paint = Math.floor(Math.random() * 35);
+            this.lift = 1;
+            const meta = CarMetas.getNullable(data.carName);
+            const physics = CarPhysics$1.getNullable(data.carName);
+            const model = physics.model_corrected || physics.model;
+            if (meta.COLORLESS)
+                data.sty = `sty/car/painted/GTA2_CAR_${model}.bmp`;
+            else
+                data.sty = `sty/car/painted/GTA2_CAR_${model}_PAL_${data.paint}.bmp`;
+            data.width = meta.IMG_WIDTH;
+            data.height = meta.IMG_HEIGHT;
+            this.makeRectangle({
+                blur: `sty/car/blurs/GTA2_CAR_${model}.png`,
+                shadow: data.sty
+            });
+        }
+    }
+
     var Objects;
     (function (Objects) {
         function factory(data) {
             switch (data.type) {
                 //case 'Ped': return new Ped(data);
                 //case 'Player': return new Player(data);
-                //case 'Car': return new Car(data);
+                case 'Car': return new Car(data);
                 case 'Block': return new Block(data);
                 case 'Surface': return new Surface(data);
                 //case 'Lamp': return new Lamp(data);
@@ -867,155 +3374,6 @@ var gta_kill = (function (exports, THREE) {
         }
     }
     City.spanUneven = 5;
-
-    // "C API" LOL
-    var Rectangles;
-    (function (Rectangles) {
-        function init() {
-        }
-        Rectangles.init = init;
-        function show(rectangle) {
-            console.log('Rectangles add ' + rectangle.data.type);
-            Four$1.scene.add(rectangle.mesh);
-            Four$1.scene.add(rectangle.meshShadow);
-        }
-        Rectangles.show = show;
-        function hide(rectangle) {
-            Four$1.scene.remove(rectangle.mesh);
-            Four$1.scene.remove(rectangle.meshShadow);
-        }
-        Rectangles.hide = hide;
-    })(Rectangles || (Rectangles = {}));
-    var Rectangles$1 = Rectangles;
-
-    var Phong2;
-    (function (Phong2) {
-        // Taken from
-        // https://raw.githubusercontent.com/mrdoob/three.js/dev/src/renderers/shaders/ShaderLib/meshphong_frag.glsl.js
-        //var customMaterial: THREE.ShaderMaterial;
-        function rig() {
-        }
-        Phong2.rig = rig;
-        function make(p) {
-            let o = {
-                name: 'Phong2',
-                transparent: true,
-                map: p.map,
-            };
-            let customMaterial = new THREE.MeshPhongMaterial(o);
-            customMaterial.onBeforeCompile = (shader) => {
-                if (p.BLUR)
-                    shader.uniforms.blurMap = { value: p.blurMap };
-                shader.uniforms.pink = { value: new THREE.Vector3(1, 0, 1) };
-                shader.fragmentShader = shader.fragmentShader.replace(`#define PHONG`, `
-				#define PHONG
-				#define PHONG2
-				`
-                    +
-                        (p.BLUR ? '#define BLUR \n' : '') +
-                    (p.PINK ? '#define PINK \n' : '') +
-                    `
-
-				#ifdef BLUR
-					uniform sampler2D blurMap;
-				#endif
-			`);
-                shader.fragmentShader = shader.fragmentShader.replace(`#include <map_fragment>`, `
-				#ifdef USE_MAP
-				
-					vec4 texelColor = vec4(0);
-					
-					vec4 mapColor = texture2D( map, vUv );
-
-					#ifdef PINK
-						// Pink pixels
-						if ( mapColor.rgb == vec3(1, 0, 1) ) {
-							mapColor.a = 0.0;
-							mapColor.rgb *= 0.0;
-						}
-					#endif
-
-					#ifdef BLUR
-						vec4 blurColor = texture2D( blurMap, vUv );
-						blurColor.rgb *= 0.0;
-						blurColor.a *= 3.5;
-						texelColor = blurColor + mapColor;
-					#else
-						texelColor = mapColor;
-					#endif
-
-					texelColor = mapTexelToLinear( texelColor );
-
-					diffuseColor *= texelColor;
-
-				#endif
-			`);
-            }; // onBeforeCompile
-            return customMaterial;
-        }
-        Phong2.make = make;
-    })(Phong2 || (Phong2 = {}));
-    var Phong2$1 = Phong2;
-
-    class Rectangle extends Object2 {
-        constructor(data) {
-            super(data);
-            this.lift = 2;
-            // the Defaults
-            if (!this.data.width)
-                this.data.width = 20;
-            if (!this.data.height)
-                this.data.height = 20;
-            this.where = new THREE.Vector3;
-            //Ready(); // used by consumer class
-        }
-        makeRectangle(params) {
-            this.makeMeshes(params);
-            this.updatePosition();
-            Rectangles$1.show(this);
-        }
-        makeMeshes(info) {
-            this.geometry = new THREE.PlaneBufferGeometry(this.data.width, this.data.height, 1);
-            this.material = Phong2$1.make({
-                map: Util$1.loadTexture(this.data.sty),
-                blurMap: Util$1.loadTexture(info.blur),
-                PINK: true,
-                BLUR: true,
-            });
-            let materialShadow = Phong2$1.make({
-                map: Util$1.loadTexture(info.shadow),
-                PINK: true,
-                DARKEN: true
-            });
-            materialShadow.opacity = 0.25;
-            materialShadow.color = new THREE__default.Color('black');
-            this.mesh = new THREE__default.Mesh(this.geometry, this.material);
-            this.mesh.frustumCulled = false;
-            this.mesh.receiveShadow = true;
-            this.meshShadow = new THREE__default.Mesh(this.geometry, materialShadow);
-            this.meshShadow.frustumCulled = false;
-        }
-        destroy() {
-            super.destroy();
-            Rectangles$1.hide(this);
-            this.geometry.dispose();
-            this.material.dispose();
-        }
-        update() {
-            super.update();
-        }
-        updatePosition() {
-            this.where.set(this.data.x * 64, this.data.y * 64, this.data.z * 64);
-            this.mesh.position.copy(this.where);
-            this.mesh.position.z += this.lift;
-            // Shade
-            this.meshShadow.position.copy(this.where);
-            this.meshShadow.position.x += 3;
-            this.meshShadow.position.y -= 3;
-            this.mesh.rotation.z = this.data.r;
-            this.meshShadow.rotation.z = this.data.r;
-        }
-    }
 
     var Anims;
     (function (Anims) {
@@ -1264,6 +3622,42 @@ var gta_kill = (function (exports, THREE) {
         return [Math.round(nx), Math.round(ny)];
     }
 
+    const parkedCarNames = [
+        "Romero", "Wellard", "Aniston BD4",
+        "Beamer",
+        "Bug", "Bulwark", /*"Bus",*/ "Cop Car",
+        "Minx", "Eddy", "Panto",
+        "Shark", "GT-A1",
+        /*"Hot Dog Van", "Ice-Cream Van", "Dementia Limousine",*/ "Dementia",
+        "Land Roamer", "Jefferson",
+        /*"Medicar",*/ "Benson", "Schmidt", "Miara",
+        "Big Bug", "Morton", "Maurice", "Pickup",
+        "A-Type", "Arachnid", "Spritzer", "Stinger",
+        "Meteor", /*"Meteor Twoo?",*/ "Hachura", "B-Type",
+        "Taxi Xpress", /*"SWAT Van",*/ "Michelli Roadster",
+        "Taxi", "T-Rex",
+        /*"Train", "Train Cab", "Train FB",*/ "Trance-Am",
+        /*"Truck Cab", "Truck Cab SX", "Container", "Transporter",*/
+        "TV Van", "Van", "U-Jerk Truck", "Z-Type",
+        "Rumbler",
+        "Jagular XK",
+        "Furore GT", "Special Agent Car" /*, "Karma Bus",*/
+    ];
+    window.parkedCarNames = parkedCarNames;
+
+    // PLURAL "LIKE A C API"
+    var Cars;
+    (function (Cars) {
+        function GetRandomName() {
+            let i = Math.floor(Math.random() * parkedCarNames.length);
+            let name = parkedCarNames[i];
+            console.log('GetRandomName ' + i + ' ' + name);
+            return name;
+        }
+        Cars.GetRandomName = GetRandomName;
+    })(Cars || (Cars = {}));
+    var Cars$1 = Cars;
+
     var Gen1;
     (function (Gen1) {
         Gen1.roadMode = 'Normal';
@@ -1478,7 +3872,7 @@ var gta_kill = (function (exports, THREE) {
         })(GenRoads = Gen1.GenRoads || (Gen1.GenRoads = {}));
         let GenParking;
         (function (GenParking) {
-            function onewayRightVert(w, segs, lanes, sheet) {
+            function onewayRight(w, segs, lanes, sheet) {
                 let staging = new StagingArea;
                 if (lanes < 2)
                     console.warn('onewayRightVert less than 2 lanes');
@@ -1489,7 +3883,7 @@ var gta_kill = (function (exports, THREE) {
                         let road = {
                             type: 'Surface',
                             sheet: sheet,
-                            square: 'sideLine',
+                            square: 'sideClear',
                             x: lane + w[0],
                             y: seg + w[1],
                             z: w[2],
@@ -1497,7 +3891,7 @@ var gta_kill = (function (exports, THREE) {
                         };
                         let parkedCar = {
                             type: 'Car',
-                            ///carName: Cars.GetRandomName(),
+                            carName: Cars$1.GetRandomName(),
                             x: road.x,
                             y: road.y,
                             z: road.z
@@ -1557,7 +3951,7 @@ var gta_kill = (function (exports, THREE) {
                 }
                 staging.deliverAll();
             }
-            GenParking.onewayRightVert = onewayRightVert;
+            GenParking.onewayRight = onewayRight;
             function leftBigHorz(w, segs, lanes, sheet) {
                 let staging = new StagingArea;
                 lanes = 4;
@@ -1576,7 +3970,7 @@ var gta_kill = (function (exports, THREE) {
                         };
                         let parkedCar = {
                             type: 'Car',
-                            ///carName: Cars.GetRandomName(),
+                            carName: Cars$1.GetRandomName(),
                             x: road.x,
                             y: road.y,
                             z: road.z
@@ -1898,6 +4292,7 @@ var gta_kill = (function (exports, THREE) {
     (function (GenLocations) {
         function aptsOffice() {
             Gen1$1.roadMode = 'Adapt';
+            //Gen2.GenPlaza.fill([-10, -500, 0], 1000, 1000, 'sty/nature/park original/216.bmp');
             //Gen2.GenPavements.vert(-1, -50, 0, 100, 1);
             //Gen2.GenPavements.vert(3, -50, 0, 100, 1);
             //Gen2.GenPavements.vert(12, -50, 0, 100, 1);
@@ -1908,14 +4303,14 @@ var gta_kill = (function (exports, THREE) {
             Gen1$1.GenFlats.type1([4, 0, 0], [3, 4, 1]); // Gas station
             //Gen2.GenPavements.fill([4, 4, 0], 4, 1);
             // The roads around the office with parking
-            Gen1$1.GenRoads.oneway(0, [8, 5, 0], 3, 'badRoads'); // horz
-            Gen1$1.GenRoads.oneway(0, [8, -1, 0], 3, 'badRoads'); // horz
+            Gen1$1.GenRoads.oneway(0, [8, 5, 0], 3, 'greyRoads'); // horz
+            Gen1$1.GenRoads.oneway(0, [8, -1, 0], 3, 'greyRoads'); // horz
             //Gen1.GenRoads.twolane(0, [2, 5, 0], 9, 'greenRoads'); // horz
             //Gen1.GenRoads.twolane(0, [2, -2, 0], 9, 'greenRoads'); // horz
             //GenDeline.mixedToBad([2, 4, 0], 9, 4);
             //GenDeline.mixedToBad([2, -3, 0], 9, 4);
-            Gen1$1.GenParking.onewayRightVert([8, -1, 0], 7, 2, 'badRoads');
-            Gen2$1.GenDeline.horz([7, 0, 0], 3, 4);
+            Gen1$1.GenParking.onewayRight([8, -1, 0], 7, 2, 'badRoads');
+            //Gen2.GenDeline.horz([7, 0, 0], 3, 4);
             let gas_station_corner = Gen2$1.getDataOfType([8, 5, 0], 'Surface');
             let gas_station_corner2 = Gen2$1.getDataOfType([8, -1, 0], 'Surface');
             gas_station_corner.square = 'singleCorner';

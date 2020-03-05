@@ -1,5 +1,5 @@
 import Four from "../Four";
-import { default as THREE, Vector3, MeshPhongMaterial } from 'three';
+import { default as THREE, Vector3, MeshPhongMaterial, MeshPhongMaterialParameters } from 'three';
 
 namespace Phong2 {
 
@@ -11,19 +11,13 @@ namespace Phong2 {
 
 	}
 
-	export function make(p: any) {
+	export function make(phongProperties: MeshPhongMaterialParameters, p: any) {
 
-		let o = {
-			name: 'Phong2',
-			transparent: true,
-			map: p.map,
-		};
-
-		let customMaterial = new MeshPhongMaterial(o);
+		let customMaterial = new MeshPhongMaterial(phongProperties);
 
 		customMaterial.onBeforeCompile = (shader) => {
 			
-			if (p.BLUR)
+			if (p.blurMap)
 				shader.uniforms.blurMap = { value: p.blurMap };
 
 			shader.uniforms.pink = { value: new Vector3(1, 0, 1) };
@@ -35,10 +29,10 @@ namespace Phong2 {
 				#define PHONG2
 				`
 				+
-				(p.BLUR ? '#define BLUR \n' : '') +
+				(p.blurMap ? '#define BLUR \n' : '') +
 				(p.PINK ? '#define PINK \n' : '') +
 				`
-
+				
 				#ifdef BLUR
 					uniform sampler2D blurMap;
 				#endif
@@ -65,7 +59,7 @@ namespace Phong2 {
 					#ifdef BLUR
 						vec4 blurColor = texture2D( blurMap, vUv );
 						blurColor.rgb *= 0.0;
-						blurColor.a *= 3.5;
+						blurColor.a /= 1.5;
 						texelColor = blurColor + mapColor;
 					#else
 						texelColor = mapColor;

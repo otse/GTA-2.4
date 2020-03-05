@@ -1,9 +1,10 @@
-import Gen1 from "./Generators";
+import Gen1 from "./Generators1";
 import Gen2 from "./Generators2";
 export var GenLocations;
 (function (GenLocations) {
     function aptsOffice() {
         Gen1.roadMode = 'Adapt';
+        //Gen2.GenPlaza.fill([-10, -500, 0], 1000, 1000, 'sty/nature/park original/216.bmp');
         //Gen2.GenPavements.vert(-1, -50, 0, 100, 1);
         //Gen2.GenPavements.vert(3, -50, 0, 100, 1);
         //Gen2.GenPavements.vert(12, -50, 0, 100, 1);
@@ -14,14 +15,14 @@ export var GenLocations;
         Gen1.GenFlats.type1([4, 0, 0], [3, 4, 1]); // Gas station
         //Gen2.GenPavements.fill([4, 4, 0], 4, 1);
         // The roads around the office with parking
-        Gen1.GenRoads.oneway(0, [8, 5, 0], 3, 'badRoads'); // horz
-        Gen1.GenRoads.oneway(0, [8, -1, 0], 3, 'badRoads'); // horz
+        Gen1.GenRoads.oneway(0, [8, 5, 0], 3, 'greyRoads'); // horz
+        Gen1.GenRoads.oneway(0, [8, -1, 0], 3, 'greyRoads'); // horz
         //Gen1.GenRoads.twolane(0, [2, 5, 0], 9, 'greenRoads'); // horz
         //Gen1.GenRoads.twolane(0, [2, -2, 0], 9, 'greenRoads'); // horz
         //GenDeline.mixedToBad([2, 4, 0], 9, 4);
         //GenDeline.mixedToBad([2, -3, 0], 9, 4);
-        Gen1.GenParking.onewayRightVert([8, -1, 0], 7, 2, 'badRoads');
-        Gen2.GenDeline.horz([7, 0, 0], 3, 4);
+        Gen1.GenParking.onewayRight([8, -1, 0], 7, 2, 'badRoads');
+        //Gen2.GenDeline.horz([7, 0, 0], 3, 4);
         let gas_station_corner = Gen2.getDataOfType([8, 5, 0], 'Surface');
         let gas_station_corner2 = Gen2.getDataOfType([8, -1, 0], 'Surface');
         gas_station_corner.square = 'singleCorner';

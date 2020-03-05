@@ -1,5 +1,6 @@
 import Datas from "../Objects/Datas";
 import StagingArea from "./Staging area";
+import Cars from "../Cars/Cars";
 export var Gen1;
 (function (Gen1) {
     Gen1.roadMode = 'Normal';
@@ -233,7 +234,7 @@ export var Gen1;
                     };
                     let parkedCar = {
                         type: 'Car',
-                        ///carName: Cars.GetRandomName(),
+                        carName: Cars.GetRandomName(),
                         x: road.x,
                         y: road.y,
                         z: road.z
@@ -312,7 +313,7 @@ export var Gen1;
                     };
                     let parkedCar = {
                         type: 'Car',
-                        ///carName: Cars.GetRandomName(),
+                        carName: Cars.GetRandomName(),
                         x: road.x,
                         y: road.y,
                         z: road.z
