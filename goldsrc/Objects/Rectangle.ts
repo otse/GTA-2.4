@@ -114,8 +114,8 @@ class Rectangle extends Object2 {
 		// Shade
 		this.meshShadow.position.copy(this.where);
 
-		this.meshShadow.position.x += 4;
-		this.meshShadow.position.y -= 2;
+		this.meshShadow.position.x += 3;
+		this.meshShadow.position.y -= 3;
 		//this.meshShadow.position.z += 3;
 
 		this.mesh.rotation.z = this.data.r!;

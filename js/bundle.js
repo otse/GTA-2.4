@@ -815,8 +815,8 @@ var gta_kill = (function (exports, THREE) {
             this.mesh.position.z += this.lift;
             // Shade
             this.meshShadow.position.copy(this.where);
-            this.meshShadow.position.x += 4;
-            this.meshShadow.position.y -= 2;
+            this.meshShadow.position.x += 3;
+            this.meshShadow.position.y -= 3;
             //this.meshShadow.position.z += 3;
             this.mesh.rotation.z = this.data.r;
             this.meshShadow.rotation.z = this.data.r;
@@ -4132,6 +4132,31 @@ var gta_kill = (function (exports, THREE) {
         })(GenPlaza = Gen2.GenPlaza || (Gen2.GenPlaza = {}));
         let GenDeline;
         (function (GenDeline) {
+            function simple(w, width, height) {
+                let x = 0;
+                for (; x < width; x++) {
+                    let y = 0;
+                    for (; y < height; y++) {
+                        let point = { x: w[0] + x, y: w[1] + y };
+                        let chunk = Datas$1.getChunk(point);
+                        for (let data of chunk.datas) {
+                            if ('Surface' != data.type)
+                                continue;
+                            if (Points$1.different(data, point))
+                                continue;
+                            if (data.square == 'sideLine') {
+                                data.square = 'sideClear';
+                            }
+                            if (data.square == 'convexLine')
+                                data.square = 'convex';
+                            if (data.square == 'sideStopLine') {
+                                data.square = 'sideStop';
+                            }
+                        }
+                    }
+                }
+            }
+            GenDeline.simple = simple;
             function horz(w, width, height) {
                 let x = 0;
                 for (; x < width; x++) {
@@ -4292,33 +4317,36 @@ var gta_kill = (function (exports, THREE) {
     (function (GenLocations) {
         function aptsOffice() {
             Gen1$1.roadMode = 'Adapt';
-            //Gen2.GenPlaza.fill([-10, -500, 0], 1000, 1000, 'sty/nature/park original/216.bmp');
+            // nature\tracks\514.bmp
+            // nature/park original/216.bmp
+            Gen2$1.GenPlaza.fill([-10, -500, 0], 1000, 1000, 'sty/nature/tracks/522.bmp');
             //Gen2.GenPavements.vert(-1, -50, 0, 100, 1);
             //Gen2.GenPavements.vert(3, -50, 0, 100, 1);
             //Gen2.GenPavements.vert(12, -50, 0, 100, 1);
             //Gen2.GenPavements.vert(9, -50, 0, 100, 1);
             //Gen1.GenRoads.highway(1, [0, -25, 0], 50, 3, 'badRoads');
-            Gen1$1.GenRoads.twolane(1, [10, -25, 0], 50, 'greyRoads'); // big main road
+            Gen1$1.GenRoads.twolane(1, [10, -25, 0], 50, 'greyRoads'); // Big main road
             //Gen1.GenFlats.type1([4, 7, 0], [6, 6, 1]); // Apts above
-            Gen1$1.GenFlats.type1([4, 0, 0], [3, 4, 1]); // Gas station
+            Gen1$1.GenFlats.type1([2, 1, 0], [3, 4, 1]); // Gas station
             //Gen2.GenPavements.fill([4, 4, 0], 4, 1);
             // The roads around the office with parking
-            Gen1$1.GenRoads.oneway(0, [8, 5, 0], 3, 'greyRoads'); // horz
-            Gen1$1.GenRoads.oneway(0, [8, -1, 0], 3, 'greyRoads'); // horz
+            Gen1$1.GenRoads.oneway(0, [6, 5, 0], 5, 'greyRoads'); // pPrking exit
+            Gen1$1.GenRoads.oneway(0, [6, 0, 0], 5, 'greyRoads'); // pPrking exit
+            Gen1$1.GenRoads.highway(1, [5, 0, 0], 6, 2, 'greyRoads'); // Pumps road
             //Gen1.GenRoads.twolane(0, [2, 5, 0], 9, 'greenRoads'); // horz
             //Gen1.GenRoads.twolane(0, [2, -2, 0], 9, 'greenRoads'); // horz
             //GenDeline.mixedToBad([2, 4, 0], 9, 4);
             //GenDeline.mixedToBad([2, -3, 0], 9, 4);
-            Gen1$1.GenParking.onewayRight([8, -1, 0], 7, 2, 'badRoads');
-            //Gen2.GenDeline.horz([7, 0, 0], 3, 4);
+            Gen1$1.GenParking.onewayRight([8, 0, 0], 6, 2, 'badRoads');
+            Gen2$1.GenDeline.horz([4, 0, 0], 6, 6);
             let gas_station_corner = Gen2$1.getDataOfType([8, 5, 0], 'Surface');
-            let gas_station_corner2 = Gen2$1.getDataOfType([8, -1, 0], 'Surface');
-            gas_station_corner.square = 'singleCorner';
-            gas_station_corner2.square = 'singleCorner';
-            gas_station_corner2.r += 1;
+            let gas_station_corner2 = Gen2$1.getDataOfType([8, 0, 0], 'Surface');
+            gas_station_corner.square = 'singleExit';
+            gas_station_corner2.square = 'singleExit';
+            //gas_station_corner2!.r! += 1;
             // Deline around the apts
             Gen2$1.GenDeline.horz([2, 4, 0], 9, 3);
-            Gen2$1.GenDeline.horz([2, -2, 0], 9, 3);
+            Gen2$1.GenDeline.horz([2, -1, 0], 9, 3);
             return;
         }
         GenLocations.aptsOffice = aptsOffice;

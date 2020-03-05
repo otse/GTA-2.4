@@ -58,6 +58,32 @@ export var Gen2;
     })(GenPlaza = Gen2.GenPlaza || (Gen2.GenPlaza = {}));
     let GenDeline;
     (function (GenDeline) {
+        function simple(w, width, height) {
+            let chunked = [];
+            let x = 0;
+            for (; x < width; x++) {
+                let y = 0;
+                for (; y < height; y++) {
+                    let point = { x: w[0] + x, y: w[1] + y };
+                    let chunk = Datas.getChunk(point);
+                    for (let data of chunk.datas) {
+                        if ('Surface' != data.type)
+                            continue;
+                        if (Points.different(data, point))
+                            continue;
+                        if (data.square == 'sideLine') {
+                            data.square = 'sideClear';
+                        }
+                        if (data.square == 'convexLine')
+                            data.square = 'convex';
+                        if (data.square == 'sideStopLine') {
+                            data.square = 'sideStop';
+                        }
+                    }
+                }
+            }
+        }
+        GenDeline.simple = simple;
         function horz(w, width, height) {
             let chunked = [];
             let x = 0;
