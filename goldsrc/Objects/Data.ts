@@ -1,5 +1,7 @@
 //import { Object2 } from './object';
 
+// todo, obviously simplify this someday
+
 export type DataType =
 	'Ignore' |	'Car' |  'Ped' | 'Ply' | 'Rectangle' | 'Block' | 'Surface' | 'Lamp';
 
@@ -7,7 +9,7 @@ export interface Data2 {
 	type: DataType;
 	x: number;
 	y: number;
-	z?: number;
+	z: number;
 	r?: number;
 	f?: boolean;
 	color?: string;
@@ -50,6 +52,9 @@ export interface Data2 {
 	celled?: boolean;
 	object2?: Object2 | null;
 	stacked?: boolean;
+
+	// road blend settings
+	adapt_sheet?: boolean;
 };
 
 export default Data2;

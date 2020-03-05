@@ -1,5 +1,5 @@
 import Datas from "../Objects/Datas";
-import Gen from "./Gen";
+import Gen from "./Neat ones go in here";
 export var GenFlats;
 (function (GenFlats) {
     GenFlats.blueMetal = [

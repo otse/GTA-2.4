@@ -6,7 +6,7 @@ import Surfaces from "./Objects/Shapes/Surfaces";
 import Blocks from "./Objects/Shapes/Blocks";
 import BoxCutter from "./Objects/Shapes/Box cutter";
 import Spritesheets from "./Sprites/Spritesheets";
-import GenStrip from "./Generators/The strip";
+import GenLocations from "./Generators/Levels";
 import Zoom from "./Unsorted/Zoom";
 import { Movie } from "./Unsorted/RGB Shift";
 export var KILL;
@@ -21,11 +21,14 @@ export var KILL;
         Spritesheets.init();
         Movie.init();
         KILL.city = new City;
-        GenStrip.aptsOffice();
+        window.KILL = KILL;
+        //GenLocations.longLonesome();
+        GenLocations.aptsOffice();
         let data = {
             type: 'Ply',
             x: 10.5,
-            y: 1
+            y: 1,
+            z: 0
         };
         data.remap = [40, 46, 47, 49, 50, 51][Math.floor(Math.random() * 6)];
         KILL.ply = new Ply(data);

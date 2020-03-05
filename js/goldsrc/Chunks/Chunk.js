@@ -24,8 +24,10 @@ export class Chunk {
     }
     add(data) {
         this.datas.push(data);
-        if (this.currentlyActive)
+        if (this.currentlyActive) {
             this.fabricate(data);
+            console.warn('active add');
+        }
     }
     remove(data) {
         this.datas.splice(this.datas.indexOf(data), 1);

@@ -1,7 +1,7 @@
 import Datas from "../Objects/Datas";
 export var GenPavements;
 (function (GenPavements) {
-    function Fill(w, width, height) {
+    function fill(w, width, height) {
         //const lanes = 1;
         let x = 0;
         for (; x < width; x++) {
@@ -20,8 +20,8 @@ export var GenPavements;
             }
         }
     }
-    GenPavements.Fill = Fill;
-    function Vert(x, y, z, segs, lanes) {
+    GenPavements.fill = fill;
+    function vert(x, y, z, segs, lanes) {
         //const lanes = 1;
         let seg = 0;
         for (; seg < segs; seg++) {
@@ -39,7 +39,7 @@ export var GenPavements;
             }
         }
     }
-    GenPavements.Vert = Vert;
+    GenPavements.vert = vert;
     function Horz(x, y, z, segs, lanes) {
         //const lanes = 1;
         let seg = 0;

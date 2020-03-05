@@ -2,7 +2,7 @@ import Datas from "../Objects/Datas";
 import Points from "../Objects/Points";
 export var GenDeline;
 (function (GenDeline) {
-    function Horz(w, width, height) {
+    function horz(w, width, height) {
         let chunked = [];
         let x = 0;
         for (; x < width; x++) {
@@ -37,7 +37,7 @@ export var GenDeline;
             }
         }
     }
-    GenDeline.Horz = Horz;
+    GenDeline.horz = horz;
     function mixedToBad(w, width, height) {
         let chunked = [];
         let x = 0;
@@ -69,25 +69,6 @@ export var GenDeline;
         }
     }
     GenDeline.mixedToBad = mixedToBad;
-    // To swap tile at ply in console
-    // Deline__.Swap([Math.floor(ply.data.x), Math.floor(ply.data.y), 0], 'sideDash')
-    function Edit(w, assign) {
-        let point = { x: w[0], y: w[1] };
-        let chunk = Datas.getChunk(point);
-        for (let data of chunk.datas) {
-            if ('Surface' != data.type)
-                continue;
-            if (Points.different(data, point))
-                continue;
-            Object.assign(data, assign);
-            console.log('Deline Swap complete');
-            // Rebuild idiom
-            chunk.remove(data);
-            chunk.add(data);
-            break;
-        }
-    }
-    GenDeline.Edit = Edit;
     function EditMultiple(w, width, height, square_a, square_b) {
         let chunked = [];
         let x = 0;

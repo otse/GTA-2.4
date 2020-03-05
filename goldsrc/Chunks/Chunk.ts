@@ -50,8 +50,10 @@ export class Chunk {
 	add(data: Data2) {
 		this.datas.push(data);
 
-		if (this.currentlyActive)
+		if (this.currentlyActive) {
 			this.fabricate(data);
+			console.warn('active add');
+		}
 	}
 
 	remove(data: Data2) {

@@ -26,14 +26,19 @@ var Datas;
     Datas.deliver = deliver;
     function replaceDeliver(A) {
         let chunk = getChunk(A);
+        let C;
         for (let B of chunk.datas) {
             if (B.type == 'Car')
                 continue;
             if (A.x == B.x &&
                 A.y == B.y &&
-                A.z == B.z)
+                A.z == B.z) {
+                C = B;
                 chunk.remove(B);
+            }
         }
+        if (C && C.sheet && A.adapt_sheet)
+            A.sheet = C.sheet;
         chunk.add(A);
     }
     Datas.replaceDeliver = replaceDeliver;

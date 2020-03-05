@@ -3,7 +3,7 @@ import Datas from "../Objects/Datas";
 //import Cars from "../cars/cars";
 export var GenParking;
 (function (GenParking) {
-    function OnewayRightVert(w, segs, lanes, sheet) {
+    function onewayRightVert(w, segs, lanes, sheet) {
         if (lanes < 2)
             console.warn('OnewayRightVert less than 2 lanes');
         let seg = 0;
@@ -79,11 +79,11 @@ export var GenParking;
             }
         }
     }
-    GenParking.OnewayRightVert = OnewayRightVert;
+    GenParking.onewayRightVert = onewayRightVert;
     function Big(w, segs, lanes, r, sheet) {
     }
     GenParking.Big = Big;
-    function LeftBigHorz(w, segs, lanes, sheet) {
+    function leftBigHorz(w, segs, lanes, sheet) {
         lanes = 4;
         let seg = 0;
         for (; seg < segs; seg++) {
@@ -197,6 +197,6 @@ export var GenParking;
             }
         }
     }
-    GenParking.LeftBigHorz = LeftBigHorz;
+    GenParking.leftBigHorz = leftBigHorz;
 })(GenParking || (GenParking = {}));
 export default GenParking;

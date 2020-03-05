@@ -8,11 +8,9 @@ class StagingArea {
     }
     addData(data) {
         this.datas.push(data);
-        this.findExtents();
     }
     addDatas(datas) {
         this.datas = this.datas.concat(datas);
-        this.findExtents();
     }
     deliverAll() {
         for (let data of this.datas)
@@ -35,7 +33,7 @@ class StagingArea {
             this.max[2] = Math.max(data.z, this.max[2]);
         }
     }
-    turnCcw(n) {
+    ccw(n) {
         this.findExtents();
         let newDatas = [];
         for (let y = 0; y < this.max[1]; y++) {
@@ -44,6 +42,7 @@ class StagingArea {
         }
         for (let data of this.datas) {
             let p = rotate(this.min[0], this.min[1], data.x, data.y, n * 90);
+            //console.log('rotate is', p[0], p[1]);
             data.r += n;
             data.x = p[0];
             data.y = p[1] + (this.max[0] - this.min[0]);

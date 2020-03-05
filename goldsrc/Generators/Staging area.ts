@@ -1,7 +1,7 @@
 import Data2 from "../Objects/Data";
 import Datas from "../Objects/Datas";
 
-import Gen from "./Gen";
+import Gen1 from "./Generators";
 
 // For making vertical ~> horizontal
 
@@ -21,14 +21,10 @@ class StagingArea {
 
 	addData(data: Data2) {
 		this.datas.push(data);
-
-		this.findExtents();
 	}
 
 	addDatas(datas: Data2[]) {
 		this.datas = this.datas.concat(datas);
-
-		this.findExtents();
 	}
 
 	deliverAll() {
@@ -57,7 +53,7 @@ class StagingArea {
 		}
 	}
 
-	turnCcw(n: 1 | 2 | 3) {
+	ccw(n: 1 | 2 | 3) {
 		
 		this.findExtents();
 
@@ -67,10 +63,12 @@ class StagingArea {
 			for (let x = 0; x < this.min[0]; x++) {
 			}
 		}
-
+		
 		for (let data of this.datas) {
 			let p = rotate(this.min[0], this.min[1], data.x, data.y, n * 90);
 
+			//console.log('rotate is', p[0], p[1]);
+			
 			data.r! += n;
 			data.x = p[0];
 			data.y = p[1] + (this.max[0] - this.min[0]);

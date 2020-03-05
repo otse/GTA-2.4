@@ -12,7 +12,7 @@ export var Spritesheets;
     function init() {
         Spritesheets.canvas = document.createElement('canvas');
         document.body.appendChild(Spritesheets.canvas);
-        console.log('Spritesheets init ');
+        console.log('Spritesheets init');
     }
     Spritesheets.init = init;
     const sheets = {
@@ -23,15 +23,17 @@ export var Spritesheets;
                 middleTracks: { x: 2, y: 2 },
                 middleCorner: { x: 3, y: 2 },
                 sideClear: { x: 1, y: 1 },
-                sideClear_alt: { x: 1, y: 1 },
+                sideClearAlt: { x: 1, y: 1 },
                 sideLine: { x: 4, y: 1 },
                 sideDash: { x: 3, y: 1 },
                 sideStop: { x: 2, y: 4 },
                 sideStopLine: { x: 5, y: 1 },
                 sideStopDash: { x: 5, y: 2 },
+                parkingSpot: { x: 1, y: 4 },
+                customNotch: { x: 3, y: 4 },
                 single: { x: 1, y: 3 },
                 singleExit: { x: 2, y: 3 },
-                singleCorner: { x: 2, y: 3 },
+                singleCorner: { x: 3, y: 3 },
                 singleOpen: { x: 3, y: 5 },
                 corner: { x: 4, y: 3 },
                 convex: { x: 4, y: 5 },
@@ -60,7 +62,7 @@ export var Spritesheets;
                 customNotch: { x: 3, y: 4 },
                 single: { x: 1, y: 3 },
                 singleExit: { x: 2, y: 3 },
-                singleCorner: { x: 2, y: 3 },
+                singleCorner: { x: 3, y: 3 },
                 singleOpen: { x: 3, y: 5 },
                 corner: { x: 4, y: 3 },
                 convex: { x: 4, y: 5 },
@@ -89,7 +91,7 @@ export var Spritesheets;
                 customNotch: { x: 3, y: 4 },
                 single: { x: 1, y: 3 },
                 singleExit: { x: 2, y: 3 },
-                singleCorner: { x: 2, y: 3 },
+                singleCorner: { x: 3, y: 3 },
                 singleOpen: { x: 3, y: 5 },
                 corner: { x: 4, y: 3 },
                 convex: { x: 4, y: 5 },
@@ -118,7 +120,7 @@ export var Spritesheets;
                 customNotch: { x: 3, y: 4 },
                 single: { x: 1, y: 3 },
                 singleExit: { x: 2, y: 3 },
-                singleCorner: { x: 2, y: 3 },
+                singleCorner: { x: 3, y: 3 },
                 singleOpen: { x: 3, y: 5 },
                 corner: { x: 4, y: 3 },
                 convex: { x: 4, y: 5 },
