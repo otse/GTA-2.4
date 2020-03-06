@@ -27,8 +27,8 @@ export namespace GenLocations {
 		//Gen2.GenPavements.fill([4, 4, 0], 4, 1);
 		
 		// The roads around the office with parking
-		Gen1.GenRoads.oneway(0, [6, 5, 0], 5, 'greyRoads'); // pPrking exit
-		Gen1.GenRoads.oneway(0, [6, 0, 0], 5, 'greyRoads'); // pPrking exit
+		Gen1.GenRoads.oneway(0, [6, 5, 0], 5, 'greyRoads'); // Parking exit
+		Gen1.GenRoads.oneway(0, [6, 0, 0], 5, 'greyRoads'); // Parking exit
 
 		Gen1.GenRoads.highway(1, [5, 0, 0], 6, 2, 'greyRoads'); // Pumps road
 		

@@ -17,8 +17,8 @@ export var GenLocations;
         Gen1.GenFlats.type1([2, 1, 0], [3, 4, 1]); // Gas station
         //Gen2.GenPavements.fill([4, 4, 0], 4, 1);
         // The roads around the office with parking
-        Gen1.GenRoads.oneway(0, [6, 5, 0], 5, 'greyRoads'); // pPrking exit
-        Gen1.GenRoads.oneway(0, [6, 0, 0], 5, 'greyRoads'); // pPrking exit
+        Gen1.GenRoads.oneway(0, [6, 5, 0], 5, 'greyRoads'); // Parking exit
+        Gen1.GenRoads.oneway(0, [6, 0, 0], 5, 'greyRoads'); // Parking exit
         Gen1.GenRoads.highway(1, [5, 0, 0], 6, 2, 'greyRoads'); // Pumps road
         //Gen1.GenRoads.twolane(0, [2, 5, 0], 9, 'greenRoads'); // horz
         //Gen1.GenRoads.twolane(0, [2, -2, 0], 9, 'greenRoads'); // horz

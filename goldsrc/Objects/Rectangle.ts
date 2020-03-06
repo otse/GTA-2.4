@@ -51,7 +51,7 @@ class Rectangle extends Object2 {
 
 		let map = Util.loadTexture(this.data.sty);
 		let blurMap = Util.loadTexture(info.blur);
-		let shadowMap = Util.loadTexture(info.shadow);
+		let shadowMap = Util.loadTexture(info.blur);
 
 		this.geometry = new PlaneBufferGeometry(
 			this.data.width, this.data.height, 1);
@@ -74,14 +74,14 @@ class Rectangle extends Object2 {
 		let materialShadow = Phong2.make({
 			name: 'Phong2',
 			transparent: true,
-			map: map,
+			map: shadowMap,
 		}, {
 			map: shadowMap,
 			PINK: true,
 			DARKEN: true
 		});
 
-		materialShadow.opacity = 0.4;
+		materialShadow.opacity = 0.5;
 		materialShadow.color = new THREE.Color(0x0);
 
 		this.mesh = new THREE.Mesh(this.geometry, this.material);

@@ -769,7 +769,7 @@ var gta_kill = (function (exports, THREE) {
         makeMeshes(info) {
             let map = Util$1.loadTexture(this.data.sty);
             let blurMap = Util$1.loadTexture(info.blur);
-            let shadowMap = Util$1.loadTexture(info.shadow);
+            let shadowMap = Util$1.loadTexture(info.blur);
             this.geometry = new THREE.PlaneBufferGeometry(this.data.width, this.data.height, 1);
             this.material = Phong2$1.make({
                 name: 'Phong2',
@@ -787,13 +787,13 @@ var gta_kill = (function (exports, THREE) {
             let materialShadow = Phong2$1.make({
                 name: 'Phong2',
                 transparent: true,
-                map: map,
+                map: shadowMap,
             }, {
                 map: shadowMap,
                 PINK: true,
                 DARKEN: true
             });
-            materialShadow.opacity = 0.4;
+            materialShadow.opacity = 0.5;
             materialShadow.color = new THREE__default.Color(0x0);
             this.mesh = new THREE__default.Mesh(this.geometry, this.material);
             this.mesh.frustumCulled = false;
@@ -4330,8 +4330,8 @@ var gta_kill = (function (exports, THREE) {
             Gen1$1.GenFlats.type1([2, 1, 0], [3, 4, 1]); // Gas station
             //Gen2.GenPavements.fill([4, 4, 0], 4, 1);
             // The roads around the office with parking
-            Gen1$1.GenRoads.oneway(0, [6, 5, 0], 5, 'greyRoads'); // pPrking exit
-            Gen1$1.GenRoads.oneway(0, [6, 0, 0], 5, 'greyRoads'); // pPrking exit
+            Gen1$1.GenRoads.oneway(0, [6, 5, 0], 5, 'greyRoads'); // Parking exit
+            Gen1$1.GenRoads.oneway(0, [6, 0, 0], 5, 'greyRoads'); // Parking exit
             Gen1$1.GenRoads.highway(1, [5, 0, 0], 6, 2, 'greyRoads'); // Pumps road
             //Gen1.GenRoads.twolane(0, [2, 5, 0], 9, 'greenRoads'); // horz
             //Gen1.GenRoads.twolane(0, [2, -2, 0], 9, 'greenRoads'); // horz
