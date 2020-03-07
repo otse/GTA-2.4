@@ -25,29 +25,23 @@ class Rectangle extends Object2 {
         let blurMap = Util.loadTexture(info.blur);
         let shadowMap = Util.loadTexture(info.blur);
         this.geometry = new PlaneBufferGeometry(this.data.width, this.data.height, 1);
-        this.material = Phong2.make({
+        this.material = Phong2.makeRectangle({
             name: 'Phong2',
             transparent: true,
             map: map,
+            blending: THREE.NormalBlending
         }, {
+            PINK: true,
             blurMap: blurMap,
+        });
+        let materialShadow = Phong2.makeRectangleShadow({
+            name: 'Phong2 Shadow',
+            transparent: true,
+            map: map,
+        }, {
             PINK: true
         });
-        /*let materialShadow = new MeshBasicMaterial({
-            map: Util.loadTexture(this.data.sty),
-            //color: 0x0,
-            transparent: true
-        });*/
-        let materialShadow = Phong2.make({
-            name: 'Phong2',
-            transparent: true,
-            map: shadowMap,
-        }, {
-            map: shadowMap,
-            PINK: true,
-            DARKEN: true
-        });
-        materialShadow.opacity = 0.5;
+        materialShadow.opacity = 0.25;
         materialShadow.color = new THREE.Color(0x0);
         this.mesh = new THREE.Mesh(this.geometry, this.material);
         this.mesh.frustumCulled = false;
@@ -71,7 +65,6 @@ class Rectangle extends Object2 {
         this.meshShadow.position.copy(this.where);
         this.meshShadow.position.x += 3;
         this.meshShadow.position.y -= 3;
-        //this.meshShadow.position.z += 3;
         this.mesh.rotation.z = this.data.r;
         this.meshShadow.rotation.z = this.data.r;
     }

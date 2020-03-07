@@ -13,13 +13,13 @@ export namespace Rectangles {
 	export function show(rectangle: Rectangle) {
 		console.log('Rectangles add ' + rectangle.data.type);
 
-		Four.scene.add(rectangle.mesh);
 		Four.scene.add(rectangle.meshShadow);
+		Four.scene.add(rectangle.mesh);
 	}
 
 	export function hide(rectangle: Rectangle) {
-		Four.scene.remove(rectangle.mesh);
 		Four.scene.remove(rectangle.meshShadow);
+		Four.scene.remove(rectangle.mesh);
 	}
 }
 

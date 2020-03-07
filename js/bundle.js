@@ -417,40 +417,40 @@ var gta_kill = (function (exports, THREE) {
 
     var SPRITES;
     (function (SPRITES) {
-        function sprite(a, b) {
+        function NN(a, b) {
             return { x: a, y: b };
         }
-        SPRITES.sprite = sprite;
+        SPRITES.NN = NN;
         SPRITES.ROADS = {
-            CLEAR: sprite(1, 2),
-            MIDDLE_TRACKS: sprite(2, 2),
-            MIDDLE_CORNER: sprite(3, 2),
-            SIDE_CLEAR: sprite(1, 1),
-            SIDE_CLEAR_ALT: sprite(1, 1),
-            SIDE_LINE: sprite(4, 1),
-            SIDE_DASH: sprite(3, 1),
-            SIDE_STOP: sprite(2, 4),
-            SIDE_STOP_LINE: sprite(5, 1),
-            SIDE_STOP_DASH: sprite(5, 2),
-            PARKING_SPOT: sprite(1, 4),
-            CUSTOM_NOTCH: sprite(3, 4),
-            SINGLE: sprite(1, 3),
-            SINGLE_EXIT: sprite(2, 3),
-            SINGLE_CORNER: sprite(3, 3),
-            SINGLE_OPEN: sprite(3, 5),
-            CORNER: sprite(4, 3),
-            CONVEX: sprite(4, 5),
-            CONVEX_LINE: sprite(5, 5),
-            SIDE_DECAL: sprite(1, 5),
-            SIDE_DECAL_2: sprite(2, 5)
+            CLEAR: NN(1, 2),
+            MIDDLE_TRACKS: NN(2, 2),
+            MIDDLE_CORNER: NN(3, 2),
+            SIDE_CLEAR: NN(1, 1),
+            SIDE_CLEAR_ALT: NN(1, 1),
+            SIDE_LINE: NN(4, 1),
+            SIDE_DASH: NN(3, 1),
+            SIDE_STOP: NN(2, 4),
+            SIDE_STOP_LINE: NN(5, 1),
+            SIDE_STOP_DASH: NN(5, 2),
+            PARKING_SPOT: NN(1, 4),
+            CUSTOM_NOTCH: NN(3, 4),
+            SINGLE: NN(1, 3),
+            SINGLE_EXIT: NN(2, 3),
+            SINGLE_CORNER: NN(3, 3),
+            SINGLE_OPEN: NN(3, 5),
+            CORNER: NN(4, 3),
+            CONVEX: NN(4, 5),
+            CONVEX_LINE: NN(5, 5),
+            SIDE_DECAL: NN(1, 5),
+            SIDE_DECAL_2: NN(2, 5)
         };
         SPRITES.PAVEMENTS = {
-            MIDDLE: sprite(1, 1),
-            SIDE_SHADOWED: sprite(2, 1),
-            SIDE_PAVED: sprite(3, 1),
-            SIDE_PAVED_SHADOWED: sprite(4, 1),
-            SIDE_PAVED_SHADOWED_VENT: sprite(3, 3),
-            SIDE_LINE_END: sprite(3, 1)
+            MIDDLE: NN(1, 1),
+            SIDE_SHADOWED: NN(2, 1),
+            SIDE_PAVED: NN(3, 1),
+            SIDE_PAVED_SHADOWED: NN(4, 1),
+            SIDE_PAVED_SHADOWED_VENT: NN(3, 3),
+            SIDE_LINE_END: NN(3, 1)
         };
     })(SPRITES || (SPRITES = {}));
     var Sprites;
@@ -609,13 +609,13 @@ var gta_kill = (function (exports, THREE) {
         Rectangles.init = init;
         function show(rectangle) {
             console.log('Rectangles add ' + rectangle.data.type);
-            Four$1.scene.add(rectangle.mesh);
             Four$1.scene.add(rectangle.meshShadow);
+            Four$1.scene.add(rectangle.mesh);
         }
         Rectangles.show = show;
         function hide(rectangle) {
-            Four$1.scene.remove(rectangle.mesh);
             Four$1.scene.remove(rectangle.meshShadow);
+            Four$1.scene.remove(rectangle.mesh);
         }
         Rectangles.hide = hide;
     })(Rectangles || (Rectangles = {}));
@@ -629,24 +629,16 @@ var gta_kill = (function (exports, THREE) {
         function rig() {
         }
         Phong2.rig = rig;
-        function make(phongProperties, p) {
+        function makeRectangle(phongProperties, p) {
             let customMaterial = new THREE.MeshPhongMaterial(phongProperties);
             customMaterial.onBeforeCompile = (shader) => {
-                if (p.blurMap)
-                    shader.uniforms.blurMap = { value: p.blurMap };
+                shader.uniforms.blurMap = { value: p.blurMap };
                 shader.uniforms.pink = { value: new THREE.Vector3(1, 0, 1) };
                 shader.fragmentShader = shader.fragmentShader.replace(`#define PHONG`, `
 				#define PHONG
 				#define PHONG2
-				`
-                    +
-                        (p.blurMap ? '#define BLUR \n' : '') +
-                    (p.PINK ? '#define PINK \n' : '') +
-                    `
 				
-				#ifdef BLUR
-					uniform sampler2D blurMap;
-				#endif
+				uniform sampler2D blurMap;
 			`);
                 shader.fragmentShader = shader.fragmentShader.replace(`#include <map_fragment>`, `
 				#ifdef USE_MAP
@@ -655,22 +647,19 @@ var gta_kill = (function (exports, THREE) {
 					
 					vec4 mapColor = texture2D( map, vUv );
 
-					#ifdef PINK
-						// Pink pixels
-						if ( mapColor.rgb == vec3(1, 0, 1) ) {
-							mapColor.a = 0.0;
-							mapColor.rgb *= 0.0;
-						}
-					#endif
+					//#ifdef PINK
 
-					#ifdef BLUR
-						vec4 blurColor = texture2D( blurMap, vUv );
-						blurColor.rgb *= 0.0;
-						blurColor.a /= 1.5;
-						texelColor = blurColor + mapColor;
-					#else
-						texelColor = mapColor;
-					#endif
+					// Pink
+					if ( mapColor.rgb == vec3(1, 0, 1) ) {
+						mapColor.a = 0.0;
+						mapColor.rgb *= 0.0;
+					}
+
+					// Blur
+					vec4 blurColor = texture2D( blurMap, vUv );
+					blurColor.rgb *= 0.0;
+					blurColor.a /= 2.0;
+					texelColor = blurColor + mapColor;
 
 					texelColor = mapTexelToLinear( texelColor );
 
@@ -681,7 +670,42 @@ var gta_kill = (function (exports, THREE) {
             }; // onBeforeCompile
             return customMaterial;
         }
-        Phong2.make = make;
+        Phong2.makeRectangle = makeRectangle;
+        function makeRectangleShadow(phongProperties, p) {
+            let customMaterial = new THREE.MeshPhongMaterial(phongProperties);
+            customMaterial.onBeforeCompile = (shader) => {
+                shader.uniforms.pink = { value: new THREE.Vector3(1, 0, 1) };
+                shader.fragmentShader = shader.fragmentShader.replace(`#define PHONG`, `
+				#define PHONG
+				#define PHONG2
+
+				// add uniforms here
+			`);
+                shader.fragmentShader = shader.fragmentShader.replace(`#include <map_fragment>`, `
+				#ifdef USE_MAP
+				
+					vec4 texelColor = vec4(0);
+					
+					vec4 mapColor = texture2D( map, vUv );
+
+					// Pink
+					if ( mapColor.rgb == vec3(1, 0, 1) ) {
+						mapColor.a = 0.0;
+						mapColor.rgb *= 0.0;
+					}
+
+					texelColor = mapColor;
+
+					texelColor = mapTexelToLinear( texelColor );
+
+					diffuseColor *= texelColor;
+
+				#endif
+			`);
+            }; // onBeforeCompile
+            return customMaterial;
+        }
+        Phong2.makeRectangleShadow = makeRectangleShadow;
     })(Phong2 || (Phong2 = {}));
     var Phong2$1 = Phong2;
 
@@ -707,29 +731,23 @@ var gta_kill = (function (exports, THREE) {
             let blurMap = Util$1.loadTexture(info.blur);
             let shadowMap = Util$1.loadTexture(info.blur);
             this.geometry = new THREE.PlaneBufferGeometry(this.data.width, this.data.height, 1);
-            this.material = Phong2$1.make({
+            this.material = Phong2$1.makeRectangle({
                 name: 'Phong2',
                 transparent: true,
                 map: map,
+                blending: THREE__default.NormalBlending
             }, {
+                PINK: true,
                 blurMap: blurMap,
+            });
+            let materialShadow = Phong2$1.makeRectangleShadow({
+                name: 'Phong2 Shadow',
+                transparent: true,
+                map: map,
+            }, {
                 PINK: true
             });
-            /*let materialShadow = new MeshBasicMaterial({
-                map: Util.loadTexture(this.data.sty),
-                //color: 0x0,
-                transparent: true
-            });*/
-            let materialShadow = Phong2$1.make({
-                name: 'Phong2',
-                transparent: true,
-                map: shadowMap,
-            }, {
-                map: shadowMap,
-                PINK: true,
-                DARKEN: true
-            });
-            materialShadow.opacity = 0.5;
+            materialShadow.opacity = 0.25;
             materialShadow.color = new THREE__default.Color(0x0);
             this.mesh = new THREE__default.Mesh(this.geometry, this.material);
             this.mesh.frustumCulled = false;
@@ -753,7 +771,6 @@ var gta_kill = (function (exports, THREE) {
             this.meshShadow.position.copy(this.where);
             this.meshShadow.position.x += 3;
             this.meshShadow.position.y -= 3;
-            //this.meshShadow.position.z += 3;
             this.mesh.rotation.z = this.data.r;
             this.meshShadow.rotation.z = this.data.r;
         }
