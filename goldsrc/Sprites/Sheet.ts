@@ -1,4 +1,4 @@
-interface Spritesheet {
+export interface Sheet {
     file: string
     padding?: number
     width: number
@@ -7,10 +7,4 @@ interface Spritesheet {
     piece: { w; h; }
 };
 
-namespace Spritesheet {
-
-	type List = Spritesheet['file']
-    
-}
-
-export default Spritesheet;
+export default Sheet;

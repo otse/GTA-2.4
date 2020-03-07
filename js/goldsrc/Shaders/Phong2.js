@@ -9,7 +9,7 @@ var Phong2;
     Phong2.rig = rig;
     function makeRectangle(phongProperties, p) {
         let customMaterial = new MeshPhongMaterial(phongProperties);
-        customMaterial.onBeforeCompile = (shader) => {
+        customMaterial.onBeforeCompile = function (shader) {
             shader.uniforms.blurMap = { value: p.blurMap };
             shader.uniforms.pink = { value: new Vector3(1, 0, 1) };
             shader.fragmentShader = shader.fragmentShader.replace(`#define PHONG`, `
@@ -45,6 +45,7 @@ var Phong2;
 
 				#endif
 			`);
+            return 2;
         }; // onBeforeCompile
         return customMaterial;
     }

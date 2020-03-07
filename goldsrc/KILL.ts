@@ -8,6 +8,7 @@ import Surfaces from "./Objects/Shapes/Surfaces";
 import Blocks from "./Objects/Shapes/Blocks";
 import BoxCutter from "./Objects/Shapes/Box cutter";
 import Sprites from "./Sprites/Sprites";
+import Sheets from "./Sprites/Sheets";
 
 import GenLocations from "./Generators/Levels";
 
@@ -28,6 +29,7 @@ export namespace KILL {
 		Blocks.init();
 		BoxCutter.init();
 		Sprites.init();
+		Sheets.init();
 		Movie.init();
 		
 		city = new City;

@@ -1,10 +1,11 @@
-export var SPRITES;
-(function (SPRITES) {
+var Sprites;
+(function (Sprites) {
+    const sprites = {};
     function NN(a, b) {
         return { x: a, y: b };
     }
-    SPRITES.NN = NN;
-    SPRITES.ROADS = {
+    Sprites.NN = NN;
+    Sprites.ROADS = {
         CLEAR: NN(1, 2),
         MIDDLE_TRACKS: NN(2, 2),
         MIDDLE_CORNER: NN(3, 2),
@@ -27,7 +28,7 @@ export var SPRITES;
         SIDE_DECAL: NN(1, 5),
         SIDE_DECAL_2: NN(2, 5)
     };
-    SPRITES.PAVEMENTS = {
+    Sprites.PAVEMENTS = {
         MIDDLE: NN(1, 1),
         SIDE_SHADOWED: NN(2, 1),
         SIDE_PAVED: NN(3, 1),
@@ -35,61 +36,9 @@ export var SPRITES;
         SIDE_PAVED_SHADOWED_VENT: NN(3, 3),
         SIDE_LINE_END: NN(3, 1)
     };
-})(SPRITES || (SPRITES = {}));
-export var Sprites;
-(function (Sprites) {
-    function getSheet(name) {
-        if (!name)
-            return;
-        let value = sheets[name];
-        if (!value)
-            console.warn('Spritesheet not found');
-        return value;
-    }
-    Sprites.getSheet = getSheet;
     function init() {
-        Sprites.canvas = document.createElement('canvas');
-        document.body.appendChild(Sprites.canvas);
-        console.log('Spritesheets init');
+        console.log('Sprites init');
     }
     Sprites.init = init;
-    const sheets = {
-        badRoads: {
-            file: 'sty/sheets/bad_roads.png',
-            width: 320,
-            height: 320,
-            piece: { w: 64, h: 64 }
-        },
-        greenRoads: {
-            file: 'sty/sheets/green_roads.png',
-            width: 320,
-            height: 320,
-            piece: { w: 64, h: 64 }
-        },
-        mixedRoads: {
-            file: 'sty/sheets/mixed_roads.png',
-            width: 320,
-            height: 320,
-            piece: { w: 64, h: 64 }
-        },
-        greyRoads: {
-            file: 'sty/sheets/grey_roads.png',
-            width: 320,
-            height: 320,
-            piece: { w: 64, h: 64 }
-        },
-        yellowyPavement: {
-            file: 'sty/sheets/yellowy_pavement.png',
-            width: 256,
-            height: 256,
-            piece: { w: 64, h: 64 }
-        },
-        greenPavement: {
-            file: 'sty/sheets/green_pavement.png',
-            width: 256,
-            height: 256,
-            piece: { w: 64, h: 64 }
-        }
-    };
 })(Sprites || (Sprites = {}));
 export default Sprites;

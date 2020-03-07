@@ -1,7 +1,12 @@
-import Spritesheet from "./Spritesheet";
+import Sheets from "./Sheets";
+import Sheet from "./Sheet";
 
+namespace Sprites {
 
-export namespace SPRITES {
+	type ListXX = { [index: string]: Readonly<Sheet> }
+
+	const sprites: ListXX = {};
+
 	export function NN(a: number, b: number): Square {
 		return { x: a, y: b };
 	}
@@ -38,78 +43,12 @@ export namespace SPRITES {
 		SIDE_PAVED_SHADOWED_VENT: NN(3, 3),
 		SIDE_LINE_END: NN(3, 1)
 	}
-}
-
-export namespace Sprites {
-
-	type List = { [index: string]: Spritesheet }
-
-	export function getSheet(name: string): Readonly<Spritesheet> | undefined {
-		if (!name)
-			return;
-
-		let value = sheets[name];
-
-		if (!value)
-			console.warn('Spritesheet not found');
-
-		return value;
-	}
-
-	export var canvas;
 
 	export function init() {
-		canvas = document.createElement('canvas');
 
-		document.body.appendChild(canvas);
-
-		console.log('Spritesheets init');
+		console.log('Sprites init');
+		
 	}
-
-	const sheets: Readonly<List> = {
-		badRoads: {
-			file: 'sty/sheets/bad_roads.png',
-			width: 320,
-			height: 320,
-			piece: { w: 64, h: 64 }
-		},
-
-		greenRoads: {
-			file: 'sty/sheets/green_roads.png',
-			width: 320,
-			height: 320,
-			piece: { w: 64, h: 64 }
-		},
-
-		mixedRoads: {
-			file: 'sty/sheets/mixed_roads.png',
-			width: 320,
-			height: 320,
-			piece: { w: 64, h: 64 }
-		},
-
-		greyRoads: {
-			file: 'sty/sheets/grey_roads.png',
-			width: 320,
-			height: 320,
-			piece: { w: 64, h: 64 }
-		},
-
-		yellowyPavement: {
-			file: 'sty/sheets/yellowy_pavement.png',
-			width: 256,
-			height: 256,
-			piece: { w: 64, h: 64 }
-		},
-
-		greenPavement: {
-			file: 'sty/sheets/green_pavement.png',
-			width: 256,
-			height: 256,
-			piece: { w: 64, h: 64 }
-		}
-	}
-
 }
 
 export default Sprites;

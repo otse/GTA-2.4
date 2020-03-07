@@ -1,5 +1,4 @@
-import Spritesheet from './Sprites/Spritesheet';
-
+import Sheet from './Sprites/Sheet';
 
 import { default as THREE, Texture, TextureLoader, NearestFilter } from 'three';
 
@@ -30,7 +29,7 @@ export namespace Util {
 		// usage sc.atlases['bad_roads_atlas'].side_line
 
 		// Workhorse function
-		export function fromSheet(geometry, square: Square, sheet: Spritesheet) {
+		export function fromSheet(geometry, square: Square, sheet: Sheet) {
 			const div = Math.floor(sheet.height / sheet.piece.h);
 			let corrected_y = div - square.y;
 

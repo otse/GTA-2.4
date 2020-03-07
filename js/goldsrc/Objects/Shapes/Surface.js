@@ -1,6 +1,6 @@
 import Object2 from "../Object";
 import Surfaces from "../Shapes/Surfaces";
-import Sprites from "../../Sprites/Sprites";
+import Sheets from "../../Sprites/Sheets";
 import Util from "../../Random";
 import { default as THREE, Mesh, MeshPhongMaterial, Color, DoubleSide } from "three";
 const defaultSty = 'sty/commercial/storefront/577.bmp';
@@ -30,7 +30,7 @@ export class Surface extends Object2 {
         const CUT = false;
         let map;
         if (hasSheet) {
-            let sheet = Sprites.getSheet(this.data.sheet);
+            let sheet = Sheets.get(this.data.sheet);
             if (!this.data.sprite)
                 console.warn('Surface has no sheet square');
             /*

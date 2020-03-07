@@ -15,7 +15,7 @@ namespace Phong2 {
 
 		let customMaterial = new MeshPhongMaterial(phongProperties);
 
-		customMaterial.onBeforeCompile = (shader: Shader) => {
+		customMaterial.onBeforeCompile = function(shader: Shader) {
 			
 			shader.uniforms.blurMap = { value: p.blurMap };
 
@@ -60,6 +60,8 @@ namespace Phong2 {
 
 				#endif
 			`);
+
+			return 2;
 			
 		} // onBeforeCompile
 

@@ -415,47 +415,10 @@ var gta_kill = (function (exports, THREE) {
     })(Surfaces || (Surfaces = {}));
     var Surfaces$1 = Surfaces;
 
-    var SPRITES;
-    (function (SPRITES) {
-        function NN(a, b) {
-            return { x: a, y: b };
-        }
-        SPRITES.NN = NN;
-        SPRITES.ROADS = {
-            CLEAR: NN(1, 2),
-            MIDDLE_TRACKS: NN(2, 2),
-            MIDDLE_CORNER: NN(3, 2),
-            SIDE_CLEAR: NN(1, 1),
-            SIDE_CLEAR_ALT: NN(1, 1),
-            SIDE_LINE: NN(4, 1),
-            SIDE_DASH: NN(3, 1),
-            SIDE_STOP: NN(2, 4),
-            SIDE_STOP_LINE: NN(5, 1),
-            SIDE_STOP_DASH: NN(5, 2),
-            PARKING_SPOT: NN(1, 4),
-            CUSTOM_NOTCH: NN(3, 4),
-            SINGLE: NN(1, 3),
-            SINGLE_EXIT: NN(2, 3),
-            SINGLE_CORNER: NN(3, 3),
-            SINGLE_OPEN: NN(3, 5),
-            CORNER: NN(4, 3),
-            CONVEX: NN(4, 5),
-            CONVEX_LINE: NN(5, 5),
-            SIDE_DECAL: NN(1, 5),
-            SIDE_DECAL_2: NN(2, 5)
-        };
-        SPRITES.PAVEMENTS = {
-            MIDDLE: NN(1, 1),
-            SIDE_SHADOWED: NN(2, 1),
-            SIDE_PAVED: NN(3, 1),
-            SIDE_PAVED_SHADOWED: NN(4, 1),
-            SIDE_PAVED_SHADOWED_VENT: NN(3, 3),
-            SIDE_LINE_END: NN(3, 1)
-        };
-    })(SPRITES || (SPRITES = {}));
-    var Sprites;
-    (function (Sprites) {
-        function getSheet(name) {
+    var Sheets;
+    (function (Sheets) {
+        const sheets = {};
+        function get(name) {
             if (!name)
                 return;
             let value = sheets[name];
@@ -463,53 +426,47 @@ var gta_kill = (function (exports, THREE) {
                 console.warn('Spritesheet not found');
             return value;
         }
-        Sprites.getSheet = getSheet;
-        function init() {
-            Sprites.canvas = document.createElement('canvas');
-            document.body.appendChild(Sprites.canvas);
-            console.log('Spritesheets init');
+        Sheets.get = get;
+        function put(name, object) {
+            sheets[name] = object;
         }
-        Sprites.init = init;
-        const sheets = {
-            badRoads: {
-                file: 'sty/sheets/bad_roads.png',
+        Sheets.put = put;
+        function clone(target, source) {
+            let clone = JSON.parse(JSON.stringify(target));
+            Object.assign(clone, source);
+            return clone;
+        }
+        Sheets.clone = clone;
+        function init() {
+            Sheets.canvas = document.createElement('canvas');
+            document.body.appendChild(Sheets.canvas);
+            console.log('Spritesheets init');
+            let baseRoads = {
                 width: 320,
                 height: 320,
-                piece: { w: 64, h: 64 }
-            },
-            greenRoads: {
-                file: 'sty/sheets/green_roads.png',
-                width: 320,
-                height: 320,
-                piece: { w: 64, h: 64 }
-            },
-            mixedRoads: {
-                file: 'sty/sheets/mixed_roads.png',
-                width: 320,
-                height: 320,
-                piece: { w: 64, h: 64 }
-            },
-            greyRoads: {
-                file: 'sty/sheets/grey_roads.png',
-                width: 320,
-                height: 320,
-                piece: { w: 64, h: 64 }
-            },
-            yellowyPavement: {
-                file: 'sty/sheets/yellowy_pavement.png',
+                piece: {
+                    w: 64,
+                    h: 64
+                }
+            };
+            let basePavement = {
                 width: 256,
                 height: 256,
-                piece: { w: 64, h: 64 }
-            },
-            greenPavement: {
-                file: 'sty/sheets/green_pavement.png',
-                width: 256,
-                height: 256,
-                piece: { w: 64, h: 64 }
-            }
-        };
-    })(Sprites || (Sprites = {}));
-    var Sprites$1 = Sprites;
+                piece: {
+                    w: 64,
+                    h: 64
+                }
+            };
+            put('badRoads', clone(baseRoads, { file: 'sty/sheets/bad_roads.png' }));
+            put('greenRoads', clone(baseRoads, { file: 'sty/sheets/green_roads.png' }));
+            put('mixedRoads', clone(baseRoads, { file: 'sty/sheets/mixed_roads.png' }));
+            put('greyRoads', clone(baseRoads, { file: 'sty/sheets/grey_roads.png' }));
+            put('yellowyPavement', clone(basePavement, { file: 'sty/sheets/yellowy_pavement.png' }));
+            put('greenPavement', clone(basePavement, { file: 'sty/sheets/green_pavement.png' }));
+        }
+        Sheets.init = init;
+    })(Sheets || (Sheets = {}));
+    var Sheets$1 = Sheets;
 
     class Surface extends Object2 {
         constructor(data) {
@@ -534,7 +491,7 @@ var gta_kill = (function (exports, THREE) {
             const hasSheet = this.data.sheet && this.data.sprite;
             let map;
             if (hasSheet) {
-                let sheet = Sprites$1.getSheet(this.data.sheet);
+                let sheet = Sheets$1.get(this.data.sheet);
                 if (!this.data.sprite)
                     console.warn('Surface has no sheet square');
                 /*
@@ -631,7 +588,7 @@ var gta_kill = (function (exports, THREE) {
         Phong2.rig = rig;
         function makeRectangle(phongProperties, p) {
             let customMaterial = new THREE.MeshPhongMaterial(phongProperties);
-            customMaterial.onBeforeCompile = (shader) => {
+            customMaterial.onBeforeCompile = function (shader) {
                 shader.uniforms.blurMap = { value: p.blurMap };
                 shader.uniforms.pink = { value: new THREE.Vector3(1, 0, 1) };
                 shader.fragmentShader = shader.fragmentShader.replace(`#define PHONG`, `
@@ -667,6 +624,7 @@ var gta_kill = (function (exports, THREE) {
 
 				#endif
 			`);
+                return 2;
             }; // onBeforeCompile
             return customMaterial;
         }
@@ -3518,6 +3476,50 @@ var gta_kill = (function (exports, THREE) {
         }
     }
 
+    var Sprites;
+    (function (Sprites) {
+        function NN(a, b) {
+            return { x: a, y: b };
+        }
+        Sprites.NN = NN;
+        Sprites.ROADS = {
+            CLEAR: NN(1, 2),
+            MIDDLE_TRACKS: NN(2, 2),
+            MIDDLE_CORNER: NN(3, 2),
+            SIDE_CLEAR: NN(1, 1),
+            SIDE_CLEAR_ALT: NN(1, 1),
+            SIDE_LINE: NN(4, 1),
+            SIDE_DASH: NN(3, 1),
+            SIDE_STOP: NN(2, 4),
+            SIDE_STOP_LINE: NN(5, 1),
+            SIDE_STOP_DASH: NN(5, 2),
+            PARKING_SPOT: NN(1, 4),
+            CUSTOM_NOTCH: NN(3, 4),
+            SINGLE: NN(1, 3),
+            SINGLE_EXIT: NN(2, 3),
+            SINGLE_CORNER: NN(3, 3),
+            SINGLE_OPEN: NN(3, 5),
+            CORNER: NN(4, 3),
+            CONVEX: NN(4, 5),
+            CONVEX_LINE: NN(5, 5),
+            SIDE_DECAL: NN(1, 5),
+            SIDE_DECAL_2: NN(2, 5)
+        };
+        Sprites.PAVEMENTS = {
+            MIDDLE: NN(1, 1),
+            SIDE_SHADOWED: NN(2, 1),
+            SIDE_PAVED: NN(3, 1),
+            SIDE_PAVED_SHADOWED: NN(4, 1),
+            SIDE_PAVED_SHADOWED_VENT: NN(3, 3),
+            SIDE_LINE_END: NN(3, 1)
+        };
+        function init() {
+            console.log('Sprites init');
+        }
+        Sprites.init = init;
+    })(Sprites || (Sprites = {}));
+    var Sprites$1 = Sprites;
+
     // For making vertical ~> horizontal
     // So you only need to make one
     // vertical generator
@@ -3727,7 +3729,7 @@ var gta_kill = (function (exports, THREE) {
                     let road = {
                         type: 'Surface',
                         sheet: sheet,
-                        sprite: SPRITES.ROADS.SINGLE,
+                        sprite: Sprites$1.ROADS.SINGLE,
                         x: w[0],
                         y: seg + w[1],
                         z: w[2],
@@ -3735,7 +3737,7 @@ var gta_kill = (function (exports, THREE) {
                     };
                     road.adapt_sheet = Gen1.roadMode == 'Adapt';
                     if (!seg || seg == segs - 1) {
-                        road.sprite = SPRITES.ROADS.SINGLE_OPEN;
+                        road.sprite = Sprites$1.ROADS.SINGLE_OPEN;
                         if (!seg)
                             road.r += 1;
                         else if (seg == segs - 1)
@@ -3758,14 +3760,14 @@ var gta_kill = (function (exports, THREE) {
                         let road = {
                             type: 'Surface',
                             sheet: sheet,
-                            sprite: SPRITES.ROADS.SIDE_LINE,
+                            sprite: Sprites$1.ROADS.SIDE_LINE,
                             x: seg + w[0],
                             y: lane + w[1],
                             z: 0,
                             r: !lane ? 2 : 0
                         };
                         if (!seg || seg == segs - 1) {
-                            road.sprite = SPRITES.ROADS.CONVEX_LINE;
+                            road.sprite = Sprites$1.ROADS.CONVEX_LINE;
                             road.adapt_sheet = Gen1.roadMode == 'Adapt';
                             if (!seg && lane ||
                                 seg == segs - 1 && !lane)
@@ -3773,7 +3775,7 @@ var gta_kill = (function (exports, THREE) {
                         }
                         else if (lane == lanes - 1 && seg == 1 ||
                             !lane && seg == segs - 2) {
-                            road.sprite = SPRITES.ROADS.SIDE_STOP_LINE; // sideStopLine
+                            road.sprite = Sprites$1.ROADS.SIDE_STOP_LINE; // sideStopLine
                             road.f = true;
                         }
                         staging.addData(road);
@@ -3793,16 +3795,16 @@ var gta_kill = (function (exports, THREE) {
                         let road = {
                             type: 'Surface',
                             sheet: sheet,
-                            sprite: SPRITES.ROADS.SIDE_LINE,
+                            sprite: Sprites$1.ROADS.SIDE_LINE,
                             x: lane + w[0],
                             y: seg + w[1],
                             z: 0,
                             r: !lane ? 3 : 1
                         };
                         if (lane > 0 && lane < lanes - 1)
-                            road.sprite = SPRITES.ROADS.MIDDLE_TRACKS;
+                            road.sprite = Sprites$1.ROADS.MIDDLE_TRACKS;
                         else if (!seg || seg == segs - 1) {
-                            road.sprite = SPRITES.ROADS.CONVEX_LINE;
+                            road.sprite = Sprites$1.ROADS.CONVEX_LINE;
                             if (!seg && !lane ||
                                 seg == segs - 1 && lane)
                                 road.r += 1;
@@ -3833,7 +3835,7 @@ var gta_kill = (function (exports, THREE) {
                         let road = {
                             type: 'Surface',
                             sheet: sheet,
-                            sprite: SPRITES.ROADS.SIDE_CLEAR,
+                            sprite: Sprites$1.ROADS.SIDE_CLEAR,
                             x: lane + w[0],
                             y: seg + w[1],
                             z: w[2],
@@ -3849,7 +3851,7 @@ var gta_kill = (function (exports, THREE) {
                         let parkHere = false;
                         if (!seg || seg == segs - 1) {
                             if (!lane) {
-                                road.sprite = SPRITES.ROADS.SINGLE_OPEN;
+                                road.sprite = Sprites$1.ROADS.SINGLE_OPEN;
                                 road.adapt_sheet = Gen1.roadMode == 'Adapt';
                                 if (!seg)
                                     road.r += 1;
@@ -3864,13 +3866,13 @@ var gta_kill = (function (exports, THREE) {
                         }
                         else if (seg == 1 || seg == segs - 2) {
                             if (!lane) {
-                                road.sprite = SPRITES.ROADS.CUSTOM_NOTCH;
+                                road.sprite = Sprites$1.ROADS.CUSTOM_NOTCH;
                                 road.r = 1;
                                 if (seg == 1)
                                     road.f = true;
                             }
                             else if (lane == lanes - 1) {
-                                road.sprite = SPRITES.ROADS.CORNER;
+                                road.sprite = Sprites$1.ROADS.CORNER;
                                 road.r = seg == 1 ? 0 : 3;
                                 if (seg != 1) {
                                     parkedCar.r = Math.PI / 4;
@@ -3885,14 +3887,14 @@ var gta_kill = (function (exports, THREE) {
                         }
                         else if (lane) {
                             if (lane == lanes - 1) {
-                                road.sprite = SPRITES.ROADS.PARKING_SPOT;
+                                road.sprite = Sprites$1.ROADS.PARKING_SPOT;
                                 parkedCar.r = Math.PI / 4;
                                 parkedCar.x = road.x + .5;
                                 parkedCar.y = road.y - .11;
                                 parkHere = true;
                             }
                             else
-                                road.sprite = SPRITES.ROADS.CLEAR;
+                                road.sprite = Sprites$1.ROADS.CLEAR;
                         }
                         if (parkHere && Math.random() < .75)
                             staging.addData(parkedCar);
@@ -3912,7 +3914,7 @@ var gta_kill = (function (exports, THREE) {
                         let road = {
                             type: 'Surface',
                             sheet: sheet,
-                            sprite: SPRITES.ROADS.SIDE_LINE,
+                            sprite: Sprites$1.ROADS.SIDE_LINE,
                             x: seg + w[0],
                             y: lane + w[1],
                             z: w[2],
@@ -3929,11 +3931,11 @@ var gta_kill = (function (exports, THREE) {
                         if (!seg) {
                             road.adapt_sheet = Gen1.roadMode == 'Adapt';
                             if (lane == 1) {
-                                road.sprite = SPRITES.ROADS.CONVEX_LINE;
+                                road.sprite = Sprites$1.ROADS.CONVEX_LINE;
                                 road.r += 1;
                             }
                             else if (lane == 2) {
-                                road.sprite = SPRITES.ROADS.CONVEX_LINE;
+                                road.sprite = Sprites$1.ROADS.CONVEX_LINE;
                             }
                             else {
                                 continue;
@@ -3941,11 +3943,11 @@ var gta_kill = (function (exports, THREE) {
                         }
                         else if (seg == 1) {
                             if (lane == 1) {
-                                road.sprite = SPRITES.ROADS.SIDE_LINE;
+                                road.sprite = Sprites$1.ROADS.SIDE_LINE;
                                 road.r += 1;
                             }
                             else if (lane == 2) {
-                                road.sprite = SPRITES.ROADS.SIDE_LINE;
+                                road.sprite = Sprites$1.ROADS.SIDE_LINE;
                                 road.r -= 1;
                             }
                             else {
@@ -3954,22 +3956,22 @@ var gta_kill = (function (exports, THREE) {
                         }
                         else if (seg == 2) {
                             if (lane == 0) {
-                                road.sprite = SPRITES.ROADS.CORNER;
+                                road.sprite = Sprites$1.ROADS.CORNER;
                                 parkHere = true;
                                 parkedCar.r = Math.PI / 4;
                                 parkedCar.x = road.x + 0.5 + 0.6;
                                 parkedCar.y = road.y + 0.5;
                             }
                             else if (lane == 1) {
-                                road.sprite = SPRITES.ROADS.CONVEX_LINE;
+                                road.sprite = Sprites$1.ROADS.CONVEX_LINE;
                                 road.r += 2;
                             }
                             else if (lane == 2) {
-                                road.sprite = SPRITES.ROADS.CONVEX_LINE;
+                                road.sprite = Sprites$1.ROADS.CONVEX_LINE;
                                 road.r -= 1;
                             }
                             else if (lane == 3) {
-                                road.sprite = SPRITES.ROADS.CORNER;
+                                road.sprite = Sprites$1.ROADS.CORNER;
                                 road.r += 1;
                                 parkHere = true;
                                 parkedCar.r = Math.PI - Math.PI / 4;
@@ -3979,22 +3981,22 @@ var gta_kill = (function (exports, THREE) {
                         }
                         else if (seg == segs - 1) {
                             if (lane == 0) {
-                                road.sprite = SPRITES.ROADS.CORNER;
+                                road.sprite = Sprites$1.ROADS.CORNER;
                                 road.r -= 1;
                             }
                             else if (lane == 3) {
-                                road.sprite = SPRITES.ROADS.CORNER;
+                                road.sprite = Sprites$1.ROADS.CORNER;
                                 road.r += 2;
                             }
                             else {
-                                road.sprite = SPRITES.ROADS.SIDE_CLEAR;
+                                road.sprite = Sprites$1.ROADS.SIDE_CLEAR;
                             }
                         }
                         else if (lane == 1 || lane == 2) {
-                            road.sprite = SPRITES.ROADS.CLEAR;
+                            road.sprite = Sprites$1.ROADS.CLEAR;
                         }
                         else if (lane != 1) {
-                            road.sprite = SPRITES.ROADS.PARKING_SPOT;
+                            road.sprite = Sprites$1.ROADS.PARKING_SPOT;
                             parkHere = true;
                             // Bottom
                             if (!lane) {
@@ -4094,13 +4096,13 @@ var gta_kill = (function (exports, THREE) {
                                 continue;
                             if (Points$1.different(data, point))
                                 continue;
-                            if (data.sprite == SPRITES.ROADS.SIDE_LINE) {
-                                data.sprite = SPRITES.ROADS.SIDE_CLEAR;
+                            if (data.sprite == Sprites$1.ROADS.SIDE_LINE) {
+                                data.sprite = Sprites$1.ROADS.SIDE_CLEAR;
                             }
-                            if (data.sprite == SPRITES.ROADS.CONVEX_LINE)
-                                data.sprite = SPRITES.ROADS.CONVEX;
-                            if (data.sprite == SPRITES.ROADS.SIDE_STOP_LINE) {
-                                data.sprite = SPRITES.ROADS.SIDE_STOP;
+                            if (data.sprite == Sprites$1.ROADS.CONVEX_LINE)
+                                data.sprite = Sprites$1.ROADS.CONVEX;
+                            if (data.sprite == Sprites$1.ROADS.SIDE_STOP_LINE) {
+                                data.sprite = Sprites$1.ROADS.SIDE_STOP;
                             }
                         }
                     }
@@ -4122,20 +4124,20 @@ var gta_kill = (function (exports, THREE) {
                                 continue;
                             if (Points$1.different(data, point))
                                 continue;
-                            if (data.sprite == SPRITES.ROADS.SIDE_LINE) {
-                                data.sprite = SPRITES.ROADS.SIDE_CLEAR;
+                            if (data.sprite == Sprites$1.ROADS.SIDE_LINE) {
+                                data.sprite = Sprites$1.ROADS.SIDE_CLEAR;
                                 if (point.x == w[0] || point.x == w[0] + width - 1) {
-                                    data.sprite = SPRITES.ROADS.SIDE_DASH;
+                                    data.sprite = Sprites$1.ROADS.SIDE_DASH;
                                     if (point.x == w[0] + width - 1 && point.y == w[1])
                                         data.f = true;
                                     if (point.x == w[0] && point.y == w[1] + height - 1)
                                         data.f = true;
                                 }
                             }
-                            if (data.sprite == SPRITES.ROADS.CONVEX_LINE)
-                                data.sprite = SPRITES.ROADS.CONVEX;
-                            if (data.sprite == SPRITES.ROADS.SIDE_STOP_LINE) {
-                                data.sprite = SPRITES.ROADS.SIDE_STOP;
+                            if (data.sprite == Sprites$1.ROADS.CONVEX_LINE)
+                                data.sprite = Sprites$1.ROADS.CONVEX;
+                            if (data.sprite == Sprites$1.ROADS.SIDE_STOP_LINE) {
+                                data.sprite = Sprites$1.ROADS.SIDE_STOP;
                             }
                         }
                     }
@@ -4157,10 +4159,10 @@ var gta_kill = (function (exports, THREE) {
                                 continue;
                             if (Points$1.different(data, point))
                                 continue;
-                            if (data.sprite == SPRITES.ROADS.SIDE_LINE)
-                                data.sprite = SPRITES.ROADS.SIDE_CLEAR;
-                            else if (data.sprite == SPRITES.ROADS.SIDE_STOP_LINE)
-                                data.sprite = SPRITES.ROADS.SIDE_STOP;
+                            if (data.sprite == Sprites$1.ROADS.SIDE_LINE)
+                                data.sprite = Sprites$1.ROADS.SIDE_CLEAR;
+                            else if (data.sprite == Sprites$1.ROADS.SIDE_STOP_LINE)
+                                data.sprite = Sprites$1.ROADS.SIDE_STOP;
                         }
                     }
                 }
@@ -4178,7 +4180,7 @@ var gta_kill = (function (exports, THREE) {
                         let pav = {
                             type: 'Surface',
                             sheet: 'yellowyPavement',
-                            sprite: SPRITES.PAVEMENTS.MIDDLE,
+                            sprite: Sprites$1.PAVEMENTS.MIDDLE,
                             //sty: 'sty/floors/blue/256.bmp',
                             x: x + w[0],
                             y: y + w[1],
@@ -4198,7 +4200,7 @@ var gta_kill = (function (exports, THREE) {
                         let pav = {
                             type: 'Surface',
                             sheet: 'yellowyPavement',
-                            sprite: SPRITES.PAVEMENTS.MIDDLE,
+                            sprite: Sprites$1.PAVEMENTS.MIDDLE,
                             //sty: 'sty/floors/blue/256.bmp',
                             x: lane + x,
                             y: seg + y,
@@ -4218,7 +4220,7 @@ var gta_kill = (function (exports, THREE) {
                         let pav = {
                             type: 'Surface',
                             sheet: 'yellowyPavement',
-                            sprite: SPRITES.PAVEMENTS.MIDDLE,
+                            sprite: Sprites$1.PAVEMENTS.MIDDLE,
                             //sty: 'sty/floors/blue/256.bmp',
                             x: seg + y,
                             y: lane + x,
@@ -4261,8 +4263,8 @@ var gta_kill = (function (exports, THREE) {
             Gen2$1.GenDeline.horz([4, 0, 0], 6, 6);
             let gas_station_corner = Gen2$1.getDataOfType([8, 5, 0], 'Surface');
             let gas_station_corner2 = Gen2$1.getDataOfType([8, 0, 0], 'Surface');
-            gas_station_corner.sprite = SPRITES.ROADS.SINGLE_EXIT;
-            gas_station_corner2.sprite = SPRITES.ROADS.SINGLE_EXIT;
+            gas_station_corner.sprite = Sprites$1.ROADS.SINGLE_EXIT;
+            gas_station_corner2.sprite = Sprites$1.ROADS.SINGLE_EXIT;
             //gas_station_corner2!.r! += 1;
             // Deline around the apts
             Gen2$1.GenDeline.horz([2, 4, 0], 9, 3);
@@ -4521,6 +4523,7 @@ var gta_kill = (function (exports, THREE) {
             Blocks$1.init();
             BoxCutter$1.init();
             Sprites$1.init();
+            Sheets$1.init();
             Movie.init();
             KILL.city = new City;
             window.KILL = KILL;

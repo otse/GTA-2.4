@@ -4,7 +4,7 @@ import Points from "../Objects/Points";
 
 import StagingArea from "./Staging area";
 import Chunk from "../Chunks/Chunk";
-import Sprites, { SPRITES } from "../Sprites/Sprites";
+import Sprites from "../Sprites/Sprites";
 
 export namespace Gen2 {
 
@@ -110,15 +110,15 @@ export namespace Gen2 {
 						if (Points.different(data, point))
 							continue;
 	
-						if (data.sprite == SPRITES.ROADS.SIDE_LINE) {
-							data.sprite = SPRITES.ROADS.SIDE_CLEAR;
+						if (data.sprite == Sprites.ROADS.SIDE_LINE) {
+							data.sprite = Sprites.ROADS.SIDE_CLEAR;
 						}
 	
-						if (data.sprite == SPRITES.ROADS.CONVEX_LINE)
-							data.sprite = SPRITES.ROADS.CONVEX;
+						if (data.sprite == Sprites.ROADS.CONVEX_LINE)
+							data.sprite = Sprites.ROADS.CONVEX;
 	
-						if (data.sprite == SPRITES.ROADS.SIDE_STOP_LINE) {
-							data.sprite = SPRITES.ROADS.SIDE_STOP;
+						if (data.sprite == Sprites.ROADS.SIDE_STOP_LINE) {
+							data.sprite = Sprites.ROADS.SIDE_STOP;
 						}
 	
 					}
@@ -153,10 +153,10 @@ export namespace Gen2 {
 						if (Points.different(data, point))
 							continue;
 	
-						if (data.sprite == SPRITES.ROADS.SIDE_LINE) {
-							data.sprite = SPRITES.ROADS.SIDE_CLEAR;
+						if (data.sprite == Sprites.ROADS.SIDE_LINE) {
+							data.sprite = Sprites.ROADS.SIDE_CLEAR;
 							if (point.x == w[0] || point.x == w[0] + width - 1) {
-								data.sprite = SPRITES.ROADS.SIDE_DASH;
+								data.sprite = Sprites.ROADS.SIDE_DASH;
 								if (point.x == w[0] + width - 1 && point.y == w[1])
 									data.f = true;
 								if (point.x == w[0] && point.y == w[1] + height - 1)
@@ -164,11 +164,11 @@ export namespace Gen2 {
 							}
 						}
 	
-						if (data.sprite == SPRITES.ROADS.CONVEX_LINE)
-							data.sprite = SPRITES.ROADS.CONVEX;
+						if (data.sprite == Sprites.ROADS.CONVEX_LINE)
+							data.sprite = Sprites.ROADS.CONVEX;
 	
-						if (data.sprite == SPRITES.ROADS.SIDE_STOP_LINE) {
-							data.sprite = SPRITES.ROADS.SIDE_STOP;
+						if (data.sprite == Sprites.ROADS.SIDE_STOP_LINE) {
+							data.sprite = Sprites.ROADS.SIDE_STOP;
 						}
 	
 					}
@@ -203,11 +203,11 @@ export namespace Gen2 {
 						if (Points.different(data, point))
 							continue;
 	
-						if (data.sprite == SPRITES.ROADS.SIDE_LINE)
-							data.sprite = SPRITES.ROADS.SIDE_CLEAR;
+						if (data.sprite == Sprites.ROADS.SIDE_LINE)
+							data.sprite = Sprites.ROADS.SIDE_CLEAR;
 	
-						else if (data.sprite == SPRITES.ROADS.SIDE_STOP_LINE)
-							data.sprite = SPRITES.ROADS.SIDE_STOP;
+						else if (data.sprite == Sprites.ROADS.SIDE_STOP_LINE)
+							data.sprite = Sprites.ROADS.SIDE_STOP;
 	
 					}
 				}
@@ -233,7 +233,7 @@ export namespace Gen2 {
 					let pav: Data2 = {
 						type: 'Surface',
 						sheet: 'yellowyPavement',
-						sprite: SPRITES.PAVEMENTS.MIDDLE,
+						sprite: Sprites.PAVEMENTS.MIDDLE,
 						//sty: 'sty/floors/blue/256.bmp',
 						x: x + w[0],
 						y: y + w[1],
@@ -259,7 +259,7 @@ export namespace Gen2 {
 					let pav: Data2 = {
 						type: 'Surface',
 						sheet: 'yellowyPavement',
-						sprite: SPRITES.PAVEMENTS.MIDDLE,
+						sprite: Sprites.PAVEMENTS.MIDDLE,
 						//sty: 'sty/floors/blue/256.bmp',
 						x: lane + x,
 						y: seg + y,
@@ -285,7 +285,7 @@ export namespace Gen2 {
 					let pav: Data2 = {
 						type: 'Surface',
 						sheet: 'yellowyPavement',
-						sprite: SPRITES.PAVEMENTS.MIDDLE,
+						sprite: Sprites.PAVEMENTS.MIDDLE,
 						//sty: 'sty/floors/blue/256.bmp',
 						x: seg + y,
 						y: lane + x,

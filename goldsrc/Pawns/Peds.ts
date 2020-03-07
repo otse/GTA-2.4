@@ -1,12 +1,11 @@
 import Ped from "./Ped";
 
-import Spritesheet from "../Sprites/Spritesheet";
-
 import Util from "../Random";
 
 import { ShaderMaterial, MeshBasicMaterial } from "three";
 
 import Anims from "../Sprites/Anims";
+import Sheet from "../Sprites/Sheet";
 
 //import { three } from "../three";
 
@@ -28,7 +27,7 @@ export namespace Peds {
     export var material: ShaderMaterial;
     export var materialShadow: MeshBasicMaterial;
 
-    export const sheet: Spritesheet = {
+    export const sheet: Sheet = {
 
         file: 'ped/template_24.png',
         width: 33 * 8,

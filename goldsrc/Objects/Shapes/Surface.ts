@@ -3,6 +3,7 @@ import Object2 from "../Object";
 
 import Surfaces from "../Shapes/Surfaces";
 import Sprites from "../../Sprites/Sprites";
+import Sheets from "../../Sprites/Sheets";
 
 import Util from "../../Random";
 
@@ -52,7 +53,7 @@ export class Surface extends Object2 {
 		let map;
 
 		if (hasSheet) {
-			let sheet = Sprites.getSheet(this.data.sheet!);
+			let sheet = Sheets.get(this.data.sheet!);
 
 			if (!this.data.sprite)
 				console.warn('Surface has no sheet square');

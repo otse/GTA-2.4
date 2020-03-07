@@ -1,6 +1,6 @@
 import Gen1 from "./Generators1";
 import Gen2 from "./Generators2";
-import { SPRITES } from "../Sprites/Sprites";
+import Sprites from "../Sprites/Sprites";
 export var GenLocations;
 (function (GenLocations) {
     function aptsOffice() {
@@ -29,8 +29,8 @@ export var GenLocations;
         Gen2.GenDeline.horz([4, 0, 0], 6, 6);
         let gas_station_corner = Gen2.getDataOfType([8, 5, 0], 'Surface');
         let gas_station_corner2 = Gen2.getDataOfType([8, 0, 0], 'Surface');
-        gas_station_corner.sprite = SPRITES.ROADS.SINGLE_EXIT;
-        gas_station_corner2.sprite = SPRITES.ROADS.SINGLE_EXIT;
+        gas_station_corner.sprite = Sprites.ROADS.SINGLE_EXIT;
+        gas_station_corner2.sprite = Sprites.ROADS.SINGLE_EXIT;
         //gas_station_corner2!.r! += 1;
         // Deline around the apts
         Gen2.GenDeline.horz([2, 4, 0], 9, 3);

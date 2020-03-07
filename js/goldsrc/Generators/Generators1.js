@@ -1,7 +1,7 @@
 import Datas from "../Objects/Datas";
 import StagingArea from "./Staging area";
 import Cars from "../Cars/Cars";
-import { SPRITES } from "../Sprites/Sprites";
+import Sprites from "../Sprites/Sprites";
 export var Gen1;
 (function (Gen1) {
     Gen1.roadMode = 'Normal';
@@ -121,7 +121,7 @@ export var Gen1;
                 let road = {
                     type: 'Surface',
                     sheet: sheet,
-                    sprite: SPRITES.ROADS.SINGLE,
+                    sprite: Sprites.ROADS.SINGLE,
                     x: w[0],
                     y: seg + w[1],
                     z: w[2],
@@ -129,7 +129,7 @@ export var Gen1;
                 };
                 road.adapt_sheet = Gen1.roadMode == 'Adapt';
                 if (!seg || seg == segs - 1) {
-                    road.sprite = SPRITES.ROADS.SINGLE_OPEN;
+                    road.sprite = Sprites.ROADS.SINGLE_OPEN;
                     if (!seg)
                         road.r += 1;
                     else if (seg == segs - 1)
@@ -152,14 +152,14 @@ export var Gen1;
                     let road = {
                         type: 'Surface',
                         sheet: sheet,
-                        sprite: SPRITES.ROADS.SIDE_LINE,
+                        sprite: Sprites.ROADS.SIDE_LINE,
                         x: seg + w[0],
                         y: lane + w[1],
                         z: 0,
                         r: !lane ? 2 : 0
                     };
                     if (!seg || seg == segs - 1) {
-                        road.sprite = SPRITES.ROADS.CONVEX_LINE;
+                        road.sprite = Sprites.ROADS.CONVEX_LINE;
                         road.adapt_sheet = Gen1.roadMode == 'Adapt';
                         if (!seg && lane ||
                             seg == segs - 1 && !lane)
@@ -167,7 +167,7 @@ export var Gen1;
                     }
                     else if (lane == lanes - 1 && seg == 1 ||
                         !lane && seg == segs - 2) {
-                        road.sprite = SPRITES.ROADS.SIDE_STOP_LINE; // sideStopLine
+                        road.sprite = Sprites.ROADS.SIDE_STOP_LINE; // sideStopLine
                         road.f = true;
                     }
                     staging.addData(road);
@@ -187,16 +187,16 @@ export var Gen1;
                     let road = {
                         type: 'Surface',
                         sheet: sheet,
-                        sprite: SPRITES.ROADS.SIDE_LINE,
+                        sprite: Sprites.ROADS.SIDE_LINE,
                         x: lane + w[0],
                         y: seg + w[1],
                         z: 0,
                         r: !lane ? 3 : 1
                     };
                     if (lane > 0 && lane < lanes - 1)
-                        road.sprite = SPRITES.ROADS.MIDDLE_TRACKS;
+                        road.sprite = Sprites.ROADS.MIDDLE_TRACKS;
                     else if (!seg || seg == segs - 1) {
-                        road.sprite = SPRITES.ROADS.CONVEX_LINE;
+                        road.sprite = Sprites.ROADS.CONVEX_LINE;
                         if (!seg && !lane ||
                             seg == segs - 1 && lane)
                             road.r += 1;
@@ -227,7 +227,7 @@ export var Gen1;
                     let road = {
                         type: 'Surface',
                         sheet: sheet,
-                        sprite: SPRITES.ROADS.SIDE_CLEAR,
+                        sprite: Sprites.ROADS.SIDE_CLEAR,
                         x: lane + w[0],
                         y: seg + w[1],
                         z: w[2],
@@ -243,7 +243,7 @@ export var Gen1;
                     let parkHere = false;
                     if (!seg || seg == segs - 1) {
                         if (!lane) {
-                            road.sprite = SPRITES.ROADS.SINGLE_OPEN;
+                            road.sprite = Sprites.ROADS.SINGLE_OPEN;
                             road.adapt_sheet = Gen1.roadMode == 'Adapt';
                             if (!seg)
                                 road.r += 1;
@@ -258,13 +258,13 @@ export var Gen1;
                     }
                     else if (seg == 1 || seg == segs - 2) {
                         if (!lane) {
-                            road.sprite = SPRITES.ROADS.CUSTOM_NOTCH;
+                            road.sprite = Sprites.ROADS.CUSTOM_NOTCH;
                             road.r = 1;
                             if (seg == 1)
                                 road.f = true;
                         }
                         else if (lane == lanes - 1) {
-                            road.sprite = SPRITES.ROADS.CORNER;
+                            road.sprite = Sprites.ROADS.CORNER;
                             road.r = seg == 1 ? 0 : 3;
                             if (seg != 1) {
                                 parkedCar.r = Math.PI / 4;
@@ -279,14 +279,14 @@ export var Gen1;
                     }
                     else if (lane) {
                         if (lane == lanes - 1) {
-                            road.sprite = SPRITES.ROADS.PARKING_SPOT;
+                            road.sprite = Sprites.ROADS.PARKING_SPOT;
                             parkedCar.r = Math.PI / 4;
                             parkedCar.x = road.x + .5;
                             parkedCar.y = road.y - .11;
                             parkHere = true;
                         }
                         else
-                            road.sprite = SPRITES.ROADS.CLEAR;
+                            road.sprite = Sprites.ROADS.CLEAR;
                     }
                     if (parkHere && Math.random() < .75)
                         staging.addData(parkedCar);
@@ -306,7 +306,7 @@ export var Gen1;
                     let road = {
                         type: 'Surface',
                         sheet: sheet,
-                        sprite: SPRITES.ROADS.SIDE_LINE,
+                        sprite: Sprites.ROADS.SIDE_LINE,
                         x: seg + w[0],
                         y: lane + w[1],
                         z: w[2],
@@ -323,11 +323,11 @@ export var Gen1;
                     if (!seg) {
                         road.adapt_sheet = Gen1.roadMode == 'Adapt';
                         if (lane == 1) {
-                            road.sprite = SPRITES.ROADS.CONVEX_LINE;
+                            road.sprite = Sprites.ROADS.CONVEX_LINE;
                             road.r += 1;
                         }
                         else if (lane == 2) {
-                            road.sprite = SPRITES.ROADS.CONVEX_LINE;
+                            road.sprite = Sprites.ROADS.CONVEX_LINE;
                         }
                         else {
                             continue;
@@ -335,11 +335,11 @@ export var Gen1;
                     }
                     else if (seg == 1) {
                         if (lane == 1) {
-                            road.sprite = SPRITES.ROADS.SIDE_LINE;
+                            road.sprite = Sprites.ROADS.SIDE_LINE;
                             road.r += 1;
                         }
                         else if (lane == 2) {
-                            road.sprite = SPRITES.ROADS.SIDE_LINE;
+                            road.sprite = Sprites.ROADS.SIDE_LINE;
                             road.r -= 1;
                         }
                         else {
@@ -348,22 +348,22 @@ export var Gen1;
                     }
                     else if (seg == 2) {
                         if (lane == 0) {
-                            road.sprite = SPRITES.ROADS.CORNER;
+                            road.sprite = Sprites.ROADS.CORNER;
                             parkHere = true;
                             parkedCar.r = Math.PI / 4;
                             parkedCar.x = road.x + 0.5 + 0.6;
                             parkedCar.y = road.y + 0.5;
                         }
                         else if (lane == 1) {
-                            road.sprite = SPRITES.ROADS.CONVEX_LINE;
+                            road.sprite = Sprites.ROADS.CONVEX_LINE;
                             road.r += 2;
                         }
                         else if (lane == 2) {
-                            road.sprite = SPRITES.ROADS.CONVEX_LINE;
+                            road.sprite = Sprites.ROADS.CONVEX_LINE;
                             road.r -= 1;
                         }
                         else if (lane == 3) {
-                            road.sprite = SPRITES.ROADS.CORNER;
+                            road.sprite = Sprites.ROADS.CORNER;
                             road.r += 1;
                             parkHere = true;
                             parkedCar.r = Math.PI - Math.PI / 4;
@@ -373,22 +373,22 @@ export var Gen1;
                     }
                     else if (seg == segs - 1) {
                         if (lane == 0) {
-                            road.sprite = SPRITES.ROADS.CORNER;
+                            road.sprite = Sprites.ROADS.CORNER;
                             road.r -= 1;
                         }
                         else if (lane == 3) {
-                            road.sprite = SPRITES.ROADS.CORNER;
+                            road.sprite = Sprites.ROADS.CORNER;
                             road.r += 2;
                         }
                         else {
-                            road.sprite = SPRITES.ROADS.SIDE_CLEAR;
+                            road.sprite = Sprites.ROADS.SIDE_CLEAR;
                         }
                     }
                     else if (lane == 1 || lane == 2) {
-                        road.sprite = SPRITES.ROADS.CLEAR;
+                        road.sprite = Sprites.ROADS.CLEAR;
                     }
                     else if (lane != 1) {
-                        road.sprite = SPRITES.ROADS.PARKING_SPOT;
+                        road.sprite = Sprites.ROADS.PARKING_SPOT;
                         parkHere = true;
                         // Bottom
                         if (!lane) {

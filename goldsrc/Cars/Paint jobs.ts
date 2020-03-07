@@ -1,4 +1,4 @@
-import Spritesheet from "../Sprites/Spritesheet";
+import Sheet from "../Sprites/Sheet";
 import CarPhysics from "./Every line is a physic";
 import CarMetas from "./Car metas";
 
@@ -22,7 +22,7 @@ namespace PaintJobs {
 		WHITE_GRAY, WHITE, YELLOW2, COP
 	}
 
-	export const deltasSheets: { [name: string]: Spritesheet } = {};
+	export const deltasSheets: { [name: string]: Sheet } = {};
 
 	export function Init() {
 
@@ -34,7 +34,7 @@ namespace PaintJobs {
 
 			const meta = CarMetas.getNullable(name);
 
-			const sheet: Spritesheet = {
+			const sheet: Sheet = {
 				file: `D_GTA2_CAR_${physic.model}`,
 				padding: 4,
 				width: (meta!.IMG_WIDTH * 10) + 36, // (9 * 4)
