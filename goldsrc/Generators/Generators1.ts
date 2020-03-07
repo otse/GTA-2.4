@@ -3,6 +3,7 @@ import Datas from "../Objects/Datas";
 import StagingArea from "./Staging area";
 
 import Cars from "../Cars/Cars";
+import Sprites from "../Sprites/Sprites";
 
 export namespace Gen1 {
 
@@ -170,7 +171,7 @@ export namespace Gen1 {
 				let road: Data2 = {
 					type: 'Surface',
 					sheet: sheet,
-					square: 'single',
+					sprite: Sprites.Roads.single,
 					x: w[0],
 					y: seg + w[1],
 					z: w[2],
@@ -180,7 +181,7 @@ export namespace Gen1 {
 				road.adapt_sheet = roadMode == 'Adapt';
 
 				if (!seg || seg == segs - 1) {
-					road.square = 'singleOpen';
+					road.sprite = Sprites.Roads.singleOpen;
 
 					if (!seg)
 						road.r! += 1;
@@ -215,7 +216,7 @@ export namespace Gen1 {
 					let road: Data2 = {
 						type: 'Surface',
 						sheet: sheet,
-						square: 'sideLine',
+						sprite: Sprites.Roads.sideLine,
 						x: seg + w[0],
 						y: lane + w[1],
 						z: 0,
@@ -223,7 +224,7 @@ export namespace Gen1 {
 					};
 
 					if (!seg || seg == segs - 1) {
-						road.square = 'convexLine';
+						road.sprite = Sprites.Roads.convexLine;
 
 						road.adapt_sheet = roadMode == 'Adapt';
 
@@ -234,7 +235,7 @@ export namespace Gen1 {
 
 					else if (lane == lanes - 1 && seg == 1 ||
 						!lane && seg == segs - 2) {
-						road.square = 'sideStopLine'; // sideStopLine
+						road.sprite = Sprites.Roads.sideStopLine; // sideStopLine
 						road.f = true;
 					}
 
@@ -264,7 +265,7 @@ export namespace Gen1 {
 					let road: Data2 = {
 						type: 'Surface',
 						sheet: sheet,
-						square: 'sideLine',
+						sprite: Sprites.Roads.sideLine,
 						x: lane + w[0],
 						y: seg + w[1],
 						z: 0,
@@ -272,10 +273,10 @@ export namespace Gen1 {
 					};
 
 					if (lane > 0 && lane < lanes - 1)
-						road.square = 'middleTracks';
+						road.sprite = Sprites.Roads.middleTracks;
 
 					else if (!seg || seg == segs - 1) {
-						road.square = 'convexLine';
+						road.sprite = Sprites.Roads.convexLine;
 
 						if (!seg && !lane ||
 							seg == segs - 1 && lane)
@@ -318,7 +319,7 @@ export namespace Gen1 {
 					let road: Data2 = {
 						type: 'Surface',
 						sheet: sheet,
-						square: 'sideClear',
+						sprite: Sprites.Roads.sideClear,
 						x: lane + w[0],
 						y: seg + w[1],
 						z: w[2],
@@ -337,7 +338,7 @@ export namespace Gen1 {
 
 					if (!seg || seg == segs - 1) {
 						if (!lane) {
-							road.square = 'singleOpen';
+							road.sprite = Sprites.Roads.singleOpen;
 
 							road.adapt_sheet = roadMode == 'Adapt';
 
@@ -356,7 +357,7 @@ export namespace Gen1 {
 
 					else if (seg == 1 || seg == segs - 2) {
 						if (!lane) {
-							road.square = 'customNotch';
+							road.sprite = Sprites.Roads.customNotch;
 
 							road.r = 1;
 
@@ -364,7 +365,7 @@ export namespace Gen1 {
 								road.f = true;
 						}
 						else if (lane == lanes - 1) {
-							road.square = 'corner';
+							road.sprite = Sprites.Roads.corner;
 							road.r = seg == 1 ? 0 : 3;
 
 							if (seg != 1) {
@@ -382,7 +383,7 @@ export namespace Gen1 {
 
 					else if (lane) {
 						if (lane == lanes - 1) {
-							road.square = 'parkingSpot';
+							road.sprite = Sprites.Roads.parkingSpot;
 
 							parkedCar.r = Math.PI / 4;
 							parkedCar.x = road.x + .5;
@@ -390,7 +391,7 @@ export namespace Gen1 {
 							parkHere = true;
 						}
 						else
-							road.square = 'clear';
+							road.sprite = Sprites.Roads.clear;
 					}
 
 					if (parkHere && Math.random() < .75)
@@ -419,7 +420,7 @@ export namespace Gen1 {
 					let road: Data2 = {
 						type: 'Surface',
 						sheet: sheet,
-						square: 'sideLine',
+						sprite: Sprites.Roads.sideLine,
 						x: seg + w[0],
 						y: lane + w[1],
 						z: w[2],
@@ -440,11 +441,11 @@ export namespace Gen1 {
 						road.adapt_sheet = roadMode == 'Adapt';
 
 						if (lane == 1) {
-							road.square = 'convexLine';
+							road.sprite = Sprites.Roads.convexLine;
 							road.r! += 1;
 						}
 						else if (lane == 2) {
-							road.square = 'convexLine';
+							road.sprite = Sprites.Roads.convexLine;
 						}
 						else {
 							continue;
@@ -452,11 +453,11 @@ export namespace Gen1 {
 					}
 					else if (seg == 1) {
 						if (lane == 1) {
-							road.square = 'sideLine';
+							road.sprite = Sprites.Roads.sideLine;
 							road.r! += 1;
 						}
 						else if (lane == 2) {
-							road.square = 'sideLine';
+							road.sprite = Sprites.Roads.sideLine;
 							road.r! -= 1;
 						}
 						else {
@@ -465,7 +466,7 @@ export namespace Gen1 {
 					}
 					else if (seg == 2) {
 						if (lane == 0) {
-							road.square = 'corner';
+							road.sprite = Sprites.Roads.corner;
 
 							parkHere = true;
 							parkedCar.r = Math.PI / 4;
@@ -474,16 +475,16 @@ export namespace Gen1 {
 
 						}
 						else if (lane == 1) {
-							road.square = 'convexLine';
+							road.sprite = Sprites.Roads.convexLine;
 							road.r! += 2;
 						}
 						else if (lane == 2) {
-							road.square = 'convexLine';
+							road.sprite = Sprites.Roads.convexLine;
 							road.r! -= 1;
 
 						}
 						else if (lane == 3) {
-							road.square = 'corner';
+							road.sprite = Sprites.Roads.corner;
 							road.r! += 1;
 
 							parkHere = true;
@@ -494,23 +495,23 @@ export namespace Gen1 {
 					}
 					else if (seg == segs - 1) {
 						if (lane == 0) {
-							road.square = 'corner';
+							road.sprite = Sprites.Roads.corner;
 							road.r! -= 1;
 						}
 						else if (lane == 3) {
-							road.square = 'corner';
+							road.sprite = Sprites.Roads.corner;
 							road.r! += 2;
 						}
 						else {
-							road.square = 'sideClear';
+							road.sprite = Sprites.Roads.sideClear;
 						}
 
 					}
 					else if (lane == 1 || lane == 2) {
-						road.square = 'clear';
+						road.sprite = Sprites.Roads.clear;
 					}
 					else if (lane != 1) {
-						road.square = 'parkingSpot';
+						road.sprite = Sprites.Roads.parkingSpot;
 
 						parkHere = true;
 

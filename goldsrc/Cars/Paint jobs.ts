@@ -36,7 +36,6 @@ namespace PaintJobs {
 
 			const sheet: Spritesheet = {
 				file: `D_GTA2_CAR_${physic.model}`,
-				squares: squares,
 				padding: 4,
 				width: (meta!.IMG_WIDTH * 10) + 36, // (9 * 4)
 				height: (meta!.IMG_HEIGHT * 2) + 4,

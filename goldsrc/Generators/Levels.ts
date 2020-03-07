@@ -1,5 +1,6 @@
 import Gen1 from "./Generators1";
 import Gen2 from "./Generators2";
+import Sprites from "../Sprites/Sprites";
 
 export namespace GenLocations {
 
@@ -44,8 +45,8 @@ export namespace GenLocations {
 		let gas_station_corner = Gen2.getDataOfType([8, 5, 0], 'Surface');
 		let gas_station_corner2 = Gen2.getDataOfType([8, 0, 0], 'Surface');
 
-		gas_station_corner!.square = 'singleExit';
-		gas_station_corner2!.square = 'singleExit';
+		gas_station_corner!.sprite = Sprites.Roads.singleExit;
+		gas_station_corner2!.sprite = Sprites.Roads.singleExit;
 		//gas_station_corner2!.r! += 1;
 
 		// Deline around the apts

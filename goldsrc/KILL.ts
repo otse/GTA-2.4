@@ -7,7 +7,7 @@ import Rectangles from "./Objects/Rectangles";
 import Surfaces from "./Objects/Shapes/Surfaces";
 import Blocks from "./Objects/Shapes/Blocks";
 import BoxCutter from "./Objects/Shapes/Box cutter";
-import Spritesheets from "./Sprites/Spritesheets";
+import Sprites from "./Sprites/Sprites";
 
 import GenLocations from "./Generators/Levels";
 
@@ -27,7 +27,7 @@ export namespace KILL {
 		Surfaces.init();
 		Blocks.init();
 		BoxCutter.init();
-		Spritesheets.init();
+		Sprites.init();
 		Movie.init();
 		
 		city = new City;

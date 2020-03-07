@@ -26,7 +26,7 @@ export interface Data2 {
 
 	// plane atlasing
 	sheet?: string;
-	square?: string;
+	sprite?: Square;
 
 	// block
 	faces?: [string?, string?, string?, string?, string?];

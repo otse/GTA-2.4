@@ -1,6 +1,5 @@
 interface Spritesheet {
     file: string
-    squares: Readonly<object>
     padding?: number
     width: number
     height: number

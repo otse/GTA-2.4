@@ -14,9 +14,6 @@ export var Peds;
         file: 'ped/template_24.png',
         width: 33 * 8,
         height: 33 * 23,
-        squares: {
-            lol: { x: 0, y: 0 }
-        },
         piece: {
             w: 33,
             h: 33

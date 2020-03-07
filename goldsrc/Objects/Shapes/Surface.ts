@@ -2,7 +2,7 @@ import Data2 from "../Data";
 import Object2 from "../Object";
 
 import Surfaces from "../Shapes/Surfaces";
-import Spritesheets from "../../Sprites/Spritesheets";
+import Sprites from "../../Sprites/Sprites";
 
 import Util from "../../Random";
 
@@ -43,7 +43,7 @@ export class Surface extends Object2 {
 	make() {
 		this.geometry = Surfaces.geometry.clone();
 
-		const hasSheet = this.data.sheet && this.data.square;
+		const hasSheet = this.data.sheet && this.data.sprite;
 
 		// Cutting can prevent texture bleeding
 		// but is quite heavy
@@ -52,8 +52,10 @@ export class Surface extends Object2 {
 		let map;
 
 		if (hasSheet) {
-			let spritesheet = Spritesheets.Get(this.data.sheet);
-			let square = spritesheet!.squares[this.data.square!];
+			let sheet = Sprites.getSheet(this.data.sheet!);
+
+			if (!this.data.sprite)
+				console.warn('Surface has no sheet square');
 
 			/*
 			// compat
@@ -63,11 +65,11 @@ export class Surface extends Object2 {
 				map = Sprites.Cut(square, sheet, key);
 			}*/
 			//else {
-				map = Util.loadTexture(spritesheet!.file);
-				map.wrapS = THREE.ClampToEdgeWrapping;
-				map.wrapT = THREE.ClampToEdgeWrapping;
+			map = Util.loadTexture(sheet!.file);
+			map.wrapS = THREE.ClampToEdgeWrapping;
+			map.wrapT = THREE.ClampToEdgeWrapping;
 
-				Util.UV.fromSheet(this.geometry, square, spritesheet!);
+			Util.UV.fromSheet(this.geometry, this.data.sprite!, sheet!);
 			//}
 		}
 		else {

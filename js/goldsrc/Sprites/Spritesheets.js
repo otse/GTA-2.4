@@ -1,20 +1,20 @@
-export var Spritesheets;
-(function (Spritesheets) {
-    function Get(index) {
-        if (!index)
+export var Sprites;
+(function (Sprites) {
+    function get(name) {
+        if (!name)
             return;
-        let value = sheets[index];
+        let value = sheets[name];
         if (!value)
             console.warn('Spritesheet not found');
         return value;
     }
-    Spritesheets.Get = Get;
+    Sprites.get = get;
     function init() {
-        Spritesheets.canvas = document.createElement('canvas');
-        document.body.appendChild(Spritesheets.canvas);
+        Sprites.canvas = document.createElement('canvas');
+        document.body.appendChild(Sprites.canvas);
         console.log('Spritesheets init');
     }
-    Spritesheets.init = init;
+    Sprites.init = init;
     const sheets = {
         badRoads: {
             file: 'sty/sheets/bad_roads.png',
@@ -156,5 +156,5 @@ export var Spritesheets;
             piece: { w: 64, h: 64 }
         }
     };
-})(Spritesheets || (Spritesheets = {}));
-export default Spritesheets;
+})(Sprites || (Sprites = {}));
+export default Sprites;
