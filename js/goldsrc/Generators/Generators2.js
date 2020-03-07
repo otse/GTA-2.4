@@ -1,6 +1,6 @@
 import Datas from "../Objects/Datas";
 import Points from "../Objects/Points";
-import Sprites from "../Sprites/Sprites";
+import { SPRITES } from "../Sprites/Sprites";
 export var Gen2;
 (function (Gen2) {
     // To swap tile at ply in console
@@ -72,13 +72,13 @@ export var Gen2;
                             continue;
                         if (Points.different(data, point))
                             continue;
-                        if (data.sprite == Sprites.Roads.sideLine) {
-                            data.sprite = Sprites.Roads.sideClear;
+                        if (data.sprite == SPRITES.ROADS.SIDE_LINE) {
+                            data.sprite = SPRITES.ROADS.SIDE_CLEAR;
                         }
-                        if (data.sprite == Sprites.Roads.convexLine)
-                            data.sprite = Sprites.Roads.convex;
-                        if (data.sprite == Sprites.Roads.sideStopLine) {
-                            data.sprite = Sprites.Roads.sideStop;
+                        if (data.sprite == SPRITES.ROADS.CONVEX_LINE)
+                            data.sprite = SPRITES.ROADS.CONVEX;
+                        if (data.sprite == SPRITES.ROADS.SIDE_STOP_LINE) {
+                            data.sprite = SPRITES.ROADS.SIDE_STOP;
                         }
                     }
                 }
@@ -101,20 +101,20 @@ export var Gen2;
                             continue;
                         if (Points.different(data, point))
                             continue;
-                        if (data.sprite == Sprites.Roads.sideLine) {
-                            data.sprite = Sprites.Roads.sideClear;
+                        if (data.sprite == SPRITES.ROADS.SIDE_LINE) {
+                            data.sprite = SPRITES.ROADS.SIDE_CLEAR;
                             if (point.x == w[0] || point.x == w[0] + width - 1) {
-                                data.sprite = Sprites.Roads.sideDash;
+                                data.sprite = SPRITES.ROADS.SIDE_DASH;
                                 if (point.x == w[0] + width - 1 && point.y == w[1])
                                     data.f = true;
                                 if (point.x == w[0] && point.y == w[1] + height - 1)
                                     data.f = true;
                             }
                         }
-                        if (data.sprite == Sprites.Roads.convexLine)
-                            data.sprite = Sprites.Roads.convex;
-                        if (data.sprite == Sprites.Roads.sideStopLine) {
-                            data.sprite = Sprites.Roads.sideStop;
+                        if (data.sprite == SPRITES.ROADS.CONVEX_LINE)
+                            data.sprite = SPRITES.ROADS.CONVEX;
+                        if (data.sprite == SPRITES.ROADS.SIDE_STOP_LINE) {
+                            data.sprite = SPRITES.ROADS.SIDE_STOP;
                         }
                     }
                 }
@@ -137,10 +137,10 @@ export var Gen2;
                             continue;
                         if (Points.different(data, point))
                             continue;
-                        if (data.sprite == Sprites.Roads.sideLine)
-                            data.sprite = Sprites.Roads.sideClear;
-                        else if (data.sprite == Sprites.Roads.sideStopLine)
-                            data.sprite = Sprites.Roads.sideStop;
+                        if (data.sprite == SPRITES.ROADS.SIDE_LINE)
+                            data.sprite = SPRITES.ROADS.SIDE_CLEAR;
+                        else if (data.sprite == SPRITES.ROADS.SIDE_STOP_LINE)
+                            data.sprite = SPRITES.ROADS.SIDE_STOP;
                     }
                 }
             }
@@ -158,7 +158,7 @@ export var Gen2;
                     let pav = {
                         type: 'Surface',
                         sheet: 'yellowyPavement',
-                        sprite: Sprites.Pavements.middle,
+                        sprite: SPRITES.PAVEMENTS.MIDDLE,
                         //sty: 'sty/floors/blue/256.bmp',
                         x: x + w[0],
                         y: y + w[1],
@@ -178,7 +178,7 @@ export var Gen2;
                     let pav = {
                         type: 'Surface',
                         sheet: 'yellowyPavement',
-                        sprite: Sprites.Pavements.middle,
+                        sprite: SPRITES.PAVEMENTS.MIDDLE,
                         //sty: 'sty/floors/blue/256.bmp',
                         x: lane + x,
                         y: seg + y,
@@ -198,7 +198,7 @@ export var Gen2;
                     let pav = {
                         type: 'Surface',
                         sheet: 'yellowyPavement',
-                        sprite: Sprites.Pavements.middle,
+                        sprite: SPRITES.PAVEMENTS.MIDDLE,
                         //sty: 'sty/floors/blue/256.bmp',
                         x: seg + y,
                         y: lane + x,

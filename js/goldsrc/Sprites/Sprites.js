@@ -1,6 +1,41 @@
-function SPRITE(a, b) {
-    return { x: a, y: b };
-}
+export var SPRITES;
+(function (SPRITES) {
+    function sprite(a, b) {
+        return { x: a, y: b };
+    }
+    SPRITES.sprite = sprite;
+    SPRITES.ROADS = {
+        CLEAR: sprite(1, 2),
+        MIDDLE_TRACKS: sprite(2, 2),
+        MIDDLE_CORNER: sprite(3, 2),
+        SIDE_CLEAR: sprite(1, 1),
+        SIDE_CLEAR_ALT: sprite(1, 1),
+        SIDE_LINE: sprite(4, 1),
+        SIDE_DASH: sprite(3, 1),
+        SIDE_STOP: sprite(2, 4),
+        SIDE_STOP_LINE: sprite(5, 1),
+        SIDE_STOP_DASH: sprite(5, 2),
+        PARKING_SPOT: sprite(1, 4),
+        CUSTOM_NOTCH: sprite(3, 4),
+        SINGLE: sprite(1, 3),
+        SINGLE_EXIT: sprite(2, 3),
+        SINGLE_CORNER: sprite(3, 3),
+        SINGLE_OPEN: sprite(3, 5),
+        CORNER: sprite(4, 3),
+        CONVEX: sprite(4, 5),
+        CONVEX_LINE: sprite(5, 5),
+        SIDE_DECAL: sprite(1, 5),
+        SIDE_DECAL_2: sprite(2, 5)
+    };
+    SPRITES.PAVEMENTS = {
+        MIDDLE: sprite(1, 1),
+        SIDE_SHADOWED: sprite(2, 1),
+        SIDE_PAVED: sprite(3, 1),
+        SIDE_PAVED_SHADOWED: sprite(4, 1),
+        SIDE_PAVED_SHADOWED_VENT: sprite(3, 3),
+        SIDE_LINE_END: sprite(3, 1)
+    };
+})(SPRITES || (SPRITES = {}));
 export var Sprites;
 (function (Sprites) {
     function getSheet(name) {
@@ -18,37 +53,6 @@ export var Sprites;
         console.log('Spritesheets init');
     }
     Sprites.init = init;
-    Sprites.Roads = {
-        clear: SPRITE(1, 2),
-        middleTracks: SPRITE(2, 2),
-        middleCorner: SPRITE(3, 2),
-        sideClear: SPRITE(1, 1),
-        sideClearAlt: SPRITE(1, 1),
-        sideLine: SPRITE(4, 1),
-        sideDash: SPRITE(3, 1),
-        sideStop: SPRITE(2, 4),
-        sideStopLine: SPRITE(5, 1),
-        sideStopDash: SPRITE(5, 2),
-        parkingSpot: SPRITE(1, 4),
-        customNotch: SPRITE(3, 4),
-        single: SPRITE(1, 3),
-        singleExit: SPRITE(2, 3),
-        singleCorner: SPRITE(3, 3),
-        singleOpen: SPRITE(3, 5),
-        corner: SPRITE(4, 3),
-        convex: SPRITE(4, 5),
-        convexLine: SPRITE(5, 5),
-        sideDecal: SPRITE(1, 5),
-        sideDecal_2: SPRITE(2, 5)
-    };
-    Sprites.Pavements = {
-        middle: SPRITE(1, 1),
-        sideShadowed: SPRITE(2, 1),
-        sidePaved: SPRITE(3, 1),
-        sidePavedShadowed: SPRITE(4, 1),
-        sidePavedShadowedVent: SPRITE(3, 3),
-        sideLineEnd: SPRITE(3, 1)
-    };
     const sheets = {
         badRoads: {
             file: 'sty/sheets/bad_roads.png',
