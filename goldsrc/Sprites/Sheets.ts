@@ -2,20 +2,12 @@ import Sheet from "./Sheet";
 
 export namespace Sheets {
 
-    type List = { [index: string]: Readonly<Sheet> }
+    type Lookup = { [index: string]: Readonly<Sheet> }
 
-    const sheets: List = {};
+    const sheets: Lookup = {};
 
-    export function get(name: string): Readonly<Sheet> | undefined {
-        if (!name)
-            return;
-
-        let value = sheets[name];
-
-        if (!value)
-            console.warn('Spritesheet not found');
-
-        return value;
+    export function get(name: string): Readonly<Sheet> {
+        return sheets[name];
     }
 
     export function put(name: string, object: object) {
@@ -42,21 +34,13 @@ export namespace Sheets {
         let baseRoads = {
             width: 320,
             height: 320,
-            piece:
-            {
-                w: 64,
-                h: 64
-            }
+            piece: { w: 64, h: 64 }
         };
 
         let basePavement = {
             width: 256,
             height: 256,
-            piece:
-            {
-                w: 64,
-                h: 64
-            }
+            piece: { w: 64, h: 64 }
         }
 
         put('badRoads', clone(baseRoads, { file: 'sty/sheets/bad_roads.png' }));

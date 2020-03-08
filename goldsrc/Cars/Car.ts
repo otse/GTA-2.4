@@ -1,9 +1,9 @@
 import Rectangle from "../Objects/Rectangle";
 import Data2 from "../Objects/Data";
 
-import { CarMetas } from "./Car metas";
+import { CarMetas } from "./Metas";
 import CarPhysics from "./Every line is a physic";
-import PaintJobs from "./Paint jobs";
+import PaintJobs from "./Paints";
 
 export class Car extends Rectangle {
 	constructor(data: Data2) {

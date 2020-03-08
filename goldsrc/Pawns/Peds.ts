@@ -18,7 +18,7 @@ export namespace Peds {
 		Anims.update(timer);
 
 		Util.UV.fromSheet(ped.geometry,
-			square || timer.def.tiles![timer.i],
+			square || timer.def.spriteArray![timer.i],
 			Peds.sheet);
 
 		return timer;

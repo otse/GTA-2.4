@@ -13,7 +13,7 @@ export namespace Anims {
 	export interface Def {
 		frames: number;
 		moment: number;
-		tiles?: Square[];
+		spriteArray?: Square[];
 	}
 
 	export function zero(a: Timer) {

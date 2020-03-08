@@ -6,7 +6,7 @@ export var Peds;
     function play(ped, word, square = undefined) {
         const timer = ped.timers[word];
         Anims.update(timer);
-        Util.UV.fromSheet(ped.geometry, square || timer.def.tiles[timer.i], Peds.sheet);
+        Util.UV.fromSheet(ped.geometry, square || timer.def.spriteArray[timer.i], Peds.sheet);
         return timer;
     }
     Peds.play = play;

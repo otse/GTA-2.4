@@ -1,6 +1,6 @@
 import Sheet from "../Sprites/Sheet";
 import CarPhysics from "./Every line is a physic";
-import CarMetas from "./Car metas";
+import CarMetas from "./Metas";
 
 // Automobiles, trains
 
@@ -24,7 +24,7 @@ namespace PaintJobs {
 
 	export const deltasSheets: { [name: string]: Sheet } = {};
 
-	export function Init() {
+	export function init() {
 
 		const list = CarPhysics.List();
 

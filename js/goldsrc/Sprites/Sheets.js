@@ -2,12 +2,7 @@ export var Sheets;
 (function (Sheets) {
     const sheets = {};
     function get(name) {
-        if (!name)
-            return;
-        let value = sheets[name];
-        if (!value)
-            console.warn('Spritesheet not found');
-        return value;
+        return sheets[name];
     }
     Sheets.get = get;
     function put(name, object) {
@@ -27,18 +22,12 @@ export var Sheets;
         let baseRoads = {
             width: 320,
             height: 320,
-            piece: {
-                w: 64,
-                h: 64
-            }
+            piece: { w: 64, h: 64 }
         };
         let basePavement = {
             width: 256,
             height: 256,
-            piece: {
-                w: 64,
-                h: 64
-            }
+            piece: { w: 64, h: 64 }
         };
         put('badRoads', clone(baseRoads, { file: 'sty/sheets/bad_roads.png' }));
         put('greenRoads', clone(baseRoads, { file: 'sty/sheets/green_roads.png' }));

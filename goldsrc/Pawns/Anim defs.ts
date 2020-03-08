@@ -41,9 +41,9 @@ const m = .11;
 
 export const pedDefs: Readonly<{ [anim: string]: Anims.Def }> = {
 	other:      { frames: 8, moment: .08 },
-	walk:       { frames: 8, moment: .11, tiles: walkSquares },
-	run:        { frames: 8, moment: .08, tiles: runSquares },
-	scratch:    { frames: 12,moment: .16, tiles: scratchSquares },
+	walk:       { frames: 8, moment: .11, spriteArray: walkSquares },
+	run:        { frames: 8, moment: .08, spriteArray: runSquares },
+	scratch:    { frames: 12,moment: .16, spriteArray: scratchSquares },
 	punch:      { frames: 8, moment: m },
 	walkpunch:  { frames: 8, moment: m },
 	runpunch:   { frames: 8, moment: .08 },

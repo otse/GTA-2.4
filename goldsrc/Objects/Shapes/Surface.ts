@@ -46,21 +46,16 @@ export class Surface extends Object2 {
 
 		const hasSheet = this.data.sheet && this.data.sprite;
 
-		// Cutting can prevent texture bleeding
-		// but is quite heavy
-		const CUT = false;
+		// Cut to prevent texture bleeding
+		const cut = false;
 
 		let map;
 
 		if (hasSheet) {
 			let sheet = Sheets.get(this.data.sheet!);
 
-			if (!this.data.sprite)
-				console.warn('Surface has no sheet square');
-
 			/*
-			// compat
-			if (CUT) {
+			if (cut) {
 				const key = `sh ${this.data.sheet} sq ${this.data.square}`;
 
 				map = Sprites.Cut(square, sheet, key);
@@ -81,7 +76,7 @@ export class Surface extends Object2 {
 			map: map,
 			shininess: 0,
 			color: new Color(this.data.color),
-			side: DoubleSide
+			//side: DoubleSide
 		});
 
 		this.mesh = new Mesh(this.geometry, this.material);

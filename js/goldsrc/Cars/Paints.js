@@ -1,5 +1,5 @@
 import CarPhysics from "./Every line is a physic";
-import CarMetas from "./Car metas";
+import CarMetas from "./Metas";
 // Automobiles, trains
 // Resources
 // https://gta.fandom.com/wiki/Vehicles_in_GTA_2

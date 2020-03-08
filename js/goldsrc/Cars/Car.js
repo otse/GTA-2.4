@@ -1,5 +1,5 @@
 import Rectangle from "../Objects/Rectangle";
-import { CarMetas } from "./Car metas";
+import { CarMetas } from "./Metas";
 import CarPhysics from "./Every line is a physic";
 export class Car extends Rectangle {
     constructor(data) {
