@@ -455,6 +455,7 @@ var gta_kill = (function (exports, THREE) {
             put('greenRoads', clone(baseRoads, { file: 'sty/sheets/green_roads.png' }));
             put('mixedRoads', clone(baseRoads, { file: 'sty/sheets/mixed_roads.png' }));
             put('greyRoads', clone(baseRoads, { file: 'sty/sheets/grey_roads.png' }));
+            put('greyRoadsMixed', clone(baseRoads, { file: 'sty/sheets/grey_roads_mixed.png' }));
             put('yellowyPavement', clone(basePavement, { file: 'sty/sheets/yellowy_pavement.png' }));
             put('greenPavement', clone(basePavement, { file: 'sty/sheets/green_pavement.png' }));
         }
@@ -4242,23 +4243,23 @@ var gta_kill = (function (exports, THREE) {
             Gen1$1.GenFlats.type1([2, 1, 0], [3, 4, 1]); // Gas station
             //Gen2.GenPavements.fill([4, 4, 0], 4, 1);
             // The roads around the office with parking
-            Gen1$1.GenRoads.oneway(0, [6, 5, 0], 5, 'greyRoads'); // Parking exit
-            //Gen1.GenRoads.oneway(0, [6, 0, 0], 5, 'greyRoads'); // Parking exit
+            Gen1$1.GenRoads.oneway(0, [-10, 5, 0], 21, 'greyRoads'); // Parking entry
+            Gen1$1.GenRoads.oneway(0, [8, 0, 0], 3, 'greyRoads'); // Parking exit
             Gen1$1.GenRoads.highway(1, [5, 0, 0], 6, 2, 'greyRoads'); // Pumps road
             //Gen1.GenRoads.twolane(0, [2, 5, 0], 9, 'greenRoads'); // horz
             //Gen1.GenRoads.twolane(0, [2, -2, 0], 9, 'greenRoads'); // horz
             //GenDeline.mixedToBad([2, 4, 0], 9, 4);
             //GenDeline.mixedToBad([2, -3, 0], 9, 4);
-            Gen1$1.GenParking.onewayRight([8, 0, 0], 6, 2, 'badRoads');
+            Gen1$1.GenParking.onewayRight([8, 0, 0], 6, 2, 'greyRoadsMixed');
             //Gen2.GenDeline.horz([4, 0, 0], 6, 6);
             let gas_station_corner = Gen2$1.getDataOfType([8, 5, 0], 'Surface');
             let gas_station_corner2 = Gen2$1.getDataOfType([8, 0, 0], 'Surface');
-            //gas_station_corner!.sprite = Sprites.ROADS.SINGLE_EXIT;
-            //gas_station_corner2!.sprite = Sprites.ROADS.SINGLE_EXIT;
-            //gas_station_corner2!.r! += 1;
+            gas_station_corner.sprite = Sprites$1.ROADS.SINGLE_EXIT;
+            gas_station_corner2.sprite = Sprites$1.ROADS.SINGLE_CORNER;
+            gas_station_corner2.r += 1;
             // Deline around the apts
             Gen2$1.GenDeline.horz([2, 4, 0], 9, 3);
-            //Gen2.GenDeline.horz([2, -1, 0], 9, 3);
+            Gen2$1.GenDeline.horz([2, -1, 0], 9, 3);
             return;
         }
         GenLocations.aptsOffice = aptsOffice;

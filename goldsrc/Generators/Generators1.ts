@@ -157,7 +157,7 @@ export namespace Gen1 {
 
 	export namespace GenRoads {
 
-		export type Strings = 'badRoads' | 'greenRoads' | 'mixedRoads' | 'greyRoads';
+		export type Strings = 'badRoads' | 'greenRoads' | 'mixedRoads' | 'greyRoads' | 'greyRoadsMixed';
 
 		export function oneway(
 			axis: 0 | 1,

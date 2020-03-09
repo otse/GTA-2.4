@@ -28,8 +28,8 @@ export namespace GenLocations {
 		//Gen2.GenPavements.fill([4, 4, 0], 4, 1);
 		
 		// The roads around the office with parking
-		Gen1.GenRoads.oneway(0, [6, 5, 0], 5, 'greyRoads'); // Parking exit
-		//Gen1.GenRoads.oneway(0, [6, 0, 0], 5, 'greyRoads'); // Parking exit
+		Gen1.GenRoads.oneway(0, [-10, 5, 0], 21, 'greyRoads'); // Parking entry
+		Gen1.GenRoads.oneway(0, [8, 0, 0], 3, 'greyRoads'); // Parking exit
 
 		Gen1.GenRoads.highway(1, [5, 0, 0], 6, 2, 'greyRoads'); // Pumps road
 		
@@ -39,19 +39,19 @@ export namespace GenLocations {
 		//GenDeline.mixedToBad([2, 4, 0], 9, 4);
 		//GenDeline.mixedToBad([2, -3, 0], 9, 4);
 		
-		Gen1.GenParking.onewayRight([8, 0, 0], 6, 2, 'badRoads');
+		Gen1.GenParking.onewayRight([8, 0, 0], 6, 2, 'greyRoadsMixed');
 		//Gen2.GenDeline.horz([4, 0, 0], 6, 6);
 
 		let gas_station_corner = Gen2.getDataOfType([8, 5, 0], 'Surface');
 		let gas_station_corner2 = Gen2.getDataOfType([8, 0, 0], 'Surface');
 
-		//gas_station_corner!.sprite = Sprites.ROADS.SINGLE_EXIT;
-		//gas_station_corner2!.sprite = Sprites.ROADS.SINGLE_EXIT;
-		//gas_station_corner2!.r! += 1;
+		gas_station_corner!.sprite = Sprites.ROADS.SINGLE_EXIT;
+		gas_station_corner2!.sprite = Sprites.ROADS.SINGLE_CORNER;
+		gas_station_corner2!.r! += 1;
 
 		// Deline around the apts
 		Gen2.GenDeline.horz([2, 4, 0], 9, 3);
-		//Gen2.GenDeline.horz([2, -1, 0], 9, 3);
+		Gen2.GenDeline.horz([2, -1, 0], 9, 3);
 		
 		return;
 		
