@@ -12,9 +12,13 @@ class StagingArea {
     addDatas(datas) {
         this.datas = this.datas.concat(datas);
     }
-    deliverAll() {
+    deliverReplace() {
         for (let data of this.datas)
             Datas.replaceDeliver(data);
+    }
+    deliverKeep() {
+        for (let data of this.datas)
+            Datas.deliver(data);
     }
     findExtents() {
         let set = false;

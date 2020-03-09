@@ -606,7 +606,7 @@ var gta_kill = (function (exports, THREE) {
 					// Blur
 					vec4 blurColor = texture2D( blurMap, vUv );
 					blurColor.rgb *= 0.0;
-					blurColor.a /= 2.0;
+					blurColor.a /= 3.0;
 					texelColor = blurColor + mapColor;
 
 					texelColor = mapTexelToLinear( texelColor );
@@ -3524,9 +3524,13 @@ var gta_kill = (function (exports, THREE) {
         addDatas(datas) {
             this.datas = this.datas.concat(datas);
         }
-        deliverAll() {
+        deliverReplace() {
             for (let data of this.datas)
                 Datas$1.replaceDeliver(data);
+        }
+        deliverKeep() {
+            for (let data of this.datas)
+                Datas$1.deliver(data);
         }
         findExtents() {
             let set = false;
@@ -3601,14 +3605,14 @@ var gta_kill = (function (exports, THREE) {
     })(Cars || (Cars = {}));
     var Cars$1 = Cars;
 
-    var Gen1;
-    (function (Gen1) {
-        Gen1.roadMode = 'Normal';
+    var Generators;
+    (function (Generators) {
+        Generators.roadMode = 'Normal';
         let Axis;
         (function (Axis) {
             Axis[Axis["Horz"] = 0] = "Horz";
             Axis[Axis["Vert"] = 1] = "Vert";
-        })(Axis = Gen1.Axis || (Gen1.Axis = {}));
+        })(Axis = Generators.Axis || (Generators.Axis = {}));
         function invert(data, axis, w) {
             let x = data.x;
             let y = data.y;
@@ -3618,7 +3622,7 @@ var gta_kill = (function (exports, THREE) {
             data.x += w[0];
             data.y += w[1];
         }
-        Gen1.invert = invert;
+        Generators.invert = invert;
         function loop(min, max, func) {
             let x = 0;
             for (; x < max[0]; x++) {
@@ -3631,10 +3635,10 @@ var gta_kill = (function (exports, THREE) {
                 }
             }
         }
-        Gen1.loop = loop;
-        let GenFlats;
-        (function (GenFlats) {
-            GenFlats.blueMetal = [
+        Generators.loop = loop;
+        let Flats;
+        (function (Flats) {
+            Flats.blueMetal = [
                 'sty/metal/blue/340.bmp',
                 'sty/metal/blue/340.bmp',
                 'sty/metal/blue/340.bmp',
@@ -3707,12 +3711,12 @@ var gta_kill = (function (exports, THREE) {
                         block.faces[3] = bmp;
                     Datas$1.deliver(block);
                 };
-                Gen1.loop(min, max, func);
+                Generators.loop(min, max, func);
             }
-            GenFlats.type1 = type1;
-        })(GenFlats = Gen1.GenFlats || (Gen1.GenFlats = {}));
-        let GenRoads;
-        (function (GenRoads) {
+            Flats.type1 = type1;
+        })(Flats = Generators.Flats || (Generators.Flats = {}));
+        let Roads;
+        (function (Roads) {
             function oneway(axis, w, segs, sheet) {
                 let staging = new StagingArea;
                 let seg = 0;
@@ -3726,7 +3730,7 @@ var gta_kill = (function (exports, THREE) {
                         z: w[2],
                         r: 3
                     };
-                    road.adapt_sheet = Gen1.roadMode == 'Adapt';
+                    road.adapt_sheet = Generators.roadMode == 'Adapt';
                     if (!seg || seg == segs - 1) {
                         road.sprite = Sprites$1.ROADS.SINGLE_OPEN;
                         if (!seg)
@@ -3738,9 +3742,9 @@ var gta_kill = (function (exports, THREE) {
                 }
                 if (axis == 0)
                     staging.ccw(1);
-                staging.deliverAll();
+                staging.deliverReplace();
             }
-            GenRoads.oneway = oneway;
+            Roads.oneway = oneway;
             function twolane(axis, w, segs, sheet) {
                 let staging = new StagingArea;
                 const lanes = 2;
@@ -3759,7 +3763,7 @@ var gta_kill = (function (exports, THREE) {
                         };
                         if (!seg || seg == segs - 1) {
                             road.sprite = Sprites$1.ROADS.CONVEX_LINE;
-                            road.adapt_sheet = Gen1.roadMode == 'Adapt';
+                            road.adapt_sheet = Generators.roadMode == 'Adapt';
                             if (!seg && lane ||
                                 seg == segs - 1 && !lane)
                                 road.r += 1;
@@ -3774,9 +3778,9 @@ var gta_kill = (function (exports, THREE) {
                 }
                 if (axis == 1)
                     staging.ccw(1);
-                staging.deliverAll();
+                staging.deliverReplace();
             }
-            GenRoads.twolane = twolane;
+            Roads.twolane = twolane;
             function highway(axis, w, segs, lanes, sheet) {
                 let staging = new StagingArea;
                 let seg = 0;
@@ -3809,12 +3813,12 @@ var gta_kill = (function (exports, THREE) {
                 }
                 if (axis == 0)
                     staging.ccw(1);
-                staging.deliverAll();
+                staging.deliverReplace();
             }
-            GenRoads.highway = highway;
-        })(GenRoads = Gen1.GenRoads || (Gen1.GenRoads = {}));
-        let GenParking;
-        (function (GenParking) {
+            Roads.highway = highway;
+        })(Roads = Generators.Roads || (Generators.Roads = {}));
+        let Parking;
+        (function (Parking) {
             function onewayRight(w, segs, lanes, sheet) {
                 let staging = new StagingArea;
                 if (lanes < 2)
@@ -3843,7 +3847,7 @@ var gta_kill = (function (exports, THREE) {
                         if (!seg || seg == segs - 1) {
                             if (!lane) {
                                 road.sprite = Sprites$1.ROADS.SINGLE_OPEN;
-                                road.adapt_sheet = Gen1.roadMode == 'Adapt';
+                                road.adapt_sheet = Generators.roadMode == 'Adapt';
                                 if (!seg)
                                     road.r += 1;
                                 else if (seg == segs - 1)
@@ -3892,9 +3896,9 @@ var gta_kill = (function (exports, THREE) {
                         staging.addData(road);
                     }
                 }
-                staging.deliverAll();
+                staging.deliverReplace();
             }
-            GenParking.onewayRight = onewayRight;
+            Parking.onewayRight = onewayRight;
             function leftBigHorz(w, segs, lanes, sheet) {
                 let staging = new StagingArea;
                 lanes = 4;
@@ -3920,7 +3924,7 @@ var gta_kill = (function (exports, THREE) {
                         };
                         let parkHere = false;
                         if (!seg) {
-                            road.adapt_sheet = Gen1.roadMode == 'Adapt';
+                            road.adapt_sheet = Generators.roadMode == 'Adapt';
                             if (lane == 1) {
                                 road.sprite = Sprites$1.ROADS.CONVEX_LINE;
                                 road.r += 1;
@@ -4010,15 +4014,105 @@ var gta_kill = (function (exports, THREE) {
                         staging.addData(road);
                     }
                 }
-                staging.deliverAll();
+                staging.deliverReplace();
             }
-            GenParking.leftBigHorz = leftBigHorz;
-        })(GenParking = Gen1.GenParking || (Gen1.GenParking = {}));
-    })(Gen1 || (Gen1 = {}));
-    var Gen1$1 = Gen1;
+            Parking.leftBigHorz = leftBigHorz;
+        })(Parking = Generators.Parking || (Generators.Parking = {}));
+        let Fill;
+        (function (Fill) {
+            function fill(w, width, height, object, extras = {}) {
+                let staging = new StagingArea;
+                //const lanes = 1;
+                let x = 0;
+                for (; x < width; x++) {
+                    let y = 0;
+                    for (; y < height; y++) {
+                        let pav = {
+                            type: 'Surface',
+                            //sheet: 'yellowyPavement',
+                            //square: 'middle',
+                            x: x + w[0],
+                            y: y + w[1],
+                            z: w[2],
+                        };
+                        Object.assign(pav, object);
+                        if (extras.RANDOM_ROTATION)
+                            pav.r = Math.floor(Math.random() * 4);
+                        staging.addData(pav);
+                    }
+                }
+                staging.deliverReplace();
+            }
+            Fill.fill = fill;
+        })(Fill = Generators.Fill || (Generators.Fill = {}));
+        let Pavements;
+        (function (Pavements) {
+            function fill(w, width, height) {
+                //const lanes = 1;
+                let x = 0;
+                for (; x < width; x++) {
+                    let y = 0;
+                    for (; y < height; y++) {
+                        let pav = {
+                            type: 'Surface',
+                            sheet: 'yellowyPavement',
+                            sprite: Sprites$1.PAVEMENTS.MIDDLE,
+                            //sty: 'sty/floors/blue/256.bmp',
+                            x: x + w[0],
+                            y: y + w[1],
+                            z: w[2],
+                        };
+                        Datas$1.deliver(pav);
+                    }
+                }
+            }
+            Pavements.fill = fill;
+            function vert(x, y, z, segs, lanes) {
+                //const lanes = 1;
+                let seg = 0;
+                for (; seg < segs; seg++) {
+                    let lane = 0;
+                    for (; lane < lanes; lane++) {
+                        let pav = {
+                            type: 'Surface',
+                            sheet: 'yellowyPavement',
+                            sprite: Sprites$1.PAVEMENTS.MIDDLE,
+                            //sty: 'sty/floors/blue/256.bmp',
+                            x: lane + x,
+                            y: seg + y,
+                            z: 0
+                        };
+                        Datas$1.deliver(pav);
+                    }
+                }
+            }
+            Pavements.vert = vert;
+            function Horz(x, y, z, segs, lanes) {
+                //const lanes = 1;
+                let seg = 0;
+                for (; seg < segs; seg++) {
+                    let lane = 0;
+                    for (; lane < lanes; lane++) {
+                        let pav = {
+                            type: 'Surface',
+                            sheet: 'yellowyPavement',
+                            sprite: Sprites$1.PAVEMENTS.MIDDLE,
+                            //sty: 'sty/floors/blue/256.bmp',
+                            x: seg + y,
+                            y: lane + x,
+                            z: 0
+                        };
+                        Datas$1.deliver(pav);
+                    }
+                }
+            }
+            Pavements.Horz = Horz;
+        })(Pavements = Generators.Pavements || (Generators.Pavements = {}));
+    })(Generators || (Generators = {}));
+    var Generators$1 = Generators;
 
-    var Gen2;
-    (function (Gen2) {
+    var GenTools;
+    (function (GenTools) {
         // To swap tile at ply in console
         // ~ Deline__.edit([Math.floor(ply.data.x), Math.floor(ply.data.y), 0], 'sideDash')
         function getDataOfType(w, type) {
@@ -4032,7 +4126,7 @@ var gta_kill = (function (exports, THREE) {
                 return data;
             }
         }
-        Gen2.getDataOfType = getDataOfType;
+        GenTools.getDataOfType = getDataOfType;
         function swap(w, assign) {
             let point = { x: w[0], y: w[1] };
             let chunk = Datas$1.getChunk(point);
@@ -4049,32 +4143,9 @@ var gta_kill = (function (exports, THREE) {
                 break;
             }
         }
-        Gen2.swap = swap;
-        let GenPlaza;
-        (function (GenPlaza) {
-            function fill(w, width, height, sty = 'sty/floors/blue/256.bmp') {
-                //const lanes = 1;
-                let x = 0;
-                for (; x < width; x++) {
-                    let y = 0;
-                    for (; y < height; y++) {
-                        let pav = {
-                            type: 'Surface',
-                            //sheet: 'yellowyPavement',
-                            //square: 'middle',
-                            sty: sty,
-                            x: x + w[0],
-                            y: y + w[1],
-                            z: w[2],
-                        };
-                        Datas$1.deliver(pav);
-                    }
-                }
-            }
-            GenPlaza.fill = fill;
-        })(GenPlaza = Gen2.GenPlaza || (Gen2.GenPlaza = {}));
-        let GenDeline;
-        (function (GenDeline) {
+        GenTools.swap = swap;
+        let Deline;
+        (function (Deline) {
             function simple(w, width, height) {
                 let x = 0;
                 for (; x < width; x++) {
@@ -4099,7 +4170,7 @@ var gta_kill = (function (exports, THREE) {
                     }
                 }
             }
-            GenDeline.simple = simple;
+            Deline.simple = simple;
             function horz(w, width, height) {
                 let x = 0;
                 for (; x < width; x++) {
@@ -4134,140 +4205,58 @@ var gta_kill = (function (exports, THREE) {
                     }
                 }
             }
-            GenDeline.horz = horz;
-            function EditMultiple(w, width, height, square_a, square_b) {
-                let x = 0;
-                for (; x < width; x++) {
-                    let y = 0;
-                    for (; y < height; y++) {
-                        let point = { x: w[0] + x, y: w[1] + y };
-                        let chunk = Datas$1.getChunk(point);
-                        //if (chunked.includes(chunk))
-                        //continue;
-                        //chunked.push(chunk);
-                        for (let data of chunk.datas) {
-                            if ('Surface' != data.type)
-                                continue;
-                            if (Points$1.different(data, point))
-                                continue;
-                            if (data.sprite == Sprites$1.ROADS.SIDE_LINE)
-                                data.sprite = Sprites$1.ROADS.SIDE_CLEAR;
-                            else if (data.sprite == Sprites$1.ROADS.SIDE_STOP_LINE)
-                                data.sprite = Sprites$1.ROADS.SIDE_STOP;
-                        }
-                    }
-                }
-            }
-            GenDeline.EditMultiple = EditMultiple;
-        })(GenDeline = Gen2.GenDeline || (Gen2.GenDeline = {}));
-        let GenPavements;
-        (function (GenPavements) {
-            function fill(w, width, height) {
-                //const lanes = 1;
-                let x = 0;
-                for (; x < width; x++) {
-                    let y = 0;
-                    for (; y < height; y++) {
-                        let pav = {
-                            type: 'Surface',
-                            sheet: 'yellowyPavement',
-                            sprite: Sprites$1.PAVEMENTS.MIDDLE,
-                            //sty: 'sty/floors/blue/256.bmp',
-                            x: x + w[0],
-                            y: y + w[1],
-                            z: w[2],
-                        };
-                        Datas$1.deliver(pav);
-                    }
-                }
-            }
-            GenPavements.fill = fill;
-            function vert(x, y, z, segs, lanes) {
-                //const lanes = 1;
-                let seg = 0;
-                for (; seg < segs; seg++) {
-                    let lane = 0;
-                    for (; lane < lanes; lane++) {
-                        let pav = {
-                            type: 'Surface',
-                            sheet: 'yellowyPavement',
-                            sprite: Sprites$1.PAVEMENTS.MIDDLE,
-                            //sty: 'sty/floors/blue/256.bmp',
-                            x: lane + x,
-                            y: seg + y,
-                            z: 0
-                        };
-                        Datas$1.deliver(pav);
-                    }
-                }
-            }
-            GenPavements.vert = vert;
-            function Horz(x, y, z, segs, lanes) {
-                //const lanes = 1;
-                let seg = 0;
-                for (; seg < segs; seg++) {
-                    let lane = 0;
-                    for (; lane < lanes; lane++) {
-                        let pav = {
-                            type: 'Surface',
-                            sheet: 'yellowyPavement',
-                            sprite: Sprites$1.PAVEMENTS.MIDDLE,
-                            //sty: 'sty/floors/blue/256.bmp',
-                            x: seg + y,
-                            y: lane + x,
-                            z: 0
-                        };
-                        Datas$1.deliver(pav);
-                    }
-                }
-            }
-            GenPavements.Horz = Horz;
-        })(GenPavements = Gen2.GenPavements || (Gen2.GenPavements = {}));
-    })(Gen2 || (Gen2 = {}));
-    var Gen2$1 = Gen2;
+            Deline.horz = horz;
+        })(Deline = GenTools.Deline || (GenTools.Deline = {}));
+    })(GenTools || (GenTools = {}));
+    var GenTools$1 = GenTools;
 
     var GenLocations;
     (function (GenLocations) {
         function aptsOffice() {
-            Gen1$1.roadMode = 'Adapt';
+            Generators$1.roadMode = 'Adapt';
             // nature\tracks\514.bmp
             // nature/park original/216.bmp
-            Gen2$1.GenPlaza.fill([-10, -500, 0], 1000, 1000, 'sty/nature/tracks/522.bmp');
+            //Gen2.GenPlaza.fill([-10, -500, 0], 1000, 1000, 'sty/nature/tracks/522.bmp');
+            Generators$1.Fill.fill([-500, -500, 0], 1000, 1000, { sty: 'sty/nature/evergreen/836.bmp' }, { RANDOM_ROTATION: true });
+            //Generators.Plaza.fill([-10, -10, 0], 20, 20, {sty: 'sty/nature/tracks/514.bmp'});
             //Gen2.GenPavements.vert(-1, -50, 0, 100, 1);
             //Gen2.GenPavements.vert(3, -50, 0, 100, 1);
             //Gen2.GenPavements.vert(12, -50, 0, 100, 1);
             //Gen2.GenPavements.vert(9, -50, 0, 100, 1);
             //Gen1.GenRoads.highway(1, [0, -25, 0], 50, 3, 'badRoads');
-            Gen1$1.GenRoads.twolane(1, [10, -25, 0], 50, 'greyRoads'); // Big main road
+            Generators$1.Fill.fill([9, -25, 0], 1, 50, { r: 1, sty: 'sty/nature/evergreen/839.bmp' });
+            Generators$1.Fill.fill([12, -25, 0], 1, 50, { r: 3, sty: 'sty/nature/evergreen/839.bmp' });
+            Generators$1.Roads.twolane(1, [10, -25, 0], 50, 'greyRoads'); // Big main road
             //Gen1.GenFlats.type1([4, 7, 0], [6, 6, 1]); // Apts above
-            Gen1$1.GenFlats.type1([2, 1, 0], [3, 4, 1]); // Gas station
             //Gen2.GenPavements.fill([4, 4, 0], 4, 1);
             // The roads around the office with parking
-            Gen1$1.GenRoads.oneway(0, [-10, 5, 0], 21, 'greyRoads'); // Parking entry
-            Gen1$1.GenRoads.oneway(0, [8, 0, 0], 3, 'greyRoads'); // Parking exit
-            Gen1$1.GenRoads.highway(1, [5, 0, 0], 6, 2, 'greyRoads'); // Pumps road
+            //Generators.Fill.fill([12, -25, 0], 1, 50, {r: 2, sty: 'sty/nature/tracks/520.bmp'});
+            Generators$1.Roads.oneway(0, [-10, 5, 0], 21, 'greyRoads'); // Parking entry
+            Generators$1.Roads.oneway(0, [8, 0, 0], 3, 'greyRoads'); // Parking exit
+            Generators$1.Flats.type1([5, 0, 0], [3, 4, 1]); // Gas station
+            //Gen1.GenRoads.highway(1, [5, 0, 0], 6, 2, 'greyRoads'); // Pumps road
             //Gen1.GenRoads.twolane(0, [2, 5, 0], 9, 'greenRoads'); // horz
             //Gen1.GenRoads.twolane(0, [2, -2, 0], 9, 'greenRoads'); // horz
             //GenDeline.mixedToBad([2, 4, 0], 9, 4);
             //GenDeline.mixedToBad([2, -3, 0], 9, 4);
-            Gen1$1.GenParking.onewayRight([8, 0, 0], 6, 2, 'greyRoadsMixed');
+            Generators$1.Parking.onewayRight([8, 0, 0], 6, 2, 'greyRoadsMixed');
             //Gen2.GenDeline.horz([4, 0, 0], 6, 6);
-            let gas_station_corner = Gen2$1.getDataOfType([8, 5, 0], 'Surface');
-            let gas_station_corner2 = Gen2$1.getDataOfType([8, 0, 0], 'Surface');
+            let gas_station_corner = GenTools$1.getDataOfType([8, 5, 0], 'Surface');
+            let gas_station_corner2 = GenTools$1.getDataOfType([8, 0, 0], 'Surface');
             gas_station_corner.sprite = Sprites$1.ROADS.SINGLE_EXIT;
             gas_station_corner2.sprite = Sprites$1.ROADS.SINGLE_CORNER;
             gas_station_corner2.r += 1;
             // Deline around the apts
-            Gen2$1.GenDeline.horz([2, 4, 0], 9, 3);
-            Gen2$1.GenDeline.horz([2, -1, 0], 9, 3);
+            GenTools$1.Deline.horz([2, 4, 0], 9, 3);
+            GenTools$1.Deline.horz([2, -1, 0], 9, 3);
             return;
         }
         GenLocations.aptsOffice = aptsOffice;
         function longLonesome() {
-            Gen2$1.GenPlaza.fill([-10, -500, 0], 1000, 1000, 'sty/nature/park original/216.bmp');
+            Generators$1.Fill.fill([-10, -500, 0], 1000, 1000, { sty: 'sty/nature/park original/216.bmp' });
             //GenPlaza.fill([9, -100, 0], 1, 200);
             //GenPlaza.fill([13, -100, 0], 1, 200);
-            Gen1$1.GenRoads.highway(1, [10, -500, 0], 1000, 3, 'greenRoads');
+            Generators$1.Roads.highway(1, [10, -500, 0], 1000, 3, 'greenRoads');
             //GenRoads.twolane(1, [10, -25, 0], 50, 'badRoads'); // vert
         }
         GenLocations.longLonesome = longLonesome;

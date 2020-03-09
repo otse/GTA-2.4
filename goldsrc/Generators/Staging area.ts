@@ -1,7 +1,7 @@
 import Data2 from "../Objects/Data";
 import Datas from "../Objects/Datas";
 
-import Gen1 from "./Generators1";
+import Generators from "./Generators";
 
 // For making vertical ~> horizontal
 
@@ -27,9 +27,14 @@ class StagingArea {
 		this.datas = this.datas.concat(datas);
 	}
 
-	deliverAll() {
+	deliverReplace() {
 		for (let data of this.datas)
 			Datas.replaceDeliver(data);
+	}
+
+	deliverKeep() {
+		for (let data of this.datas)
+			Datas.deliver(data);
 	}
 
 	private findExtents() {

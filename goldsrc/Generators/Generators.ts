@@ -5,7 +5,7 @@ import StagingArea from "./Staging area";
 import Cars from "../Cars/Cars";
 import Sprites from "../Sprites/Sprites";
 
-export namespace Gen1 {
+export namespace Generators {
 
 	type RoadMode = 'Normal' | 'Adapt';
 
@@ -51,7 +51,7 @@ export namespace Gen1 {
 		}
 	}
 
-	export namespace GenFlats {
+	export namespace Flats {
 
 		type Faces = [string, string, string, string, string];
 
@@ -150,12 +150,12 @@ export namespace Gen1 {
 				Datas.deliver(block);
 			}
 
-			Gen1.loop(min, max, func);
+			Generators.loop(min, max, func);
 		}
 
 	}
 
-	export namespace GenRoads {
+	export namespace Roads {
 
 		export type Strings = 'badRoads' | 'greenRoads' | 'mixedRoads' | 'greyRoads' | 'greyRoadsMixed';
 
@@ -196,7 +196,7 @@ export namespace Gen1 {
 			if (axis == 0)
 				staging.ccw(1);
 
-			staging.deliverAll();
+			staging.deliverReplace();
 		}
 
 		export function twolane(
@@ -246,7 +246,7 @@ export namespace Gen1 {
 			if (axis == 1)
 				staging.ccw(1);
 
-			staging.deliverAll();
+			staging.deliverReplace();
 		}
 
 		export function highway(
@@ -295,15 +295,15 @@ export namespace Gen1 {
 			if (axis == 0)
 				staging.ccw(1);
 
-			staging.deliverAll();
+			staging.deliverReplace();
 		}
 
 	}
 
-	export namespace GenParking {
+	export namespace Parking {
 
 		export function onewayRight(
-			w: [number, number, number], segs: number, lanes: number, sheet: GenRoads.Strings) {
+			w: [number, number, number], segs: number, lanes: number, sheet: Roads.Strings) {
 
 			let staging = new StagingArea;
 
@@ -401,11 +401,11 @@ export namespace Gen1 {
 				}
 			}
 
-			staging.deliverAll();
+			staging.deliverReplace();
 		}
 
 		export function leftBigHorz(
-			w: [number, number, number], segs: number, lanes: number, sheet: GenRoads.Strings) {
+			w: [number, number, number], segs: number, lanes: number, sheet: Roads.Strings) {
 
 			let staging = new StagingArea;
 
@@ -542,11 +542,139 @@ export namespace Gen1 {
 				}
 			}
 
-			staging.deliverAll();
+			staging.deliverReplace();
 		}
 
 	}
 
+	export namespace Fill {
+
+		interface Extras {
+			RANDOM_ROTATION?: boolean;
+		}
+
+		export function fill(
+			w: [number, number, number],
+			width, height, object: object, extras: Extras = {}
+			) {
+
+			let staging = new StagingArea;
+	
+			//const lanes = 1;
+	
+			let x = 0;
+			for (; x < width; x++) {
+	
+				let y = 0;
+				for (; y < height; y++) {
+	
+					let pav: Data2 = {
+						type: 'Surface',
+						//sheet: 'yellowyPavement',
+						//square: 'middle',
+						x: x + w[0],
+						y: y + w[1],
+						z: w[2],
+					};
+					
+					Object.assign(pav, object);
+
+					if (extras.RANDOM_ROTATION)
+						pav.r = Math.floor(Math.random() * 4);
+	
+					staging.addData(pav);
+				}
+			}
+			
+			staging.deliverReplace();
+		}
+	
+	}
+
+	export namespace Pavements {
+
+		export function fill(
+			w: [number, number, number],
+			width, height) {
+	
+			//const lanes = 1;
+	
+			let x = 0;
+			for (; x < width; x++) {
+	
+				let y = 0;
+				for (; y < height; y++) {
+	
+					let pav: Data2 = {
+						type: 'Surface',
+						sheet: 'yellowyPavement',
+						sprite: Sprites.PAVEMENTS.MIDDLE,
+						//sty: 'sty/floors/blue/256.bmp',
+						x: x + w[0],
+						y: y + w[1],
+						z: w[2],
+					};
+	
+					Datas.deliver(pav);
+				}
+			}
+			
+		}
+	
+		export function vert(x, y, z, segs, lanes) {
+	
+			//const lanes = 1;
+	
+			let seg = 0;
+			for (; seg < segs; seg++) {
+	
+				let lane = 0;
+				for (; lane < lanes; lane++) {
+	
+					let pav: Data2 = {
+						type: 'Surface',
+						sheet: 'yellowyPavement',
+						sprite: Sprites.PAVEMENTS.MIDDLE,
+						//sty: 'sty/floors/blue/256.bmp',
+						x: lane + x,
+						y: seg + y,
+						z: 0
+					};
+	
+					Datas.deliver(pav);
+	
+				}
+			}
+		}
+	
+		export function Horz(x, y, z, segs, lanes) {
+	
+			//const lanes = 1;
+	
+			let seg = 0;
+			for (; seg < segs; seg++) {
+	
+				let lane = 0;
+				for (; lane < lanes; lane++) {
+	
+					let pav: Data2 = {
+						type: 'Surface',
+						sheet: 'yellowyPavement',
+						sprite: Sprites.PAVEMENTS.MIDDLE,
+						//sty: 'sty/floors/blue/256.bmp',
+						x: seg + y,
+						y: lane + x,
+						z: 0
+					};
+					
+					Datas.deliver(pav);
+	
+				}
+			}
+		}
+		
+	}
+
 }
 
-export default Gen1;
+export default Generators;
