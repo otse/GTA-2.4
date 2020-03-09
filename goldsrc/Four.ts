@@ -3,6 +3,7 @@ import { default as THREE, Clock, Scene, WebGLRenderer, PerspectiveCamera, Direc
 import KILL from './KILL';
 import Points from './Objects/Points';
 import { Movie } from './Unsorted/RGB Shift';
+import App from './App';
 
 //export { THREE };
 
@@ -25,6 +26,9 @@ export namespace Four {
 
 		KILL.update();
 
+		if (App.map[115] == 1)
+			Movie.enabled = !Movie.enabled;
+
 		if (Movie.enabled)
 
 			Movie.composer.render();
@@ -46,15 +50,15 @@ export namespace Four {
 
 		scene = new Scene();
 
-		directionalLight = new DirectionalLight(0x355886, 0.8);
+		directionalLight = new DirectionalLight(0x355886, 1.0);
 		directionalLight.position.set(0, 0, 1);
-		ambientLight = new AmbientLight('#355886'); // #5187cd
+		ambientLight = new AmbientLight('#c1c1c1'); // #5187cd
 
-		scene.add(directionalLight);
+		//scene.add(directionalLight);
 		scene.add(directionalLight.target);
 		scene.add(ambientLight);
 
-		renderer = new WebGLRenderer({ antialias: true });
+		renderer = new WebGLRenderer({ antialias: false });
 		renderer.setPixelRatio(window.devicePixelRatio);
 		renderer.setSize(
 			window.innerWidth, window.innerHeight);

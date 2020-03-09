@@ -1,12 +1,14 @@
 import { MeshPhongMaterial } from 'three';
-var Blender;
-(function (Blender) {
+// attempt at a shader that could mix two surfaces using a black white mask
+// never finished / started
+var Twoface;
+(function (Twoface) {
     // Taken from
     // https://raw.githubusercontent.com/mrdoob/three.js/dev/src/renderers/shaders/ShaderLib/meshphong_frag.glsl.js
     //var customMaterial: THREE.ShaderMaterial;
     function rig() {
     }
-    Blender.rig = rig;
+    Twoface.rig = rig;
     function make(phongProperties, params) {
         let customMaterial = new MeshPhongMaterial(phongProperties);
         customMaterial.onBeforeCompile = function (shader) {
@@ -40,6 +42,6 @@ var Blender;
         }; // onBeforeCompile
         return customMaterial;
     }
-    Blender.make = make;
-})(Blender || (Blender = {}));
+    Twoface.make = make;
+})(Twoface || (Twoface = {}));
 export default Twoface;

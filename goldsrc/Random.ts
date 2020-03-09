@@ -1,6 +1,6 @@
 import Sheet from './Sprites/Sheet';
 
-import { default as THREE, Texture, TextureLoader, NearestFilter } from 'three';
+import { default as THREE, Texture, TextureLoader, NearestFilter, LinearFilter } from 'three';
 
 export namespace Util {
 
@@ -15,6 +15,11 @@ export namespace Util {
 			return mem[file];
 
 		let texture = new TextureLoader().load(file);
+
+		texture.generateMipmaps = false;
+
+		texture.wrapS = THREE.ClampToEdgeWrapping;
+		texture.wrapT = THREE.ClampToEdgeWrapping;
 
 		texture.magFilter = NearestFilter;
 		texture.minFilter = NearestFilter;
@@ -43,19 +48,22 @@ export namespace Util {
 				y += (corrected_y) * sheet.padding / sheet.height;
 			}
 
+			// pixel correction
+			x += .5 / sheet.width;
+			y += .5 / sheet.height;
+			w -= .5 / sheet.width;
+			h -= .5 / sheet.height;
+
 			UV.planarUV(geometry, 0, x, y, w, h);
 		}
 
 		export function planarUV(geom, face, x, y, w, h) {
 
 			let o = face * 8;
-			// 0 1, 1 1, 0 0, 1 0
-			// left top, right top, left bottom, right bottom
 
-			// [ x,y, x+w,y, x,y+h, x+w,y+h ]
 			let a = [x, y + h, x + w, y + h, x, y, x + w, y];
 
-			for (let i = 0; i < 8; i++) // coffee 0..7
+			for (let i = 0; i < 8; i++)
 				geom.attributes.uv.array[o + i] = a[i];
 
 			geom.attributes.uv.needsUpdate = true;

@@ -1,6 +1,5 @@
 import Gen1 from "./Generators1";
 import Gen2 from "./Generators2";
-import Sprites from "../Sprites/Sprites";
 export var GenLocations;
 (function (GenLocations) {
     function aptsOffice() {
@@ -19,22 +18,22 @@ export var GenLocations;
         //Gen2.GenPavements.fill([4, 4, 0], 4, 1);
         // The roads around the office with parking
         Gen1.GenRoads.oneway(0, [6, 5, 0], 5, 'greyRoads'); // Parking exit
-        Gen1.GenRoads.oneway(0, [6, 0, 0], 5, 'greyRoads'); // Parking exit
+        //Gen1.GenRoads.oneway(0, [6, 0, 0], 5, 'greyRoads'); // Parking exit
         Gen1.GenRoads.highway(1, [5, 0, 0], 6, 2, 'greyRoads'); // Pumps road
         //Gen1.GenRoads.twolane(0, [2, 5, 0], 9, 'greenRoads'); // horz
         //Gen1.GenRoads.twolane(0, [2, -2, 0], 9, 'greenRoads'); // horz
         //GenDeline.mixedToBad([2, 4, 0], 9, 4);
         //GenDeline.mixedToBad([2, -3, 0], 9, 4);
         Gen1.GenParking.onewayRight([8, 0, 0], 6, 2, 'badRoads');
-        Gen2.GenDeline.horz([4, 0, 0], 6, 6);
+        //Gen2.GenDeline.horz([4, 0, 0], 6, 6);
         let gas_station_corner = Gen2.getDataOfType([8, 5, 0], 'Surface');
         let gas_station_corner2 = Gen2.getDataOfType([8, 0, 0], 'Surface');
-        gas_station_corner.sprite = Sprites.ROADS.SINGLE_EXIT;
-        gas_station_corner2.sprite = Sprites.ROADS.SINGLE_EXIT;
+        //gas_station_corner!.sprite = Sprites.ROADS.SINGLE_EXIT;
+        //gas_station_corner2!.sprite = Sprites.ROADS.SINGLE_EXIT;
         //gas_station_corner2!.r! += 1;
         // Deline around the apts
         Gen2.GenDeline.horz([2, 4, 0], 9, 3);
-        Gen2.GenDeline.horz([2, -1, 0], 9, 3);
+        //Gen2.GenDeline.horz([2, -1, 0], 9, 3);
         return;
         // I removed this because I wanted a lonely gas station
         //Pavements.Horz(3, -50, 0, 100, 1);

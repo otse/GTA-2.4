@@ -167,6 +167,9 @@ var gta_kill = (function (exports, THREE) {
             if (mem[file])
                 return mem[file];
             let texture = new THREE.TextureLoader().load(file);
+            texture.generateMipmaps = false;
+            texture.wrapS = THREE__default.ClampToEdgeWrapping;
+            texture.wrapT = THREE__default.ClampToEdgeWrapping;
             texture.magFilter = THREE.NearestFilter;
             texture.minFilter = THREE.NearestFilter;
             mem[file] = texture;
@@ -188,16 +191,18 @@ var gta_kill = (function (exports, THREE) {
                     x += (square.x - 1) * sheet.padding / sheet.width;
                     y += (corrected_y) * sheet.padding / sheet.height;
                 }
+                // pixel correction
+                x += .5 / sheet.width;
+                y += .5 / sheet.height;
+                w -= .5 / sheet.width;
+                h -= .5 / sheet.height;
                 UV.planarUV(geometry, 0, x, y, w, h);
             }
             UV.fromSheet = fromSheet;
             function planarUV(geom, face, x, y, w, h) {
                 let o = face * 8;
-                // 0 1, 1 1, 0 0, 1 0
-                // left top, right top, left bottom, right bottom
-                // [ x,y, x+w,y, x,y+h, x+w,y+h ]
                 let a = [x, y + h, x + w, y + h, x, y, x + w, y];
-                for (let i = 0; i < 8; i++) // coffee 0..7
+                for (let i = 0; i < 8; i++)
                     geom.attributes.uv.array[o + i] = a[i];
                 geom.attributes.uv.needsUpdate = true;
             }
@@ -4238,22 +4243,22 @@ var gta_kill = (function (exports, THREE) {
             //Gen2.GenPavements.fill([4, 4, 0], 4, 1);
             // The roads around the office with parking
             Gen1$1.GenRoads.oneway(0, [6, 5, 0], 5, 'greyRoads'); // Parking exit
-            Gen1$1.GenRoads.oneway(0, [6, 0, 0], 5, 'greyRoads'); // Parking exit
+            //Gen1.GenRoads.oneway(0, [6, 0, 0], 5, 'greyRoads'); // Parking exit
             Gen1$1.GenRoads.highway(1, [5, 0, 0], 6, 2, 'greyRoads'); // Pumps road
             //Gen1.GenRoads.twolane(0, [2, 5, 0], 9, 'greenRoads'); // horz
             //Gen1.GenRoads.twolane(0, [2, -2, 0], 9, 'greenRoads'); // horz
             //GenDeline.mixedToBad([2, 4, 0], 9, 4);
             //GenDeline.mixedToBad([2, -3, 0], 9, 4);
             Gen1$1.GenParking.onewayRight([8, 0, 0], 6, 2, 'badRoads');
-            Gen2$1.GenDeline.horz([4, 0, 0], 6, 6);
+            //Gen2.GenDeline.horz([4, 0, 0], 6, 6);
             let gas_station_corner = Gen2$1.getDataOfType([8, 5, 0], 'Surface');
             let gas_station_corner2 = Gen2$1.getDataOfType([8, 0, 0], 'Surface');
-            gas_station_corner.sprite = Sprites$1.ROADS.SINGLE_EXIT;
-            gas_station_corner2.sprite = Sprites$1.ROADS.SINGLE_EXIT;
+            //gas_station_corner!.sprite = Sprites.ROADS.SINGLE_EXIT;
+            //gas_station_corner2!.sprite = Sprites.ROADS.SINGLE_EXIT;
             //gas_station_corner2!.r! += 1;
             // Deline around the apts
             Gen2$1.GenDeline.horz([2, 4, 0], 9, 3);
-            Gen2$1.GenDeline.horz([2, -1, 0], 9, 3);
+            //Gen2.GenDeline.horz([2, -1, 0], 9, 3);
             return;
         }
         GenLocations.aptsOffice = aptsOffice;
@@ -4381,10 +4386,10 @@ var gta_kill = (function (exports, THREE) {
     const TWO = THREE__default;
     var Movie;
     (function (Movie) {
-        Movie.enabled = true;
+        Movie.enabled = false;
         function cityView() {
             Zoom$1.set(2);
-            Movie.effect.uniforms["pixelSize"].value = 3.0;
+            Movie.effect.uniforms["pixelSize"].value = 1.0;
             Movie.effect.uniforms["zoom"].value = 0.0;
         }
         Movie.cityView = cityView;
@@ -4411,7 +4416,7 @@ var gta_kill = (function (exports, THREE) {
                 "redblue": { value: 0.005 },
                 "angle": { value: 0.0 },
                 "resolution": { value: null },
-                "pixelSize": { value: 1.0 },
+                "pixelSize": { value: 3.0 },
                 "zoom": { value: 1.0 }
             },
             defines: {
@@ -4460,7 +4465,7 @@ var gta_kill = (function (exports, THREE) {
             void main() {
 
                 // cinematic retro city view
-                if (pixelSize > 1.0) {
+                /*if (pixelSize > 1.0) {
 
                     vec2 dxy = pixelSize / resolution;
                     vec2 coord = dxy * floor( vUv / dxy );
@@ -4477,7 +4482,8 @@ var gta_kill = (function (exports, THREE) {
 
                     //gl_FragColor = R2D2(uuu);
                 }
-                else {
+                else */
+                {
                     vec2 offset = redblue * vec2( cos(angle), sin(angle));
                     vec4 cr = texture2D(tDiffuse, vUv + offset);
                     vec4 cga = texture2D(tDiffuse, vUv);
@@ -4543,6 +4549,8 @@ var gta_kill = (function (exports, THREE) {
         function update() {
             Four.delta = Four.clock.getDelta();
             KILL$1.update();
+            if (App.map[115] == 1)
+                Movie.enabled = !Movie.enabled;
             if (Movie.enabled)
                 Movie.composer.render();
             else
@@ -4555,13 +4563,13 @@ var gta_kill = (function (exports, THREE) {
             Four.camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 2000);
             Four.camera.position.z = 200;
             Four.scene = new THREE.Scene();
-            Four.directionalLight = new THREE.DirectionalLight(0x355886, 0.8);
+            Four.directionalLight = new THREE.DirectionalLight(0x355886, 1.0);
             Four.directionalLight.position.set(0, 0, 1);
-            Four.ambientLight = new THREE.AmbientLight('#355886'); // #5187cd
-            Four.scene.add(Four.directionalLight);
+            Four.ambientLight = new THREE.AmbientLight('#c1c1c1'); // #5187cd
+            //scene.add(directionalLight);
             Four.scene.add(Four.directionalLight.target);
             Four.scene.add(Four.ambientLight);
-            Four.renderer = new THREE.WebGLRenderer({ antialias: true });
+            Four.renderer = new THREE.WebGLRenderer({ antialias: false });
             Four.renderer.setPixelRatio(window.devicePixelRatio);
             Four.renderer.setSize(window.innerWidth, window.innerHeight);
             Four.renderer.autoClear = true;

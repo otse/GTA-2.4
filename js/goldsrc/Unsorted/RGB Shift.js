@@ -4,10 +4,10 @@ import { default as THREE, Vector2 } from "three";
 const TWO = THREE;
 export var Movie;
 (function (Movie) {
-    Movie.enabled = true;
+    Movie.enabled = false;
     function cityView() {
         Zoom.set(2);
-        Movie.effect.uniforms["pixelSize"].value = 3.0;
+        Movie.effect.uniforms["pixelSize"].value = 1.0;
         Movie.effect.uniforms["zoom"].value = 0.0;
     }
     Movie.cityView = cityView;
@@ -34,7 +34,7 @@ export var Movie;
             "redblue": { value: 0.005 },
             "angle": { value: 0.0 },
             "resolution": { value: null },
-            "pixelSize": { value: 1.0 },
+            "pixelSize": { value: 3.0 },
             "zoom": { value: 1.0 }
         },
         defines: {
@@ -83,7 +83,7 @@ export var Movie;
             void main() {
 
                 // cinematic retro city view
-                if (pixelSize > 1.0) {
+                /*if (pixelSize > 1.0) {
 
                     vec2 dxy = pixelSize / resolution;
                     vec2 coord = dxy * floor( vUv / dxy );
@@ -100,7 +100,8 @@ export var Movie;
 
                     //gl_FragColor = R2D2(uuu);
                 }
-                else {
+                else */
+                {
                     vec2 offset = redblue * vec2( cos(angle), sin(angle));
                     vec4 cr = texture2D(tDiffuse, vUv + offset);
                     vec4 cga = texture2D(tDiffuse, vUv);
