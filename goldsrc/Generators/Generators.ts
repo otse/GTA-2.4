@@ -51,7 +51,7 @@ export namespace Generators {
 		}
 	}
 
-	export namespace Flats {
+	export namespace Buildings {
 
 		type Faces = [string, string, string, string, string];
 
@@ -77,7 +77,7 @@ export namespace Generators {
 				}
 				else if (w[0] == min[0] + max[0] - 1 && w[1] == min[1] + max[1] - 1) { // rt
 					block.faces![4] = 'sty/roofs/green/784.bmp';
-					block.f = true;
+					block.flip = true;
 					block.r = 0;
 				}
 				else if (w[0] == min[0] && w[1] == min[1] + max[1] - 1) { // lt
@@ -95,7 +95,7 @@ export namespace Generators {
 				}
 				else if (w[1] == min[1] + max[1] - 1) {
 					block.faces![4] = 'sty/roofs/green/790.bmp';
-					block.f = true;
+					block.flip = true;
 					block.r = 2;
 				}
 				else if (w[0] == min[0] + max[0] - 1) {
@@ -236,7 +236,7 @@ export namespace Generators {
 					else if (lane == lanes - 1 && seg == 1 ||
 						!lane && seg == segs - 2) {
 						road.sprite = Sprites.ROADS.SIDE_STOP_LINE; // sideStopLine
-						road.f = true;
+						road.flip = true;
 					}
 
 					staging.addData(road);
@@ -362,7 +362,7 @@ export namespace Generators {
 							road.r = 1;
 
 							if (seg == 1)
-								road.f = true;
+								road.flip = true;
 						}
 						else if (lane == lanes - 1) {
 							road.sprite = Sprites.ROADS.CORNER;
@@ -518,7 +518,7 @@ export namespace Generators {
 						// Bottom
 						if (!lane) {
 							road.r! += 1;
-							road.f = true;
+							road.flip = true;
 
 							parkedCar.r = Math.PI / 4;
 							parkedCar.x = road.x + 0.5 + 0.6;

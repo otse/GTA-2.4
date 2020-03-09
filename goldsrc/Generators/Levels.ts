@@ -13,15 +13,7 @@ export namespace GenLocations {
 		//Gen2.GenPlaza.fill([-10, -500, 0], 1000, 1000, 'sty/nature/tracks/522.bmp');
 
 		Generators.Fill.fill([-500, -500, 0], 1000, 1000, {sty: 'sty/nature/evergreen/836.bmp'}, {RANDOM_ROTATION: true});
-		//Generators.Plaza.fill([-10, -10, 0], 20, 20, {sty: 'sty/nature/tracks/514.bmp'});
 
-		//Gen2.GenPavements.vert(-1, -50, 0, 100, 1);
-		//Gen2.GenPavements.vert(3, -50, 0, 100, 1);
-		
-		//Gen2.GenPavements.vert(12, -50, 0, 100, 1);
-		//Gen2.GenPavements.vert(9, -50, 0, 100, 1);
-
-		//Gen1.GenRoads.highway(1, [0, -25, 0], 50, 3, 'badRoads');
 		Generators.Fill.fill([9, -25, 0], 1, 50, {r: 1, sty: 'sty/nature/evergreen/839.bmp'});
 		Generators.Fill.fill([12, -25, 0], 1, 50, {r: 3, sty: 'sty/nature/evergreen/839.bmp'});
 		Generators.Roads.twolane(1, [10, -25, 0], 50, 'greyRoads'); // Big main road
@@ -33,10 +25,21 @@ export namespace GenLocations {
 		
 		// The roads around the office with parking
 		//Generators.Fill.fill([12, -25, 0], 1, 50, {r: 2, sty: 'sty/nature/tracks/520.bmp'});
-		Generators.Roads.oneway(0, [-10, 5, 0], 21, 'greyRoads'); // Parking entry
-		Generators.Roads.oneway(0, [8, 0, 0], 3, 'greyRoads'); // Parking exit
+		Generators.Roads.oneway(0, [3, 5, 0], 8, 'greyRoadsMixed'); // Parking entry
+		Generators.Roads.oneway(0, [8, 0, 0], 3, 'greyRoadsMixed'); // Parking exit
+		
+		// Deline exits
+		
+		//GenTools.Deline.horz([2, 4, 0], 10, 3, 0);
+		//GenTools.Deline.horz([2, -1, 0], 9, 3, 0);
 
-		Generators.Flats.type1([5, 0, 0], [3, 4, 1]); // Gas station
+		//GenTools.Deline.aabb([2, -1, 0], [2, 4+10, 0+9], 0);
+		GenTools.Deline.aabb([9, -1, 0], [13, 7, 0], 0); // Deline success
+
+
+		//Generators.Fill.fill([4, 4, 0], 4, 1, {r: 0, sty: 'sty/floors/mixed/64.bmp'}, {RANDOM_ROTATION: true});
+		//Generators.Fill.fill([7, 0, 0], 1, 4, {r: 1, sty: 'sty/floors/mixed/64.bmp'}, {RANDOM_ROTATION: true});
+		Generators.Buildings.type1([5, 0, 0], [3, 5, 1]); // Gas station
 		//Gen1.GenRoads.highway(1, [5, 0, 0], 6, 2, 'greyRoads'); // Pumps road
 		
 		//Gen1.GenRoads.twolane(0, [2, 5, 0], 9, 'greenRoads'); // horz
@@ -45,7 +48,7 @@ export namespace GenLocations {
 		//GenDeline.mixedToBad([2, 4, 0], 9, 4);
 		//GenDeline.mixedToBad([2, -3, 0], 9, 4);
 		
-		Generators.Parking.onewayRight([8, 0, 0], 6, 2, 'greyRoadsMixed');
+		Generators.Parking.onewayRight([8, 0, 0], 6, 2, 'badRoads');
 		//Gen2.GenDeline.horz([4, 0, 0], 6, 6);
 
 		let gas_station_corner = GenTools.getDataOfType([8, 5, 0], 'Surface');
@@ -55,9 +58,6 @@ export namespace GenLocations {
 		gas_station_corner2!.sprite = Sprites.ROADS.SINGLE_CORNER;
 		gas_station_corner2!.r! += 1;
 
-		// Deline around the apts
-		GenTools.Deline.horz([2, 4, 0], 9, 3);
-		GenTools.Deline.horz([2, -1, 0], 9, 3);
 		
 		return;
 		
@@ -68,11 +68,11 @@ export namespace GenLocations {
 		//FillerBuildings.Type1([13, 5, 0], [5, 2, 2]);
 		
 		// Big parking lot with skyscraper
-		Generators.Flats.type1([13, 6, 0], [8, 8, 1]);
+		Generators.Buildings.type1([13, 6, 0], [8, 8, 1]);
 		Generators.Pavements.vert(21, -50, 0, 100, 1);
 		Generators.Pavements.fill([12, 0, 0], 10, 6);
 		Generators.Parking.leftBigHorz([11, 1, 0], 10, 3, 'greyRoads');
-		GenTools.Deline.horz([11, 1, 0], 3, 4); // Dash It!
+		GenTools.Deline.horz([11, 1, 0], 3, 4, 0); // Dash It!
 
 		Generators.Roads.twolane(1, [22, -25, 0], 50, 'badRoads');
 

@@ -47,7 +47,7 @@ export class Block extends Object2 {
             // Now, see if this is upside
             if (this.geometry.groups[faceCount].materialIndex != 4)
                 continue;
-            if (this.data.f)
+            if (this.data.flip)
                 Util.UV.flipPlane(this.geometry, faceCount, true);
             if (this.data.r)
                 Util.UV.rotatePlane(this.geometry, faceCount, this.data.r);

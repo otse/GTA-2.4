@@ -33,9 +33,9 @@ export var Generators;
         }
     }
     Generators.loop = loop;
-    let Flats;
-    (function (Flats) {
-        Flats.blueMetal = [
+    let Buildings;
+    (function (Buildings) {
+        Buildings.blueMetal = [
             'sty/metal/blue/340.bmp',
             'sty/metal/blue/340.bmp',
             'sty/metal/blue/340.bmp',
@@ -51,7 +51,7 @@ export var Generators;
                 }
                 else if (w[0] == min[0] + max[0] - 1 && w[1] == min[1] + max[1] - 1) { // rt
                     block.faces[4] = 'sty/roofs/green/784.bmp';
-                    block.f = true;
+                    block.flip = true;
                     block.r = 0;
                 }
                 else if (w[0] == min[0] && w[1] == min[1] + max[1] - 1) { // lt
@@ -68,7 +68,7 @@ export var Generators;
                 }
                 else if (w[1] == min[1] + max[1] - 1) {
                     block.faces[4] = 'sty/roofs/green/790.bmp';
-                    block.f = true;
+                    block.flip = true;
                     block.r = 2;
                 }
                 else if (w[0] == min[0] + max[0] - 1) {
@@ -110,8 +110,8 @@ export var Generators;
             };
             Generators.loop(min, max, func);
         }
-        Flats.type1 = type1;
-    })(Flats = Generators.Flats || (Generators.Flats = {}));
+        Buildings.type1 = type1;
+    })(Buildings = Generators.Buildings || (Generators.Buildings = {}));
     let Roads;
     (function (Roads) {
         function oneway(axis, w, segs, sheet) {
@@ -168,7 +168,7 @@ export var Generators;
                     else if (lane == lanes - 1 && seg == 1 ||
                         !lane && seg == segs - 2) {
                         road.sprite = Sprites.ROADS.SIDE_STOP_LINE; // sideStopLine
-                        road.f = true;
+                        road.flip = true;
                     }
                     staging.addData(road);
                 }
@@ -261,7 +261,7 @@ export var Generators;
                             road.sprite = Sprites.ROADS.CUSTOM_NOTCH;
                             road.r = 1;
                             if (seg == 1)
-                                road.f = true;
+                                road.flip = true;
                         }
                         else if (lane == lanes - 1) {
                             road.sprite = Sprites.ROADS.CORNER;
@@ -393,7 +393,7 @@ export var Generators;
                         // Bottom
                         if (!lane) {
                             road.r += 1;
-                            road.f = true;
+                            road.flip = true;
                             parkedCar.r = Math.PI / 4;
                             parkedCar.x = road.x + 0.5 + 0.6;
                             parkedCar.y = road.y + 0.5;

@@ -17,20 +17,22 @@ export var GenTools;
         }
     }
     GenTools.getDataOfType = getDataOfType;
-    function swap(w, assign) {
-        let point = { x: w[0], y: w[1] };
-        let chunk = Datas.getChunk(point);
-        for (let data of chunk.datas) {
-            if ('Surface' != data.type)
-                continue;
-            if (Points.different(data, point))
-                continue;
-            Object.assign(data, assign);
-            console.log('Deline Swap complete');
-            // Rebuild idiom
-            chunk.remove(data);
-            chunk.add(data);
-            break;
+    function swap(min, max, assign) {
+        let x = min[0];
+        for (; x < max[0]; x++) {
+            let y = max[1];
+            for (; y < max[1]; y++) {
+                let point = Points.make(x, y);
+                let chunk = Datas.getChunk(point);
+                for (let data of chunk.datas) {
+                    if (Points.different(data, point))
+                        continue;
+                    Object.assign(data, assign);
+                    // Rebuild idiom
+                    chunk.remove(data);
+                    chunk.add(data);
+                }
+            }
         }
     }
     GenTools.swap = swap;
@@ -42,7 +44,7 @@ export var GenTools;
             for (; x < width; x++) {
                 let y = 0;
                 for (; y < height; y++) {
-                    let point = { x: w[0] + x, y: w[1] + y };
+                    let point = Points.make(w[0] + x, w[1] + y);
                     let chunk = Datas.getChunk(point);
                     for (let data of chunk.datas) {
                         if ('Surface' != data.type)
@@ -62,30 +64,38 @@ export var GenTools;
             }
         }
         Deline.simple = simple;
-        function horz(w, width, height) {
+        function aabb(min, max, axis) {
+            horz(min, max[0] - min[0], max[1] - min[1], axis);
+        }
+        Deline.aabb = aabb;
+        function horz(w, width, height, axis) {
             let chunked = [];
             let x = 0;
             for (; x < width; x++) {
                 let y = 0;
                 for (; y < height; y++) {
-                    let point = { x: w[0] + x, y: w[1] + y };
-                    let chunk = Datas.getChunk(point);
+                    let p = { x: w[0] + x, y: w[1] + y };
+                    let chunk = Datas.getChunk(p);
                     //if (chunked.includes(chunk))
                     //continue;
                     //chunked.push(chunk);
                     for (let data of chunk.datas) {
                         if ('Surface' != data.type)
                             continue;
-                        if (Points.different(data, point))
+                        if (Points.different(data, p))
                             continue;
+                        //data.color = 'red';
                         if (data.sprite == Sprites.ROADS.SIDE_LINE) {
                             data.sprite = Sprites.ROADS.SIDE_CLEAR;
-                            if (point.x == w[0] || point.x == w[0] + width - 1) {
-                                data.sprite = Sprites.ROADS.SIDE_DASH;
-                                if (point.x == w[0] + width - 1 && point.y == w[1])
-                                    data.f = true;
-                                if (point.x == w[0] && point.y == w[1] + height - 1)
-                                    data.f = true;
+                            if (axis == 0) {
+                                if (p.y == w[1] || p.y == w[1] + height - 1) {
+                                    data.sprite = Sprites.ROADS.SIDE_DASH;
+                                    //data.color = 'pink';
+                                    if ((data.r == 1) && p.y == w[1] + height - 1)
+                                        data.flip = true;
+                                    if ((data.r == 3) && p.y == w[1])
+                                        data.flip = true;
+                                }
                             }
                         }
                         if (data.sprite == Sprites.ROADS.CONVEX_LINE)

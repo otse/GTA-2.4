@@ -76,7 +76,7 @@ export class Block extends Object2 {
 			if (this.geometry.groups[faceCount].materialIndex != 4)
 				continue;
 
-			if (this.data.f)
+			if (this.data.flip)
 				Util.UV.flipPlane(this.geometry, faceCount, true);
 
 			if (this.data.r)

@@ -11,7 +11,7 @@ export interface Data2 {
 	y: number;
 	z: number;
 	r?: number;
-	f?: boolean;
+	flip?: boolean;
 	color?: string;
 	sty?: string;
 	shadow?: boolean;

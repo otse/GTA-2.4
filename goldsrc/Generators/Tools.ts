@@ -22,126 +22,139 @@ export namespace GenTools {
 
 			if (Points.different(data, point))
 				continue;
-			
+
 			return data;
 		}
 	}
 
-	export function swap(w: [number, number, number], assign: object) {
+	export function swap(min: [number, number, number], max: [number, number, number], assign: object) {
 
-		let point = { x: w[0], y: w[1] };
+		let x = min[0];
+		for (; x < max[0]; x++) {
 
-		let chunk = Datas.getChunk(point);
+			let y = max[1];
+			for (; y < max[1]; y++) {
 
-		for (let data of chunk.datas) {
+				let point = Points.make(x, y);
 
-			if ('Surface' != data.type)
-				continue;
+				let chunk = Datas.getChunk(point);
 
-			if (Points.different(data, point))
-				continue;
+				for (let data of chunk.datas) {
 
-			Object.assign(data, assign);
+					if (Points.different(data, point))
+						continue;
 
-			console.log('Deline Swap complete');
+					Object.assign(data, assign);
 
-			// Rebuild idiom
-			chunk.remove(data);
-			chunk.add(data);
+					// Rebuild idiom
+					chunk.remove(data);
+					chunk.add(data);
+				}
 
-			break;
-
+			}
 		}
 	}
 
 	export namespace Deline {
 
 		export function simple(w: [number, number, number], width, height) {
-	
+
 			let chunked: Chunk[] = [];
-	
+
 			let x = 0;
 			for (; x < width; x++) {
-	
+
 				let y = 0;
 				for (; y < height; y++) {
-	
-					let point = { x: w[0] + x, y: w[1] + y };
-	
+
+					let point = Points.make(w[0] + x, w[1] + y);
+
 					let chunk = Datas.getChunk(point);
-	
+
 					for (let data of chunk.datas) {
 						if ('Surface' != data.type)
 							continue;
 						if (Points.different(data, point))
 							continue;
-	
+
 						if (data.sprite == Sprites.ROADS.SIDE_LINE) {
 							data.sprite = Sprites.ROADS.SIDE_CLEAR;
 						}
-	
+
 						if (data.sprite == Sprites.ROADS.CONVEX_LINE)
 							data.sprite = Sprites.ROADS.CONVEX;
-	
+
 						if (data.sprite == Sprites.ROADS.SIDE_STOP_LINE) {
 							data.sprite = Sprites.ROADS.SIDE_STOP;
 						}
-	
+
 					}
 				}
 			}
 		}
 
-		export function horz(w: [number, number, number], width, height) {
-	
+		export function aabb(min: [number, number, number], max: [number, number, number], axis) {
+			horz(min, max[0] - min[0], max[1] - min[1], axis);
+		}
+
+		export function horz(w: [number, number, number], width, height, axis) {
+
 			let chunked: Chunk[] = [];
-	
+
 			let x = 0;
 			for (; x < width; x++) {
-	
+
 				let y = 0;
 				for (; y < height; y++) {
-	
-					let point = { x: w[0] + x, y: w[1] + y };
-	
-					let chunk = Datas.getChunk(point);
-	
+
+					let p = { x: w[0] + x, y: w[1] + y };
+
+					let chunk = Datas.getChunk(p);
+
 					//if (chunked.includes(chunk))
 					//continue;
-	
+
 					//chunked.push(chunk);
-	
+
 					for (let data of chunk.datas) {
-	
+
 						if ('Surface' != data.type)
 							continue;
-	
-						if (Points.different(data, point))
+
+						if (Points.different(data, p))
 							continue;
-	
+
+						//data.color = 'red';
+
 						if (data.sprite == Sprites.ROADS.SIDE_LINE) {
 							data.sprite = Sprites.ROADS.SIDE_CLEAR;
-							if (point.x == w[0] || point.x == w[0] + width - 1) {
-								data.sprite = Sprites.ROADS.SIDE_DASH;
-								if (point.x == w[0] + width - 1 && point.y == w[1])
-									data.f = true;
-								if (point.x == w[0] && point.y == w[1] + height - 1)
-									data.f = true;
+							if (axis == 0) {
+								if (p.y == w[1] || p.y == w[1] + height - 1) {
+									data.sprite = Sprites.ROADS.SIDE_DASH;
+									//data.color = 'pink';
+
+									if ((data.r == 1) && p.y == w[1] + height - 1)
+										data.flip = true;
+										
+									if ((data.r == 3) && p.y == w[1])
+										data.flip = true;
+								}
 							}
+
 						}
-	
+
 						if (data.sprite == Sprites.ROADS.CONVEX_LINE)
 							data.sprite = Sprites.ROADS.CONVEX;
-	
+
 						if (data.sprite == Sprites.ROADS.SIDE_STOP_LINE) {
 							data.sprite = Sprites.ROADS.SIDE_STOP;
 						}
-	
+
 					}
 				}
 			}
 		}
-	
+
 	}
 }
 

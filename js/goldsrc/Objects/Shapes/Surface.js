@@ -58,7 +58,7 @@ export class Surface extends Object2 {
         this.mesh.receiveShadow = true;
         this.mesh.position.set(this.data.x * 64 + 32, this.data.y * 64 + 32, this.data.z * 64);
         this.mesh.updateMatrix();
-        if (this.data.f)
+        if (this.data.flip)
             Util.UV.flipPlane(this.geometry, 0, true);
         if (this.data.r)
             Util.UV.rotatePlane(this.geometry, 0, this.data.r);
