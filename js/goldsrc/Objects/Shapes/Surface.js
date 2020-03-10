@@ -3,7 +3,6 @@ import Surfaces from "../Shapes/Surfaces";
 import Sheets from "../../Sprites/Sheets";
 import Util from "../../Random";
 import { Mesh, MeshPhongMaterial, Color } from "three";
-import Points from "../Points";
 const defaultSty = 'sty/commercial/storefront/577.bmp';
 export class Surface extends Object2 {
     constructor(data) {
@@ -32,10 +31,8 @@ export class Surface extends Object2 {
         //let halfPixel = 0;
         if (hasSheet) {
             let sheet = Sheets.get(this.data.sheet);
-            //halfPixel = .5 / sheet.width;
             if (cut) {
-                const key = `sh ${this.data.sheet} sq ${Points.string(this.data.sprite)}`;
-                map = Sheets.cut(sheet, this.data.sprite, key);
+                map = Sheets.cut(sheet, this.data.sprite);
             }
             else {
                 map = Util.loadTexture(sheet.file);
@@ -50,33 +47,6 @@ export class Surface extends Object2 {
             shininess: 0,
             color: new Color(this.data.color),
         });
-        /*
-        this.material.onBeforeCompile = function (shader: Shader) {
-
-            console.log('onBeforeCompile halfPixel ', halfPixel);
-
-            shader.uniforms.halfPixel = { value: halfPixel };
-
-            shader.vertexShader = shader.vertexShader.replace(
-                `#include <uv_pars_vertex>`,
-                `
-                #include <uv_pars_vertex>
-
-                //uniform float halfPixel;
-                `
-            );
-
-            shader.vertexShader = shader.vertexShader.replace(
-                `#include <uv_vertex>`,
-                `
-                #include <uv_vertex>
-                
-                //vUv.x += halfPixel;
-                //vUv.y += halfPixel;
-                `
-            );
-        }
-        */
         //map.offset.set(.01, .01);
         this.mesh = new Mesh(this.geometry, this.material);
         this.mesh.matrixAutoUpdate = false;

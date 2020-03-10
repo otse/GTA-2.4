@@ -95,7 +95,7 @@ export class Block extends Object2 {
 		this.mesh.position.set(
 			this.data.x * 64 + 32,
 			this.data.y * 64 + 32,
-			this.data.z! * 64 + 32);
+			this.data.z * 64 + 32);
 
 		this.mesh.updateMatrix();
 	}

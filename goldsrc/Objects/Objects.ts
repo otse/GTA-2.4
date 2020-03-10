@@ -3,6 +3,7 @@ import Object2 from "./Object";
 
 import Block from "./Shapes/Block";
 import Surface from "./Shapes/Surface";
+import Wall from "./Shapes/Wall";
 import Car from "../Cars/Car";
 
 export namespace Objects {
@@ -15,6 +16,7 @@ export namespace Objects {
 			case 'Car': return new Car(data);
 			case 'Block': return new Block(data);
 			case 'Surface': return new Surface(data);
+			case 'Wall': return new Wall(data);
 			//case 'Lamp': return new Lamp(data);
 
 			default:

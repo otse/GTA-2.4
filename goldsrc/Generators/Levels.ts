@@ -26,7 +26,7 @@ export namespace GenLocations {
 		// Side of roads:
 		// 'sty/nature/evergreen/839.bmp'
 		//Generators.Fill.fill([8, -25, 0], [8, -25 + 50, 0], { r: 1, sty: 'sty/nature/evergreen/839.bmp' });
-		Generators.Fill.fill([9, -25, 0], [9, -25 + 50, 0], { r: 1, sty: 'sty/floors/mixed/64.bmp' });
+		//Generators.Fill.fill([9, -25, 0], [9, -25 + 50, 0], { r: 1, sty: 'sty/floors/mixed/64.bmp' });
 		//Generators.Fill.fill([12, -25, 0], [12, -25 + 50, 0], { r: 3, sty: 'sty/nature/evergreen/839.bmp' });
 		//Generators.Fill.fill([-25, 6, 0], [9, 6, 0], { r: 2, sty: 'sty/nature/evergreen/839.bmp' });
 		//Generators.Fill.fill1([9, 6, 0], { r: 2, sty: 'sty/nature/evergreen/852.bmp' }); // 838
@@ -59,7 +59,9 @@ export namespace GenLocations {
 
 		Generators.Fill.fill([6, 0, 0], [6, 4, 0], { r: 0, sty: 'sty/floors/yellow/932.bmp' }, { WHEEL: true });
 		Generators.Fill.fill([7, 0, 0], [7, 0, 0], { r: 1, sty: 'sty/floors/mixed/64.bmp' }, { WHEEL: true });
-		Generators.Buildings.type1([3, 0, 0], [3, 5, 1]); // Gas station
+
+		//Generators.Buildings.type1([4, 0, 0], [5, 4, 0]); // Gas station
+		Generators.Buildings.type1([6, 0, 0], [6, 5, 1]); // Gas station
 		//Gen1.GenRoads.highway(1, [5, 0, 0], 6, 2, 'greyRoads'); // Pumps road
 
 		//Gen1.GenRoads.twolane(0, [2, 5, 0], 9, 'greenRoads'); // horz

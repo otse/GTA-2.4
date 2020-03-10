@@ -2,6 +2,7 @@ import Sheet from "./Sheet";
 import { default as THREE, NearestFilter, Texture, TextureLoader, CanvasTexture } from "three";
 import Four from "../Four";
 import Util from "../Random";
+import Points from "../Objects/Points";
 
 export namespace Sheets {
 
@@ -10,7 +11,7 @@ export namespace Sheets {
     const sheets: Lookup = {};
 
     export function get(name: string): Readonly<Sheet> {
-        return sheets[name];
+        return sheets[name!];
     }
 
     export function put(name: string, object: object) {
@@ -56,14 +57,16 @@ export namespace Sheets {
 
     }
 
-	var mem = [];
+	var spriteTextures = [];
 
-    // Legacy function to cut from a big spritesheet
-	// can be avoided with texture modes
-	export function cut(sheet: Sheet, sprite: Square, key: string): THREE.Texture {
+    // Cut sprite from sheet
+	export function cut(sheet: Sheet, sprite: Square): THREE.Texture {
 
-		if (mem[key])
-			return mem[key];
+		// 
+		const key = `sh ${sheet} sp ${Points.string(sprite)}`;
+		
+		if (spriteTextures[key])
+			return spriteTextures[key];
 
 		let spriteTexture =
 			new CanvasTexture(canvas);
@@ -71,7 +74,7 @@ export namespace Sheets {
 		spriteTexture.magFilter = NearestFilter;
 		spriteTexture.minFilter = NearestFilter;
 
-		mem[key] = spriteTexture;
+		spriteTextures[key] = spriteTexture;
 
 		let callback = (texture: Texture) => {
 

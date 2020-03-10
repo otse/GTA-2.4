@@ -1,5 +1,6 @@
 import Block from "./Shapes/Block";
 import Surface from "./Shapes/Surface";
+import Wall from "./Shapes/Wall";
 import Car from "../Cars/Car";
 export var Objects;
 (function (Objects) {
@@ -10,6 +11,7 @@ export var Objects;
             case 'Car': return new Car(data);
             case 'Block': return new Block(data);
             case 'Surface': return new Surface(data);
+            case 'Wall': return new Wall(data);
             //case 'Lamp': return new Lamp(data);
             default:
                 return null;

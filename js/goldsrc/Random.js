@@ -39,6 +39,7 @@ export var Util;
             return [x, y, w, h];
         }
         UV.fromSheet = fromSheet;
+        // broken
         function pixelCorrection(geom, face, zxcv, halfPixel) {
             zxcv[0] += halfPixel;
             zxcv[1] += halfPixel;

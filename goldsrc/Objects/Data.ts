@@ -3,7 +3,7 @@
 // todo, obviously simplify this someday
 
 export type DataType =
-	'Ignore' |	'Car' |  'Ped' | 'Ply' | 'Rectangle' | 'Block' | 'Surface' | 'Lamp';
+	'Ignore' |	'Car' |  'Ped' | 'Ply' | 'Rectangle' | 'Block' | 'Surface' | 'Wall' | 'Lamp';
 
 export interface Data2 {
 	type: DataType;

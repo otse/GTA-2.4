@@ -50,22 +50,18 @@ export class Surface extends Object2 {
 		// Cut to prevent texture bleeding
 		const cut = true;
 
-		let map: Texture;
+		let map: Texture | null;
 
 		//let halfPixel = 0;
 
 		if (hasSheet) {
-			let sheet = Sheets.get(this.data.sheet!);
-
-			//halfPixel = .5 / sheet.width;
+			let sheet = Sheets.get(this.data.sheet);
 
 			if (cut) {
-				const key = `sh ${this.data.sheet} sq ${Points.string(this.data.sprite!)}`;
-
-				map = Sheets.cut(sheet!, this.data.sprite!, key);
+				map = Sheets.cut(sheet!, this.data.sprite);
 			}
 			else {
-				map = Util.loadTexture(sheet!.file)!;
+				map = Util.loadTexture(sheet.file);
 
 				Util.UV.fromSheet(this.geometry, this.data.sprite!, sheet!);
 			}
@@ -81,34 +77,6 @@ export class Surface extends Object2 {
 			//side: DoubleSide
 		});
 
-		/*
-		this.material.onBeforeCompile = function (shader: Shader) {
-
-			console.log('onBeforeCompile halfPixel ', halfPixel);
-
-			shader.uniforms.halfPixel = { value: halfPixel };
-
-			shader.vertexShader = shader.vertexShader.replace(
-				`#include <uv_pars_vertex>`,
-				`
-				#include <uv_pars_vertex>
-
-				//uniform float halfPixel;
-				`
-			);
-
-			shader.vertexShader = shader.vertexShader.replace(
-				`#include <uv_vertex>`,
-				`
-				#include <uv_vertex>
-				
-				//vUv.x += halfPixel;
-				//vUv.y += halfPixel;
-				`
-			);
-		}
-		*/
-
 		//map.offset.set(.01, .01);
 
 		this.mesh = new Mesh(this.geometry, this.material);
@@ -120,7 +88,7 @@ export class Surface extends Object2 {
 		this.mesh.position.set(
 			this.data.x * 64 + 32,
 			this.data.y * 64 + 32,
-			this.data.z! * 64);
+			this.data.z * 64);
 
 		this.mesh.updateMatrix();
 

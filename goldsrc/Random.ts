@@ -56,6 +56,7 @@ export namespace Util {
 			return [x, y, w, h];
 		}
 
+		// broken
 		export function pixelCorrection(geom, face, zxcv, halfPixel) {
 			zxcv[0] += halfPixel;
 			zxcv[1] += halfPixel;

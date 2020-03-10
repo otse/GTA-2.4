@@ -1,4 +1,5 @@
 import { NearestFilter, TextureLoader, CanvasTexture } from "three";
+import Points from "../Objects/Points";
 export var Sheets;
 (function (Sheets) {
     const sheets = {};
@@ -39,16 +40,17 @@ export var Sheets;
         put('greenPavement', clone(basePavement, { file: 'sty/sheets/green_pavement.png' }));
     }
     Sheets.init = init;
-    var mem = [];
-    // Legacy function to cut from a big spritesheet
-    // can be avoided with texture modes
-    function cut(sheet, sprite, key) {
-        if (mem[key])
-            return mem[key];
+    var spriteTextures = [];
+    // Cut sprite from sheet
+    function cut(sheet, sprite) {
+        // 
+        const key = `sh ${sheet} sp ${Points.string(sprite)}`;
+        if (spriteTextures[key])
+            return spriteTextures[key];
         let spriteTexture = new CanvasTexture(Sheets.canvas);
         spriteTexture.magFilter = NearestFilter;
         spriteTexture.minFilter = NearestFilter;
-        mem[key] = spriteTexture;
+        spriteTextures[key] = spriteTexture;
         let callback = (texture) => {
             const context = Sheets.canvas.getContext("2d");
             Sheets.canvas.width = sheet.piece.w;

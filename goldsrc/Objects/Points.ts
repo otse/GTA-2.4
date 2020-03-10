@@ -32,7 +32,7 @@ export namespace Points {
 	}
 
 	export function string(a: Point) {
-		return `${a.x},${a.y}`
+		return `${a.x},${a!.y}`
 	}
 
 

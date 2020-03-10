@@ -99,7 +99,7 @@ class Rectangle extends Object2 {
 
 	updatePosition() {
 		this.where.set(
-			this.data.x * 64, this.data.y * 64, this.data.z! * 64);
+			this.data.x * 64, this.data.y * 64, this.data.z * 64);
 
 		this.mesh.position.copy(this.where);
 		this.mesh.position.z += this.lift;

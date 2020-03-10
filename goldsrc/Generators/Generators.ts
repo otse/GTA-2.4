@@ -37,17 +37,40 @@ export namespace Generators {
 		max: [number, number, number],
 		func: (w: [number, number, number]) => any) {
 
-		let x = 0;
-		for (; x < max[0]; x++) {
-			let y = 0;
-			for (; y < max[1]; y++) {
-				let z = 0;
-				for (; z < max[2]; z++) {
+		let x = min[0];
+		for (; x <= max[0]; x++) {
+			let y = min[1];
+			for (; y <= max[1]; y++) {
+				let z = min[2];
+				for (; z <= max[2]; z++) {
 
-					func([min[0] + x, min[1] + y, min[2] + z]);
+					func([x, y, z]);
 
 				}
 			}
+		}
+	}
+
+	export namespace Interiors {
+		export function type1(
+			min: [number, number, number],
+			max: [number, number, number],
+		) {
+
+			let staging = new StagingArea;
+
+			const func = (w: [number, number, number]) => {
+				let wall: Data2 = {
+					type: 'Wall',
+					x: w[0],
+					y: w[1],
+					z: w[2]
+				}
+
+				staging.addData(wall);
+			}
+
+			Generators.loop(min, max, func);
 		}
 	}
 
@@ -64,45 +87,45 @@ export namespace Generators {
 
 		const roofFunc = (
 			block: Data2,
-			w: [number, number, number],
+			p: [number, number, number],
 			min: [number, number, number],
 			max: [number, number, number]) => {
 
-			if (w[2] == max[2] - min[2] - 1) {
+			if (p[2] == max[2]) {
 				block.faces![4] = 'sty/roofs/green/793.bmp';
 
-				if (w[0] == min[0] && w[1] == min[1]) { // lb
+				if (p[0] == min[0] && p[1] == min[1]) { // lb
 					block.faces![4] = 'sty/roofs/green/784.bmp';
 					block.r = 3;
 				}
-				else if (w[0] == min[0] + max[0] - 1 && w[1] == min[1] + max[1] - 1) { // rt
+				else if (p[0] == max[0] && p[1] == max[1]) { // rt
 					block.faces![4] = 'sty/roofs/green/784.bmp';
 					block.flip = true;
 					block.r = 0;
 				}
-				else if (w[0] == min[0] && w[1] == min[1] + max[1] - 1) { // lt
+				else if (p[0] == min[0] && p[1] == max[1]) { // lt
 					block.faces![4] = 'sty/roofs/green/784.bmp';
 					block.r = 0;
 				}
-				else if (w[0] == min[0] + max[0] - 1 && w[1] == min[1]) { // rb
+				else if (p[0] == max[0] && p[1] == min[1]) { // rb
 					block.faces![4] = 'sty/roofs/green/784.bmp';
 					block.r = 2;
 				}
 
-				else if (w[0] == min[0]) {
+				else if (p[0] == min[0]) {
 					block.faces![4] = 'sty/roofs/green/790.bmp';
 					block.r = 1;
 				}
-				else if (w[1] == min[1] + max[1] - 1) {
+				else if (p[1] == max[1]) {
 					block.faces![4] = 'sty/roofs/green/790.bmp';
 					block.flip = true;
 					block.r = 2;
 				}
-				else if (w[0] == min[0] + max[0] - 1) {
+				else if (p[0] == max[0]) {
 					block.faces![4] = 'sty/roofs/green/790.bmp';
 					block.r = 3;
 				}
-				else if (w[1] == min[1]) {
+				else if (p[1] == min[1]) {
 					block.faces![4] = 'sty/roofs/green/790.bmp';
 					block.r = 0;
 				}
@@ -114,37 +137,37 @@ export namespace Generators {
 			max: [number, number, number],
 		) {
 
-			const func = (w: [number, number, number]) => {
+			const func = (p: [number, number, number]) => {
 
 				let bmp = 'sty/metal/blue/340.bmp';
 
 				let block: Data2 = {
 					type: 'Block',
-					x: w[0],
-					y: w[1],
-					z: w[2]
+					x: p[0],
+					y: p[1],
+					z: p[2]
 				};
 
 				block.faces = [];
 
 				if (
-					w[0] > min[0] &&
-					w[0] < min[0] + max[0] - 1 &&
-					w[1] > min[1] &&
-					w[1] < min[1] + max[1] - 1 &&
-					w[2] < min[2] + max[2] - 1
+					p[0] > min[0] &&
+					p[0] < max[0] &&
+					p[1] > min[1] &&
+					p[1] < max[1] &&
+					p[2] < max[2]
 				)
 					return;
 
-				roofFunc(block, w, min, max);
+				roofFunc(block, p, min, max);
 
-				if (w[0] == min[0])
+				if (p[0] == min[0])
 					block.faces[1] = bmp;
-				if (w[1] == min[1] + max[1] - 1)
+				if (p[1] == max[1])
 					block.faces[2] = bmp;
-				if (w[0] == min[0] + max[0] - 1)
+				if (p[0] == max[0])
 					block.faces[0] = bmp;
-				if (w[1] == min[1])
+				if (p[1] == min[1])
 					block.faces[3] = bmp;
 
 				Datas.deliver(block);

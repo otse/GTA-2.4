@@ -202,6 +202,7 @@ var gta_kill = (function (exports, THREE) {
                 return [x, y, w, h];
             }
             UV.fromSheet = fromSheet;
+            // broken
             function pixelCorrection(geom, face, zxcv, halfPixel) {
                 zxcv[0] += halfPixel;
                 zxcv[1] += halfPixel;
@@ -471,16 +472,17 @@ var gta_kill = (function (exports, THREE) {
             put('greenPavement', clone(basePavement, { file: 'sty/sheets/green_pavement.png' }));
         }
         Sheets.init = init;
-        var mem = [];
-        // Legacy function to cut from a big spritesheet
-        // can be avoided with texture modes
-        function cut(sheet, sprite, key) {
-            if (mem[key])
-                return mem[key];
+        var spriteTextures = [];
+        // Cut sprite from sheet
+        function cut(sheet, sprite) {
+            // 
+            const key = `sh ${sheet} sp ${Points$1.string(sprite)}`;
+            if (spriteTextures[key])
+                return spriteTextures[key];
             let spriteTexture = new THREE.CanvasTexture(Sheets.canvas);
             spriteTexture.magFilter = THREE.NearestFilter;
             spriteTexture.minFilter = THREE.NearestFilter;
-            mem[key] = spriteTexture;
+            spriteTextures[key] = spriteTexture;
             let callback = (texture) => {
                 const context = Sheets.canvas.getContext("2d");
                 Sheets.canvas.width = sheet.piece.w;
@@ -498,7 +500,7 @@ var gta_kill = (function (exports, THREE) {
     })(Sheets || (Sheets = {}));
     var Sheets$1 = Sheets;
 
-    class Surface extends Object2 {
+    class Surface$1 extends Object2 {
         constructor(data) {
             super(data);
             // the Defaults
@@ -523,10 +525,8 @@ var gta_kill = (function (exports, THREE) {
             //let halfPixel = 0;
             if (hasSheet) {
                 let sheet = Sheets$1.get(this.data.sheet);
-                //halfPixel = .5 / sheet.width;
                 {
-                    const key = `sh ${this.data.sheet} sq ${Points$1.string(this.data.sprite)}`;
-                    map = Sheets$1.cut(sheet, this.data.sprite, key);
+                    map = Sheets$1.cut(sheet, this.data.sprite);
                 }
             }
             else {
@@ -537,33 +537,6 @@ var gta_kill = (function (exports, THREE) {
                 shininess: 0,
                 color: new THREE.Color(this.data.color),
             });
-            /*
-            this.material.onBeforeCompile = function (shader: Shader) {
-
-                console.log('onBeforeCompile halfPixel ', halfPixel);
-
-                shader.uniforms.halfPixel = { value: halfPixel };
-
-                shader.vertexShader = shader.vertexShader.replace(
-                    `#include <uv_pars_vertex>`,
-                    `
-                    #include <uv_pars_vertex>
-
-                    //uniform float halfPixel;
-                    `
-                );
-
-                shader.vertexShader = shader.vertexShader.replace(
-                    `#include <uv_vertex>`,
-                    `
-                    #include <uv_vertex>
-                    
-                    //vUv.x += halfPixel;
-                    //vUv.y += halfPixel;
-                    `
-                );
-            }
-            */
             //map.offset.set(.01, .01);
             this.mesh = new THREE.Mesh(this.geometry, this.material);
             this.mesh.matrixAutoUpdate = false;
@@ -3137,7 +3110,8 @@ var gta_kill = (function (exports, THREE) {
                 //case 'Player': return new Player(data);
                 case 'Car': return new Car(data);
                 case 'Block': return new Block(data);
-                case 'Surface': return new Surface(data);
+                case 'Surface': return new Surface$1(data);
+                case 'Wall': return new Surface(data);
                 //case 'Lamp': return new Lamp(data);
                 default:
                     return null;
@@ -3681,18 +3655,35 @@ var gta_kill = (function (exports, THREE) {
         }
         Generators.invert = invert;
         function loop(min, max, func) {
-            let x = 0;
-            for (; x < max[0]; x++) {
-                let y = 0;
-                for (; y < max[1]; y++) {
-                    let z = 0;
-                    for (; z < max[2]; z++) {
-                        func([min[0] + x, min[1] + y, min[2] + z]);
+            let x = min[0];
+            for (; x <= max[0]; x++) {
+                let y = min[1];
+                for (; y <= max[1]; y++) {
+                    let z = min[2];
+                    for (; z <= max[2]; z++) {
+                        func([x, y, z]);
                     }
                 }
             }
         }
         Generators.loop = loop;
+        let Interiors;
+        (function (Interiors) {
+            function type1(min, max) {
+                let staging = new StagingArea;
+                const func = (w) => {
+                    let wall = {
+                        type: 'Wall',
+                        x: w[0],
+                        y: w[1],
+                        z: w[2]
+                    };
+                    staging.addData(wall);
+                };
+                Generators.loop(min, max, func);
+            }
+            Interiors.type1 = type1;
+        })(Interiors = Generators.Interiors || (Generators.Interiors = {}));
         let Buildings;
         (function (Buildings) {
             Buildings.blueMetal = [
@@ -3702,69 +3693,69 @@ var gta_kill = (function (exports, THREE) {
                 'sty/metal/blue/340.bmp',
                 'sty/metal/blue/340.bmp'
             ];
-            const roofFunc = (block, w, min, max) => {
-                if (w[2] == max[2] - min[2] - 1) {
+            const roofFunc = (block, p, min, max) => {
+                if (p[2] == max[2]) {
                     block.faces[4] = 'sty/roofs/green/793.bmp';
-                    if (w[0] == min[0] && w[1] == min[1]) { // lb
+                    if (p[0] == min[0] && p[1] == min[1]) { // lb
                         block.faces[4] = 'sty/roofs/green/784.bmp';
                         block.r = 3;
                     }
-                    else if (w[0] == min[0] + max[0] - 1 && w[1] == min[1] + max[1] - 1) { // rt
+                    else if (p[0] == max[0] && p[1] == max[1]) { // rt
                         block.faces[4] = 'sty/roofs/green/784.bmp';
                         block.flip = true;
                         block.r = 0;
                     }
-                    else if (w[0] == min[0] && w[1] == min[1] + max[1] - 1) { // lt
+                    else if (p[0] == min[0] && p[1] == max[1]) { // lt
                         block.faces[4] = 'sty/roofs/green/784.bmp';
                         block.r = 0;
                     }
-                    else if (w[0] == min[0] + max[0] - 1 && w[1] == min[1]) { // rb
+                    else if (p[0] == max[0] && p[1] == min[1]) { // rb
                         block.faces[4] = 'sty/roofs/green/784.bmp';
                         block.r = 2;
                     }
-                    else if (w[0] == min[0]) {
+                    else if (p[0] == min[0]) {
                         block.faces[4] = 'sty/roofs/green/790.bmp';
                         block.r = 1;
                     }
-                    else if (w[1] == min[1] + max[1] - 1) {
+                    else if (p[1] == max[1]) {
                         block.faces[4] = 'sty/roofs/green/790.bmp';
                         block.flip = true;
                         block.r = 2;
                     }
-                    else if (w[0] == min[0] + max[0] - 1) {
+                    else if (p[0] == max[0]) {
                         block.faces[4] = 'sty/roofs/green/790.bmp';
                         block.r = 3;
                     }
-                    else if (w[1] == min[1]) {
+                    else if (p[1] == min[1]) {
                         block.faces[4] = 'sty/roofs/green/790.bmp';
                         block.r = 0;
                     }
                 }
             };
             function type1(min, max) {
-                const func = (w) => {
+                const func = (p) => {
                     let bmp = 'sty/metal/blue/340.bmp';
                     let block = {
                         type: 'Block',
-                        x: w[0],
-                        y: w[1],
-                        z: w[2]
+                        x: p[0],
+                        y: p[1],
+                        z: p[2]
                     };
                     block.faces = [];
-                    if (w[0] > min[0] &&
-                        w[0] < min[0] + max[0] - 1 &&
-                        w[1] > min[1] &&
-                        w[1] < min[1] + max[1] - 1 &&
-                        w[2] < min[2] + max[2] - 1)
+                    if (p[0] > min[0] &&
+                        p[0] < max[0] &&
+                        p[1] > min[1] &&
+                        p[1] < max[1] &&
+                        p[2] < max[2])
                         return;
-                    roofFunc(block, w, min, max);
-                    if (w[0] == min[0])
+                    roofFunc(block, p, min, max);
+                    if (p[0] == min[0])
                         block.faces[1] = bmp;
-                    if (w[1] == min[1] + max[1] - 1)
+                    if (p[1] == max[1])
                         block.faces[2] = bmp;
-                    if (w[0] == min[0] + max[0] - 1)
+                    if (p[0] == max[0])
                         block.faces[0] = bmp;
-                    if (w[1] == min[1])
+                    if (p[1] == min[1])
                         block.faces[3] = bmp;
                     Datas$1.deliver(block);
                 };
@@ -4298,7 +4289,7 @@ var gta_kill = (function (exports, THREE) {
             // Side of roads:
             // 'sty/nature/evergreen/839.bmp'
             //Generators.Fill.fill([8, -25, 0], [8, -25 + 50, 0], { r: 1, sty: 'sty/nature/evergreen/839.bmp' });
-            Generators$1.Fill.fill([9, -25, 0], [9, -25 + 50, 0], { r: 1, sty: 'sty/floors/mixed/64.bmp' });
+            //Generators.Fill.fill([9, -25, 0], [9, -25 + 50, 0], { r: 1, sty: 'sty/floors/mixed/64.bmp' });
             //Generators.Fill.fill([12, -25, 0], [12, -25 + 50, 0], { r: 3, sty: 'sty/nature/evergreen/839.bmp' });
             //Generators.Fill.fill([-25, 6, 0], [9, 6, 0], { r: 2, sty: 'sty/nature/evergreen/839.bmp' });
             //Generators.Fill.fill1([9, 6, 0], { r: 2, sty: 'sty/nature/evergreen/852.bmp' }); // 838
@@ -4323,7 +4314,8 @@ var gta_kill = (function (exports, THREE) {
             GenTools$1.Deline.aabb([9, -1, 0], [13, 7, 0], 0); // Deline success
             Generators$1.Fill.fill([6, 0, 0], [6, 4, 0], { r: 0, sty: 'sty/floors/yellow/932.bmp' }, { WHEEL: true });
             Generators$1.Fill.fill([7, 0, 0], [7, 0, 0], { r: 1, sty: 'sty/floors/mixed/64.bmp' }, { WHEEL: true });
-            Generators$1.Buildings.type1([3, 0, 0], [3, 5, 1]); // Gas station
+            //Generators.Buildings.type1([4, 0, 0], [5, 4, 0]); // Gas station
+            Generators$1.Buildings.type1([6, 0, 0], [6, 5, 1]); // Gas station
             //Gen1.GenRoads.highway(1, [5, 0, 0], 6, 2, 'greyRoads'); // Pumps road
             //Gen1.GenRoads.twolane(0, [2, 5, 0], 9, 'greenRoads'); // horz
             //Gen1.GenRoads.twolane(0, [2, -2, 0], 9, 'greenRoads'); // horz
