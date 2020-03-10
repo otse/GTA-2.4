@@ -74,7 +74,7 @@ export class Wall extends Object2 {
                     vec4 texelColor = texture2D( map, vUv );
                     vec4 maskColor = texture2D( maskMap, vUv );
                     
-                    texelColor.a *= maskColor.r;
+                    texelColor.rgb *= maskColor.r;
 
 					texelColor = mapTexelToLinear( texelColor );
 					diffuseColor *= texelColor;

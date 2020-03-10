@@ -618,7 +618,7 @@ var gta_kill = (function (exports, THREE) {
                     vec4 texelColor = texture2D( map, vUv );
                     vec4 maskColor = texture2D( maskMap, vUv );
                     
-                    texelColor.a *= maskColor.r;
+                    texelColor.rgb *= maskColor.r;
 
 					texelColor = mapTexelToLinear( texelColor );
 					diffuseColor *= texelColor;
@@ -3731,64 +3731,68 @@ var gta_kill = (function (exports, THREE) {
             function generate(min, max) {
                 let staging = new StagingArea;
                 const func = (p) => {
-                    let wall = {
-                        type: 'Wall',
-                        x: p[0],
-                        y: p[1],
-                        z: p[2]
-                    };
-                    spriteFunc(wall, p, min, max);
-                    staging.addData(wall);
+                    if (p[0] > min[0] &&
+                        p[0] < max[0] &&
+                        p[1] > min[1] &&
+                        p[1] < max[1]) ;
+                    else {
+                        let wall = {
+                            type: 'Wall',
+                            x: p[0],
+                            y: p[1],
+                            z: p[2]
+                        };
+                        wallFunc(wall, p, min, max);
+                        staging.addData(wall);
+                    }
                 };
                 Generators.loop(min, max, func);
                 staging.deliverKeep();
             }
             Interiors.generate = generate;
-            const spriteFunc = (data, p, min, max) => {
-                if (p[2] == max[2]) {
-                    data.sty = 'sty/roofs/green/793.bmp';
-                    if (p[0] == min[0] && p[1] == min[1]) { // lb
-                        data.sty = 'sty/roofs/green/784.bmp';
-                        data.wall = 'concave';
-                        data.r = 3;
-                    }
-                    else if (p[0] == max[0] && p[1] == max[1]) { // rt
-                        data.sty = 'sty/roofs/green/784.bmp';
-                        data.wall = 'concave';
-                        data.flip = true;
-                        data.r = 0;
-                    }
-                    else if (p[0] == min[0] && p[1] == max[1]) { // lt
-                        data.sty = 'sty/roofs/green/784.bmp';
-                        data.wall = 'concave';
-                        data.r = 0;
-                    }
-                    else if (p[0] == max[0] && p[1] == min[1]) { // rb
-                        data.sty = 'sty/roofs/green/784.bmp';
-                        data.wall = 'concave';
-                        data.r = 2;
-                    }
-                    else if (p[0] == min[0]) {
-                        data.sty = 'sty/roofs/green/790.bmp';
-                        data.wall = 'side';
-                        data.r = 1;
-                    }
-                    else if (p[1] == max[1]) {
-                        data.sty = 'sty/roofs/green/790.bmp';
-                        data.wall = 'side';
-                        data.flip = true;
-                        data.r = 2;
-                    }
-                    else if (p[0] == max[0]) {
-                        data.sty = 'sty/roofs/green/790.bmp';
-                        data.wall = 'side';
-                        data.r = 3;
-                    }
-                    else if (p[1] == min[1]) {
-                        data.sty = 'sty/roofs/green/790.bmp';
-                        data.wall = 'side';
-                        data.r = 0;
-                    }
+            const wallFunc = (data, p, min, max) => {
+                data.sty = 'sty/roofs/green/793.bmp';
+                if (p[0] == min[0] && p[1] == min[1]) { // lb
+                    data.sty = 'sty/roofs/green/784.bmp';
+                    data.wall = 'concave';
+                    data.r = 3;
+                }
+                else if (p[0] == max[0] && p[1] == max[1]) { // rt
+                    data.sty = 'sty/roofs/green/784.bmp';
+                    data.wall = 'concave';
+                    data.flip = true;
+                    data.r = 0;
+                }
+                else if (p[0] == min[0] && p[1] == max[1]) { // lt
+                    data.sty = 'sty/roofs/green/784.bmp';
+                    data.wall = 'concave';
+                    data.r = 0;
+                }
+                else if (p[0] == max[0] && p[1] == min[1]) { // rb
+                    data.sty = 'sty/roofs/green/784.bmp';
+                    data.wall = 'concave';
+                    data.r = 2;
+                }
+                else if (p[0] == min[0]) {
+                    data.sty = 'sty/roofs/green/790.bmp';
+                    data.wall = 'side';
+                    data.r = 1;
+                }
+                else if (p[1] == max[1]) {
+                    data.sty = 'sty/roofs/green/790.bmp';
+                    data.wall = 'side';
+                    data.flip = true;
+                    data.r = 2;
+                }
+                else if (p[0] == max[0]) {
+                    data.sty = 'sty/roofs/green/790.bmp';
+                    data.wall = 'side';
+                    data.r = 3;
+                }
+                else if (p[1] == min[1]) {
+                    data.sty = 'sty/roofs/green/790.bmp';
+                    data.wall = 'side';
+                    data.r = 0;
                 }
             };
         })(Interiors = Generators.Interiors || (Generators.Interiors = {}));
@@ -4423,7 +4427,7 @@ var gta_kill = (function (exports, THREE) {
             Generators$1.Fill.fill([6, 0, 0], [6, 4, 0], { r: 0, sty: 'sty/floors/yellow/932.bmp' }, { WHEEL: true });
             Generators$1.Fill.fill([7, 0, 0], [7, 0, 0], { r: 1, sty: 'sty/floors/mixed/64.bmp' }, { WHEEL: true });
             //Generators.Buildings.type1([4, 0, 0], [5, 4, 0]); // Gas station
-            Generators$1.Interiors.generate([4, 0, 0], [5, 4, 0]); // Gas station
+            Generators$1.Interiors.generate([3, 0, 0], [5, 4, 0]); // Gas station
             //Gen1.GenRoads.highway(1, [5, 0, 0], 6, 2, 'greyRoads'); // Pumps road
             //Gen1.GenRoads.twolane(0, [2, 5, 0], 9, 'greenRoads'); // horz
             //Gen1.GenRoads.twolane(0, [2, -2, 0], 9, 'greenRoads'); // horz
