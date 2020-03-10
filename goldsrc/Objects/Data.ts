@@ -28,6 +28,9 @@ export interface Data2 {
 	sheet?: string;
 	sprite?: Square;
 
+	// wall
+	wall?: 'concave' | 'convex' | 'side';
+
 	// block
 	faces?: [string?, string?, string?, string?, string?];
 	slope?: [number, number, number, number];

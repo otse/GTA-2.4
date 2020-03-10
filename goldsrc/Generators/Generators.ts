@@ -52,26 +52,87 @@ export namespace Generators {
 	}
 
 	export namespace Interiors {
-		export function type1(
+
+		export function generate(
 			min: [number, number, number],
 			max: [number, number, number],
 		) {
 
 			let staging = new StagingArea;
 
-			const func = (w: [number, number, number]) => {
+			const func = (p: [number, number, number]) => {
 				let wall: Data2 = {
 					type: 'Wall',
-					x: w[0],
-					y: w[1],
-					z: w[2]
-				}
+					x: p[0],
+					y: p[1],
+					z: p[2]
+				};
 
+				spriteFunc(wall, p, min, max);
+				
 				staging.addData(wall);
 			}
 
 			Generators.loop(min, max, func);
+
+			staging.deliverKeep();
 		}
+
+		const spriteFunc = (
+			data: Data2,
+			p: [number, number, number],
+			min: [number, number, number],
+			max: [number, number, number]) => {
+
+			if (p[2] == max[2]) {
+				data.sty = 'sty/roofs/green/793.bmp';
+
+				if (p[0] == min[0] && p[1] == min[1]) { // lb
+					data.sty = 'sty/roofs/green/784.bmp';
+					data.wall = 'concave';
+					data.r = 3;
+				}
+				else if (p[0] == max[0] && p[1] == max[1]) { // rt
+					data.sty = 'sty/roofs/green/784.bmp';
+					data.wall = 'concave';
+					data.flip = true;
+					data.r = 0;
+				}
+				else if (p[0] == min[0] && p[1] == max[1]) { // lt
+					data.sty = 'sty/roofs/green/784.bmp';
+					data.wall = 'concave';
+					data.r = 0;
+				}
+				else if (p[0] == max[0] && p[1] == min[1]) { // rb
+					data.sty = 'sty/roofs/green/784.bmp';
+					data.wall = 'concave';
+					data.r = 2;
+				}
+
+				else if (p[0] == min[0]) {
+					data.sty = 'sty/roofs/green/790.bmp';
+					data.wall = 'side';
+					data.r = 1;
+				}
+				else if (p[1] == max[1]) {
+					data.sty = 'sty/roofs/green/790.bmp';
+					data.wall = 'side';
+					data.flip = true;
+					data.r = 2;
+				}
+				else if (p[0] == max[0]) {
+					data.sty = 'sty/roofs/green/790.bmp';
+					data.wall = 'side';
+					data.r = 3;
+				}
+				else if (p[1] == min[1]) {
+					data.sty = 'sty/roofs/green/790.bmp';
+					data.wall = 'side';
+					data.r = 0;
+				}
+			}
+		}
+
 	}
 
 	export namespace Buildings {

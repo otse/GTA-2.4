@@ -500,7 +500,7 @@ var gta_kill = (function (exports, THREE) {
     })(Sheets || (Sheets = {}));
     var Sheets$1 = Sheets;
 
-    class Surface$1 extends Object2 {
+    class Surface extends Object2 {
         constructor(data) {
             super(data);
             // the Defaults
@@ -579,6 +579,66 @@ var gta_kill = (function (exports, THREE) {
         }
     }
 
+    class Wall extends Object2 {
+        constructor(data) {
+            super(data);
+            console.log('Wall');
+            this.make();
+        }
+        destroy() {
+            super.destroy();
+        }
+        make() {
+            this.geometry = new THREE__default.PlaneBufferGeometry(64, 64, 1, 1);
+            let map = Util$1.loadTexture(this.data.sty);
+            let maskMap;
+            if ('concave' == this.data.wall)
+                maskMap = Util$1.loadTexture('sty/interior/green/maskConcave.bmp');
+            else
+                maskMap = Util$1.loadTexture('sty/interior/green/maskSide.bmp');
+            this.material = new THREE.MeshPhongMaterial({
+                map: map,
+                shininess: 0,
+                transparent: true,
+                color: new THREE.Color(this.data.color),
+            });
+            this.material.onBeforeCompile = function (shader) {
+                shader.uniforms.maskMap = { value: maskMap };
+                shader.fragmentShader = shader.fragmentShader.replace(`#define PHONG`, `
+                #define PHONG
+                
+				#define INTERIOR_WALL
+				
+				uniform sampler2D maskMap;
+			`);
+                // https://github.com/mrdoob/three.js/tree/dev/src/renderers/shaders/ShaderChunk/map_fragment.glsl.js
+                shader.fragmentShader = shader.fragmentShader.replace(`#include <map_fragment>`, `
+				#ifdef USE_MAP
+				
+                    vec4 texelColor = texture2D( map, vUv );
+                    vec4 maskColor = texture2D( maskMap, vUv );
+                    
+                    texelColor.a *= maskColor.r;
+
+					texelColor = mapTexelToLinear( texelColor );
+					diffuseColor *= texelColor;
+
+				#endif
+			`);
+            };
+            this.mesh = new THREE.Mesh(this.geometry, this.material);
+            this.mesh.matrixAutoUpdate = false;
+            this.mesh.frustumCulled = false;
+            this.mesh.position.set(this.data.x * 64 + 32, this.data.y * 64 + 32, this.data.z * 64);
+            this.mesh.updateMatrix();
+            if (this.data.flip)
+                Util$1.UV.flipPlane(this.geometry, 0, true);
+            if (this.data.r)
+                Util$1.UV.rotatePlane(this.geometry, 0, this.data.r);
+            Four$1.scene.add(this.mesh);
+        }
+    }
+
     // "C API" LOL
     var Rectangles;
     (function (Rectangles) {
@@ -645,8 +705,7 @@ var gta_kill = (function (exports, THREE) {
 
 				#endif
 			`);
-                return 2;
-            }; // onBeforeCompile
+            };
             return customMaterial;
         }
         Phong2.makeRectangle = makeRectangle;
@@ -3110,8 +3169,8 @@ var gta_kill = (function (exports, THREE) {
                 //case 'Player': return new Player(data);
                 case 'Car': return new Car(data);
                 case 'Block': return new Block(data);
-                case 'Surface': return new Surface$1(data);
-                case 'Wall': return new Surface(data);
+                case 'Surface': return new Surface(data);
+                case 'Wall': return new Wall(data);
                 //case 'Lamp': return new Lamp(data);
                 default:
                     return null;
@@ -3669,20 +3728,69 @@ var gta_kill = (function (exports, THREE) {
         Generators.loop = loop;
         let Interiors;
         (function (Interiors) {
-            function type1(min, max) {
+            function generate(min, max) {
                 let staging = new StagingArea;
-                const func = (w) => {
+                const func = (p) => {
                     let wall = {
                         type: 'Wall',
-                        x: w[0],
-                        y: w[1],
-                        z: w[2]
+                        x: p[0],
+                        y: p[1],
+                        z: p[2]
                     };
+                    spriteFunc(wall, p, min, max);
                     staging.addData(wall);
                 };
                 Generators.loop(min, max, func);
+                staging.deliverKeep();
             }
-            Interiors.type1 = type1;
+            Interiors.generate = generate;
+            const spriteFunc = (data, p, min, max) => {
+                if (p[2] == max[2]) {
+                    data.sty = 'sty/roofs/green/793.bmp';
+                    if (p[0] == min[0] && p[1] == min[1]) { // lb
+                        data.sty = 'sty/roofs/green/784.bmp';
+                        data.wall = 'concave';
+                        data.r = 3;
+                    }
+                    else if (p[0] == max[0] && p[1] == max[1]) { // rt
+                        data.sty = 'sty/roofs/green/784.bmp';
+                        data.wall = 'concave';
+                        data.flip = true;
+                        data.r = 0;
+                    }
+                    else if (p[0] == min[0] && p[1] == max[1]) { // lt
+                        data.sty = 'sty/roofs/green/784.bmp';
+                        data.wall = 'concave';
+                        data.r = 0;
+                    }
+                    else if (p[0] == max[0] && p[1] == min[1]) { // rb
+                        data.sty = 'sty/roofs/green/784.bmp';
+                        data.wall = 'concave';
+                        data.r = 2;
+                    }
+                    else if (p[0] == min[0]) {
+                        data.sty = 'sty/roofs/green/790.bmp';
+                        data.wall = 'side';
+                        data.r = 1;
+                    }
+                    else if (p[1] == max[1]) {
+                        data.sty = 'sty/roofs/green/790.bmp';
+                        data.wall = 'side';
+                        data.flip = true;
+                        data.r = 2;
+                    }
+                    else if (p[0] == max[0]) {
+                        data.sty = 'sty/roofs/green/790.bmp';
+                        data.wall = 'side';
+                        data.r = 3;
+                    }
+                    else if (p[1] == min[1]) {
+                        data.sty = 'sty/roofs/green/790.bmp';
+                        data.wall = 'side';
+                        data.r = 0;
+                    }
+                }
+            };
         })(Interiors = Generators.Interiors || (Generators.Interiors = {}));
         let Buildings;
         (function (Buildings) {
@@ -4315,7 +4423,7 @@ var gta_kill = (function (exports, THREE) {
             Generators$1.Fill.fill([6, 0, 0], [6, 4, 0], { r: 0, sty: 'sty/floors/yellow/932.bmp' }, { WHEEL: true });
             Generators$1.Fill.fill([7, 0, 0], [7, 0, 0], { r: 1, sty: 'sty/floors/mixed/64.bmp' }, { WHEEL: true });
             //Generators.Buildings.type1([4, 0, 0], [5, 4, 0]); // Gas station
-            Generators$1.Buildings.type1([6, 0, 0], [6, 5, 1]); // Gas station
+            Generators$1.Interiors.generate([4, 0, 0], [5, 4, 0]); // Gas station
             //Gen1.GenRoads.highway(1, [5, 0, 0], 6, 2, 'greyRoads'); // Pumps road
             //Gen1.GenRoads.twolane(0, [2, 5, 0], 9, 'greenRoads'); // horz
             //Gen1.GenRoads.twolane(0, [2, -2, 0], 9, 'greenRoads'); // horz

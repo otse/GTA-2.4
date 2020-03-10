@@ -61,7 +61,7 @@ export namespace GenLocations {
 		Generators.Fill.fill([7, 0, 0], [7, 0, 0], { r: 1, sty: 'sty/floors/mixed/64.bmp' }, { WHEEL: true });
 
 		//Generators.Buildings.type1([4, 0, 0], [5, 4, 0]); // Gas station
-		Generators.Buildings.type1([6, 0, 0], [6, 5, 1]); // Gas station
+		Generators.Interiors.generate([4, 0, 0], [5, 4, 0]); // Gas station
 		//Gen1.GenRoads.highway(1, [5, 0, 0], 6, 2, 'greyRoads'); // Pumps road
 
 		//Gen1.GenRoads.twolane(0, [2, 5, 0], 9, 'greenRoads'); // horz

@@ -45,8 +45,7 @@ var Phong2;
 
 				#endif
 			`);
-            return 2;
-        }; // onBeforeCompile
+        };
         return customMaterial;
     }
     Phong2.makeRectangle = makeRectangle;

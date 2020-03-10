@@ -35,20 +35,69 @@ export var Generators;
     Generators.loop = loop;
     let Interiors;
     (function (Interiors) {
-        function type1(min, max) {
+        function generate(min, max) {
             let staging = new StagingArea;
-            const func = (w) => {
+            const func = (p) => {
                 let wall = {
                     type: 'Wall',
-                    x: w[0],
-                    y: w[1],
-                    z: w[2]
+                    x: p[0],
+                    y: p[1],
+                    z: p[2]
                 };
+                spriteFunc(wall, p, min, max);
                 staging.addData(wall);
             };
             Generators.loop(min, max, func);
+            staging.deliverKeep();
         }
-        Interiors.type1 = type1;
+        Interiors.generate = generate;
+        const spriteFunc = (data, p, min, max) => {
+            if (p[2] == max[2]) {
+                data.sty = 'sty/roofs/green/793.bmp';
+                if (p[0] == min[0] && p[1] == min[1]) { // lb
+                    data.sty = 'sty/roofs/green/784.bmp';
+                    data.wall = 'concave';
+                    data.r = 3;
+                }
+                else if (p[0] == max[0] && p[1] == max[1]) { // rt
+                    data.sty = 'sty/roofs/green/784.bmp';
+                    data.wall = 'concave';
+                    data.flip = true;
+                    data.r = 0;
+                }
+                else if (p[0] == min[0] && p[1] == max[1]) { // lt
+                    data.sty = 'sty/roofs/green/784.bmp';
+                    data.wall = 'concave';
+                    data.r = 0;
+                }
+                else if (p[0] == max[0] && p[1] == min[1]) { // rb
+                    data.sty = 'sty/roofs/green/784.bmp';
+                    data.wall = 'concave';
+                    data.r = 2;
+                }
+                else if (p[0] == min[0]) {
+                    data.sty = 'sty/roofs/green/790.bmp';
+                    data.wall = 'side';
+                    data.r = 1;
+                }
+                else if (p[1] == max[1]) {
+                    data.sty = 'sty/roofs/green/790.bmp';
+                    data.wall = 'side';
+                    data.flip = true;
+                    data.r = 2;
+                }
+                else if (p[0] == max[0]) {
+                    data.sty = 'sty/roofs/green/790.bmp';
+                    data.wall = 'side';
+                    data.r = 3;
+                }
+                else if (p[1] == min[1]) {
+                    data.sty = 'sty/roofs/green/790.bmp';
+                    data.wall = 'side';
+                    data.r = 0;
+                }
+            }
+        };
     })(Interiors = Generators.Interiors || (Generators.Interiors = {}));
     let Buildings;
     (function (Buildings) {

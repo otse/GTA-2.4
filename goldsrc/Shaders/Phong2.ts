@@ -60,10 +60,8 @@ namespace Phong2 {
 
 				#endif
 			`);
-
-			return 2;
 			
-		} // onBeforeCompile
+		}
 
 		return customMaterial;
 	}
