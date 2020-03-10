@@ -27,13 +27,17 @@ export namespace GenTools {
 		}
 	}
 
+	export function swap2(min: [number, number, number], assign: object) {
+		swap(min, min, assign);
+	}
+
 	export function swap(min: [number, number, number], max: [number, number, number], assign: object) {
 
 		let x = min[0];
-		for (; x < max[0]; x++) {
+		for (; x <= max[0]; x++) {
 
-			let y = max[1];
-			for (; y < max[1]; y++) {
+			let y = min[1];
+			for (; y <= max[1]; y++) {
 
 				let point = Points.make(x, y);
 
@@ -43,6 +47,8 @@ export namespace GenTools {
 
 					if (Points.different(data, point))
 						continue;
+
+					//data.color = 'pink';
 
 					Object.assign(data, assign);
 
@@ -135,7 +141,7 @@ export namespace GenTools {
 
 									if ((data.r == 1) && p.y == w[1] + height - 1)
 										data.flip = true;
-										
+
 									if ((data.r == 3) && p.y == w[1])
 										data.flip = true;
 								}

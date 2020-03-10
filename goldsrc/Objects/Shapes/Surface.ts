@@ -7,7 +7,8 @@ import Sheets from "../../Sprites/Sheets";
 
 import Util from "../../Random";
 
-import { default as THREE, Mesh, Material, PlaneBufferGeometry, MeshPhongMaterial, Color, DoubleSide } from "three";
+import { default as THREE, Mesh, Material, PlaneBufferGeometry, MeshPhongMaterial, Color, DoubleSide, Texture, Shader } from "three";
+import Points from "../Points";
 
 const defaultSty = 'sty/commercial/storefront/577.bmp';
 
@@ -47,29 +48,30 @@ export class Surface extends Object2 {
 		const hasSheet = this.data.sheet && this.data.sprite;
 
 		// Cut to prevent texture bleeding
-		const cut = false;
+		const cut = true;
 
-		let map;
+		let map: Texture;
+
+		//let halfPixel = 0;
 
 		if (hasSheet) {
 			let sheet = Sheets.get(this.data.sheet!);
 
-			/*
+			//halfPixel = .5 / sheet.width;
+
 			if (cut) {
-				const key = `sh ${this.data.sheet} sq ${this.data.square}`;
+				const key = `sh ${this.data.sheet} sq ${Points.string(this.data.sprite!)}`;
 
-				map = Sprites.Cut(square, sheet, key);
-			}*/
-			//else {
-			map = Util.loadTexture(sheet!.file);
-			map.wrapS = THREE.ClampToEdgeWrapping;
-			map.wrapT = THREE.ClampToEdgeWrapping;
+				map = Sheets.cut(sheet!, this.data.sprite!, key);
+			}
+			else {
+				map = Util.loadTexture(sheet!.file)!;
 
-			Util.UV.fromSheet(this.geometry, this.data.sprite!, sheet!);
-			//}
+				Util.UV.fromSheet(this.geometry, this.data.sprite!, sheet!);
+			}
 		}
 		else {
-			map = Util.loadTexture(this.data.sty);
+			map = Util.loadTexture(this.data.sty)!;
 		}
 
 		this.material = new MeshPhongMaterial({
@@ -78,6 +80,36 @@ export class Surface extends Object2 {
 			color: new Color(this.data.color),
 			//side: DoubleSide
 		});
+
+		/*
+		this.material.onBeforeCompile = function (shader: Shader) {
+
+			console.log('onBeforeCompile halfPixel ', halfPixel);
+
+			shader.uniforms.halfPixel = { value: halfPixel };
+
+			shader.vertexShader = shader.vertexShader.replace(
+				`#include <uv_pars_vertex>`,
+				`
+				#include <uv_pars_vertex>
+
+				//uniform float halfPixel;
+				`
+			);
+
+			shader.vertexShader = shader.vertexShader.replace(
+				`#include <uv_vertex>`,
+				`
+				#include <uv_vertex>
+				
+				//vUv.x += halfPixel;
+				//vUv.y += halfPixel;
+				`
+			);
+		}
+		*/
+
+		//map.offset.set(.01, .01);
 
 		this.mesh = new Mesh(this.geometry, this.material);
 		this.mesh.matrixAutoUpdate = false;

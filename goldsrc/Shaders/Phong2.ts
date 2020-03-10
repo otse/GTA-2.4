@@ -51,7 +51,7 @@ namespace Phong2 {
 					// Blur
 					vec4 blurColor = texture2D( blurMap, vUv );
 					blurColor.rgb *= 0.0;
-					blurColor.a /= 3.0;
+					blurColor.a /= 2.0; // detensify
 					texelColor = blurColor + mapColor;
 
 					texelColor = mapTexelToLinear( texelColor );

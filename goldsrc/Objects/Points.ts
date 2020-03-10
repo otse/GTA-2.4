@@ -31,6 +31,10 @@ export namespace Points {
 		return !different(a, b)
 	}
 
+	export function string(a: Point) {
+		return `${a.x},${a.y}`
+	}
+
 
 	export function multp(a: Point, n: number): Point {
 		let b = copy(a);

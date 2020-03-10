@@ -1,3 +1,4 @@
+import { NearestFilter, TextureLoader, CanvasTexture } from "three";
 export var Sheets;
 (function (Sheets) {
     const sheets = {};
@@ -38,5 +39,29 @@ export var Sheets;
         put('greenPavement', clone(basePavement, { file: 'sty/sheets/green_pavement.png' }));
     }
     Sheets.init = init;
+    var mem = [];
+    // Legacy function to cut from a big spritesheet
+    // can be avoided with texture modes
+    function cut(sheet, sprite, key) {
+        if (mem[key])
+            return mem[key];
+        let spriteTexture = new CanvasTexture(Sheets.canvas);
+        spriteTexture.magFilter = NearestFilter;
+        spriteTexture.minFilter = NearestFilter;
+        mem[key] = spriteTexture;
+        let callback = (texture) => {
+            const context = Sheets.canvas.getContext("2d");
+            Sheets.canvas.width = sheet.piece.w;
+            Sheets.canvas.height = sheet.piece.h;
+            context.drawImage(texture.image, (sprite.x - 1) * -sheet.piece.w, (sprite.y - 1) * -sheet.piece.h);
+            let image = new Image();
+            image.src = Sheets.canvas.toDataURL();
+            spriteTexture.image = image;
+            spriteTexture.needsUpdate = true;
+        };
+        let sheetTexture = new TextureLoader().load(sheet.file, callback, undefined, undefined);
+        return spriteTexture;
+    }
+    Sheets.cut = cut;
 })(Sheets || (Sheets = {}));
 export default Sheets;

@@ -550,45 +550,52 @@ export namespace Generators {
 	export namespace Fill {
 
 		interface Extras {
-			RANDOM_ROTATION?: boolean;
+			WHEEL?: boolean;
+		}
+
+		export function fill1(
+			min: [number, number, number],
+			object: object,
+			extras: Extras = {}
+		) {
+			fill(min, min, object, extras);
 		}
 
 		export function fill(
-			w: [number, number, number],
-			width, height, object: object, extras: Extras = {}
-			) {
-
+			min: [number, number, number],
+			max: [number, number, number],
+			object: object,
+			extras: Extras = {}
+		) {
 			let staging = new StagingArea;
-	
+
 			//const lanes = 1;
-	
-			let x = 0;
-			for (; x < width; x++) {
-	
-				let y = 0;
-				for (; y < height; y++) {
-	
+
+			let x = min[0];
+			for (; x <= max[0]; x++) {
+
+				let y = min[1];
+				for (; y <= max[1]; y++) {
+
 					let pav: Data2 = {
 						type: 'Surface',
-						//sheet: 'yellowyPavement',
-						//square: 'middle',
-						x: x + w[0],
-						y: y + w[1],
-						z: w[2],
+						x: x,
+						y: y,
+						z: min[2],
 					};
-					
+
 					Object.assign(pav, object);
 
-					if (extras.RANDOM_ROTATION)
+					if (extras.WHEEL)
 						pav.r = Math.floor(Math.random() * 4);
-	
+
 					staging.addData(pav);
 				}
 			}
-			
+
 			staging.deliverReplace();
 		}
-	
+
 	}
 
 	export namespace Pavements {
@@ -596,15 +603,15 @@ export namespace Generators {
 		export function fill(
 			w: [number, number, number],
 			width, height) {
-	
+
 			//const lanes = 1;
-	
+
 			let x = 0;
 			for (; x < width; x++) {
-	
+
 				let y = 0;
 				for (; y < height; y++) {
-	
+
 					let pav: Data2 = {
 						type: 'Surface',
 						sheet: 'yellowyPavement',
@@ -614,23 +621,23 @@ export namespace Generators {
 						y: y + w[1],
 						z: w[2],
 					};
-	
+
 					Datas.deliver(pav);
 				}
 			}
-			
+
 		}
-	
+
 		export function vert(x, y, z, segs, lanes) {
-	
+
 			//const lanes = 1;
-	
+
 			let seg = 0;
 			for (; seg < segs; seg++) {
-	
+
 				let lane = 0;
 				for (; lane < lanes; lane++) {
-	
+
 					let pav: Data2 = {
 						type: 'Surface',
 						sheet: 'yellowyPavement',
@@ -640,23 +647,23 @@ export namespace Generators {
 						y: seg + y,
 						z: 0
 					};
-	
+
 					Datas.deliver(pav);
-	
+
 				}
 			}
 		}
-	
+
 		export function Horz(x, y, z, segs, lanes) {
-	
+
 			//const lanes = 1;
-	
+
 			let seg = 0;
 			for (; seg < segs; seg++) {
-	
+
 				let lane = 0;
 				for (; lane < lanes; lane++) {
-	
+
 					let pav: Data2 = {
 						type: 'Surface',
 						sheet: 'yellowyPavement',
@@ -666,13 +673,13 @@ export namespace Generators {
 						y: lane + x,
 						z: 0
 					};
-					
+
 					Datas.deliver(pav);
-	
+
 				}
 			}
 		}
-		
+
 	}
 
 }

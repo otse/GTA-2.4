@@ -1,6 +1,6 @@
 import Sheet from './Sprites/Sheet';
 
-import { default as THREE, Texture, TextureLoader, NearestFilter, LinearFilter } from 'three';
+import { default as THREE, Texture, TextureLoader, NearestFilter, LinearFilter, Geometry, BufferGeometry } from 'three';
 
 export namespace Util {
 
@@ -18,9 +18,6 @@ export namespace Util {
 
 		texture.generateMipmaps = false;
 
-		texture.wrapS = THREE.ClampToEdgeWrapping;
-		texture.wrapT = THREE.ClampToEdgeWrapping;
-
 		texture.magFilter = NearestFilter;
 		texture.minFilter = NearestFilter;
 
@@ -34,7 +31,7 @@ export namespace Util {
 		// usage sc.atlases['bad_roads_atlas'].side_line
 
 		// Workhorse function
-		export function fromSheet(geometry, square: Square, sheet: Sheet) {
+		export function fromSheet(geometry, square: Square, sheet: Sheet): Zxcv {
 			const div = Math.floor(sheet.height / sheet.piece.h);
 			let corrected_y = div - square.y;
 
@@ -49,12 +46,23 @@ export namespace Util {
 			}
 
 			// pixel correction
-			x += .5 / sheet.width;
-			y += .5 / sheet.height;
-			w -= .5 / sheet.width;
-			h -= .5 / sheet.height;
+			//x += .5 / sheet.width;
+			//y += .5 / sheet.height;
+			//w -= .5 / sheet.width;
+			//h -= .5 / sheet.height;
 
 			UV.planarUV(geometry, 0, x, y, w, h);
+
+			return [x, y, w, h];
+		}
+
+		export function pixelCorrection(geom, face, zxcv, halfPixel) {
+			zxcv[0] += halfPixel;
+			zxcv[1] += halfPixel;
+			zxcv[2] -= halfPixel;
+			zxcv[3] -= halfPixel;
+
+			planarUV(geom, face, zxcv[0], zxcv[1], zxcv[2], zxcv[3]);
 		}
 
 		export function planarUV(geom, face, x, y, w, h) {

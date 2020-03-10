@@ -1,4 +1,7 @@
 import Sheet from "./Sheet";
+import { default as THREE, NearestFilter, Texture, TextureLoader, CanvasTexture } from "three";
+import Four from "../Four";
+import Util from "../Random";
 
 export namespace Sheets {
 
@@ -52,6 +55,46 @@ export namespace Sheets {
         put('greenPavement', clone(basePavement, { file: 'sty/sheets/green_pavement.png' }));
 
     }
+
+	var mem = [];
+
+    // Legacy function to cut from a big spritesheet
+	// can be avoided with texture modes
+	export function cut(sheet: Sheet, sprite: Square, key: string): THREE.Texture {
+
+		if (mem[key])
+			return mem[key];
+
+		let spriteTexture =
+			new CanvasTexture(canvas);
+
+		spriteTexture.magFilter = NearestFilter;
+		spriteTexture.minFilter = NearestFilter;
+
+		mem[key] = spriteTexture;
+
+		let callback = (texture: Texture) => {
+
+			const context = canvas.getContext("2d");
+
+			canvas.width = sheet.piece.w;
+			canvas.height = sheet.piece.h;
+
+			context.drawImage(
+				texture.image,
+				(sprite.x - 1) * -sheet.piece.w, (sprite.y - 1) * -sheet.piece.h);
+
+			let image = new Image();
+			image.src = canvas.toDataURL();
+
+			spriteTexture.image = image;
+			spriteTexture.needsUpdate = true;
+		}
+
+		let sheetTexture = new TextureLoader().load(sheet.file, callback, undefined, undefined);
+
+		return spriteTexture;
+	}
 
 }
 

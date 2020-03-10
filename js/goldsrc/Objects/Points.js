@@ -28,6 +28,10 @@ export var Points;
         return !different(a, b);
     }
     Points.same = same;
+    function string(a) {
+        return `${a.x},${a.y}`;
+    }
+    Points.string = string;
     function multp(a, n) {
         let b = copy(a);
         return make(b.x * n, b.y * n);

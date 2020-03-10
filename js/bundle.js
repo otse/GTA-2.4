@@ -33,6 +33,10 @@ var gta_kill = (function (exports, THREE) {
             return !different(a, b);
         }
         Points.same = same;
+        function string(a) {
+            return `${a.x},${a.y}`;
+        }
+        Points.string = string;
         function multp(a, n) {
             let b = copy(a);
             return make(b.x * n, b.y * n);
@@ -168,8 +172,6 @@ var gta_kill = (function (exports, THREE) {
                 return mem[file];
             let texture = new THREE.TextureLoader().load(file);
             texture.generateMipmaps = false;
-            texture.wrapS = THREE__default.ClampToEdgeWrapping;
-            texture.wrapT = THREE__default.ClampToEdgeWrapping;
             texture.magFilter = THREE.NearestFilter;
             texture.minFilter = THREE.NearestFilter;
             mem[file] = texture;
@@ -192,13 +194,22 @@ var gta_kill = (function (exports, THREE) {
                     y += (corrected_y) * sheet.padding / sheet.height;
                 }
                 // pixel correction
-                x += .5 / sheet.width;
-                y += .5 / sheet.height;
-                w -= .5 / sheet.width;
-                h -= .5 / sheet.height;
+                //x += .5 / sheet.width;
+                //y += .5 / sheet.height;
+                //w -= .5 / sheet.width;
+                //h -= .5 / sheet.height;
                 UV.planarUV(geometry, 0, x, y, w, h);
+                return [x, y, w, h];
             }
             UV.fromSheet = fromSheet;
+            function pixelCorrection(geom, face, zxcv, halfPixel) {
+                zxcv[0] += halfPixel;
+                zxcv[1] += halfPixel;
+                zxcv[2] -= halfPixel;
+                zxcv[3] -= halfPixel;
+                planarUV(geom, face, zxcv[0], zxcv[1], zxcv[2], zxcv[3]);
+            }
+            UV.pixelCorrection = pixelCorrection;
             function planarUV(geom, face, x, y, w, h) {
                 let o = face * 8;
                 let a = [x, y + h, x + w, y + h, x, y, x + w, y];
@@ -460,6 +471,30 @@ var gta_kill = (function (exports, THREE) {
             put('greenPavement', clone(basePavement, { file: 'sty/sheets/green_pavement.png' }));
         }
         Sheets.init = init;
+        var mem = [];
+        // Legacy function to cut from a big spritesheet
+        // can be avoided with texture modes
+        function cut(sheet, sprite, key) {
+            if (mem[key])
+                return mem[key];
+            let spriteTexture = new THREE.CanvasTexture(Sheets.canvas);
+            spriteTexture.magFilter = THREE.NearestFilter;
+            spriteTexture.minFilter = THREE.NearestFilter;
+            mem[key] = spriteTexture;
+            let callback = (texture) => {
+                const context = Sheets.canvas.getContext("2d");
+                Sheets.canvas.width = sheet.piece.w;
+                Sheets.canvas.height = sheet.piece.h;
+                context.drawImage(texture.image, (sprite.x - 1) * -sheet.piece.w, (sprite.y - 1) * -sheet.piece.h);
+                let image = new Image();
+                image.src = Sheets.canvas.toDataURL();
+                spriteTexture.image = image;
+                spriteTexture.needsUpdate = true;
+            };
+            let sheetTexture = new THREE.TextureLoader().load(sheet.file, callback, undefined, undefined);
+            return spriteTexture;
+        }
+        Sheets.cut = cut;
     })(Sheets || (Sheets = {}));
     var Sheets$1 = Sheets;
 
@@ -485,20 +520,14 @@ var gta_kill = (function (exports, THREE) {
             this.geometry = Surfaces$1.geometry.clone();
             const hasSheet = this.data.sheet && this.data.sprite;
             let map;
+            //let halfPixel = 0;
             if (hasSheet) {
                 let sheet = Sheets$1.get(this.data.sheet);
-                /*
-                if (cut) {
-                    const key = `sh ${this.data.sheet} sq ${this.data.square}`;
-
-                    map = Sprites.Cut(square, sheet, key);
-                }*/
-                //else {
-                map = Util$1.loadTexture(sheet.file);
-                map.wrapS = THREE__default.ClampToEdgeWrapping;
-                map.wrapT = THREE__default.ClampToEdgeWrapping;
-                Util$1.UV.fromSheet(this.geometry, this.data.sprite, sheet);
-                //}
+                //halfPixel = .5 / sheet.width;
+                {
+                    const key = `sh ${this.data.sheet} sq ${Points$1.string(this.data.sprite)}`;
+                    map = Sheets$1.cut(sheet, this.data.sprite, key);
+                }
             }
             else {
                 map = Util$1.loadTexture(this.data.sty);
@@ -508,6 +537,34 @@ var gta_kill = (function (exports, THREE) {
                 shininess: 0,
                 color: new THREE.Color(this.data.color),
             });
+            /*
+            this.material.onBeforeCompile = function (shader: Shader) {
+
+                console.log('onBeforeCompile halfPixel ', halfPixel);
+
+                shader.uniforms.halfPixel = { value: halfPixel };
+
+                shader.vertexShader = shader.vertexShader.replace(
+                    `#include <uv_pars_vertex>`,
+                    `
+                    #include <uv_pars_vertex>
+
+                    //uniform float halfPixel;
+                    `
+                );
+
+                shader.vertexShader = shader.vertexShader.replace(
+                    `#include <uv_vertex>`,
+                    `
+                    #include <uv_vertex>
+                    
+                    //vUv.x += halfPixel;
+                    //vUv.y += halfPixel;
+                    `
+                );
+            }
+            */
+            //map.offset.set(.01, .01);
             this.mesh = new THREE.Mesh(this.geometry, this.material);
             this.mesh.matrixAutoUpdate = false;
             this.mesh.frustumCulled = false;
@@ -606,7 +663,7 @@ var gta_kill = (function (exports, THREE) {
 					// Blur
 					vec4 blurColor = texture2D( blurMap, vUv );
 					blurColor.rgb *= 0.0;
-					blurColor.a /= 3.0;
+					blurColor.a /= 2.0; // detensify
 					texelColor = blurColor + mapColor;
 
 					texelColor = mapTexelToLinear( texelColor );
@@ -4020,23 +4077,25 @@ var gta_kill = (function (exports, THREE) {
         })(Parking = Generators.Parking || (Generators.Parking = {}));
         let Fill;
         (function (Fill) {
-            function fill(w, width, height, object, extras = {}) {
+            function fill1(min, object, extras = {}) {
+                fill(min, min, object, extras);
+            }
+            Fill.fill1 = fill1;
+            function fill(min, max, object, extras = {}) {
                 let staging = new StagingArea;
                 //const lanes = 1;
-                let x = 0;
-                for (; x < width; x++) {
-                    let y = 0;
-                    for (; y < height; y++) {
+                let x = min[0];
+                for (; x <= max[0]; x++) {
+                    let y = min[1];
+                    for (; y <= max[1]; y++) {
                         let pav = {
                             type: 'Surface',
-                            //sheet: 'yellowyPavement',
-                            //square: 'middle',
-                            x: x + w[0],
-                            y: y + w[1],
-                            z: w[2],
+                            x: x,
+                            y: y,
+                            z: min[2],
                         };
                         Object.assign(pav, object);
-                        if (extras.RANDOM_ROTATION)
+                        if (extras.WHEEL)
                             pav.r = Math.floor(Math.random() * 4);
                         staging.addData(pav);
                     }
@@ -4127,16 +4186,21 @@ var gta_kill = (function (exports, THREE) {
             }
         }
         GenTools.getDataOfType = getDataOfType;
+        function swap2(min, assign) {
+            swap(min, min, assign);
+        }
+        GenTools.swap2 = swap2;
         function swap(min, max, assign) {
             let x = min[0];
-            for (; x < max[0]; x++) {
-                let y = max[1];
-                for (; y < max[1]; y++) {
+            for (; x <= max[0]; x++) {
+                let y = min[1];
+                for (; y <= max[1]; y++) {
                     let point = Points$1.make(x, y);
                     let chunk = Datas$1.getChunk(point);
                     for (let data of chunk.datas) {
                         if (Points$1.different(data, point))
                             continue;
+                        //data.color = 'pink';
                         Object.assign(data, assign);
                         // Rebuild idiom
                         chunk.remove(data);
@@ -4224,36 +4288,53 @@ var gta_kill = (function (exports, THREE) {
     (function (GenLocations) {
         function aptsOffice() {
             Generators$1.roadMode = 'Adapt';
-            // nature\tracks\514.bmp
-            // nature/park original/216.bmp
-            //Gen2.GenPlaza.fill([-10, -500, 0], 1000, 1000, 'sty/nature/tracks/522.bmp');
-            Generators$1.Fill.fill([-500, -500, 0], 1000, 1000, { sty: 'sty/nature/evergreen/836.bmp' }, { RANDOM_ROTATION: true });
-            Generators$1.Fill.fill([9, -25, 0], 1, 50, { r: 1, sty: 'sty/nature/evergreen/839.bmp' });
-            Generators$1.Fill.fill([12, -25, 0], 1, 50, { r: 3, sty: 'sty/nature/evergreen/839.bmp' });
-            Generators$1.Roads.twolane(1, [10, -25, 0], 50, 'greyRoads'); // Big main road
-            //Gen1.GenFlats.type1([4, 7, 0], [6, 6, 1]); // Apts above
-            //Gen2.GenPavements.fill([4, 4, 0], 4, 1);
-            // The roads around the office with parking
+            // Fill the landscape
+            // sty/nature/tracks/514.bmp
+            // sty/nature/park original/216.bmp
+            // sty/nature/evergreen/836.bmp - Turtoise wasteland
+            Generators$1.Fill.fill([-500, -500, 0], [1000, 1000, 0], { sty: 'sty/nature/evergreen/836.bmp' }, { WHEEL: true });
+            //Generators.Fill.fill([10, -25, 0], [10+1000, -25+1000, 0], {sty: 'sty/nature/tracks/512.bmp'}, {RANDOM_ROTATION: true});
+            //Generators.Fill.fill([12, -25, 0], 1, 50, {r: 3, sty: 'sty/nature/evergreen/839.bmp'});
+            // Side of roads:
+            // 'sty/nature/evergreen/839.bmp'
+            //Generators.Fill.fill([8, -25, 0], [8, -25 + 50, 0], { r: 1, sty: 'sty/nature/evergreen/839.bmp' });
+            Generators$1.Fill.fill([9, -25, 0], [9, -25 + 50, 0], { r: 1, sty: 'sty/floors/mixed/64.bmp' });
+            //Generators.Fill.fill([12, -25, 0], [12, -25 + 50, 0], { r: 3, sty: 'sty/nature/evergreen/839.bmp' });
+            //Generators.Fill.fill([-25, 6, 0], [9, 6, 0], { r: 2, sty: 'sty/nature/evergreen/839.bmp' });
+            //Generators.Fill.fill1([9, 6, 0], { r: 2, sty: 'sty/nature/evergreen/852.bmp' }); // 838
+            //Generators.Fill.fill([-25, -1, 0], [9, -1, 0], { r: 0, sty: 'sty/nature/evergreen/839.bmp' });
+            //Generators.Fill.fill1([9, -1, 0], { r: 1, sty: 'sty/nature/evergreen/852.bmp' }); // 838
+            // Big main road:
+            Generators$1.Roads.twolane(1, [10, -25, 0], 50, 'greyRoads');
             //Generators.Fill.fill([12, -25, 0], 1, 50, {r: 2, sty: 'sty/nature/tracks/520.bmp'});
-            Generators$1.Roads.oneway(0, [3, 5, 0], 8, 'greyRoadsMixed'); // Parking entry
-            Generators$1.Roads.oneway(0, [8, 0, 0], 3, 'greyRoadsMixed'); // Parking exit
+            Generators$1.Roads.oneway(0, [2, 5, 0], 9, 'greyRoads'); // Parking entry
+            Generators$1.Roads.oneway(0, [7, 0, 0], 4, 'greyRoads'); // Parking exit
+            // Deco in between road and parking
+            Generators$1.Fill.fill([8, 1, 0], [9, 4, 0], { r: 0, sty: 'sty/floors/mixed/64.bmp' });
+            //Generators.Fill.fill([9, 1, 0], [9, 4, 0], { r: 1, sty: 'sty/nature/evergreen/836.bmp' });
+            Generators$1.Fill.fill1([9, 1, 0], { r: 2, sty: 'sty/nature/evergreen/840.bmp' });
+            Generators$1.Fill.fill1([9, 2, 0], { r: 2, sty: 'sty/nature/evergreen/859.bmp' });
+            Generators$1.Fill.fill1([9, 3, 0], { r: 2, sty: 'sty/nature/evergreen/859.bmp' });
+            Generators$1.Fill.fill1([9, 4, 0], { r: 0, sty: 'sty/nature/evergreen/840.bmp' });
             // Deline exits
             //GenTools.Deline.horz([2, 4, 0], 10, 3, 0);
             //GenTools.Deline.horz([2, -1, 0], 9, 3, 0);
             //GenTools.Deline.aabb([2, -1, 0], [2, 4+10, 0+9], 0);
             GenTools$1.Deline.aabb([9, -1, 0], [13, 7, 0], 0); // Deline success
-            //Generators.Fill.fill([4, 4, 0], 4, 1, {r: 0, sty: 'sty/floors/mixed/64.bmp'}, {RANDOM_ROTATION: true});
-            //Generators.Fill.fill([7, 0, 0], 1, 4, {r: 1, sty: 'sty/floors/mixed/64.bmp'}, {RANDOM_ROTATION: true});
-            Generators$1.Buildings.type1([5, 0, 0], [3, 5, 1]); // Gas station
+            Generators$1.Fill.fill([6, 0, 0], [6, 4, 0], { r: 0, sty: 'sty/floors/yellow/932.bmp' }, { WHEEL: true });
+            Generators$1.Fill.fill([7, 0, 0], [7, 0, 0], { r: 1, sty: 'sty/floors/mixed/64.bmp' }, { WHEEL: true });
+            Generators$1.Buildings.type1([3, 0, 0], [3, 5, 1]); // Gas station
             //Gen1.GenRoads.highway(1, [5, 0, 0], 6, 2, 'greyRoads'); // Pumps road
             //Gen1.GenRoads.twolane(0, [2, 5, 0], 9, 'greenRoads'); // horz
             //Gen1.GenRoads.twolane(0, [2, -2, 0], 9, 'greenRoads'); // horz
             //GenDeline.mixedToBad([2, 4, 0], 9, 4);
             //GenDeline.mixedToBad([2, -3, 0], 9, 4);
-            Generators$1.Parking.onewayRight([8, 0, 0], 6, 2, 'badRoads');
+            Generators$1.Parking.onewayRight([7, 0, 0], 6, 2, 'greyRoads');
+            //GenTools.swap([7, 1, 0], [7, 4, 0], { sheet: 'badRoads' });
+            //GenTools.swap([6, 2, 0], [6, 3, 0], { sheet: 'badRoads'} );
             //Gen2.GenDeline.horz([4, 0, 0], 6, 6);
-            let gas_station_corner = GenTools$1.getDataOfType([8, 5, 0], 'Surface');
-            let gas_station_corner2 = GenTools$1.getDataOfType([8, 0, 0], 'Surface');
+            let gas_station_corner = GenTools$1.getDataOfType([7, 5, 0], 'Surface');
+            let gas_station_corner2 = GenTools$1.getDataOfType([7, 0, 0], 'Surface');
             gas_station_corner.sprite = Sprites$1.ROADS.SINGLE_EXIT;
             gas_station_corner2.sprite = Sprites$1.ROADS.SINGLE_CORNER;
             gas_station_corner2.r += 1;
@@ -4261,7 +4342,7 @@ var gta_kill = (function (exports, THREE) {
         }
         GenLocations.aptsOffice = aptsOffice;
         function longLonesome() {
-            Generators$1.Fill.fill([-10, -500, 0], 1000, 1000, { sty: 'sty/nature/park original/216.bmp' });
+            Generators$1.Fill.fill([-10, -500, 0], [-10, -500, 0], { sty: 'sty/nature/park original/216.bmp' });
             //GenPlaza.fill([9, -100, 0], 1, 200);
             //GenPlaza.fill([13, -100, 0], 1, 200);
             Generators$1.Roads.highway(1, [10, -500, 0], 1000, 3, 'greenRoads');

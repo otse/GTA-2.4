@@ -417,23 +417,25 @@ export var Generators;
     })(Parking = Generators.Parking || (Generators.Parking = {}));
     let Fill;
     (function (Fill) {
-        function fill(w, width, height, object, extras = {}) {
+        function fill1(min, object, extras = {}) {
+            fill(min, min, object, extras);
+        }
+        Fill.fill1 = fill1;
+        function fill(min, max, object, extras = {}) {
             let staging = new StagingArea;
             //const lanes = 1;
-            let x = 0;
-            for (; x < width; x++) {
-                let y = 0;
-                for (; y < height; y++) {
+            let x = min[0];
+            for (; x <= max[0]; x++) {
+                let y = min[1];
+                for (; y <= max[1]; y++) {
                     let pav = {
                         type: 'Surface',
-                        //sheet: 'yellowyPavement',
-                        //square: 'middle',
-                        x: x + w[0],
-                        y: y + w[1],
-                        z: w[2],
+                        x: x,
+                        y: y,
+                        z: min[2],
                     };
                     Object.assign(pav, object);
-                    if (extras.RANDOM_ROTATION)
+                    if (extras.WHEEL)
                         pav.r = Math.floor(Math.random() * 4);
                     staging.addData(pav);
                 }

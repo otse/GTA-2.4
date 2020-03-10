@@ -1,4 +1,4 @@
-import { default as THREE, TextureLoader, NearestFilter } from 'three';
+import { TextureLoader, NearestFilter } from 'three';
 export var Util;
 (function (Util) {
     let mem = [];
@@ -9,8 +9,6 @@ export var Util;
             return mem[file];
         let texture = new TextureLoader().load(file);
         texture.generateMipmaps = false;
-        texture.wrapS = THREE.ClampToEdgeWrapping;
-        texture.wrapT = THREE.ClampToEdgeWrapping;
         texture.magFilter = NearestFilter;
         texture.minFilter = NearestFilter;
         mem[file] = texture;
@@ -33,13 +31,22 @@ export var Util;
                 y += (corrected_y) * sheet.padding / sheet.height;
             }
             // pixel correction
-            x += .5 / sheet.width;
-            y += .5 / sheet.height;
-            w -= .5 / sheet.width;
-            h -= .5 / sheet.height;
+            //x += .5 / sheet.width;
+            //y += .5 / sheet.height;
+            //w -= .5 / sheet.width;
+            //h -= .5 / sheet.height;
             UV.planarUV(geometry, 0, x, y, w, h);
+            return [x, y, w, h];
         }
         UV.fromSheet = fromSheet;
+        function pixelCorrection(geom, face, zxcv, halfPixel) {
+            zxcv[0] += halfPixel;
+            zxcv[1] += halfPixel;
+            zxcv[2] -= halfPixel;
+            zxcv[3] -= halfPixel;
+            planarUV(geom, face, zxcv[0], zxcv[1], zxcv[2], zxcv[3]);
+        }
+        UV.pixelCorrection = pixelCorrection;
         function planarUV(geom, face, x, y, w, h) {
             let o = face * 8;
             let a = [x, y + h, x + w, y + h, x, y, x + w, y];

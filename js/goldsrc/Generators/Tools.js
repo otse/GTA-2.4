@@ -17,16 +17,21 @@ export var GenTools;
         }
     }
     GenTools.getDataOfType = getDataOfType;
+    function swap2(min, assign) {
+        swap(min, min, assign);
+    }
+    GenTools.swap2 = swap2;
     function swap(min, max, assign) {
         let x = min[0];
-        for (; x < max[0]; x++) {
-            let y = max[1];
-            for (; y < max[1]; y++) {
+        for (; x <= max[0]; x++) {
+            let y = min[1];
+            for (; y <= max[1]; y++) {
                 let point = Points.make(x, y);
                 let chunk = Datas.getChunk(point);
                 for (let data of chunk.datas) {
                     if (Points.different(data, point))
                         continue;
+                    //data.color = 'pink';
                     Object.assign(data, assign);
                     // Rebuild idiom
                     chunk.remove(data);
