@@ -28,17 +28,21 @@ export namespace Movie {
 
 	let strawberry = 0;
 	let orange = 0;
+	let meat = 0;
 
 	export function update() {
 
-		strawberry = cart(strawberry, 1);
+		strawberry = cart(strawberry, 0.7);
 		orange = cart(orange, 1.5);
+		meat = cart(meat, 0.5);
 
-		let x = Math.sin(strawberry);
-		let y = Math.cos(orange);
+		// sin = -1 - 1
+		let x = Math.sin(strawberry);		
+		let y = Math.cos(orange) / 2;
+		let z = Math.sin(meat) + 0.5 / 3; // 
 
 		effect.uniforms['angle'].value = x * strawberry;
-		effect.uniforms['redblue'].value = y * 0.005;
+		effect.uniforms['redblue'].value = y * z * 0.004;
 	}
 
 	export function resize() {

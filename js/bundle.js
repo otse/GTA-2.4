@@ -4598,13 +4598,17 @@ var gta_kill = (function (exports, THREE) {
         }
         let strawberry = 0;
         let orange = 0;
+        let meat = 0;
         function update() {
-            strawberry = cart(strawberry, 1);
+            strawberry = cart(strawberry, 0.7);
             orange = cart(orange, 1.5);
+            meat = cart(meat, 0.5);
+            // sin = -1 - 1
             let x = Math.sin(strawberry);
-            let y = Math.cos(orange);
+            let y = Math.cos(orange) / 2;
+            let z = Math.sin(meat) + 0.5 / 3; // 
             Movie.effect.uniforms['angle'].value = x * strawberry;
-            Movie.effect.uniforms['redblue'].value = y * 0.005;
+            Movie.effect.uniforms['redblue'].value = y * z * 0.004;
         }
         Movie.update = update;
         function resize() {
