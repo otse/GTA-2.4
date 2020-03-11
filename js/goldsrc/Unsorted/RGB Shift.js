@@ -11,10 +11,20 @@ export var Movie;
         Movie.effect.uniforms["zoom"].value = 0.0;
     }
     Movie.cityView = cityView;
-    function Resize() {
+    let sin = 0;
+    function update() {
+        if (sin < Math.PI * 2)
+            sin += 0.1;
+        if (sin > Math.PI * 2)
+            sin -= Math.PI * 2;
+        Movie.effect.uniforms['angle'].value = sin;
+        Movie.effect.uniforms['redblue'].value = sin * 0.5;
+    }
+    Movie.update = update;
+    function resize() {
         Movie.effect.uniforms["resolution"].value.set(window.innerWidth, window.innerHeight).multiplyScalar(window.devicePixelRatio);
     }
-    Movie.Resize = Resize;
+    Movie.resize = resize;
     function init() {
         Movie.composer = new TWO.EffectComposer(Four.renderer);
         Movie.renderPass = new TWO.RenderPass(Four.scene, Four.camera);
@@ -41,83 +51,83 @@ export var Movie;
             'XXX': '',
         },
         vertexShader: `
-            varying vec2 vUv;
-            uniform float zoom;
+			varying vec2 vUv;
+			uniform float zoom;
 
-            void main() {
+			void main() {
 
-                vUv = uv;
+				vUv = uv;
 
-                //if (zoom > 0.0) {
-                //    vUv.x -= zoom / 300.0;
-                //}
+				//if (zoom > 0.0) {
+				//    vUv.x -= zoom / 300.0;
+				//}
 
-                gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+				gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
 
-            }`,
+			}`,
         fragmentShader: `
-            uniform sampler2D tDiffuse;
-            uniform float redblue;
-            uniform float angle;
+			uniform sampler2D tDiffuse;
+			uniform float redblue;
+			uniform float angle;
 
-            uniform float zoom;
-            uniform float pixelSize;
-            uniform vec2 resolution;
+			uniform float zoom;
+			uniform float pixelSize;
+			uniform vec2 resolution;
 
-            varying vec2 vUv;
+			varying vec2 vUv;
 
-            float reduce(float p) {
-                float DIVIDE = 4.0;
-                return (ceil((p * 255.0) / DIVIDE) * DIVIDE) / 255.0;
-                // ceil is lighter, floor is darker
-            }
+			float reduce(float p) {
+				float DIVIDE = 8.0;
+				return (ceil((p * 255.0) / DIVIDE) * DIVIDE) / 255.0;
+				// ceil is lighter, floor is darker
+			}
 
-            vec4 R2D2(vec2 v) {
-                vec4 rgb = texture2D(tDiffuse, v);
-                rgb.r = reduce(rgb.r);
-                rgb.g = reduce(rgb.g);
-                rgb.b = reduce(rgb.b);
-                return rgb;
-            }
+			vec4 R2D2(vec2 v) {
+				vec4 rgb = texture2D(tDiffuse, v);
+				rgb.r = reduce(rgb.r);
+				rgb.g = reduce(rgb.g);
+				rgb.b = reduce(rgb.b);
+				return rgb;
+			}
 
-            void main() {
+			void main() {
 
-                // cinematic retro city view
-                /*if (pixelSize > 1.0) {
+				// cinematic retro city view
+				/*if (pixelSize > 1.0) {
 
-                    vec2 dxy = pixelSize / resolution;
-                    vec2 coord = dxy * floor( vUv / dxy );
+					vec2 dxy = pixelSize / resolution;
+					vec2 coord = dxy * floor( vUv / dxy );
 
-                    vec2 uuu = coord; //coord; // vUv
+					vec2 uuu = coord; //coord; // vUv
 
-                    vec2 offset = redblue * vec2( cos(angle), sin(angle));
-                    vec4 cr = R2D2(uuu + offset);
-                    vec4 cga = R2D2(uuu);
-                    vec4 cb = R2D2(uuu - offset);
+					vec2 offset = redblue * vec2( cos(angle), sin(angle));
+					vec4 cr = R2D2(uuu + offset);
+					vec4 cga = R2D2(uuu);
+					vec4 cb = R2D2(uuu - offset);
 
-                    vec4 shifty = vec4(cr.r, cga.g, cb.b, cga.a);
-                    gl_FragColor = shifty;
+					vec4 shifty = vec4(cr.r, cga.g, cb.b, cga.a);
+					gl_FragColor = shifty;
 
-                    //gl_FragColor = R2D2(uuu);
-                }
-                else */
-                {
-                    vec2 offset = redblue * vec2( cos(angle), sin(angle));
-                    vec4 cr = texture2D(tDiffuse, vUv + offset);
-                    vec4 cga = texture2D(tDiffuse, vUv);
-                    vec4 cb = texture2D(tDiffuse, vUv - offset);
+					//gl_FragColor = R2D2(uuu);
+				}
+				else */
+				{
+					vec2 offset = redblue * vec2( cos(angle), sin(angle));
+					vec4 cr = texture2D(tDiffuse, vUv + offset);
+					vec4 cga = texture2D(tDiffuse, vUv);
+					vec4 cb = texture2D(tDiffuse, vUv - offset);
 
-                    vec4 shifty = vec4(cr.r, cga.g, cb.b, cga.a);
-                    gl_FragColor = shifty;
-                    //gl_FragColor = texture2D(tDiffuse, vUv);
+					vec4 shifty = vec4(cr.r, cga.g, cb.b, cga.a);
+					gl_FragColor = shifty;
+					//gl_FragColor = texture2D(tDiffuse, vUv);
 
-                }
+				}
 
-                #ifdef MAKE_BLACK
-                    
-                    gl_FragColor.rgb *= 0.0;
+				#ifdef MAKE_BLACK
+					
+					gl_FragColor.rgb *= 0.0;
 
-                #endif
-            }`
+				#endif
+			}`
     };
 })(Movie || (Movie = {}));

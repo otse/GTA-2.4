@@ -6,22 +6,21 @@ export namespace Util {
 
 	let mem = [];
 
-	export function loadTexture(file: string | undefined): Texture | null {
+	export function loadTexture(path: string | undefined, salt = ''): Texture | null {
 
-		if (!file)
-			return null;
+		let pepper = path + salt;
 
-		if (mem[file])
-			return mem[file];
+		if (mem[pepper])
+			return mem[pepper];
 
-		let texture = new TextureLoader().load(file);
+		let texture = new TextureLoader().load(path);
 
 		texture.generateMipmaps = false;
 
 		texture.magFilter = NearestFilter;
 		texture.minFilter = NearestFilter;
 
-		mem[file] = texture;
+		mem[pepper] = texture;
 
 		return texture;
 	}

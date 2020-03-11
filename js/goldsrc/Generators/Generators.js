@@ -35,7 +35,7 @@ export var Generators;
     Generators.loop = loop;
     let Interiors;
     (function (Interiors) {
-        function generate(min, max) {
+        function generate(min, max, style) {
             let staging = new StagingArea;
             const func = (p) => {
                 if (p[0] > min[0] &&
@@ -45,6 +45,7 @@ export var Generators;
                 else {
                     let wall = {
                         type: 'Wall',
+                        style: style,
                         x: p[0],
                         y: p[1],
                         z: p[2]
@@ -58,48 +59,39 @@ export var Generators;
         }
         Interiors.generate = generate;
         const wallFunc = (data, p, min, max) => {
-            data.sty = 'sty/roofs/green/793.bmp';
             if (p[0] == min[0] && p[1] == min[1]) { // lb
-                data.sty = 'sty/roofs/green/784.bmp';
                 data.wall = 'concave';
                 data.r = 3;
             }
             else if (p[0] == max[0] && p[1] == max[1]) { // rt
-                data.sty = 'sty/roofs/green/784.bmp';
                 data.wall = 'concave';
                 data.flip = true;
                 data.r = 0;
             }
             else if (p[0] == min[0] && p[1] == max[1]) { // lt
-                data.sty = 'sty/roofs/green/784.bmp';
                 data.wall = 'concave';
                 data.r = 0;
             }
             else if (p[0] == max[0] && p[1] == min[1]) { // rb
-                data.sty = 'sty/roofs/green/784.bmp';
                 data.wall = 'concave';
                 data.r = 2;
             }
             else if (p[0] == min[0]) {
-                data.sty = 'sty/roofs/green/790.bmp';
-                data.wall = 'side';
-                data.r = 1;
-            }
-            else if (p[1] == max[1]) {
-                data.sty = 'sty/roofs/green/790.bmp';
-                data.wall = 'side';
-                data.flip = true;
-                data.r = 2;
-            }
-            else if (p[0] == max[0]) {
-                data.sty = 'sty/roofs/green/790.bmp';
                 data.wall = 'side';
                 data.r = 3;
             }
-            else if (p[1] == min[1]) {
-                data.sty = 'sty/roofs/green/790.bmp';
+            else if (p[1] == max[1]) {
                 data.wall = 'side';
+                data.flip = true;
                 data.r = 0;
+            }
+            else if (p[0] == max[0]) {
+                data.wall = 'side';
+                data.r = 1;
+            }
+            else if (p[1] == min[1]) {
+                data.wall = 'side';
+                data.r = 2;
             }
         };
     })(Interiors = Generators.Interiors || (Generators.Interiors = {}));

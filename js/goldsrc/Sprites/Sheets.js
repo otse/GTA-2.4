@@ -33,6 +33,8 @@ export var Sheets;
         };
         put('badRoads', clone(baseRoads, { file: 'sty/sheets/bad_roads.png' }));
         put('greenRoads', clone(baseRoads, { file: 'sty/sheets/green_roads.png' }));
+        put('blueRoads', clone(baseRoads, { file: 'sty/sheets/blue_roads.bmp' }));
+        put('qualityRoads', clone(baseRoads, { file: 'sty/sheets/quality_roads.bmp' }));
         put('mixedRoads', clone(baseRoads, { file: 'sty/sheets/mixed_roads.png' }));
         put('greyRoads', clone(baseRoads, { file: 'sty/sheets/grey_roads.png' }));
         put('greyRoadsMixed', clone(baseRoads, { file: 'sty/sheets/grey_roads_mixed.png' }));

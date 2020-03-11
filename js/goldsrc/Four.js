@@ -11,8 +11,10 @@ export var Four;
         KILL.update();
         if (App.map[115] == 1)
             Movie.enabled = !Movie.enabled;
-        if (Movie.enabled)
+        if (Movie.enabled) {
+            Movie.update();
             Movie.composer.render();
+        }
         else
             Four.renderer.render(Four.scene, Four.camera);
     }
@@ -25,7 +27,8 @@ export var Four;
         Four.scene = new Scene();
         Four.directionalLight = new DirectionalLight(0x355886, 1.0);
         Four.directionalLight.position.set(0, 0, 1);
-        Four.ambientLight = new AmbientLight('#c1c1c1'); // #5187cd
+        Four.ambientLight = new AmbientLight('#ffffff'); // #5187cd
+        //ambientLight = new AmbientLight('#c1c1c1'); // #5187cd
         //scene.add(directionalLight);
         Four.scene.add(Four.directionalLight.target);
         Four.scene.add(Four.ambientLight);
@@ -41,6 +44,7 @@ export var Four;
     function onWindowResize() {
         Four.camera.aspect = window.innerWidth / window.innerHeight;
         Four.camera.updateProjectionMatrix();
+        Movie.resize();
         Four.renderer.setSize(window.innerWidth, window.innerHeight);
     }
 })(Four || (Four = {}));

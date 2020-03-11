@@ -2,16 +2,15 @@ import { TextureLoader, NearestFilter } from 'three';
 export var Util;
 (function (Util) {
     let mem = [];
-    function loadTexture(file) {
-        if (!file)
-            return null;
-        if (mem[file])
-            return mem[file];
-        let texture = new TextureLoader().load(file);
+    function loadTexture(path, salt = '') {
+        let pepper = path + salt;
+        if (mem[pepper])
+            return mem[pepper];
+        let texture = new TextureLoader().load(path);
         texture.generateMipmaps = false;
         texture.magFilter = NearestFilter;
         texture.minFilter = NearestFilter;
-        mem[file] = texture;
+        mem[pepper] = texture;
         return texture;
     }
     Util.loadTexture = loadTexture;

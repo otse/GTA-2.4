@@ -29,9 +29,12 @@ export namespace Four {
 		if (App.map[115] == 1)
 			Movie.enabled = !Movie.enabled;
 
-		if (Movie.enabled)
+		if (Movie.enabled) {
 
+			Movie.update();
+			
 			Movie.composer.render();
+		}
 
 		else
 
@@ -52,7 +55,8 @@ export namespace Four {
 
 		directionalLight = new DirectionalLight(0x355886, 1.0);
 		directionalLight.position.set(0, 0, 1);
-		ambientLight = new AmbientLight('#c1c1c1'); // #5187cd
+		ambientLight = new AmbientLight('#ffffff'); // #5187cd
+		//ambientLight = new AmbientLight('#c1c1c1'); // #5187cd
 
 		//scene.add(directionalLight);
 		scene.add(directionalLight.target);
@@ -75,6 +79,8 @@ export namespace Four {
 		camera.aspect = window.innerWidth / window.innerHeight;
 
 		camera.updateProjectionMatrix();
+
+		Movie.resize();
 
 		renderer.setSize(
 			window.innerWidth, window.innerHeight);

@@ -165,16 +165,15 @@ var gta_kill = (function (exports, THREE) {
     var Util;
     (function (Util) {
         let mem = [];
-        function loadTexture(file) {
-            if (!file)
-                return null;
-            if (mem[file])
-                return mem[file];
-            let texture = new THREE.TextureLoader().load(file);
+        function loadTexture(path, salt = '') {
+            let pepper = path + salt;
+            if (mem[pepper])
+                return mem[pepper];
+            let texture = new THREE.TextureLoader().load(path);
             texture.generateMipmaps = false;
             texture.magFilter = THREE.NearestFilter;
             texture.minFilter = THREE.NearestFilter;
-            mem[file] = texture;
+            mem[pepper] = texture;
             return texture;
         }
         Util.loadTexture = loadTexture;
@@ -465,6 +464,8 @@ var gta_kill = (function (exports, THREE) {
             };
             put('badRoads', clone(baseRoads, { file: 'sty/sheets/bad_roads.png' }));
             put('greenRoads', clone(baseRoads, { file: 'sty/sheets/green_roads.png' }));
+            put('blueRoads', clone(baseRoads, { file: 'sty/sheets/blue_roads.bmp' }));
+            put('qualityRoads', clone(baseRoads, { file: 'sty/sheets/quality_roads.bmp' }));
             put('mixedRoads', clone(baseRoads, { file: 'sty/sheets/mixed_roads.png' }));
             put('greyRoads', clone(baseRoads, { file: 'sty/sheets/grey_roads.png' }));
             put('greyRoadsMixed', clone(baseRoads, { file: 'sty/sheets/grey_roads_mixed.png' }));
@@ -532,6 +533,7 @@ var gta_kill = (function (exports, THREE) {
             else {
                 map = Util$1.loadTexture(this.data.sty);
             }
+            //this.data.color = '#888888';
             this.material = new THREE.MeshPhongMaterial({
                 map: map,
                 shininess: 0,
@@ -590,12 +592,18 @@ var gta_kill = (function (exports, THREE) {
         }
         make() {
             this.geometry = new THREE__default.PlaneBufferGeometry(64, 64, 1, 1);
-            let map = Util$1.loadTexture(this.data.sty);
-            let maskMap;
-            if ('concave' == this.data.wall)
-                maskMap = Util$1.loadTexture('sty/interior/green/maskConcave.bmp');
-            else
-                maskMap = Util$1.loadTexture('sty/interior/green/maskSide.bmp');
+            let style = `sty/interiors/${this.data.style}`;
+            let sty, mask;
+            if ('concave' == this.data.wall) {
+                sty = `concave.bmp`;
+                mask = `concaveMask.bmp`;
+            }
+            else {
+                sty = `side.bmp`;
+                mask = `sideMask.bmp`;
+            }
+            let map = Util$1.loadTexture(`${style}/${sty}`);
+            let maskMap = Util$1.loadTexture(`${style}/${mask}`);
             this.material = new THREE.MeshPhongMaterial({
                 map: map,
                 shininess: 0,
@@ -647,12 +655,12 @@ var gta_kill = (function (exports, THREE) {
         Rectangles.init = init;
         function show(rectangle) {
             console.log('Rectangles add ' + rectangle.data.type);
-            Four$1.scene.add(rectangle.meshShadow);
+            //Four.scene.add(rectangle.meshShadow);
             Four$1.scene.add(rectangle.mesh);
         }
         Rectangles.show = show;
         function hide(rectangle) {
-            Four$1.scene.remove(rectangle.meshShadow);
+            //Four.scene.remove(rectangle.meshShadow);
             Four$1.scene.remove(rectangle.mesh);
         }
         Rectangles.hide = hide;
@@ -670,12 +678,14 @@ var gta_kill = (function (exports, THREE) {
         function makeRectangle(phongProperties, p) {
             let customMaterial = new THREE.MeshPhongMaterial(phongProperties);
             customMaterial.onBeforeCompile = function (shader) {
+                shader.uniforms.nearestMap = { value: p.nearestMap };
                 shader.uniforms.blurMap = { value: p.blurMap };
                 shader.uniforms.pink = { value: new THREE.Vector3(1, 0, 1) };
                 shader.fragmentShader = shader.fragmentShader.replace(`#define PHONG`, `
 				#define PHONG
 				#define PHONG2
 				
+				uniform sampler2D nearestMap;
 				uniform sampler2D blurMap;
 			`);
                 shader.fragmentShader = shader.fragmentShader.replace(`#include <map_fragment>`, `
@@ -684,11 +694,12 @@ var gta_kill = (function (exports, THREE) {
 					vec4 texelColor = vec4(0);
 					
 					vec4 mapColor = texture2D( map, vUv );
+					vec4 nearestColor = texture2D( nearestMap, vUv );
 
 					//#ifdef PINK
 
 					// Pink
-					if ( mapColor.rgb == vec3(1, 0, 1) ) {
+					if ( nearestColor.rgb == vec3(1, 0, 1) ) {
 						mapColor.a = 0.0;
 						mapColor.rgb *= 0.0;
 					}
@@ -696,8 +707,9 @@ var gta_kill = (function (exports, THREE) {
 					// Blur
 					vec4 blurColor = texture2D( blurMap, vUv );
 					blurColor.rgb *= 0.0;
-					blurColor.a /= 2.0; // detensify
-					texelColor = blurColor + mapColor;
+					blurColor.a /= 3.0; // detensify
+					//texelColor = blurColor + mapColor;
+					texelColor = mapColor;
 
 					texelColor = mapTexelToLinear( texelColor );
 
@@ -766,7 +778,12 @@ var gta_kill = (function (exports, THREE) {
         }
         makeMeshes(info) {
             let map = Util$1.loadTexture(this.data.sty);
+            let nearestMap = Util$1.loadTexture(this.data.sty, 'nearest');
+            nearestMap.minFilter = THREE.NearestFilter;
+            nearestMap.magFilter = THREE.NearestFilter;
             let blurMap = Util$1.loadTexture(info.blur);
+            blurMap.minFilter = THREE.LinearFilter;
+            blurMap.magFilter = THREE.LinearFilter;
             let shadowMap = Util$1.loadTexture(info.blur);
             this.geometry = new THREE.PlaneBufferGeometry(this.data.width, this.data.height, 1);
             this.material = Phong2$1.makeRectangle({
@@ -775,6 +792,7 @@ var gta_kill = (function (exports, THREE) {
                 map: map,
                 blending: THREE__default.NormalBlending
             }, {
+                nearestMap: nearestMap,
                 PINK: true,
                 blurMap: blurMap,
             });
@@ -783,6 +801,7 @@ var gta_kill = (function (exports, THREE) {
                 transparent: true,
                 map: map,
             }, {
+                nearestMap: nearestMap,
                 PINK: true
             });
             materialShadow.opacity = 0.25;
@@ -3728,7 +3747,7 @@ var gta_kill = (function (exports, THREE) {
         Generators.loop = loop;
         let Interiors;
         (function (Interiors) {
-            function generate(min, max) {
+            function generate(min, max, style) {
                 let staging = new StagingArea;
                 const func = (p) => {
                     if (p[0] > min[0] &&
@@ -3738,6 +3757,7 @@ var gta_kill = (function (exports, THREE) {
                     else {
                         let wall = {
                             type: 'Wall',
+                            style: style,
                             x: p[0],
                             y: p[1],
                             z: p[2]
@@ -3751,48 +3771,39 @@ var gta_kill = (function (exports, THREE) {
             }
             Interiors.generate = generate;
             const wallFunc = (data, p, min, max) => {
-                data.sty = 'sty/roofs/green/793.bmp';
                 if (p[0] == min[0] && p[1] == min[1]) { // lb
-                    data.sty = 'sty/roofs/green/784.bmp';
                     data.wall = 'concave';
                     data.r = 3;
                 }
                 else if (p[0] == max[0] && p[1] == max[1]) { // rt
-                    data.sty = 'sty/roofs/green/784.bmp';
                     data.wall = 'concave';
                     data.flip = true;
                     data.r = 0;
                 }
                 else if (p[0] == min[0] && p[1] == max[1]) { // lt
-                    data.sty = 'sty/roofs/green/784.bmp';
                     data.wall = 'concave';
                     data.r = 0;
                 }
                 else if (p[0] == max[0] && p[1] == min[1]) { // rb
-                    data.sty = 'sty/roofs/green/784.bmp';
                     data.wall = 'concave';
                     data.r = 2;
                 }
                 else if (p[0] == min[0]) {
-                    data.sty = 'sty/roofs/green/790.bmp';
-                    data.wall = 'side';
-                    data.r = 1;
-                }
-                else if (p[1] == max[1]) {
-                    data.sty = 'sty/roofs/green/790.bmp';
-                    data.wall = 'side';
-                    data.flip = true;
-                    data.r = 2;
-                }
-                else if (p[0] == max[0]) {
-                    data.sty = 'sty/roofs/green/790.bmp';
                     data.wall = 'side';
                     data.r = 3;
                 }
-                else if (p[1] == min[1]) {
-                    data.sty = 'sty/roofs/green/790.bmp';
+                else if (p[1] == max[1]) {
                     data.wall = 'side';
+                    data.flip = true;
                     data.r = 0;
+                }
+                else if (p[0] == max[0]) {
+                    data.wall = 'side';
+                    data.r = 1;
+                }
+                else if (p[1] == min[1]) {
+                    data.wall = 'side';
+                    data.r = 2;
                 }
             };
         })(Interiors = Generators.Interiors || (Generators.Interiors = {}));
@@ -4395,12 +4406,12 @@ var gta_kill = (function (exports, THREE) {
             // sty/nature/tracks/514.bmp
             // sty/nature/park original/216.bmp
             // sty/nature/evergreen/836.bmp - Turtoise wasteland
-            Generators$1.Fill.fill([-500, -500, 0], [1000, 1000, 0], { sty: 'sty/nature/evergreen/836.bmp' }, { WHEEL: true });
+            //Generators.Fill.fill([-500, -500, 0], [1000, 1000, 0], { sty: 'sty/nature/evergreen/836.bmp' }, { WHEEL: true });
             //Generators.Fill.fill([10, -25, 0], [10+1000, -25+1000, 0], {sty: 'sty/nature/tracks/512.bmp'}, {RANDOM_ROTATION: true});
             //Generators.Fill.fill([12, -25, 0], 1, 50, {r: 3, sty: 'sty/nature/evergreen/839.bmp'});
             // Side of roads:
             // 'sty/nature/evergreen/839.bmp'
-            //Generators.Fill.fill([8, -25, 0], [8, -25 + 50, 0], { r: 1, sty: 'sty/nature/evergreen/839.bmp' });
+            //Generators.Fill.fill([9, -25, 0], [9, -25 + 50, 0], { r: 1, sty: 'sty/nature/evergreen/839.bmp' });
             //Generators.Fill.fill([9, -25, 0], [9, -25 + 50, 0], { r: 1, sty: 'sty/floors/mixed/64.bmp' });
             //Generators.Fill.fill([12, -25, 0], [12, -25 + 50, 0], { r: 3, sty: 'sty/nature/evergreen/839.bmp' });
             //Generators.Fill.fill([-25, 6, 0], [9, 6, 0], { r: 2, sty: 'sty/nature/evergreen/839.bmp' });
@@ -4408,32 +4419,34 @@ var gta_kill = (function (exports, THREE) {
             //Generators.Fill.fill([-25, -1, 0], [9, -1, 0], { r: 0, sty: 'sty/nature/evergreen/839.bmp' });
             //Generators.Fill.fill1([9, -1, 0], { r: 1, sty: 'sty/nature/evergreen/852.bmp' }); // 838
             // Big main road:
-            Generators$1.Roads.twolane(1, [10, -25, 0], 50, 'greyRoads');
+            Generators$1.Roads.twolane(1, [10, -25, 0], 50, 'qualityRoads');
             //Generators.Fill.fill([12, -25, 0], 1, 50, {r: 2, sty: 'sty/nature/tracks/520.bmp'});
-            Generators$1.Roads.oneway(0, [2, 5, 0], 9, 'greyRoads'); // Parking entry
-            Generators$1.Roads.oneway(0, [7, 0, 0], 4, 'greyRoads'); // Parking exit
+            Generators$1.Roads.oneway(0, [2, 5, 0], 9, 'qualityRoads'); // Parking entry
+            Generators$1.Roads.oneway(0, [7, 0, 0], 4, 'qualityRoads'); // Parking exit
             // Deco in between road and parking
             Generators$1.Fill.fill([8, 1, 0], [9, 4, 0], { r: 0, sty: 'sty/floors/mixed/64.bmp' });
             //Generators.Fill.fill([9, 1, 0], [9, 4, 0], { r: 1, sty: 'sty/nature/evergreen/836.bmp' });
-            Generators$1.Fill.fill1([9, 1, 0], { r: 2, sty: 'sty/nature/evergreen/840.bmp' });
-            Generators$1.Fill.fill1([9, 2, 0], { r: 2, sty: 'sty/nature/evergreen/859.bmp' });
-            Generators$1.Fill.fill1([9, 3, 0], { r: 2, sty: 'sty/nature/evergreen/859.bmp' });
-            Generators$1.Fill.fill1([9, 4, 0], { r: 0, sty: 'sty/nature/evergreen/840.bmp' });
+            // Turq evergreen planter
+            //Generators.Fill.fill1([9, 1, 0], { r: 2, sty: 'sty/nature/evergreen/840.bmp' });
+            //Generators.Fill.fill1([9, 2, 0], { r: 2, sty: 'sty/nature/evergreen/859.bmp' });
+            //Generators.Fill.fill1([9, 3, 0], { r: 2, sty: 'sty/nature/evergreen/859.bmp' });
+            //Generators.Fill.fill1([9, 4, 0], { r: 0, sty: 'sty/nature/evergreen/840.bmp' });
             // Deline exits
             //GenTools.Deline.horz([2, 4, 0], 10, 3, 0);
             //GenTools.Deline.horz([2, -1, 0], 9, 3, 0);
             //GenTools.Deline.aabb([2, -1, 0], [2, 4+10, 0+9], 0);
             GenTools$1.Deline.aabb([9, -1, 0], [13, 7, 0], 0); // Deline success
-            Generators$1.Fill.fill([6, 0, 0], [6, 4, 0], { r: 0, sty: 'sty/floors/yellow/932.bmp' }, { WHEEL: true });
-            Generators$1.Fill.fill([7, 0, 0], [7, 0, 0], { r: 1, sty: 'sty/floors/mixed/64.bmp' }, { WHEEL: true });
-            //Generators.Buildings.type1([4, 0, 0], [5, 4, 0]); // Gas station
-            Generators$1.Interiors.generate([3, 0, 0], [5, 4, 0]); // Gas station
+            //Generators.Fill.fill([6, 0, 0], [6, 4, 0], { r: 3, sty: 'sty/floors/yellow/933.bmp' }, { WHEEL: false });
+            Generators$1.Fill.fill([6, 0, 0], [6, 4, 0], { r: 1, sty: 'sty/floors/mixed/64.bmp' }, { WHEEL: true });
+            // Gas station
+            Generators$1.Interiors.generate([3, 0, 0], [5, 4, 0], 'green');
+            //Generators.Buildings.type1([3, 0, 0], [5, 4, 0]); // Gas station
             //Gen1.GenRoads.highway(1, [5, 0, 0], 6, 2, 'greyRoads'); // Pumps road
             //Gen1.GenRoads.twolane(0, [2, 5, 0], 9, 'greenRoads'); // horz
             //Gen1.GenRoads.twolane(0, [2, -2, 0], 9, 'greenRoads'); // horz
             //GenDeline.mixedToBad([2, 4, 0], 9, 4);
             //GenDeline.mixedToBad([2, -3, 0], 9, 4);
-            Generators$1.Parking.onewayRight([7, 0, 0], 6, 2, 'greyRoads');
+            Generators$1.Parking.onewayRight([7, 0, 0], 6, 2, 'qualityRoads');
             //GenTools.swap([7, 1, 0], [7, 4, 0], { sheet: 'badRoads' });
             //GenTools.swap([6, 2, 0], [6, 3, 0], { sheet: 'badRoads'} );
             //Gen2.GenDeline.horz([4, 0, 0], 6, 6);
@@ -4576,10 +4589,20 @@ var gta_kill = (function (exports, THREE) {
             Movie.effect.uniforms["zoom"].value = 0.0;
         }
         Movie.cityView = cityView;
-        function Resize() {
+        let sin = 0;
+        function update() {
+            if (sin < Math.PI * 2)
+                sin += 0.1;
+            if (sin > Math.PI * 2)
+                sin -= Math.PI * 2;
+            Movie.effect.uniforms['angle'].value = sin;
+            Movie.effect.uniforms['redblue'].value = sin * 0.5;
+        }
+        Movie.update = update;
+        function resize() {
             Movie.effect.uniforms["resolution"].value.set(window.innerWidth, window.innerHeight).multiplyScalar(window.devicePixelRatio);
         }
-        Movie.Resize = Resize;
+        Movie.resize = resize;
         function init() {
             Movie.composer = new TWO.EffectComposer(Four$1.renderer);
             Movie.renderPass = new TWO.RenderPass(Four$1.scene, Four$1.camera);
@@ -4606,84 +4629,84 @@ var gta_kill = (function (exports, THREE) {
                 'XXX': '',
             },
             vertexShader: `
-            varying vec2 vUv;
-            uniform float zoom;
+			varying vec2 vUv;
+			uniform float zoom;
 
-            void main() {
+			void main() {
 
-                vUv = uv;
+				vUv = uv;
 
-                //if (zoom > 0.0) {
-                //    vUv.x -= zoom / 300.0;
-                //}
+				//if (zoom > 0.0) {
+				//    vUv.x -= zoom / 300.0;
+				//}
 
-                gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+				gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
 
-            }`,
+			}`,
             fragmentShader: `
-            uniform sampler2D tDiffuse;
-            uniform float redblue;
-            uniform float angle;
+			uniform sampler2D tDiffuse;
+			uniform float redblue;
+			uniform float angle;
 
-            uniform float zoom;
-            uniform float pixelSize;
-            uniform vec2 resolution;
+			uniform float zoom;
+			uniform float pixelSize;
+			uniform vec2 resolution;
 
-            varying vec2 vUv;
+			varying vec2 vUv;
 
-            float reduce(float p) {
-                float DIVIDE = 4.0;
-                return (ceil((p * 255.0) / DIVIDE) * DIVIDE) / 255.0;
-                // ceil is lighter, floor is darker
-            }
+			float reduce(float p) {
+				float DIVIDE = 8.0;
+				return (ceil((p * 255.0) / DIVIDE) * DIVIDE) / 255.0;
+				// ceil is lighter, floor is darker
+			}
 
-            vec4 R2D2(vec2 v) {
-                vec4 rgb = texture2D(tDiffuse, v);
-                rgb.r = reduce(rgb.r);
-                rgb.g = reduce(rgb.g);
-                rgb.b = reduce(rgb.b);
-                return rgb;
-            }
+			vec4 R2D2(vec2 v) {
+				vec4 rgb = texture2D(tDiffuse, v);
+				rgb.r = reduce(rgb.r);
+				rgb.g = reduce(rgb.g);
+				rgb.b = reduce(rgb.b);
+				return rgb;
+			}
 
-            void main() {
+			void main() {
 
-                // cinematic retro city view
-                /*if (pixelSize > 1.0) {
+				// cinematic retro city view
+				/*if (pixelSize > 1.0) {
 
-                    vec2 dxy = pixelSize / resolution;
-                    vec2 coord = dxy * floor( vUv / dxy );
+					vec2 dxy = pixelSize / resolution;
+					vec2 coord = dxy * floor( vUv / dxy );
 
-                    vec2 uuu = coord; //coord; // vUv
+					vec2 uuu = coord; //coord; // vUv
 
-                    vec2 offset = redblue * vec2( cos(angle), sin(angle));
-                    vec4 cr = R2D2(uuu + offset);
-                    vec4 cga = R2D2(uuu);
-                    vec4 cb = R2D2(uuu - offset);
+					vec2 offset = redblue * vec2( cos(angle), sin(angle));
+					vec4 cr = R2D2(uuu + offset);
+					vec4 cga = R2D2(uuu);
+					vec4 cb = R2D2(uuu - offset);
 
-                    vec4 shifty = vec4(cr.r, cga.g, cb.b, cga.a);
-                    gl_FragColor = shifty;
+					vec4 shifty = vec4(cr.r, cga.g, cb.b, cga.a);
+					gl_FragColor = shifty;
 
-                    //gl_FragColor = R2D2(uuu);
-                }
-                else */
-                {
-                    vec2 offset = redblue * vec2( cos(angle), sin(angle));
-                    vec4 cr = texture2D(tDiffuse, vUv + offset);
-                    vec4 cga = texture2D(tDiffuse, vUv);
-                    vec4 cb = texture2D(tDiffuse, vUv - offset);
+					//gl_FragColor = R2D2(uuu);
+				}
+				else */
+				{
+					vec2 offset = redblue * vec2( cos(angle), sin(angle));
+					vec4 cr = texture2D(tDiffuse, vUv + offset);
+					vec4 cga = texture2D(tDiffuse, vUv);
+					vec4 cb = texture2D(tDiffuse, vUv - offset);
 
-                    vec4 shifty = vec4(cr.r, cga.g, cb.b, cga.a);
-                    gl_FragColor = shifty;
-                    //gl_FragColor = texture2D(tDiffuse, vUv);
+					vec4 shifty = vec4(cr.r, cga.g, cb.b, cga.a);
+					gl_FragColor = shifty;
+					//gl_FragColor = texture2D(tDiffuse, vUv);
 
-                }
+				}
 
-                #ifdef MAKE_BLACK
-                    
-                    gl_FragColor.rgb *= 0.0;
+				#ifdef MAKE_BLACK
+					
+					gl_FragColor.rgb *= 0.0;
 
-                #endif
-            }`
+				#endif
+			}`
         };
     })(Movie || (Movie = {}));
 
@@ -4734,8 +4757,10 @@ var gta_kill = (function (exports, THREE) {
             KILL$1.update();
             if (App.map[115] == 1)
                 Movie.enabled = !Movie.enabled;
-            if (Movie.enabled)
+            if (Movie.enabled) {
+                Movie.update();
                 Movie.composer.render();
+            }
             else
                 Four.renderer.render(Four.scene, Four.camera);
         }
@@ -4748,7 +4773,8 @@ var gta_kill = (function (exports, THREE) {
             Four.scene = new THREE.Scene();
             Four.directionalLight = new THREE.DirectionalLight(0x355886, 1.0);
             Four.directionalLight.position.set(0, 0, 1);
-            Four.ambientLight = new THREE.AmbientLight('#c1c1c1'); // #5187cd
+            Four.ambientLight = new THREE.AmbientLight('#ffffff'); // #5187cd
+            //ambientLight = new AmbientLight('#c1c1c1'); // #5187cd
             //scene.add(directionalLight);
             Four.scene.add(Four.directionalLight.target);
             Four.scene.add(Four.ambientLight);
@@ -4764,6 +4790,7 @@ var gta_kill = (function (exports, THREE) {
         function onWindowResize() {
             Four.camera.aspect = window.innerWidth / window.innerHeight;
             Four.camera.updateProjectionMatrix();
+            Movie.resize();
             Four.renderer.setSize(window.innerWidth, window.innerHeight);
         }
     })(Four || (Four = {}));

@@ -13,12 +13,18 @@ export class Wall extends Object2 {
     }
     make() {
         this.geometry = new THREE.PlaneBufferGeometry(64, 64, 1, 1);
-        let map = Util.loadTexture(this.data.sty);
-        let maskMap;
-        if ('concave' == this.data.wall)
-            maskMap = Util.loadTexture('sty/interior/green/maskConcave.bmp');
-        else
-            maskMap = Util.loadTexture('sty/interior/green/maskSide.bmp');
+        let style = `sty/interiors/${this.data.style}`;
+        let sty, mask;
+        if ('concave' == this.data.wall) {
+            sty = `concave.bmp`;
+            mask = `concaveMask.bmp`;
+        }
+        else {
+            sty = `side.bmp`;
+            mask = `sideMask.bmp`;
+        }
+        let map = Util.loadTexture(`${style}/${sty}`);
+        let maskMap = Util.loadTexture(`${style}/${mask}`);
         this.material = new MeshPhongMaterial({
             map: map,
             shininess: 0,

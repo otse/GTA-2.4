@@ -7,7 +7,7 @@ import Phong2 from "../Shaders/Phong2";
 import Util from "../Random";
 
 import Four from "../Four";
-import { default as THREE, Mesh, Vector3, ShaderMaterial, PlaneBufferGeometry, MeshPhongMaterial, MeshBasicMaterial } from 'three';
+import { default as THREE, Mesh, Vector3, ShaderMaterial, PlaneBufferGeometry, MeshPhongMaterial, MeshBasicMaterial, NearestFilter, LinearFilter } from 'three';
 
 
 interface Info {
@@ -50,7 +50,12 @@ class Rectangle extends Object2 {
 	private makeMeshes(info: Info) {
 
 		let map = Util.loadTexture(this.data.sty);
+		let nearestMap = Util.loadTexture(this.data.sty, 'nearest');
+		nearestMap.minFilter = NearestFilter;
+		nearestMap.magFilter = NearestFilter;
 		let blurMap = Util.loadTexture(info.blur);
+		blurMap.minFilter = LinearFilter;
+		blurMap.magFilter = LinearFilter;
 		let shadowMap = Util.loadTexture(info.blur);
 
 		this.geometry = new PlaneBufferGeometry(
@@ -62,6 +67,7 @@ class Rectangle extends Object2 {
 			map: map,
 			blending: THREE.NormalBlending
 		}, {
+			nearestMap: nearestMap,
 			PINK: true,
 			blurMap: blurMap,
 		});
@@ -71,6 +77,7 @@ class Rectangle extends Object2 {
 			transparent: true,
 			map: map,
 		}, {
+			nearestMap: nearestMap,
 			PINK: true
 		});
 

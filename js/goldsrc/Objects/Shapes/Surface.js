@@ -42,6 +42,7 @@ export class Surface extends Object2 {
         else {
             map = Util.loadTexture(this.data.sty);
         }
+        //this.data.color = '#888888';
         this.material = new MeshPhongMaterial({
             map: map,
             shininess: 0,

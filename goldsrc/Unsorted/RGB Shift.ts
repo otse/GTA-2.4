@@ -6,137 +6,147 @@ import { default as THREE, Vector2 } from "three";
 const TWO = (THREE as any)
 
 export namespace Movie {
-    export var enabled = false;
-    
-    export var composer;
-    export var effect;
-    export var renderPass;
+	export var enabled = false;
 
-    export function cityView() {
-        Zoom.set(2);
-        Movie.effect.uniforms["pixelSize"].value = 1.0;
-        Movie.effect.uniforms["zoom"].value = 0.0;
-    }
+	export var composer;
+	export var effect;
+	export var renderPass;
 
-    export function Resize()
-    {
-        effect.uniforms["resolution"].value.set(
-            window.innerWidth, window.innerHeight).multiplyScalar(window.devicePixelRatio);
-    }
+	export function cityView() {
+		Zoom.set(2);
+		Movie.effect.uniforms["pixelSize"].value = 1.0;
+		Movie.effect.uniforms["zoom"].value = 0.0;
+	}
 
-    export function init() {
-        composer = new TWO.EffectComposer(Four.renderer);
-        renderPass = new TWO.RenderPass(Four.scene, Four.camera);
+	let sin = 0;
+	export function update() {
+		if (sin < Math.PI * 2)
+			sin += 0.1;
+		if (sin > Math.PI * 2)
+			sin -= Math.PI * 2;
 
-        composer.addPass(renderPass);
+		effect.uniforms['angle'].value = sin;
+		effect.uniforms['redblue'].value = sin * 0.5;
+	}
 
-        effect = new TWO.ShaderPass(retroShader);
+	export function resize() {
+		effect.uniforms["resolution"].value.set(
+			window.innerWidth, window.innerHeight).multiplyScalar(window.devicePixelRatio);
+	}
 
-        effect.uniforms['redblue'].value = 0.0015 * 0.5;
-        effect.uniforms["resolution"].value =
-            new Vector2(window.innerWidth, window.innerHeight);
-        effect.uniforms["resolution"].value.multiplyScalar(
-            window.devicePixelRatio);
-        effect.renderToScreen = true;
+	export function init() {
+		composer = new TWO.EffectComposer(Four.renderer);
+		renderPass = new TWO.RenderPass(Four.scene, Four.camera);
 
-        composer.addPass(effect);
-    }
+		composer.addPass(renderPass);
 
-    export var retroShader = {
+		effect = new TWO.ShaderPass(retroShader);
 
-        uniforms: {
-            "tDiffuse": { value: null },
-            "redblue": { value: 0.005 },
-            "angle": { value: 0.0 },
-            "resolution": { value: null },
-            "pixelSize": { value: 3.0 },
-            "zoom": { value: 1.0 }
-        },
+		effect.uniforms['redblue'].value = 0.0015 * 0.5;
+		effect.uniforms["resolution"].value =
+			new Vector2(window.innerWidth, window.innerHeight);
+		effect.uniforms["resolution"].value.multiplyScalar(
+			window.devicePixelRatio);
+		effect.renderToScreen = true;
 
-        defines: {
-            'XXX': '',
-        },
+		composer.addPass(effect);
+	}
 
-        vertexShader: `
-            varying vec2 vUv;
-            uniform float zoom;
+	export var retroShader = {
 
-            void main() {
+		uniforms: {
+			"tDiffuse": { value: null },
+			"redblue": { value: 0.005 },
+			"angle": { value: 0.0 },
+			"resolution": { value: null },
+			"pixelSize": { value: 3.0 },
+			"zoom": { value: 1.0 }
+		},
 
-                vUv = uv;
+		defines: {
+			'XXX': '',
+		},
 
-                //if (zoom > 0.0) {
-                //    vUv.x -= zoom / 300.0;
-                //}
+		vertexShader: `
+			varying vec2 vUv;
+			uniform float zoom;
 
-                gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+			void main() {
 
-            }`,
+				vUv = uv;
 
-        fragmentShader: `
-            uniform sampler2D tDiffuse;
-            uniform float redblue;
-            uniform float angle;
+				//if (zoom > 0.0) {
+				//    vUv.x -= zoom / 300.0;
+				//}
 
-            uniform float zoom;
-            uniform float pixelSize;
-            uniform vec2 resolution;
+				gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
 
-            varying vec2 vUv;
+			}`,
 
-            float reduce(float p) {
-                float DIVIDE = 4.0;
-                return (ceil((p * 255.0) / DIVIDE) * DIVIDE) / 255.0;
-                // ceil is lighter, floor is darker
-            }
+		fragmentShader: `
+			uniform sampler2D tDiffuse;
+			uniform float redblue;
+			uniform float angle;
 
-            vec4 R2D2(vec2 v) {
-                vec4 rgb = texture2D(tDiffuse, v);
-                rgb.r = reduce(rgb.r);
-                rgb.g = reduce(rgb.g);
-                rgb.b = reduce(rgb.b);
-                return rgb;
-            }
+			uniform float zoom;
+			uniform float pixelSize;
+			uniform vec2 resolution;
 
-            void main() {
+			varying vec2 vUv;
 
-                // cinematic retro city view
-                /*if (pixelSize > 1.0) {
+			float reduce(float p) {
+				float DIVIDE = 8.0;
+				return (ceil((p * 255.0) / DIVIDE) * DIVIDE) / 255.0;
+				// ceil is lighter, floor is darker
+			}
 
-                    vec2 dxy = pixelSize / resolution;
-                    vec2 coord = dxy * floor( vUv / dxy );
+			vec4 R2D2(vec2 v) {
+				vec4 rgb = texture2D(tDiffuse, v);
+				rgb.r = reduce(rgb.r);
+				rgb.g = reduce(rgb.g);
+				rgb.b = reduce(rgb.b);
+				return rgb;
+			}
 
-                    vec2 uuu = coord; //coord; // vUv
+			void main() {
 
-                    vec2 offset = redblue * vec2( cos(angle), sin(angle));
-                    vec4 cr = R2D2(uuu + offset);
-                    vec4 cga = R2D2(uuu);
-                    vec4 cb = R2D2(uuu - offset);
+				// cinematic retro city view
+				/*if (pixelSize > 1.0) {
 
-                    vec4 shifty = vec4(cr.r, cga.g, cb.b, cga.a);
-                    gl_FragColor = shifty;
+					vec2 dxy = pixelSize / resolution;
+					vec2 coord = dxy * floor( vUv / dxy );
 
-                    //gl_FragColor = R2D2(uuu);
-                }
-                else */
-                {
-                    vec2 offset = redblue * vec2( cos(angle), sin(angle));
-                    vec4 cr = texture2D(tDiffuse, vUv + offset);
-                    vec4 cga = texture2D(tDiffuse, vUv);
-                    vec4 cb = texture2D(tDiffuse, vUv - offset);
+					vec2 uuu = coord; //coord; // vUv
 
-                    vec4 shifty = vec4(cr.r, cga.g, cb.b, cga.a);
-                    gl_FragColor = shifty;
-                    //gl_FragColor = texture2D(tDiffuse, vUv);
+					vec2 offset = redblue * vec2( cos(angle), sin(angle));
+					vec4 cr = R2D2(uuu + offset);
+					vec4 cga = R2D2(uuu);
+					vec4 cb = R2D2(uuu - offset);
 
-                }
+					vec4 shifty = vec4(cr.r, cga.g, cb.b, cga.a);
+					gl_FragColor = shifty;
 
-                #ifdef MAKE_BLACK
-                    
-                    gl_FragColor.rgb *= 0.0;
+					//gl_FragColor = R2D2(uuu);
+				}
+				else */
+				{
+					vec2 offset = redblue * vec2( cos(angle), sin(angle));
+					vec4 cr = texture2D(tDiffuse, vUv + offset);
+					vec4 cga = texture2D(tDiffuse, vUv);
+					vec4 cb = texture2D(tDiffuse, vUv - offset);
 
-                #endif
-            }`
+					vec4 shifty = vec4(cr.r, cga.g, cb.b, cga.a);
+					gl_FragColor = shifty;
+					//gl_FragColor = texture2D(tDiffuse, vUv);
 
-    };
+				}
+
+				#ifdef MAKE_BLACK
+					
+					gl_FragColor.rgb *= 0.0;
+
+				#endif
+			}`
+
+	};
 }

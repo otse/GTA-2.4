@@ -29,6 +29,7 @@ export interface Data2 {
 	sprite?: Square;
 
 	// wall
+	style?: string;
 	wall?: 'concave' | 'convex' | 'side';
 
 	// block

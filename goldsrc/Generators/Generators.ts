@@ -39,8 +39,10 @@ export namespace Generators {
 
 		let x = min[0];
 		for (; x <= max[0]; x++) {
+
 			let y = min[1];
 			for (; y <= max[1]; y++) {
+
 				let z = min[2];
 				for (; z <= max[2]; z++) {
 
@@ -56,6 +58,7 @@ export namespace Generators {
 		export function generate(
 			min: [number, number, number],
 			max: [number, number, number],
+			style: string
 		) {
 
 			let staging = new StagingArea;
@@ -71,6 +74,7 @@ export namespace Generators {
 				else {
 					let wall: Data2 = {
 						type: 'Wall',
+						style: style,
 						x: p[0],
 						y: p[1],
 						z: p[2]
@@ -93,50 +97,40 @@ export namespace Generators {
 			min: [number, number, number],
 			max: [number, number, number]) => {
 
-			data.sty = 'sty/roofs/green/793.bmp';
-
 			if (p[0] == min[0] && p[1] == min[1]) { // lb
-				data.sty = 'sty/roofs/green/784.bmp';
 				data.wall = 'concave';
 				data.r = 3;
 			}
 			else if (p[0] == max[0] && p[1] == max[1]) { // rt
-				data.sty = 'sty/roofs/green/784.bmp';
 				data.wall = 'concave';
 				data.flip = true;
 				data.r = 0;
 			}
 			else if (p[0] == min[0] && p[1] == max[1]) { // lt
-				data.sty = 'sty/roofs/green/784.bmp';
 				data.wall = 'concave';
 				data.r = 0;
 			}
 			else if (p[0] == max[0] && p[1] == min[1]) { // rb
-				data.sty = 'sty/roofs/green/784.bmp';
 				data.wall = 'concave';
 				data.r = 2;
 			}
 
 			else if (p[0] == min[0]) {
-				data.sty = 'sty/roofs/green/790.bmp';
-				data.wall = 'side';
-				data.r = 1;
-			}
-			else if (p[1] == max[1]) {
-				data.sty = 'sty/roofs/green/790.bmp';
-				data.wall = 'side';
-				data.flip = true;
-				data.r = 2;
-			}
-			else if (p[0] == max[0]) {
-				data.sty = 'sty/roofs/green/790.bmp';
 				data.wall = 'side';
 				data.r = 3;
 			}
-			else if (p[1] == min[1]) {
-				data.sty = 'sty/roofs/green/790.bmp';
+			else if (p[1] == max[1]) {
 				data.wall = 'side';
+				data.flip = true;
 				data.r = 0;
+			}
+			else if (p[0] == max[0]) {
+				data.wall = 'side';
+				data.r = 1;
+			}
+			else if (p[1] == min[1]) {
+				data.wall = 'side';
+				data.r = 2;
 			}
 		}
 
@@ -248,7 +242,7 @@ export namespace Generators {
 
 	export namespace Roads {
 
-		export type Strings = 'badRoads' | 'greenRoads' | 'mixedRoads' | 'greyRoads' | 'greyRoadsMixed';
+		export type Strings = 'badRoads' | 'greenRoads' | 'blueRoads' | 'qualityRoads' | 'mixedRoads' | 'greyRoads' | 'greyRoadsMixed';
 
 		export function oneway(
 			axis: 0 | 1,
