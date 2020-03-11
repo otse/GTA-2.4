@@ -18,15 +18,27 @@ export namespace Movie {
 		Movie.effect.uniforms["zoom"].value = 0.0;
 	}
 
-	let sin = 0;
-	export function update() {
-		if (sin < Math.PI * 2)
-			sin += 0.1;
-		if (sin > Math.PI * 2)
-			sin -= Math.PI * 2;
+	function cart(a: number, n: number) {
+		if (a < Math.PI * 2)
+			a += n * Four.delta;
+		if (a > Math.PI * 2)
+			a -= Math.PI * 2;
+		return a;
+	}
 
-		effect.uniforms['angle'].value = sin;
-		effect.uniforms['redblue'].value = sin * 0.5;
+	let strawberry = 0;
+	let orange = 0;
+
+	export function update() {
+
+		strawberry = cart(strawberry, 1);
+		orange = cart(orange, 1.5);
+
+		let x = Math.sin(strawberry);
+		let y = Math.cos(orange);
+
+		effect.uniforms['angle'].value = x * strawberry;
+		effect.uniforms['redblue'].value = y * 0.005;
 	}
 
 	export function resize() {

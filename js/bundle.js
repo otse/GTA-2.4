@@ -4589,14 +4589,22 @@ var gta_kill = (function (exports, THREE) {
             Movie.effect.uniforms["zoom"].value = 0.0;
         }
         Movie.cityView = cityView;
-        let sin = 0;
+        function cart(a, n) {
+            if (a < Math.PI * 2)
+                a += n * Four$1.delta;
+            if (a > Math.PI * 2)
+                a -= Math.PI * 2;
+            return a;
+        }
+        let strawberry = 0;
+        let orange = 0;
         function update() {
-            if (sin < Math.PI * 2)
-                sin += 0.1;
-            if (sin > Math.PI * 2)
-                sin -= Math.PI * 2;
-            Movie.effect.uniforms['angle'].value = sin;
-            Movie.effect.uniforms['redblue'].value = sin * 0.5;
+            strawberry = cart(strawberry, 1);
+            orange = cart(orange, 1.5);
+            let x = Math.sin(strawberry);
+            let y = Math.cos(orange);
+            Movie.effect.uniforms['angle'].value = x * strawberry;
+            Movie.effect.uniforms['redblue'].value = y * 0.005;
         }
         Movie.update = update;
         function resize() {
