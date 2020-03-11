@@ -7,7 +7,7 @@ import Blocks from "./Objects/Shapes/Blocks";
 import BoxCutter from "./Objects/Shapes/Box cutter";
 import Sprites from "./Sprites/Sprites";
 import Sheets from "./Sprites/Sheets";
-import GenLocations from "./Generators/Levels";
+import Levels from "./Generators/Levels";
 import Zoom from "./Unsorted/Zoom";
 import { Movie } from "./Unsorted/RGB Shift";
 export var KILL;
@@ -24,8 +24,8 @@ export var KILL;
         Movie.init();
         KILL.city = new City;
         window.KILL = KILL;
-        //GenLocations.longLonesome();
-        GenLocations.aptsOffice();
+        Levels.longLonesome();
+        //Levels.aptsOffice();
         let data = {
             type: 'Ply',
             x: 10.5,

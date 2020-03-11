@@ -9,27 +9,27 @@ export class Car extends Rectangle {
 	constructor(data: Data2) {
 		super(data);
 
-		console.log('Car ' + data.carName);
+		if (undefined == data.car)
+			console.warn('Car data has no .car!');
 
-		if (!data.carName)
-			console.warn('Car data has no carName!');
+		if (undefined == data.paint)
+			data.paint = Math.floor(Math.random() * 35);
 
-		// Defaults
-		if (!data.paint) data.paint = Math.floor(Math.random()*35);
+		console.log('Car ' + data.car + ' paint ', data.paint);
 
 		this.lift = 1;
 
-		const meta = CarMetas.getNullable(data.carName!);
+		const meta = CarMetas.getNullable(data.car!);
 
-		const physics = CarPhysics.getNullable(data.carName!);
-		
+		const physics = CarPhysics.getNullable(data.car!);
+
 		const model = physics!.model_corrected || physics!.model;
 
 		if (meta!.COLORLESS)
 			data.sty = `sty/car/painted/GTA2_CAR_${model}.bmp`;
 		else
 			data.sty = `sty/car/painted/GTA2_CAR_${model}_PAL_${data.paint}.bmp`;
-			
+
 		data.width = meta!.IMG_WIDTH;
 		data.height = meta!.IMG_HEIGHT;
 

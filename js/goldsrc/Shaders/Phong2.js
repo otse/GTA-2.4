@@ -10,14 +10,12 @@ var Phong2;
     function makeRectangle(phongProperties, p) {
         let customMaterial = new MeshPhongMaterial(phongProperties);
         customMaterial.onBeforeCompile = function (shader) {
-            shader.uniforms.nearestMap = { value: p.nearestMap };
             shader.uniforms.blurMap = { value: p.blurMap };
             shader.uniforms.pink = { value: new Vector3(1, 0, 1) };
             shader.fragmentShader = shader.fragmentShader.replace(`#define PHONG`, `
 				#define PHONG
 				#define PHONG2
 				
-				uniform sampler2D nearestMap;
 				uniform sampler2D blurMap;
 			`);
             shader.fragmentShader = shader.fragmentShader.replace(`#include <map_fragment>`, `
@@ -26,12 +24,11 @@ var Phong2;
 					vec4 texelColor = vec4(0);
 					
 					vec4 mapColor = texture2D( map, vUv );
-					vec4 nearestColor = texture2D( nearestMap, vUv );
 
 					//#ifdef PINK
 
 					// Pink
-					if ( nearestColor.rgb == vec3(1, 0, 1) ) {
+					if ( mapColor.rgb == vec3(1, 0, 1) ) {
 						mapColor.a = 0.0;
 						mapColor.rgb *= 0.0;
 					}

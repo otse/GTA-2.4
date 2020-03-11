@@ -413,7 +413,7 @@ export namespace Generators {
 
 					let parkedCar: Data2 = {
 						type: 'Car',
-						carName: Cars.GetRandomName(),
+						car: Cars.GetRandomName(),
 						x: road.x,
 						y: road.y,
 						z: road.z
@@ -514,7 +514,7 @@ export namespace Generators {
 
 					let parkedCar: Data2 = {
 						type: 'Car',
-						carName: Cars.GetRandomName(),
+						car: Cars.GetRandomName(),
 						x: road.x,
 						y: road.y,
 						z: road.z

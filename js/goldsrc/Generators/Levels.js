@@ -1,8 +1,10 @@
 import Generators from "./Generators";
 import Sprites from "../Sprites/Sprites";
 import GenTools from "./Tools";
-export var GenLocations;
-(function (GenLocations) {
+import Datas from "../Objects/Datas";
+import PaintJobs from "../Cars/Paints";
+export var Levels;
+(function (Levels) {
     function aptsOffice() {
         Generators.roadMode = 'Adapt';
         // Fill the landscape
@@ -72,14 +74,19 @@ export var GenLocations;
         Generators.Roads.twolane(0, [11, -2, 0], 12, 'badRoads');
         Generators.Pavements.fill([12, -3, 0], 9, 1);
     }
-    GenLocations.aptsOffice = aptsOffice;
+    Levels.aptsOffice = aptsOffice;
     function longLonesome() {
-        Generators.Fill.fill([-10, -500, 0], [-10, -500, 0], { sty: 'sty/nature/park original/216.bmp' });
-        //GenPlaza.fill([9, -100, 0], 1, 200);
-        //GenPlaza.fill([13, -100, 0], 1, 200);
-        Generators.Roads.highway(1, [10, -500, 0], 1000, 3, 'greenRoads');
-        //GenRoads.twolane(1, [10, -25, 0], 50, 'badRoads'); // vert
+        Generators.Roads.twolane(1, [10, -7000, 0], 8000, 'qualityRoads');
+        let car = {
+            type: 'Car',
+            car: 'Minx',
+            paint: PaintJobs.Enum.DARK_GREEN,
+            x: 10.5,
+            y: 0,
+            z: 0
+        };
+        Datas.deliver(car);
     }
-    GenLocations.longLonesome = longLonesome;
-})(GenLocations || (GenLocations = {}));
-export default GenLocations;
+    Levels.longLonesome = longLonesome;
+})(Levels || (Levels = {}));
+export default Levels;

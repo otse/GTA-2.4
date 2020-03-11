@@ -297,7 +297,7 @@ export var Generators;
                     };
                     let parkedCar = {
                         type: 'Car',
-                        carName: Cars.GetRandomName(),
+                        car: Cars.GetRandomName(),
                         x: road.x,
                         y: road.y,
                         z: road.z
@@ -376,7 +376,7 @@ export var Generators;
                     };
                     let parkedCar = {
                         type: 'Car',
-                        carName: Cars.GetRandomName(),
+                        car: Cars.GetRandomName(),
                         x: road.x,
                         y: road.y,
                         z: road.z

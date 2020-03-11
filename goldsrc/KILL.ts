@@ -10,7 +10,7 @@ import BoxCutter from "./Objects/Shapes/Box cutter";
 import Sprites from "./Sprites/Sprites";
 import Sheets from "./Sprites/Sheets";
 
-import GenLocations from "./Generators/Levels";
+import Levels from "./Generators/Levels";
 
 import Zoom from "./Unsorted/Zoom";
 import { Movie } from "./Unsorted/RGB Shift";
@@ -36,8 +36,8 @@ export namespace KILL {
 
 		(window as any).KILL = KILL;
 
-		//GenLocations.longLonesome();
-		GenLocations.aptsOffice();
+		Levels.longLonesome();
+		//Levels.aptsOffice();
 
 		let data: Data2 = {
 			type: 'Ply',

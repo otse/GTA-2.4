@@ -32,7 +32,7 @@ export var Four;
         //scene.add(directionalLight);
         Four.scene.add(Four.directionalLight.target);
         Four.scene.add(Four.ambientLight);
-        Four.renderer = new WebGLRenderer({ antialias: false });
+        Four.renderer = new WebGLRenderer({ antialias: true });
         Four.renderer.setPixelRatio(window.devicePixelRatio);
         Four.renderer.setSize(window.innerWidth, window.innerHeight);
         Four.renderer.autoClear = true;

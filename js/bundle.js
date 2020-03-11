@@ -655,12 +655,12 @@ var gta_kill = (function (exports, THREE) {
         Rectangles.init = init;
         function show(rectangle) {
             console.log('Rectangles add ' + rectangle.data.type);
-            //Four.scene.add(rectangle.meshShadow);
+            Four$1.scene.add(rectangle.meshShadow);
             Four$1.scene.add(rectangle.mesh);
         }
         Rectangles.show = show;
         function hide(rectangle) {
-            //Four.scene.remove(rectangle.meshShadow);
+            Four$1.scene.remove(rectangle.meshShadow);
             Four$1.scene.remove(rectangle.mesh);
         }
         Rectangles.hide = hide;
@@ -678,14 +678,12 @@ var gta_kill = (function (exports, THREE) {
         function makeRectangle(phongProperties, p) {
             let customMaterial = new THREE.MeshPhongMaterial(phongProperties);
             customMaterial.onBeforeCompile = function (shader) {
-                shader.uniforms.nearestMap = { value: p.nearestMap };
                 shader.uniforms.blurMap = { value: p.blurMap };
                 shader.uniforms.pink = { value: new THREE.Vector3(1, 0, 1) };
                 shader.fragmentShader = shader.fragmentShader.replace(`#define PHONG`, `
 				#define PHONG
 				#define PHONG2
 				
-				uniform sampler2D nearestMap;
 				uniform sampler2D blurMap;
 			`);
                 shader.fragmentShader = shader.fragmentShader.replace(`#include <map_fragment>`, `
@@ -694,12 +692,11 @@ var gta_kill = (function (exports, THREE) {
 					vec4 texelColor = vec4(0);
 					
 					vec4 mapColor = texture2D( map, vUv );
-					vec4 nearestColor = texture2D( nearestMap, vUv );
 
 					//#ifdef PINK
 
 					// Pink
-					if ( nearestColor.rgb == vec3(1, 0, 1) ) {
+					if ( mapColor.rgb == vec3(1, 0, 1) ) {
 						mapColor.a = 0.0;
 						mapColor.rgb *= 0.0;
 					}
@@ -778,12 +775,9 @@ var gta_kill = (function (exports, THREE) {
         }
         makeMeshes(info) {
             let map = Util$1.loadTexture(this.data.sty);
-            let nearestMap = Util$1.loadTexture(this.data.sty, 'nearest');
-            nearestMap.minFilter = THREE.NearestFilter;
-            nearestMap.magFilter = THREE.NearestFilter;
             let blurMap = Util$1.loadTexture(info.blur);
-            blurMap.minFilter = THREE.LinearFilter;
-            blurMap.magFilter = THREE.LinearFilter;
+            //blurMap.minFilter = LinearFilter;
+            //blurMap.magFilter = LinearFilter;
             let shadowMap = Util$1.loadTexture(info.blur);
             this.geometry = new THREE.PlaneBufferGeometry(this.data.width, this.data.height, 1);
             this.material = Phong2$1.makeRectangle({
@@ -792,18 +786,13 @@ var gta_kill = (function (exports, THREE) {
                 map: map,
                 blending: THREE__default.NormalBlending
             }, {
-                nearestMap: nearestMap,
-                PINK: true,
-                blurMap: blurMap,
+                blurMap: blurMap
             });
             let materialShadow = Phong2$1.makeRectangleShadow({
                 name: 'Phong2 Shadow',
                 transparent: true,
-                map: map,
-            }, {
-                nearestMap: nearestMap,
-                PINK: true
-            });
+                map: blurMap,
+            }, {});
             materialShadow.opacity = 0.25;
             materialShadow.color = new THREE__default.Color(0x0);
             this.mesh = new THREE__default.Mesh(this.geometry, this.material);
@@ -1242,6 +1231,7 @@ var gta_kill = (function (exports, THREE) {
             }
         };
     })(CarMetas || (CarMetas = {}));
+    var CarMetas$1 = CarMetas;
 
     var CarPhysics;
     (function (CarPhysics) {
@@ -3157,15 +3147,14 @@ var gta_kill = (function (exports, THREE) {
     class Car extends Rectangle {
         constructor(data) {
             super(data);
-            console.log('Car ' + data.carName);
-            if (!data.carName)
-                console.warn('Car data has no carName!');
-            // Defaults
-            if (!data.paint)
+            if (undefined == data.car)
+                console.warn('Car data has no .car!');
+            if (undefined == data.paint)
                 data.paint = Math.floor(Math.random() * 35);
+            console.log('Car ' + data.car + ' paint ', data.paint);
             this.lift = 1;
-            const meta = CarMetas.getNullable(data.carName);
-            const physics = CarPhysics$1.getNullable(data.carName);
+            const meta = CarMetas.getNullable(data.car);
+            const physics = CarPhysics$1.getNullable(data.car);
             const model = physics.model_corrected || physics.model;
             if (meta.COLORLESS)
                 data.sty = `sty/car/painted/GTA2_CAR_${model}.bmp`;
@@ -4009,7 +3998,7 @@ var gta_kill = (function (exports, THREE) {
                         };
                         let parkedCar = {
                             type: 'Car',
-                            carName: Cars$1.GetRandomName(),
+                            car: Cars$1.GetRandomName(),
                             x: road.x,
                             y: road.y,
                             z: road.z
@@ -4088,7 +4077,7 @@ var gta_kill = (function (exports, THREE) {
                         };
                         let parkedCar = {
                             type: 'Car',
-                            carName: Cars$1.GetRandomName(),
+                            car: Cars$1.GetRandomName(),
                             x: road.x,
                             y: road.y,
                             z: road.z
@@ -4398,8 +4387,82 @@ var gta_kill = (function (exports, THREE) {
     })(GenTools || (GenTools = {}));
     var GenTools$1 = GenTools;
 
-    var GenLocations;
-    (function (GenLocations) {
+    // Automobiles, trains
+    // Resources
+    // https://gta.fandom.com/wiki/Vehicles_in_GTA_2
+    // http://en.wikigta.org/wiki/Code_lists_%28GTA2%29
+    var PaintJobs;
+    (function (PaintJobs) {
+        let Enum;
+        (function (Enum) {
+            Enum[Enum["BLUE1"] = 0] = "BLUE1";
+            Enum[Enum["PURPLE1"] = 1] = "PURPLE1";
+            Enum[Enum["BLACK"] = 2] = "BLACK";
+            Enum[Enum["BLUE2"] = 3] = "BLUE2";
+            Enum[Enum["BLUE_GRAY"] = 4] = "BLUE_GRAY";
+            Enum[Enum["BRIGHT_GREEN"] = 5] = "BRIGHT_GREEN";
+            Enum[Enum["BRIGHT_RED"] = 6] = "BRIGHT_RED";
+            Enum[Enum["BROWN1"] = 7] = "BROWN1";
+            Enum[Enum["BROWN2"] = 8] = "BROWN2";
+            Enum[Enum["SILVER_BLUE"] = 9] = "SILVER_BLUE";
+            Enum[Enum["CREAM"] = 10] = "CREAM";
+            Enum[Enum["YELLOW"] = 11] = "YELLOW";
+            Enum[Enum["CYAN"] = 12] = "CYAN";
+            Enum[Enum["DARK_BEIGE"] = 13] = "DARK_BEIGE";
+            Enum[Enum["DARK_BLUE"] = 14] = "DARK_BLUE";
+            Enum[Enum["DEEP_BLUE"] = 15] = "DEEP_BLUE";
+            Enum[Enum["DARK_GREEN"] = 16] = "DARK_GREEN";
+            Enum[Enum["DARK_RED"] = 17] = "DARK_RED";
+            Enum[Enum["DARK_RUST"] = 18] = "DARK_RUST";
+            Enum[Enum["GOLD"] = 19] = "GOLD";
+            Enum[Enum["GREEN"] = 20] = "GREEN";
+            Enum[Enum["GRAY"] = 21] = "GRAY";
+            Enum[Enum["YELLOW_GREEN"] = 22] = "YELLOW_GREEN";
+            Enum[Enum["OLIVE"] = 23] = "OLIVE";
+            Enum[Enum["ORANGE"] = 24] = "ORANGE";
+            Enum[Enum["PALE_BLUE"] = 25] = "PALE_BLUE";
+            Enum[Enum["PINK_RED"] = 26] = "PINK_RED";
+            Enum[Enum["PURPLE2"] = 27] = "PURPLE2";
+            Enum[Enum["RED"] = 28] = "RED";
+            Enum[Enum["RUST"] = 29] = "RUST";
+            Enum[Enum["SILVER"] = 30] = "SILVER";
+            Enum[Enum["SKY_BLUE"] = 31] = "SKY_BLUE";
+            Enum[Enum["TURQUOISE"] = 32] = "TURQUOISE";
+            Enum[Enum["WHITE_GRAY"] = 33] = "WHITE_GRAY";
+            Enum[Enum["WHITE"] = 34] = "WHITE";
+            Enum[Enum["COP"] = 35] = "COP";
+        })(Enum = PaintJobs.Enum || (PaintJobs.Enum = {}));
+        PaintJobs.deltasSheets = {};
+        function init() {
+            const list = CarPhysics$1.List();
+            for (let name in list) {
+                const physic = list[name];
+                const meta = CarMetas$1.getNullable(name);
+                const sheet = {
+                    file: `D_GTA2_CAR_${physic.model}`,
+                    padding: 4,
+                    width: (meta.IMG_WIDTH * 10) + 36,
+                    height: (meta.IMG_HEIGHT * 2) + 4,
+                    nr: {
+                        w: 10,
+                        h: 2
+                    },
+                    piece: {
+                        w: meta.IMG_WIDTH,
+                        h: meta.IMG_HEIGHT
+                    }
+                };
+                PaintJobs.deltasSheets[name] = sheet;
+            }
+            console.log('build car delta sheets');
+            window.carsDeltas = PaintJobs.deltasSheets;
+        }
+        PaintJobs.init = init;
+    })(PaintJobs || (PaintJobs = {}));
+    var PaintJobs$1 = PaintJobs;
+
+    var Levels;
+    (function (Levels) {
         function aptsOffice() {
             Generators$1.roadMode = 'Adapt';
             // Fill the landscape
@@ -4457,17 +4520,22 @@ var gta_kill = (function (exports, THREE) {
             gas_station_corner2.r += 1;
             return;
         }
-        GenLocations.aptsOffice = aptsOffice;
+        Levels.aptsOffice = aptsOffice;
         function longLonesome() {
-            Generators$1.Fill.fill([-10, -500, 0], [-10, -500, 0], { sty: 'sty/nature/park original/216.bmp' });
-            //GenPlaza.fill([9, -100, 0], 1, 200);
-            //GenPlaza.fill([13, -100, 0], 1, 200);
-            Generators$1.Roads.highway(1, [10, -500, 0], 1000, 3, 'greenRoads');
-            //GenRoads.twolane(1, [10, -25, 0], 50, 'badRoads'); // vert
+            Generators$1.Roads.twolane(1, [10, -7000, 0], 8000, 'qualityRoads');
+            let car = {
+                type: 'Car',
+                car: 'Minx',
+                paint: PaintJobs$1.Enum.DARK_GREEN,
+                x: 10.5,
+                y: 0,
+                z: 0
+            };
+            Datas$1.deliver(car);
         }
-        GenLocations.longLonesome = longLonesome;
-    })(GenLocations || (GenLocations = {}));
-    var GenLocations$1 = GenLocations;
+        Levels.longLonesome = longLonesome;
+    })(Levels || (Levels = {}));
+    var Levels$1 = Levels;
 
     var EasingFunctions;
     (function (EasingFunctions) {
@@ -4582,7 +4650,7 @@ var gta_kill = (function (exports, THREE) {
     const TWO = THREE__default;
     var Movie;
     (function (Movie) {
-        Movie.enabled = false;
+        Movie.enabled = true;
         function cityView() {
             Zoom$1.set(2);
             Movie.effect.uniforms["pixelSize"].value = 1.0;
@@ -4600,17 +4668,26 @@ var gta_kill = (function (exports, THREE) {
         let orange = 0;
         let meat = 0;
         function update() {
-            strawberry = cart(strawberry, 0.7);
+            //updateHyper();
+            //return;
+            strawberry = cart(strawberry, 0.9);
             orange = cart(orange, 1.5);
             meat = cart(meat, 0.5);
             // sin = -1 - 1
             let x = Math.sin(strawberry);
             let y = Math.cos(orange) / 2;
-            let z = Math.sin(meat) + 0.5 / 3; // 
+            let z = Math.sin(meat) + 1 / 3; // 
             Movie.effect.uniforms['angle'].value = x * strawberry;
             Movie.effect.uniforms['redblue'].value = y * z * 0.004;
         }
         Movie.update = update;
+        let bat = 0;
+        function updateHyper() {
+            bat = cart(bat, 5);
+            Movie.effect.uniforms['angle'].value = bat;
+            Movie.effect.uniforms['redblue'].value = bat * 0.5;
+        }
+        Movie.updateHyper = updateHyper;
         function resize() {
             Movie.effect.uniforms["resolution"].value.set(window.innerWidth, window.innerHeight).multiplyScalar(window.devicePixelRatio);
         }
@@ -4736,8 +4813,8 @@ var gta_kill = (function (exports, THREE) {
             Movie.init();
             KILL.city = new City;
             window.KILL = KILL;
-            //GenLocations.longLonesome();
-            GenLocations$1.aptsOffice();
+            Levels$1.longLonesome();
+            //Levels.aptsOffice();
             let data = {
                 type: 'Ply',
                 x: 10.5,
@@ -4790,7 +4867,7 @@ var gta_kill = (function (exports, THREE) {
             //scene.add(directionalLight);
             Four.scene.add(Four.directionalLight.target);
             Four.scene.add(Four.ambientLight);
-            Four.renderer = new THREE.WebGLRenderer({ antialias: false });
+            Four.renderer = new THREE.WebGLRenderer({ antialias: true });
             Four.renderer.setPixelRatio(window.devicePixelRatio);
             Four.renderer.setSize(window.innerWidth, window.innerHeight);
             Four.renderer.autoClear = true;

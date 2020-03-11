@@ -50,12 +50,9 @@ class Rectangle extends Object2 {
 	private makeMeshes(info: Info) {
 
 		let map = Util.loadTexture(this.data.sty);
-		let nearestMap = Util.loadTexture(this.data.sty, 'nearest');
-		nearestMap.minFilter = NearestFilter;
-		nearestMap.magFilter = NearestFilter;
 		let blurMap = Util.loadTexture(info.blur);
-		blurMap.minFilter = LinearFilter;
-		blurMap.magFilter = LinearFilter;
+		//blurMap.minFilter = LinearFilter;
+		//blurMap.magFilter = LinearFilter;
 		let shadowMap = Util.loadTexture(info.blur);
 
 		this.geometry = new PlaneBufferGeometry(
@@ -67,18 +64,15 @@ class Rectangle extends Object2 {
 			map: map,
 			blending: THREE.NormalBlending
 		}, {
-			nearestMap: nearestMap,
-			PINK: true,
-			blurMap: blurMap,
+			blurMap: blurMap
 		});
 
 		let materialShadow = Phong2.makeRectangleShadow({
 			name: 'Phong2 Shadow',
 			transparent: true,
-			map: map,
+			map: blurMap,
 		}, {
-			nearestMap: nearestMap,
-			PINK: true
+			
 		});
 
 		materialShadow.opacity = 0.25;

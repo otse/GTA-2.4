@@ -45,7 +45,7 @@ export interface Data2 {
 	bottom?: string;
 
 	// car
-	carName?: string; // gci.keys;
+	car?: string; // gci.keys;
 	paint?: number;
 
 	// lamp

@@ -4,15 +4,14 @@ import CarPhysics from "./Every line is a physic";
 export class Car extends Rectangle {
     constructor(data) {
         super(data);
-        console.log('Car ' + data.carName);
-        if (!data.carName)
-            console.warn('Car data has no carName!');
-        // Defaults
-        if (!data.paint)
+        if (undefined == data.car)
+            console.warn('Car data has no .car!');
+        if (undefined == data.paint)
             data.paint = Math.floor(Math.random() * 35);
+        console.log('Car ' + data.car + ' paint ', data.paint);
         this.lift = 1;
-        const meta = CarMetas.getNullable(data.carName);
-        const physics = CarPhysics.getNullable(data.carName);
+        const meta = CarMetas.getNullable(data.car);
+        const physics = CarPhysics.getNullable(data.car);
         const model = physics.model_corrected || physics.model;
         if (meta.COLORLESS)
             data.sty = `sty/car/painted/GTA2_CAR_${model}.bmp`;

@@ -62,7 +62,7 @@ export namespace Four {
 		scene.add(directionalLight.target);
 		scene.add(ambientLight);
 
-		renderer = new WebGLRenderer({ antialias: false });
+		renderer = new WebGLRenderer({ antialias: true });
 		renderer.setPixelRatio(window.devicePixelRatio);
 		renderer.setSize(
 			window.innerWidth, window.innerHeight);

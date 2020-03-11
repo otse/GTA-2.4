@@ -2,7 +2,7 @@ import Object2 from "../Objects/Object";
 import Rectangles from "../Objects/Rectangles";
 import Phong2 from "../Shaders/Phong2";
 import Util from "../Random";
-import { default as THREE, Vector3, PlaneBufferGeometry, NearestFilter, LinearFilter } from 'three';
+import { default as THREE, Vector3, PlaneBufferGeometry } from 'three';
 class Rectangle extends Object2 {
     constructor(data) {
         super(data);
@@ -22,12 +22,9 @@ class Rectangle extends Object2 {
     }
     makeMeshes(info) {
         let map = Util.loadTexture(this.data.sty);
-        let nearestMap = Util.loadTexture(this.data.sty, 'nearest');
-        nearestMap.minFilter = NearestFilter;
-        nearestMap.magFilter = NearestFilter;
         let blurMap = Util.loadTexture(info.blur);
-        blurMap.minFilter = LinearFilter;
-        blurMap.magFilter = LinearFilter;
+        //blurMap.minFilter = LinearFilter;
+        //blurMap.magFilter = LinearFilter;
         let shadowMap = Util.loadTexture(info.blur);
         this.geometry = new PlaneBufferGeometry(this.data.width, this.data.height, 1);
         this.material = Phong2.makeRectangle({
@@ -36,18 +33,13 @@ class Rectangle extends Object2 {
             map: map,
             blending: THREE.NormalBlending
         }, {
-            nearestMap: nearestMap,
-            PINK: true,
-            blurMap: blurMap,
+            blurMap: blurMap
         });
         let materialShadow = Phong2.makeRectangleShadow({
             name: 'Phong2 Shadow',
             transparent: true,
-            map: map,
-        }, {
-            nearestMap: nearestMap,
-            PINK: true
-        });
+            map: blurMap,
+        }, {});
         materialShadow.opacity = 0.25;
         materialShadow.color = new THREE.Color(0x0);
         this.mesh = new THREE.Mesh(this.geometry, this.material);

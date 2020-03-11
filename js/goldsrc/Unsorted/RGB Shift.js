@@ -4,7 +4,7 @@ import { default as THREE, Vector2 } from "three";
 const TWO = THREE;
 export var Movie;
 (function (Movie) {
-    Movie.enabled = false;
+    Movie.enabled = true;
     function cityView() {
         Zoom.set(2);
         Movie.effect.uniforms["pixelSize"].value = 1.0;
@@ -22,17 +22,26 @@ export var Movie;
     let orange = 0;
     let meat = 0;
     function update() {
-        strawberry = cart(strawberry, 0.7);
+        //updateHyper();
+        //return;
+        strawberry = cart(strawberry, 0.9);
         orange = cart(orange, 1.5);
         meat = cart(meat, 0.5);
         // sin = -1 - 1
         let x = Math.sin(strawberry);
         let y = Math.cos(orange) / 2;
-        let z = Math.sin(meat) + 0.5 / 3; // 
+        let z = Math.sin(meat) + 1 / 3; // 
         Movie.effect.uniforms['angle'].value = x * strawberry;
         Movie.effect.uniforms['redblue'].value = y * z * 0.004;
     }
     Movie.update = update;
+    let bat = 0;
+    function updateHyper() {
+        bat = cart(bat, 5);
+        Movie.effect.uniforms['angle'].value = bat;
+        Movie.effect.uniforms['redblue'].value = bat * 0.5;
+    }
+    Movie.updateHyper = updateHyper;
     function resize() {
         Movie.effect.uniforms["resolution"].value.set(window.innerWidth, window.innerHeight).multiplyScalar(window.devicePixelRatio);
     }

@@ -11,15 +11,42 @@ import CarMetas from "./Metas";
 namespace PaintJobs {
 
 	export enum Enum {
-		BLUE1, PURPLE1, BLACK, BLUE2,
-		BLUE_GRAY, BRIGHT_GREEN, BRIGHT_RED, BROWN1,
-		BROWN2, SILVER_BLUE, CREAM, CYAN,
-		DARK_BEIGE, DARK_BLUE, DEEP_BLUE, DARK_GREEN,
-		DARK_RED, DARK_RUST, GOLD, GREEN,
-		GRAY, YELLOW_GREEN, OLIVE, ORANGE,
-		PALE_BLUE, PINK_RED, PURPLE2, RED,
-		RUST, SILVER, SKY_BLUE, TURQUOISE,
-		WHITE_GRAY, WHITE, YELLOW2, COP
+		BLUE1,
+		PURPLE1,
+		BLACK,
+		BLUE2,
+		BLUE_GRAY,
+		BRIGHT_GREEN,
+		BRIGHT_RED,
+		BROWN1,
+		BROWN2,
+		SILVER_BLUE,
+		CREAM,
+		YELLOW,
+		CYAN,
+		DARK_BEIGE,
+		DARK_BLUE,
+		DEEP_BLUE,
+		DARK_GREEN,
+		DARK_RED,
+		DARK_RUST,
+		GOLD,
+		GREEN,
+		GRAY,
+		YELLOW_GREEN,
+		OLIVE,
+		ORANGE,
+		PALE_BLUE,
+		PINK_RED,
+		PURPLE2,
+		RED,
+		RUST,
+		SILVER,
+		SKY_BLUE,
+		TURQUOISE,
+		WHITE_GRAY,
+		WHITE,
+		COP
 	}
 
 	export const deltasSheets: { [name: string]: Sheet } = {};
@@ -52,7 +79,7 @@ namespace PaintJobs {
 			deltasSheets[name] = sheet;
 		}
 
-		console.log('build car delta sheets');		
+		console.log('build car delta sheets');
 
 		(window as any).carsDeltas = deltasSheets;
 	}
