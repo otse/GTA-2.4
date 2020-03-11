@@ -24,8 +24,8 @@ export var HighWayWithEveryCar;
                 j++;
                 if (j > 14) {
                     j = 0;
+                    // Begin spawning at new lane
                     y = 0;
-                    // Move to next lane
                     x += 1;
                 }
                 Datas.deliver(car);

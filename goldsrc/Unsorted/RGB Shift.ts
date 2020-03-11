@@ -43,10 +43,10 @@ export namespace Movie {
 		// sin = -1 - 1
 		let x = Math.sin(strawberry);
 		let y = Math.cos(orange) / 2;
-		let z = Math.sin(meat) + 1 / 3; // 
+		let z = Math.sin(meat) + 1 / 4; // 
 
 		effect.uniforms['angle'].value = x * strawberry;
-		effect.uniforms['redblue'].value = y * z * 0.005;
+		effect.uniforms['redblue'].value = y * z * 0.0045;
 	}
 
 	let bat = 0;

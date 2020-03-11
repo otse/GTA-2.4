@@ -3747,9 +3747,9 @@ var gta_kill = (function (exports, THREE) {
             // sin = -1 - 1
             let x = Math.sin(strawberry);
             let y = Math.cos(orange) / 2;
-            let z = Math.sin(meat) + 1 / 3; // 
+            let z = Math.sin(meat) + 1 / 4; // 
             Movie.effect.uniforms['angle'].value = x * strawberry;
-            Movie.effect.uniforms['redblue'].value = y * z * 0.005;
+            Movie.effect.uniforms['redblue'].value = y * z * 0.0045;
         }
         Movie.update = update;
         let bat = 0;
@@ -4591,8 +4591,8 @@ var gta_kill = (function (exports, THREE) {
                     j++;
                     if (j > 14) {
                         j = 0;
+                        // Begin spawning at new lane
                         y = 0;
-                        // Move to next lane
                         x += 1;
                     }
                     Datas$1.deliver(car);

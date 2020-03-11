@@ -30,9 +30,9 @@ export var Movie;
         // sin = -1 - 1
         let x = Math.sin(strawberry);
         let y = Math.cos(orange) / 2;
-        let z = Math.sin(meat) + 1 / 3; // 
+        let z = Math.sin(meat) + 1 / 4; // 
         Movie.effect.uniforms['angle'].value = x * strawberry;
-        Movie.effect.uniforms['redblue'].value = y * z * 0.005;
+        Movie.effect.uniforms['redblue'].value = y * z * 0.0045;
     }
     Movie.update = update;
     let bat = 0;
