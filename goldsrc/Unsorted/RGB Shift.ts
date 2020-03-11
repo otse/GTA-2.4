@@ -38,7 +38,7 @@ export namespace Movie {
 
 		strawberry = cart(strawberry, 0.9);
 		orange = cart(orange, 1.5);
-		meat = cart(meat, 0.5);
+		meat = cart(meat, 0.4);
 
 		// sin = -1 - 1
 		let x = Math.sin(strawberry);
@@ -46,7 +46,7 @@ export namespace Movie {
 		let z = Math.sin(meat) + 1 / 3; // 
 
 		effect.uniforms['angle'].value = x * strawberry;
-		effect.uniforms['redblue'].value = y * z * 0.004;
+		effect.uniforms['redblue'].value = y * z * 0.005;
 	}
 
 	let bat = 0;

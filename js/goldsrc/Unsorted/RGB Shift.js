@@ -26,13 +26,13 @@ export var Movie;
         //return;
         strawberry = cart(strawberry, 0.9);
         orange = cart(orange, 1.5);
-        meat = cart(meat, 0.5);
+        meat = cart(meat, 0.4);
         // sin = -1 - 1
         let x = Math.sin(strawberry);
         let y = Math.cos(orange) / 2;
         let z = Math.sin(meat) + 1 / 3; // 
         Movie.effect.uniforms['angle'].value = x * strawberry;
-        Movie.effect.uniforms['redblue'].value = y * z * 0.004;
+        Movie.effect.uniforms['redblue'].value = y * z * 0.005;
     }
     Movie.update = update;
     let bat = 0;

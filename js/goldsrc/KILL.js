@@ -7,9 +7,9 @@ import Blocks from "./Objects/Shapes/Blocks";
 import BoxCutter from "./Objects/Shapes/Box cutter";
 import Sprites from "./Sprites/Sprites";
 import Sheets from "./Sprites/Sheets";
-import Levels from "./Generators/Levels";
 import Zoom from "./Unsorted/Zoom";
 import { Movie } from "./Unsorted/RGB Shift";
+import HighWayWithEveryCar from "./Scenarios/Highway with every car";
 export var KILL;
 (function (KILL) {
     function init() {
@@ -24,8 +24,8 @@ export var KILL;
         Movie.init();
         KILL.city = new City;
         window.KILL = KILL;
-        Levels.longLonesome();
-        //Levels.aptsOffice();
+        //PalmTrees.init();
+        HighWayWithEveryCar.init();
         let data = {
             type: 'Ply',
             x: 10.5,

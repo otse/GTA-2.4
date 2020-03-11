@@ -1231,7 +1231,6 @@ var gta_kill = (function (exports, THREE) {
             }
         };
     })(CarMetas || (CarMetas = {}));
-    var CarMetas$1 = CarMetas;
 
     var CarPhysics;
     (function (CarPhysics) {
@@ -3609,6 +3608,268 @@ var gta_kill = (function (exports, THREE) {
     })(Sprites || (Sprites = {}));
     var Sprites$1 = Sprites;
 
+    var EasingFunctions;
+    (function (EasingFunctions) {
+        // no easing, no acceleration
+        function linear(t) {
+            return t;
+        }
+        EasingFunctions.linear = linear;
+        // Accelerating from zero velocity
+        function inQuad(t) {
+            return t * t;
+        }
+        EasingFunctions.inQuad = inQuad;
+        // Decelerating to zero velocity
+        function easeOutQuad(t) {
+            return t * (2 - t);
+        }
+        EasingFunctions.easeOutQuad = easeOutQuad;
+        // Acceleration until halfway, then deceleration
+        function inOutQuad(t) {
+            return t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+        }
+        EasingFunctions.inOutQuad = inOutQuad;
+        // Accelerating from zero velocity 
+        function inCubic(t) {
+            return t * t * t;
+        }
+        EasingFunctions.inCubic = inCubic;
+        // Decelerating to zero velocity 
+        function outCubic(t) {
+            return (--t) * t * t + 1;
+        }
+        EasingFunctions.outCubic = outCubic;
+        // Acceleration until halfway, then deceleration 
+        function inOutCubic(t) {
+            return t < .5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
+        }
+        EasingFunctions.inOutCubic = inOutCubic;
+        // Accelerating from zero velocity 
+        function inQuart(t) {
+            return t * t * t * t;
+        }
+        EasingFunctions.inQuart = inQuart;
+        // Decelerating to zero velocity 
+        function outQuart(t) {
+            return 1 - (--t) * t * t * t;
+        }
+        EasingFunctions.outQuart = outQuart;
+        // Acceleration until halfway, then deceleration
+        function inOutQuart(t) {
+            return t < .5 ? 8 * t * t * t * t : 1 - 8 * (--t) * t * t * t;
+        }
+        EasingFunctions.inOutQuart = inOutQuart;
+        // Accelerating from zero velocity
+        function inQuint(t) {
+            return t * t * t * t * t;
+        }
+        EasingFunctions.inQuint = inQuint;
+        // Decelerating to zero velocity
+        function outQuint(t) {
+            return 1 + (--t) * t * t * t * t;
+        }
+        EasingFunctions.outQuint = outQuint;
+        // Acceleration until halfway, then deceleration 
+        function inOutQuint(t) {
+            return t < .5 ? 16 * t * t * t * t * t : 1 + 16 * (--t) * t * t * t * t;
+        }
+        EasingFunctions.inOutQuint = inOutQuint;
+    })(EasingFunctions || (EasingFunctions = {}));
+    var EasingFunctions$1 = EasingFunctions;
+
+    // todo construct a utility type from the length of the stages array,
+    // so that we can make a cool tuple for the Zoom.Set so that we dont
+    // have to write 0 | 1 | 2 | 3
+    // http://www.typescriptlang.org/docs/handbook/advanced-types.html
+    var Zoom;
+    (function (Zoom) {
+        Zoom.stage = 2;
+        Zoom.stages = [150, 300, 600, 1200];
+        let broom = 600;
+        let zoom = 600;
+        let t = 0;
+        const SECONDS = 1;
+        function set(st) {
+            t = 0;
+            broom = zoom;
+            Zoom.stage = st;
+        }
+        Zoom.set = set;
+        function update() {
+            if (!KILL$1.ply)
+                return;
+            const z = App.map[90] == 1;
+            if (z) {
+                t = 0;
+                broom = zoom;
+                Zoom.stage =
+                    Zoom.stage < Zoom.stages.length - 1 ? Zoom.stage + 1 : 0;
+            }
+            t += Four$1.delta / SECONDS;
+            t = Math.min(Math.max(t, 0.0), 1.0);
+            const difference = Zoom.stages[Zoom.stage] - broom;
+            const T = EasingFunctions$1.inOutCubic(t);
+            zoom = broom + (T * difference);
+            const data = KILL$1.ply.data;
+            Four$1.camera.position.set(data.x * 64, data.y * 64, zoom);
+        }
+        Zoom.update = update;
+    })(Zoom || (Zoom = {}));
+    var Zoom$1 = Zoom;
+
+    const TWO = THREE__default;
+    var Movie;
+    (function (Movie) {
+        Movie.enabled = true;
+        function cityView() {
+            Zoom$1.set(2);
+            Movie.effect.uniforms["pixelSize"].value = 1.0;
+            Movie.effect.uniforms["zoom"].value = 0.0;
+        }
+        Movie.cityView = cityView;
+        function cart(a, n) {
+            if (a < Math.PI * 2)
+                a += n * Four$1.delta;
+            if (a > Math.PI * 2)
+                a -= Math.PI * 2;
+            return a;
+        }
+        let strawberry = 0;
+        let orange = 0;
+        let meat = 0;
+        function update() {
+            //updateHyper();
+            //return;
+            strawberry = cart(strawberry, 0.9);
+            orange = cart(orange, 1.5);
+            meat = cart(meat, 0.4);
+            // sin = -1 - 1
+            let x = Math.sin(strawberry);
+            let y = Math.cos(orange) / 2;
+            let z = Math.sin(meat) + 1 / 3; // 
+            Movie.effect.uniforms['angle'].value = x * strawberry;
+            Movie.effect.uniforms['redblue'].value = y * z * 0.005;
+        }
+        Movie.update = update;
+        let bat = 0;
+        function updateHyper() {
+            bat = cart(bat, 5);
+            Movie.effect.uniforms['angle'].value = bat;
+            Movie.effect.uniforms['redblue'].value = bat * 0.5;
+        }
+        Movie.updateHyper = updateHyper;
+        function resize() {
+            Movie.effect.uniforms["resolution"].value.set(window.innerWidth, window.innerHeight).multiplyScalar(window.devicePixelRatio);
+        }
+        Movie.resize = resize;
+        function init() {
+            Movie.composer = new TWO.EffectComposer(Four$1.renderer);
+            Movie.renderPass = new TWO.RenderPass(Four$1.scene, Four$1.camera);
+            Movie.composer.addPass(Movie.renderPass);
+            Movie.effect = new TWO.ShaderPass(Movie.retroShader);
+            Movie.effect.uniforms['redblue'].value = 0.0015 * 0.5;
+            Movie.effect.uniforms["resolution"].value =
+                new THREE.Vector2(window.innerWidth, window.innerHeight);
+            Movie.effect.uniforms["resolution"].value.multiplyScalar(window.devicePixelRatio);
+            Movie.effect.renderToScreen = true;
+            Movie.composer.addPass(Movie.effect);
+        }
+        Movie.init = init;
+        Movie.retroShader = {
+            uniforms: {
+                "tDiffuse": { value: null },
+                "redblue": { value: 0.005 },
+                "angle": { value: 0.0 },
+                "resolution": { value: null },
+                "pixelSize": { value: 3.0 },
+                "zoom": { value: 1.0 }
+            },
+            defines: {
+                'XXX': '',
+            },
+            vertexShader: `
+			varying vec2 vUv;
+			uniform float zoom;
+
+			void main() {
+
+				vUv = uv;
+
+				//if (zoom > 0.0) {
+				//    vUv.x -= zoom / 300.0;
+				//}
+
+				gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+
+			}`,
+            fragmentShader: `
+			uniform sampler2D tDiffuse;
+			uniform float redblue;
+			uniform float angle;
+
+			uniform float zoom;
+			uniform float pixelSize;
+			uniform vec2 resolution;
+
+			varying vec2 vUv;
+
+			float reduce(float p) {
+				float DIVIDE = 8.0;
+				return (ceil((p * 255.0) / DIVIDE) * DIVIDE) / 255.0;
+				// ceil is lighter, floor is darker
+			}
+
+			vec4 R2D2(vec2 v) {
+				vec4 rgb = texture2D(tDiffuse, v);
+				rgb.r = reduce(rgb.r);
+				rgb.g = reduce(rgb.g);
+				rgb.b = reduce(rgb.b);
+				return rgb;
+			}
+
+			void main() {
+
+				// cinematic retro city view
+				/*if (pixelSize > 1.0) {
+
+					vec2 dxy = pixelSize / resolution;
+					vec2 coord = dxy * floor( vUv / dxy );
+
+					vec2 uuu = coord; //coord; // vUv
+
+					vec2 offset = redblue * vec2( cos(angle), sin(angle));
+					vec4 cr = R2D2(uuu + offset);
+					vec4 cga = R2D2(uuu);
+					vec4 cb = R2D2(uuu - offset);
+
+					vec4 shifty = vec4(cr.r, cga.g, cb.b, cga.a);
+					gl_FragColor = shifty;
+
+					//gl_FragColor = R2D2(uuu);
+				}
+				else */
+				{
+					vec2 offset = redblue * vec2( cos(angle), sin(angle));
+					vec4 cr = texture2D(tDiffuse, vUv + offset);
+					vec4 cga = texture2D(tDiffuse, vUv);
+					vec4 cb = texture2D(tDiffuse, vUv - offset);
+
+					vec4 shifty = vec4(cr.r, cga.g, cb.b, cga.a);
+					gl_FragColor = shifty;
+					//gl_FragColor = texture2D(tDiffuse, vUv);
+
+				}
+
+				#ifdef MAKE_BLACK
+					
+					gl_FragColor.rgb *= 0.0;
+
+				#endif
+			}`
+        };
+    })(Movie || (Movie = {}));
+
     // For making vertical ~> horizontal
     // So you only need to make one
     // vertical generator
@@ -3689,6 +3950,27 @@ var gta_kill = (function (exports, THREE) {
         "Furore GT", "Special Agent Car" /*, "Karma Bus",*/
     ];
     window.parkedCarNames = parkedCarNames;
+    const carNames = [
+        "Romero", "Wellard", "Aniston BD4", "Pacifier",
+        "G4 Bank Van", "Beamer", "Box Car", "Box Truck",
+        "Bug", "Bulwark", "Bus", "Cop Car",
+        "Minx", "Eddy", "Panto", "Fire Truck",
+        "Shark", "GT-A1", "Garbage Truck", "Armed Land Roamer",
+        "Hot Dog Van", "Ice-Cream Van", "Dementia Limousine", "Dementia",
+        "Land Roamer", "Jefferson", "Stretch Limousine", "Sports Limousine",
+        "Medicar", "Benson", "Schmidt", "Miara",
+        "Big Bug", "Morton", "Maurice", "Pickup",
+        "A-Type", "Arachnid", "Spritzer", "Stinger",
+        "Meteor", /*"Meteor Twoo?",*/ "Hachura", "B-Type",
+        "Taxi Xpress", "SWAT Van", "Michelli Roadster",
+        "Taxi", "T-Rex", "Tow Truck",
+        /*"Train", "Train Cab", "Train FB",*/ "Trance-Am",
+        "Truck Cab", "Truck Cab SX", "Container", "Transporter",
+        "TV Van", "Van", "U-Jerk Truck", "Z-Type",
+        "Rumbler",
+        "Jagular XK",
+        "Furore GT", "Special Agent Car",
+    ];
 
     // PLURAL "LIKE A C API"
     var Cars;
@@ -4273,531 +4555,62 @@ var gta_kill = (function (exports, THREE) {
     })(Generators || (Generators = {}));
     var Generators$1 = Generators;
 
-    var GenTools;
-    (function (GenTools) {
-        // To swap tile at ply in console
-        // ~ Deline__.edit([Math.floor(ply.data.x), Math.floor(ply.data.y), 0], 'sideDash')
-        function getDataOfType(w, type) {
-            let point = { x: w[0], y: w[1], z: w[2] };
-            let chunk = Datas$1.getChunk(point);
-            for (let data of chunk.datas) {
-                if (data.type != type)
-                    continue;
-                if (Points$1.different(data, point))
-                    continue;
-                return data;
-            }
+    var Scenarios;
+    (function (Scenarios) {
+        function load(p) {
+            Scenarios.current = p;
+            Scenarios.current.load();
         }
-        GenTools.getDataOfType = getDataOfType;
-        function swap2(min, assign) {
-            swap(min, min, assign);
+        Scenarios.load = load;
+        function update() {
+            if (Scenarios.current)
+                Scenarios.current.update();
         }
-        GenTools.swap2 = swap2;
-        function swap(min, max, assign) {
-            let x = min[0];
-            for (; x <= max[0]; x++) {
-                let y = min[1];
-                for (; y <= max[1]; y++) {
-                    let point = Points$1.make(x, y);
-                    let chunk = Datas$1.getChunk(point);
-                    for (let data of chunk.datas) {
-                        if (Points$1.different(data, point))
-                            continue;
-                        //data.color = 'pink';
-                        Object.assign(data, assign);
-                        // Rebuild idiom
-                        chunk.remove(data);
-                        chunk.add(data);
-                    }
-                }
-            }
-        }
-        GenTools.swap = swap;
-        let Deline;
-        (function (Deline) {
-            function simple(w, width, height) {
-                let x = 0;
-                for (; x < width; x++) {
-                    let y = 0;
-                    for (; y < height; y++) {
-                        let point = Points$1.make(w[0] + x, w[1] + y);
-                        let chunk = Datas$1.getChunk(point);
-                        for (let data of chunk.datas) {
-                            if ('Surface' != data.type)
-                                continue;
-                            if (Points$1.different(data, point))
-                                continue;
-                            if (data.sprite == Sprites$1.ROADS.SIDE_LINE) {
-                                data.sprite = Sprites$1.ROADS.SIDE_CLEAR;
-                            }
-                            if (data.sprite == Sprites$1.ROADS.CONVEX_LINE)
-                                data.sprite = Sprites$1.ROADS.CONVEX;
-                            if (data.sprite == Sprites$1.ROADS.SIDE_STOP_LINE) {
-                                data.sprite = Sprites$1.ROADS.SIDE_STOP;
-                            }
-                        }
-                    }
-                }
-            }
-            Deline.simple = simple;
-            function aabb(min, max, axis) {
-                horz(min, max[0] - min[0], max[1] - min[1], axis);
-            }
-            Deline.aabb = aabb;
-            function horz(w, width, height, axis) {
-                let x = 0;
-                for (; x < width; x++) {
-                    let y = 0;
-                    for (; y < height; y++) {
-                        let p = { x: w[0] + x, y: w[1] + y };
-                        let chunk = Datas$1.getChunk(p);
-                        //if (chunked.includes(chunk))
-                        //continue;
-                        //chunked.push(chunk);
-                        for (let data of chunk.datas) {
-                            if ('Surface' != data.type)
-                                continue;
-                            if (Points$1.different(data, p))
-                                continue;
-                            //data.color = 'red';
-                            if (data.sprite == Sprites$1.ROADS.SIDE_LINE) {
-                                data.sprite = Sprites$1.ROADS.SIDE_CLEAR;
-                                if (axis == 0) {
-                                    if (p.y == w[1] || p.y == w[1] + height - 1) {
-                                        data.sprite = Sprites$1.ROADS.SIDE_DASH;
-                                        //data.color = 'pink';
-                                        if ((data.r == 1) && p.y == w[1] + height - 1)
-                                            data.flip = true;
-                                        if ((data.r == 3) && p.y == w[1])
-                                            data.flip = true;
-                                    }
-                                }
-                            }
-                            if (data.sprite == Sprites$1.ROADS.CONVEX_LINE)
-                                data.sprite = Sprites$1.ROADS.CONVEX;
-                            if (data.sprite == Sprites$1.ROADS.SIDE_STOP_LINE) {
-                                data.sprite = Sprites$1.ROADS.SIDE_STOP;
-                            }
-                        }
-                    }
-                }
-            }
-            Deline.horz = horz;
-        })(Deline = GenTools.Deline || (GenTools.Deline = {}));
-    })(GenTools || (GenTools = {}));
-    var GenTools$1 = GenTools;
+        Scenarios.update = update;
+    })(Scenarios || (Scenarios = {}));
 
-    // Automobiles, trains
-    // Resources
-    // https://gta.fandom.com/wiki/Vehicles_in_GTA_2
-    // http://en.wikigta.org/wiki/Code_lists_%28GTA2%29
-    var PaintJobs;
-    (function (PaintJobs) {
-        let Enum;
-        (function (Enum) {
-            Enum[Enum["BLUE1"] = 0] = "BLUE1";
-            Enum[Enum["PURPLE1"] = 1] = "PURPLE1";
-            Enum[Enum["BLACK"] = 2] = "BLACK";
-            Enum[Enum["BLUE2"] = 3] = "BLUE2";
-            Enum[Enum["BLUE_GRAY"] = 4] = "BLUE_GRAY";
-            Enum[Enum["BRIGHT_GREEN"] = 5] = "BRIGHT_GREEN";
-            Enum[Enum["BRIGHT_RED"] = 6] = "BRIGHT_RED";
-            Enum[Enum["BROWN1"] = 7] = "BROWN1";
-            Enum[Enum["BROWN2"] = 8] = "BROWN2";
-            Enum[Enum["SILVER_BLUE"] = 9] = "SILVER_BLUE";
-            Enum[Enum["CREAM"] = 10] = "CREAM";
-            Enum[Enum["YELLOW"] = 11] = "YELLOW";
-            Enum[Enum["CYAN"] = 12] = "CYAN";
-            Enum[Enum["DARK_BEIGE"] = 13] = "DARK_BEIGE";
-            Enum[Enum["DARK_BLUE"] = 14] = "DARK_BLUE";
-            Enum[Enum["DEEP_BLUE"] = 15] = "DEEP_BLUE";
-            Enum[Enum["DARK_GREEN"] = 16] = "DARK_GREEN";
-            Enum[Enum["DARK_RED"] = 17] = "DARK_RED";
-            Enum[Enum["DARK_RUST"] = 18] = "DARK_RUST";
-            Enum[Enum["GOLD"] = 19] = "GOLD";
-            Enum[Enum["GREEN"] = 20] = "GREEN";
-            Enum[Enum["GRAY"] = 21] = "GRAY";
-            Enum[Enum["YELLOW_GREEN"] = 22] = "YELLOW_GREEN";
-            Enum[Enum["OLIVE"] = 23] = "OLIVE";
-            Enum[Enum["ORANGE"] = 24] = "ORANGE";
-            Enum[Enum["PALE_BLUE"] = 25] = "PALE_BLUE";
-            Enum[Enum["PINK_RED"] = 26] = "PINK_RED";
-            Enum[Enum["PURPLE2"] = 27] = "PURPLE2";
-            Enum[Enum["RED"] = 28] = "RED";
-            Enum[Enum["RUST"] = 29] = "RUST";
-            Enum[Enum["SILVER"] = 30] = "SILVER";
-            Enum[Enum["SKY_BLUE"] = 31] = "SKY_BLUE";
-            Enum[Enum["TURQUOISE"] = 32] = "TURQUOISE";
-            Enum[Enum["WHITE_GRAY"] = 33] = "WHITE_GRAY";
-            Enum[Enum["WHITE"] = 34] = "WHITE";
-            Enum[Enum["COP"] = 35] = "COP";
-        })(Enum = PaintJobs.Enum || (PaintJobs.Enum = {}));
-        PaintJobs.deltasSheets = {};
+    var HighWayWithEveryCar;
+    (function (HighWayWithEveryCar) {
         function init() {
-            const list = CarPhysics$1.List();
-            for (let name in list) {
-                const physic = list[name];
-                const meta = CarMetas$1.getNullable(name);
-                const sheet = {
-                    file: `D_GTA2_CAR_${physic.model}`,
-                    padding: 4,
-                    width: (meta.IMG_WIDTH * 10) + 36,
-                    height: (meta.IMG_HEIGHT * 2) + 4,
-                    nr: {
-                        w: 10,
-                        h: 2
-                    },
-                    piece: {
-                        w: meta.IMG_WIDTH,
-                        h: meta.IMG_HEIGHT
+            console.log('Highway with every car init');
+            const load = function () {
+                Generators$1.Roads.highway(1, [10, -7000, 0], 8000, 5, 'qualityRoads');
+                let x = .5;
+                let y = 0;
+                let j = 0;
+                for (let name of carNames) {
+                    let car = {
+                        type: 'Car',
+                        car: name,
+                        //paint: PaintJobs.Enum.DARK_GREEN,
+                        x: 10 + x,
+                        y: y + 7,
+                        z: 0
+                    };
+                    y--;
+                    j++;
+                    if (j > 14) {
+                        j = 0;
+                        y = 0;
+                        // Move to next lane
+                        x += 1;
                     }
-                };
-                PaintJobs.deltasSheets[name] = sheet;
-            }
-            console.log('build car delta sheets');
-            window.carsDeltas = PaintJobs.deltasSheets;
-        }
-        PaintJobs.init = init;
-    })(PaintJobs || (PaintJobs = {}));
-    var PaintJobs$1 = PaintJobs;
-
-    var Levels;
-    (function (Levels) {
-        function aptsOffice() {
-            Generators$1.roadMode = 'Adapt';
-            // Fill the landscape
-            // sty/nature/tracks/514.bmp
-            // sty/nature/park original/216.bmp
-            // sty/nature/evergreen/836.bmp - Turtoise wasteland
-            //Generators.Fill.fill([-500, -500, 0], [1000, 1000, 0], { sty: 'sty/nature/evergreen/836.bmp' }, { WHEEL: true });
-            //Generators.Fill.fill([10, -25, 0], [10+1000, -25+1000, 0], {sty: 'sty/nature/tracks/512.bmp'}, {RANDOM_ROTATION: true});
-            //Generators.Fill.fill([12, -25, 0], 1, 50, {r: 3, sty: 'sty/nature/evergreen/839.bmp'});
-            // Side of roads:
-            // 'sty/nature/evergreen/839.bmp'
-            //Generators.Fill.fill([9, -25, 0], [9, -25 + 50, 0], { r: 1, sty: 'sty/nature/evergreen/839.bmp' });
-            //Generators.Fill.fill([9, -25, 0], [9, -25 + 50, 0], { r: 1, sty: 'sty/floors/mixed/64.bmp' });
-            //Generators.Fill.fill([12, -25, 0], [12, -25 + 50, 0], { r: 3, sty: 'sty/nature/evergreen/839.bmp' });
-            //Generators.Fill.fill([-25, 6, 0], [9, 6, 0], { r: 2, sty: 'sty/nature/evergreen/839.bmp' });
-            //Generators.Fill.fill1([9, 6, 0], { r: 2, sty: 'sty/nature/evergreen/852.bmp' }); // 838
-            //Generators.Fill.fill([-25, -1, 0], [9, -1, 0], { r: 0, sty: 'sty/nature/evergreen/839.bmp' });
-            //Generators.Fill.fill1([9, -1, 0], { r: 1, sty: 'sty/nature/evergreen/852.bmp' }); // 838
-            // Big main road:
-            Generators$1.Roads.twolane(1, [10, -25, 0], 50, 'qualityRoads');
-            //Generators.Fill.fill([12, -25, 0], 1, 50, {r: 2, sty: 'sty/nature/tracks/520.bmp'});
-            Generators$1.Roads.oneway(0, [2, 5, 0], 9, 'qualityRoads'); // Parking entry
-            Generators$1.Roads.oneway(0, [7, 0, 0], 4, 'qualityRoads'); // Parking exit
-            // Deco in between road and parking
-            Generators$1.Fill.fill([8, 1, 0], [9, 4, 0], { r: 0, sty: 'sty/floors/mixed/64.bmp' });
-            //Generators.Fill.fill([9, 1, 0], [9, 4, 0], { r: 1, sty: 'sty/nature/evergreen/836.bmp' });
-            // Turq evergreen planter
-            //Generators.Fill.fill1([9, 1, 0], { r: 2, sty: 'sty/nature/evergreen/840.bmp' });
-            //Generators.Fill.fill1([9, 2, 0], { r: 2, sty: 'sty/nature/evergreen/859.bmp' });
-            //Generators.Fill.fill1([9, 3, 0], { r: 2, sty: 'sty/nature/evergreen/859.bmp' });
-            //Generators.Fill.fill1([9, 4, 0], { r: 0, sty: 'sty/nature/evergreen/840.bmp' });
-            // Deline exits
-            //GenTools.Deline.horz([2, 4, 0], 10, 3, 0);
-            //GenTools.Deline.horz([2, -1, 0], 9, 3, 0);
-            //GenTools.Deline.aabb([2, -1, 0], [2, 4+10, 0+9], 0);
-            GenTools$1.Deline.aabb([9, -1, 0], [13, 7, 0], 0); // Deline success
-            //Generators.Fill.fill([6, 0, 0], [6, 4, 0], { r: 3, sty: 'sty/floors/yellow/933.bmp' }, { WHEEL: false });
-            Generators$1.Fill.fill([6, 0, 0], [6, 4, 0], { r: 1, sty: 'sty/floors/mixed/64.bmp' }, { WHEEL: true });
-            // Gas station
-            Generators$1.Interiors.generate([3, 0, 0], [5, 4, 0], 'green');
-            //Generators.Buildings.type1([3, 0, 0], [5, 4, 0]); // Gas station
-            //Gen1.GenRoads.highway(1, [5, 0, 0], 6, 2, 'greyRoads'); // Pumps road
-            //Gen1.GenRoads.twolane(0, [2, 5, 0], 9, 'greenRoads'); // horz
-            //Gen1.GenRoads.twolane(0, [2, -2, 0], 9, 'greenRoads'); // horz
-            //GenDeline.mixedToBad([2, 4, 0], 9, 4);
-            //GenDeline.mixedToBad([2, -3, 0], 9, 4);
-            Generators$1.Parking.onewayRight([7, 0, 0], 6, 2, 'qualityRoads');
-            //GenTools.swap([7, 1, 0], [7, 4, 0], { sheet: 'badRoads' });
-            //GenTools.swap([6, 2, 0], [6, 3, 0], { sheet: 'badRoads'} );
-            //Gen2.GenDeline.horz([4, 0, 0], 6, 6);
-            let gas_station_corner = GenTools$1.getDataOfType([7, 5, 0], 'Surface');
-            let gas_station_corner2 = GenTools$1.getDataOfType([7, 0, 0], 'Surface');
-            gas_station_corner.sprite = Sprites$1.ROADS.SINGLE_EXIT;
-            gas_station_corner2.sprite = Sprites$1.ROADS.SINGLE_CORNER;
-            gas_station_corner2.r += 1;
-            return;
-        }
-        Levels.aptsOffice = aptsOffice;
-        function longLonesome() {
-            Generators$1.Roads.twolane(1, [10, -7000, 0], 8000, 'qualityRoads');
-            let car = {
-                type: 'Car',
-                car: 'Minx',
-                paint: PaintJobs$1.Enum.DARK_GREEN,
-                x: 10.5,
-                y: 0,
-                z: 0
+                    Datas$1.deliver(car);
+                }
+                console.log('loaded highway with every car');
             };
-            Datas$1.deliver(car);
+            const update = function () {
+            };
+            let highwayWithEveryCar = {
+                name: 'Highway with every car',
+                load: load,
+                update: update
+            };
+            Scenarios.load(highwayWithEveryCar);
         }
-        Levels.longLonesome = longLonesome;
-    })(Levels || (Levels = {}));
-    var Levels$1 = Levels;
-
-    var EasingFunctions;
-    (function (EasingFunctions) {
-        // no easing, no acceleration
-        function linear(t) {
-            return t;
-        }
-        EasingFunctions.linear = linear;
-        // Accelerating from zero velocity
-        function inQuad(t) {
-            return t * t;
-        }
-        EasingFunctions.inQuad = inQuad;
-        // Decelerating to zero velocity
-        function easeOutQuad(t) {
-            return t * (2 - t);
-        }
-        EasingFunctions.easeOutQuad = easeOutQuad;
-        // Acceleration until halfway, then deceleration
-        function inOutQuad(t) {
-            return t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-        }
-        EasingFunctions.inOutQuad = inOutQuad;
-        // Accelerating from zero velocity 
-        function inCubic(t) {
-            return t * t * t;
-        }
-        EasingFunctions.inCubic = inCubic;
-        // Decelerating to zero velocity 
-        function outCubic(t) {
-            return (--t) * t * t + 1;
-        }
-        EasingFunctions.outCubic = outCubic;
-        // Acceleration until halfway, then deceleration 
-        function inOutCubic(t) {
-            return t < .5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
-        }
-        EasingFunctions.inOutCubic = inOutCubic;
-        // Accelerating from zero velocity 
-        function inQuart(t) {
-            return t * t * t * t;
-        }
-        EasingFunctions.inQuart = inQuart;
-        // Decelerating to zero velocity 
-        function outQuart(t) {
-            return 1 - (--t) * t * t * t;
-        }
-        EasingFunctions.outQuart = outQuart;
-        // Acceleration until halfway, then deceleration
-        function inOutQuart(t) {
-            return t < .5 ? 8 * t * t * t * t : 1 - 8 * (--t) * t * t * t;
-        }
-        EasingFunctions.inOutQuart = inOutQuart;
-        // Accelerating from zero velocity
-        function inQuint(t) {
-            return t * t * t * t * t;
-        }
-        EasingFunctions.inQuint = inQuint;
-        // Decelerating to zero velocity
-        function outQuint(t) {
-            return 1 + (--t) * t * t * t * t;
-        }
-        EasingFunctions.outQuint = outQuint;
-        // Acceleration until halfway, then deceleration 
-        function inOutQuint(t) {
-            return t < .5 ? 16 * t * t * t * t * t : 1 + 16 * (--t) * t * t * t * t;
-        }
-        EasingFunctions.inOutQuint = inOutQuint;
-    })(EasingFunctions || (EasingFunctions = {}));
-    var EasingFunctions$1 = EasingFunctions;
-
-    // todo construct a utility type from the length of the stages array,
-    // so that we can make a cool tuple for the Zoom.Set so that we dont
-    // have to write 0 | 1 | 2 | 3
-    // http://www.typescriptlang.org/docs/handbook/advanced-types.html
-    var Zoom;
-    (function (Zoom) {
-        Zoom.stage = 2;
-        Zoom.stages = [150, 300, 600, 1200];
-        let broom = 600;
-        let zoom = 600;
-        let t = 0;
-        const SECONDS = 1;
-        function set(st) {
-            t = 0;
-            broom = zoom;
-            Zoom.stage = st;
-        }
-        Zoom.set = set;
-        function update() {
-            if (!KILL$1.ply)
-                return;
-            const z = App.map[90] == 1;
-            if (z) {
-                t = 0;
-                broom = zoom;
-                Zoom.stage =
-                    Zoom.stage < Zoom.stages.length - 1 ? Zoom.stage + 1 : 0;
-            }
-            t += Four$1.delta / SECONDS;
-            t = Math.min(Math.max(t, 0.0), 1.0);
-            const difference = Zoom.stages[Zoom.stage] - broom;
-            const T = EasingFunctions$1.inOutCubic(t);
-            zoom = broom + (T * difference);
-            const data = KILL$1.ply.data;
-            Four$1.camera.position.set(data.x * 64, data.y * 64, zoom);
-        }
-        Zoom.update = update;
-    })(Zoom || (Zoom = {}));
-    var Zoom$1 = Zoom;
-
-    const TWO = THREE__default;
-    var Movie;
-    (function (Movie) {
-        Movie.enabled = true;
-        function cityView() {
-            Zoom$1.set(2);
-            Movie.effect.uniforms["pixelSize"].value = 1.0;
-            Movie.effect.uniforms["zoom"].value = 0.0;
-        }
-        Movie.cityView = cityView;
-        function cart(a, n) {
-            if (a < Math.PI * 2)
-                a += n * Four$1.delta;
-            if (a > Math.PI * 2)
-                a -= Math.PI * 2;
-            return a;
-        }
-        let strawberry = 0;
-        let orange = 0;
-        let meat = 0;
-        function update() {
-            //updateHyper();
-            //return;
-            strawberry = cart(strawberry, 0.9);
-            orange = cart(orange, 1.5);
-            meat = cart(meat, 0.5);
-            // sin = -1 - 1
-            let x = Math.sin(strawberry);
-            let y = Math.cos(orange) / 2;
-            let z = Math.sin(meat) + 1 / 3; // 
-            Movie.effect.uniforms['angle'].value = x * strawberry;
-            Movie.effect.uniforms['redblue'].value = y * z * 0.004;
-        }
-        Movie.update = update;
-        let bat = 0;
-        function updateHyper() {
-            bat = cart(bat, 5);
-            Movie.effect.uniforms['angle'].value = bat;
-            Movie.effect.uniforms['redblue'].value = bat * 0.5;
-        }
-        Movie.updateHyper = updateHyper;
-        function resize() {
-            Movie.effect.uniforms["resolution"].value.set(window.innerWidth, window.innerHeight).multiplyScalar(window.devicePixelRatio);
-        }
-        Movie.resize = resize;
-        function init() {
-            Movie.composer = new TWO.EffectComposer(Four$1.renderer);
-            Movie.renderPass = new TWO.RenderPass(Four$1.scene, Four$1.camera);
-            Movie.composer.addPass(Movie.renderPass);
-            Movie.effect = new TWO.ShaderPass(Movie.retroShader);
-            Movie.effect.uniforms['redblue'].value = 0.0015 * 0.5;
-            Movie.effect.uniforms["resolution"].value =
-                new THREE.Vector2(window.innerWidth, window.innerHeight);
-            Movie.effect.uniforms["resolution"].value.multiplyScalar(window.devicePixelRatio);
-            Movie.effect.renderToScreen = true;
-            Movie.composer.addPass(Movie.effect);
-        }
-        Movie.init = init;
-        Movie.retroShader = {
-            uniforms: {
-                "tDiffuse": { value: null },
-                "redblue": { value: 0.005 },
-                "angle": { value: 0.0 },
-                "resolution": { value: null },
-                "pixelSize": { value: 3.0 },
-                "zoom": { value: 1.0 }
-            },
-            defines: {
-                'XXX': '',
-            },
-            vertexShader: `
-			varying vec2 vUv;
-			uniform float zoom;
-
-			void main() {
-
-				vUv = uv;
-
-				//if (zoom > 0.0) {
-				//    vUv.x -= zoom / 300.0;
-				//}
-
-				gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
-
-			}`,
-            fragmentShader: `
-			uniform sampler2D tDiffuse;
-			uniform float redblue;
-			uniform float angle;
-
-			uniform float zoom;
-			uniform float pixelSize;
-			uniform vec2 resolution;
-
-			varying vec2 vUv;
-
-			float reduce(float p) {
-				float DIVIDE = 8.0;
-				return (ceil((p * 255.0) / DIVIDE) * DIVIDE) / 255.0;
-				// ceil is lighter, floor is darker
-			}
-
-			vec4 R2D2(vec2 v) {
-				vec4 rgb = texture2D(tDiffuse, v);
-				rgb.r = reduce(rgb.r);
-				rgb.g = reduce(rgb.g);
-				rgb.b = reduce(rgb.b);
-				return rgb;
-			}
-
-			void main() {
-
-				// cinematic retro city view
-				/*if (pixelSize > 1.0) {
-
-					vec2 dxy = pixelSize / resolution;
-					vec2 coord = dxy * floor( vUv / dxy );
-
-					vec2 uuu = coord; //coord; // vUv
-
-					vec2 offset = redblue * vec2( cos(angle), sin(angle));
-					vec4 cr = R2D2(uuu + offset);
-					vec4 cga = R2D2(uuu);
-					vec4 cb = R2D2(uuu - offset);
-
-					vec4 shifty = vec4(cr.r, cga.g, cb.b, cga.a);
-					gl_FragColor = shifty;
-
-					//gl_FragColor = R2D2(uuu);
-				}
-				else */
-				{
-					vec2 offset = redblue * vec2( cos(angle), sin(angle));
-					vec4 cr = texture2D(tDiffuse, vUv + offset);
-					vec4 cga = texture2D(tDiffuse, vUv);
-					vec4 cb = texture2D(tDiffuse, vUv - offset);
-
-					vec4 shifty = vec4(cr.r, cga.g, cb.b, cga.a);
-					gl_FragColor = shifty;
-					//gl_FragColor = texture2D(tDiffuse, vUv);
-
-				}
-
-				#ifdef MAKE_BLACK
-					
-					gl_FragColor.rgb *= 0.0;
-
-				#endif
-			}`
-        };
-    })(Movie || (Movie = {}));
+        HighWayWithEveryCar.init = init;
+    })(HighWayWithEveryCar || (HighWayWithEveryCar = {}));
+    var HighWayWithEveryCar$1 = HighWayWithEveryCar;
 
     var KILL;
     (function (KILL) {
@@ -4813,8 +4626,8 @@ var gta_kill = (function (exports, THREE) {
             Movie.init();
             KILL.city = new City;
             window.KILL = KILL;
-            Levels$1.longLonesome();
-            //Levels.aptsOffice();
+            //PalmTrees.init();
+            HighWayWithEveryCar$1.init();
             let data = {
                 type: 'Ply',
                 x: 10.5,

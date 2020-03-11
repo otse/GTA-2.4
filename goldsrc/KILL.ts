@@ -14,6 +14,8 @@ import Levels from "./Generators/Levels";
 
 import Zoom from "./Unsorted/Zoom";
 import { Movie } from "./Unsorted/RGB Shift";
+import PalmTrees from "./Scenarios/Palm trees";
+import HighWayWithEveryCar from "./Scenarios/Highway with every car";
 
 export namespace KILL {
 
@@ -33,11 +35,11 @@ export namespace KILL {
 		Movie.init();
 		
 		city = new City;
-
+		
 		(window as any).KILL = KILL;
-
-		Levels.longLonesome();
-		//Levels.aptsOffice();
+		
+		//PalmTrees.init();
+		HighWayWithEveryCar.init();
 
 		let data: Data2 = {
 			type: 'Ply',
