@@ -3903,6 +3903,9 @@ var gta_kill = (function (exports, THREE) {
 
     var Spelling;
     (function (Spelling) {
+        function symbol(a, b, c, d, e, f, g) {
+            return { char: a, x: b, y: c, x2: d, y2: e, w: f, h: g };
+        }
         const lowercase = [
             'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',
             'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
@@ -3921,8 +3924,7 @@ var gta_kill = (function (exports, THREE) {
                 let char = text[i];
                 if (' ' == char) {
                     last_x += 33;
-                    let letter = { char: ' ', x: last_x, y: 0, cx: -1, cy: -1, w: 0, h: 0 };
-                    sentence.symbols.push(letter);
+                    sentence.symbols.push(symbol(' ', last_x, 0, -1, -1, 0, 0));
                     continue;
                 }
                 let a = lowercase.indexOf(char);
@@ -3930,11 +3932,9 @@ var gta_kill = (function (exports, THREE) {
                 let index = a != -1 ? a : b != -1 ? b : 0;
                 let start = font_sizes[index];
                 console.log('char', char, 'index', index);
-                let x = start;
                 let w = font_sizes[index + 1] - start;
-                let letter = { char: char, x: last_x, y: last_y, cx: x, cy: 0, w: w, h: 64 };
+                sentence.symbols.push(symbol(char, last_x, last_y, start, 0, w, 64));
                 last_x += w;
-                sentence.symbols.push(letter);
             }
             return sentence;
         }
@@ -3956,7 +3956,7 @@ var gta_kill = (function (exports, THREE) {
                 Letterer.bigFont = image;
                 KILL$1.checkin('FONTS');
             }, undefined, () => {
-                KILL$1.fault('FONTS');
+                KILL$1.fault('BIG FONT');
             });
         }
         Letterer.init = init;
@@ -3972,7 +3972,7 @@ var gta_kill = (function (exports, THREE) {
                 for (let symbol of spelling.symbols) {
                     if (' ' == symbol.char)
                         continue;
-                    context.drawImage(Letterer.bigFont, symbol.cx, symbol.cy, symbol.w, symbol.h, symbol.x, symbol.y, symbol.w, symbol.h);
+                    context.drawImage(Letterer.bigFont, symbol.x2, symbol.y2, symbol.w, symbol.h, symbol.x, symbol.y, symbol.w, symbol.h);
                 }
                 let image = new Image();
                 image.src = Letterer.canvas.toDataURL();

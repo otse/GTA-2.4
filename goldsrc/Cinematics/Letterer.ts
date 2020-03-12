@@ -33,7 +33,8 @@ export namespace Letterer {
 			},
 			undefined,
 			() => {
-				KILL.fault('FONTS');
+
+				KILL.fault('BIG FONT');
 			}
 		);
 
@@ -63,7 +64,7 @@ export namespace Letterer {
 					continue;
 
 				context.drawImage(
-					bigFont, symbol.cx, symbol.cy, symbol.w, symbol.h, symbol.x, symbol.y, symbol.w, symbol.h);
+					bigFont, symbol.x2, symbol.y2, symbol.w, symbol.h, symbol.x, symbol.y, symbol.w, symbol.h);
 			}
 
 			let image = new Image();

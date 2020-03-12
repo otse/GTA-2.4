@@ -15,7 +15,7 @@ export var Letterer;
             Letterer.bigFont = image;
             KILL.checkin('FONTS');
         }, undefined, () => {
-            KILL.fault('FONTS');
+            KILL.fault('BIG FONT');
         });
     }
     Letterer.init = init;
@@ -32,7 +32,7 @@ export var Letterer;
             for (let symbol of spelling.symbols) {
                 if (' ' == symbol.char)
                     continue;
-                context.drawImage(Letterer.bigFont, symbol.cx, symbol.cy, symbol.w, symbol.h, symbol.x, symbol.y, symbol.w, symbol.h);
+                context.drawImage(Letterer.bigFont, symbol.x2, symbol.y2, symbol.w, symbol.h, symbol.x, symbol.y, symbol.w, symbol.h);
             }
             let image = new Image();
             image.src = Letterer.canvas.toDataURL();
