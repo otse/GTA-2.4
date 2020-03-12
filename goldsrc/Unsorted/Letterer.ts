@@ -29,11 +29,11 @@ export namespace Letterer {
 			(image) => {
 				bigFont = image;
 
-				KILL.checkin(KILL.MASKS.FONTS);
+				KILL.checkin('FONTS');
 			},
 			undefined,
 			() => {
-				console.error('kill can\'t load font');
+				KILL.mistake('FONTS');
 			}
 		);
 

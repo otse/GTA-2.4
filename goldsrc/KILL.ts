@@ -26,37 +26,46 @@ export namespace KILL {
 	export var ply: Ply | null;
 	export var city: City;
 
-	var ready = false;
+	var started = false;
 
-	export enum MASKS {
+	export enum SYSTEM {
 		FONTS = 0,
-		//AUDIOS,
+		SPRITES,
 		COUNT
-	}
+	};
 
 	let systems = 0b0;
 
-	export function checkin(mask: MASKS) {
+	export function checkin(system: string) {
 
-		console.log('check-in ', mask);
+		var mask: SYSTEM = (<any>SYSTEM)[system];
 
-		const bit = 0b1 << mask;
+		if (undefined == mask) {
+			console.warn('checkin', system);
+			return;
+		}
+
+		const bit = 0b0 << mask;
 
 		systems |= bit;
 	}
 
-	function checkins() {
+	function checkins(t) {
 		let count = 0;
 
 		let i = 0;
-		for (; i < MASKS.COUNT; i++) {
+		for (; i < SYSTEM.COUNT; i++) {
 			(systems & 0b1 << i) ? count++ : void (0);
 		}
 
-		if (count == MASKS.COUNT) {
-			ready = true;
+		if (count == SYSTEM.COUNT) {
+			clearInterval(t);
 			start();
 		}
+	}
+
+	export function mistake(mask: string) {
+		console.error('mistake #', mask);
 	}
 
 	export function init() {
@@ -75,12 +84,17 @@ export namespace KILL {
 
 		city = new City;
 
-		(window as any).KILL = KILL;
+		let then = Date.now()
+
+		let t;
+		t = setInterval(() => { checkins(t) }, 1);
 	}
 
 	export function start() {
 
-		console.log('start');
+		console.log('kill starting');
+
+		started = true;
 
 		BridgeScenario.init();
 
@@ -100,10 +114,8 @@ export namespace KILL {
 
 	export function update() {
 
-		if (!ready) {
-			checkins();
+		if (!started)
 			return;
-		}
 
 		if (ply)
 			ply.update();

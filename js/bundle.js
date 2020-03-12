@@ -471,6 +471,7 @@ var gta_kill = (function (exports, THREE) {
             put('greyRoadsMixed', clone(baseRoads, { file: 'sty/sheets/grey_roads_mixed.png' }));
             put('yellowyPavement', clone(basePavement, { file: 'sty/sheets/yellowy_pavement.png' }));
             put('greenPavement', clone(basePavement, { file: 'sty/sheets/green_pavement.png' }));
+            KILL$1.checkin('SPRITES');
         }
         Sheets.init = init;
         var spriteTextures = [];
@@ -3909,9 +3910,9 @@ var gta_kill = (function (exports, THREE) {
             let loader = new THREE.ImageLoader();
             loader.load('sty/fonts/big.png', (image) => {
                 Letterer.bigFont = image;
-                KILL$1.checkin(KILL$1.MASKS.FONTS);
+                KILL$1.checkin('FONTS');
             }, undefined, () => {
-                console.error('kill can\'t load font');
+                KILL$1.mistake('FONTS');
             });
         }
         Letterer.init = init;
@@ -4794,31 +4795,39 @@ var gta_kill = (function (exports, THREE) {
 
     var KILL;
     (function (KILL) {
-        var ready = false;
-        let MASKS;
-        (function (MASKS) {
-            MASKS[MASKS["FONTS"] = 0] = "FONTS";
-            //AUDIOS,
-            MASKS[MASKS["COUNT"] = 1] = "COUNT";
-        })(MASKS = KILL.MASKS || (KILL.MASKS = {}));
+        var started = false;
+        let SYSTEM;
+        (function (SYSTEM) {
+            SYSTEM[SYSTEM["FONTS"] = 0] = "FONTS";
+            SYSTEM[SYSTEM["SPRITES"] = 1] = "SPRITES";
+            SYSTEM[SYSTEM["COUNT"] = 2] = "COUNT";
+        })(SYSTEM = KILL.SYSTEM || (KILL.SYSTEM = {}));
         let systems = 0b0;
-        function checkin(mask) {
-            console.log('check-in ', mask);
-            const bit = 0b1 << mask;
+        function checkin(system) {
+            var mask = SYSTEM[system];
+            if (undefined == mask) {
+                console.warn('checkin', system);
+                return;
+            }
+            const bit = 0b0 << mask;
             systems |= bit;
         }
         KILL.checkin = checkin;
-        function checkins() {
+        function checkins(t) {
             let count = 0;
             let i = 0;
-            for (; i < MASKS.COUNT; i++) {
+            for (; i < SYSTEM.COUNT; i++) {
                 (systems & 0b1 << i) ? count++ : void (0);
             }
-            if (count == MASKS.COUNT) {
-                ready = true;
+            if (count == SYSTEM.COUNT) {
+                clearInterval(t);
                 start();
             }
         }
+        function mistake(mask) {
+            console.error('mistake #', mask);
+        }
+        KILL.mistake = mistake;
         function init() {
             console.log('kill init');
             Phong2$1.rig();
@@ -4832,11 +4841,13 @@ var gta_kill = (function (exports, THREE) {
             Letterer.init();
             Movie.init();
             KILL.city = new City;
-            window.KILL = KILL;
+            let t;
+            t = setInterval(() => { checkins(t); }, 1);
         }
         KILL.init = init;
         function start() {
-            console.log('start');
+            console.log('kill starting');
+            started = true;
             BridgeScenario$1.init();
             let data = {
                 type: 'Ply',
@@ -4851,10 +4862,8 @@ var gta_kill = (function (exports, THREE) {
         }
         KILL.start = start;
         function update() {
-            if (!ready) {
-                checkins();
+            if (!started)
                 return;
-            }
             if (KILL.ply)
                 KILL.ply.update();
             Zoom$1.update();

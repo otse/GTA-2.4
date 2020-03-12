@@ -15,31 +15,40 @@ import { Scenarios } from "./Scenarios/Scenarios";
 import { Letterer } from "./Unsorted/Letterer";
 export var KILL;
 (function (KILL) {
-    var ready = false;
-    let MASKS;
-    (function (MASKS) {
-        MASKS[MASKS["FONTS"] = 0] = "FONTS";
-        //AUDIOS,
-        MASKS[MASKS["COUNT"] = 1] = "COUNT";
-    })(MASKS = KILL.MASKS || (KILL.MASKS = {}));
+    var started = false;
+    let SYSTEM;
+    (function (SYSTEM) {
+        SYSTEM[SYSTEM["FONTS"] = 0] = "FONTS";
+        SYSTEM[SYSTEM["SPRITES"] = 1] = "SPRITES";
+        SYSTEM[SYSTEM["COUNT"] = 2] = "COUNT";
+    })(SYSTEM = KILL.SYSTEM || (KILL.SYSTEM = {}));
+    ;
     let systems = 0b0;
-    function checkin(mask) {
-        console.log('check-in ', mask);
-        const bit = 0b1 << mask;
+    function checkin(system) {
+        var mask = SYSTEM[system];
+        if (undefined == mask) {
+            console.warn('checkin', system);
+            return;
+        }
+        const bit = 0b0 << mask;
         systems |= bit;
     }
     KILL.checkin = checkin;
-    function checkins() {
+    function checkins(t) {
         let count = 0;
         let i = 0;
-        for (; i < MASKS.COUNT; i++) {
+        for (; i < SYSTEM.COUNT; i++) {
             (systems & 0b1 << i) ? count++ : void (0);
         }
-        if (count == MASKS.COUNT) {
-            ready = true;
+        if (count == SYSTEM.COUNT) {
+            clearInterval(t);
             start();
         }
     }
+    function mistake(mask) {
+        console.error('mistake #', mask);
+    }
+    KILL.mistake = mistake;
     function init() {
         console.log('kill init');
         Phong2.rig();
@@ -53,11 +62,14 @@ export var KILL;
         Letterer.init();
         Movie.init();
         KILL.city = new City;
-        window.KILL = KILL;
+        let then = Date.now();
+        let t;
+        t = setInterval(() => { checkins(t); }, 1);
     }
     KILL.init = init;
     function start() {
-        console.log('start');
+        console.log('kill starting');
+        started = true;
         BridgeScenario.init();
         let data = {
             type: 'Ply',
@@ -72,10 +84,8 @@ export var KILL;
     }
     KILL.start = start;
     function update() {
-        if (!ready) {
-            checkins();
+        if (!started)
             return;
-        }
         if (KILL.ply)
             KILL.ply.update();
         Zoom.update();

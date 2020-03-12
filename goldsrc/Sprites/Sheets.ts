@@ -3,6 +3,7 @@ import { default as THREE, NearestFilter, Texture, TextureLoader, CanvasTexture,
 import Four from "../Four";
 import Util from "../Random";
 import Points from "../Objects/Points";
+import KILL from "../KILL";
 
 export namespace Sheets {
 
@@ -56,6 +57,8 @@ export namespace Sheets {
 		put('greyRoadsMixed', clone(baseRoads, { file: 'sty/sheets/grey_roads_mixed.png' }));
 		put('yellowyPavement', clone(basePavement, { file: 'sty/sheets/yellowy_pavement.png' }));
 		put('greenPavement', clone(basePavement, { file: 'sty/sheets/green_pavement.png' }));
+
+		KILL.checkin('SPRITES');
 
 	}
 

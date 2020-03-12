@@ -12,9 +12,9 @@ export var Letterer;
         let loader = new ImageLoader();
         loader.load('sty/fonts/big.png', (image) => {
             Letterer.bigFont = image;
-            KILL.checkin(KILL.MASKS.FONTS);
+            KILL.checkin('FONTS');
         }, undefined, () => {
-            console.error('kill can\'t load font');
+            KILL.mistake('FONTS');
         });
     }
     Letterer.init = init;
