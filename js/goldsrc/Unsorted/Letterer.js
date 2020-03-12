@@ -14,7 +14,7 @@ export var Letterer;
             Letterer.bigFont = image;
             KILL.checkin('FONTS');
         }, undefined, () => {
-            KILL.mistake('FONTS');
+            KILL.fault('FONTS');
         });
     }
     Letterer.init = init;

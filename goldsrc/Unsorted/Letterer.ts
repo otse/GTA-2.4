@@ -33,7 +33,7 @@ export namespace Letterer {
 			},
 			undefined,
 			() => {
-				KILL.mistake('FONTS');
+				KILL.fault('FONTS');
 			}
 		);
 

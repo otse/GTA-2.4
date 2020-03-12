@@ -16,39 +16,37 @@ import { Letterer } from "./Unsorted/Letterer";
 export var KILL;
 (function (KILL) {
     var started = false;
-    let SYSTEM;
-    (function (SYSTEM) {
-        SYSTEM[SYSTEM["FONTS"] = 0] = "FONTS";
-        SYSTEM[SYSTEM["SPRITES"] = 1] = "SPRITES";
-        SYSTEM[SYSTEM["COUNT"] = 2] = "COUNT";
-    })(SYSTEM = KILL.SYSTEM || (KILL.SYSTEM = {}));
+    let WORDS;
+    (function (WORDS) {
+        WORDS[WORDS["FONTS"] = 0] = "FONTS";
+        WORDS[WORDS["SPRITES"] = 1] = "SPRITES";
+        WORDS[WORDS["COUNT"] = 2] = "COUNT";
+    })(WORDS = KILL.WORDS || (KILL.WORDS = {}));
     ;
-    let systems = 0b0;
-    function checkin(system) {
-        var mask = SYSTEM[system];
+    let words = 0b0;
+    function checkin(word) {
+        var mask = WORDS[word];
         if (undefined == mask) {
-            console.warn('checkin', system);
+            console.warn('checkin', word);
             return;
         }
-        const bit = 0b0 << mask;
-        systems |= bit;
+        const bit = 0b1 << mask;
+        words |= bit;
+        checkins();
     }
     KILL.checkin = checkin;
-    function checkins(t) {
+    function checkins() {
         let count = 0;
         let i = 0;
-        for (; i < SYSTEM.COUNT; i++) {
-            (systems & 0b1 << i) ? count++ : void (0);
-        }
-        if (count == SYSTEM.COUNT) {
-            clearInterval(t);
+        for (; i < WORDS.COUNT; i++)
+            (words & 0b1 << i) ? count++ : void (0);
+        if (count == WORDS.COUNT)
             start();
-        }
     }
-    function mistake(mask) {
-        console.error('mistake #', mask);
+    function fault(mask) {
+        console.error('fault ', mask);
     }
-    KILL.mistake = mistake;
+    KILL.fault = fault;
     function init() {
         console.log('kill init');
         Phong2.rig();
@@ -62,9 +60,6 @@ export var KILL;
         Letterer.init();
         Movie.init();
         KILL.city = new City;
-        let then = Date.now();
-        let t;
-        t = setInterval(() => { checkins(t); }, 1);
     }
     KILL.init = init;
     function start() {

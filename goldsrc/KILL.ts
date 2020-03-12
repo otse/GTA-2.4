@@ -28,44 +28,43 @@ export namespace KILL {
 
 	var started = false;
 
-	export enum SYSTEM {
+	export enum WORDS {
 		FONTS = 0,
 		SPRITES,
 		COUNT
 	};
 
-	let systems = 0b0;
+	let words = 0b0;
 
-	export function checkin(system: string) {
+	export function checkin(word: string) {
 
-		var mask: SYSTEM = (<any>SYSTEM)[system];
+		var mask: WORDS = (<any>WORDS)[word];
 
 		if (undefined == mask) {
-			console.warn('checkin', system);
+			console.warn('checkin', word);
 			return;
 		}
 
-		const bit = 0b0 << mask;
+		const bit = 0b1 << mask;
 
-		systems |= bit;
+		words |= bit;
+
+		checkins();
 	}
 
-	function checkins(t) {
+	function checkins() {
 		let count = 0;
 
 		let i = 0;
-		for (; i < SYSTEM.COUNT; i++) {
-			(systems & 0b1 << i) ? count++ : void (0);
-		}
+		for (; i < WORDS.COUNT; i++)
+			(words & 0b1 << i) ? count++ : void (0);
 
-		if (count == SYSTEM.COUNT) {
-			clearInterval(t);
+		if (count == WORDS.COUNT)
 			start();
-		}
 	}
 
-	export function mistake(mask: string) {
-		console.error('mistake #', mask);
+	export function fault(mask: string) {
+		console.error('fault ', mask);
 	}
 
 	export function init() {
@@ -83,11 +82,6 @@ export namespace KILL {
 		Movie.init();
 
 		city = new City;
-
-		let then = Date.now()
-
-		let t;
-		t = setInterval(() => { checkins(t) }, 1);
 	}
 
 	export function start() {
