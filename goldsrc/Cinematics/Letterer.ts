@@ -11,8 +11,6 @@ export namespace Letterer {
 	export var canvas;
 	export var bigFont;
 
-	export var paint: () => any;
-
 	const bigAlphabetPos = [
 		0, 33, 65, 96, 127, 152, 180, 212, 244, 261, 291, 327, 354, 393, 425, 456, 487, 519, 550, 580, 608, 640, 672, 711, 744, 777, 809];
 
@@ -48,7 +46,7 @@ export namespace Letterer {
 
 		let canvasTexture = new CanvasTexture(canvas);
 
-		paint = () => {
+		const paint = () => {
 
 			canvasTexture.magFilter = NearestFilter;
 			canvasTexture.minFilter = NearestFilter;
@@ -59,9 +57,6 @@ export namespace Letterer {
 			canvas.height = 1024;
 
 			for (let symbol of spelling.symbols) {
-
-				if (' ' == symbol.char)
-					continue;
 
 				context.drawImage(
 					bigFont, symbol.x2, symbol.y2, symbol.w, symbol.h, symbol.x, symbol.y, symbol.w, symbol.h);

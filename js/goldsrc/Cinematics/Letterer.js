@@ -23,15 +23,13 @@ export var Letterer;
     function makeNiceText(text) {
         let spelling = Spelling.build(text, bigAlphabetPos);
         let canvasTexture = new CanvasTexture(Letterer.canvas);
-        Letterer.paint = () => {
+        const paint = () => {
             canvasTexture.magFilter = NearestFilter;
             canvasTexture.minFilter = NearestFilter;
             const context = Letterer.canvas.getContext("2d");
             Letterer.canvas.width = 1024;
             Letterer.canvas.height = 1024;
             for (let symbol of spelling.symbols) {
-                if (' ' == symbol.char)
-                    continue;
                 context.drawImage(Letterer.bigFont, symbol.x2, symbol.y2, symbol.w, symbol.h, symbol.x, symbol.y, symbol.w, symbol.h);
             }
             let image = new Image();
@@ -39,7 +37,7 @@ export var Letterer;
             canvasTexture.image = image;
             canvasTexture.needsUpdate = true;
         };
-        Letterer.paint();
+        paint();
         return canvasTexture;
     }
     Letterer.makeNiceText = makeNiceText;
