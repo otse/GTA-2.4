@@ -69,6 +69,8 @@ export namespace Four {
 		renderer.autoClear = true;
 		//renderer.setClearColor(0x777777, 1);
 
+		renderer.domElement.id = "main";
+
 		document.body.appendChild(renderer.domElement);
 
 		window.addEventListener('resize', onWindowResize, false);

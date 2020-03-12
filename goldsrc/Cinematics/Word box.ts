@@ -46,10 +46,12 @@ export class WordBox {
 		this.geometry = new PlaneBufferGeometry(64, 16, 1);
 
 		this.mesh = new Mesh(this.geometry, this.material);
-		this.mesh.scale.set(5, 5, 5);
-		this.meshShadow = new Mesh(this.geometry, this.materialShadow);
 		this.mesh.renderOrder = 2;
+		this.mesh.scale.set(5, 5, 5);
+		
+		this.meshShadow = new Mesh(this.geometry, this.materialShadow);
 		this.meshShadow.renderOrder = 1;
+		this.meshShadow.scale.set(5, 5, 5);
 
 		Four.scene.add(this.mesh);
 		Four.scene.add(this.meshShadow);
@@ -59,7 +61,7 @@ export class WordBox {
 
 	update() {
 		let pos = Four.camera.position.clone();
-		let x = pos.x + 0;
+		let x = pos.x + 100;
 		let y = pos.y;
 		let z = pos.z - 200;
 

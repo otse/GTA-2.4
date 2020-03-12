@@ -31,7 +31,7 @@ export namespace Spelling {
 		text = text.toUpperCase();
 
 		let last_x = 0;
-		let last_y = 0;
+		let last_y = 256 - 128 - 64;
 
 		let sentence = { symbols: [] };
 
@@ -47,7 +47,7 @@ export namespace Spelling {
 				continue;
 			}
 			if ('\n' == char) {
-				last_y = 64;
+				last_y += 64;
 				last_x = 0;
 				continue;
 			}

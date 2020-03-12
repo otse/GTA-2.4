@@ -3919,7 +3919,7 @@ var gta_kill = (function (exports, THREE) {
         function build(text, font_sizes) {
             text = text.toUpperCase();
             let last_x = 0;
-            let last_y = 0;
+            let last_y = 256 - 128 - 64;
             let sentence = { symbols: [] };
             for (let i = 0; i < text.length; i++) {
                 let char = text[i];
@@ -3928,7 +3928,7 @@ var gta_kill = (function (exports, THREE) {
                     continue;
                 }
                 if ('\n' == char) {
-                    last_y = 64;
+                    last_y += 64;
                     last_x = 0;
                     continue;
                 }
@@ -4776,17 +4776,18 @@ var gta_kill = (function (exports, THREE) {
             this.materialShadow.color = new THREE.Color(0x0);
             this.geometry = new THREE.PlaneBufferGeometry(64, 16, 1);
             this.mesh = new THREE.Mesh(this.geometry, this.material);
+            this.mesh.renderOrder = 2;
             this.mesh.scale.set(5, 5, 5);
             this.meshShadow = new THREE.Mesh(this.geometry, this.materialShadow);
-            this.mesh.renderOrder = 2;
             this.meshShadow.renderOrder = 1;
+            this.meshShadow.scale.set(5, 5, 5);
             Four$1.scene.add(this.mesh);
             Four$1.scene.add(this.meshShadow);
             console.log('make word box');
         }
         update() {
             let pos = Four$1.camera.position.clone();
-            let x = pos.x + 0;
+            let x = pos.x + 100;
             let y = pos.y;
             let z = pos.z - 200;
             this.mesh.position.set(x, y, z);
@@ -4960,6 +4961,7 @@ var gta_kill = (function (exports, THREE) {
             Four.renderer.setSize(window.innerWidth, window.innerHeight);
             Four.renderer.autoClear = true;
             //renderer.setClearColor(0x777777, 1);
+            Four.renderer.domElement.id = "main";
             document.body.appendChild(Four.renderer.domElement);
             window.addEventListener('resize', onWindowResize, false);
         }

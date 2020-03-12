@@ -21,7 +21,7 @@ export var Spelling;
     function build(text, font_sizes) {
         text = text.toUpperCase();
         let last_x = 0;
-        let last_y = 0;
+        let last_y = 256 - 128 - 64;
         let sentence = { symbols: [] };
         let word = 0;
         for (let i = 0; i < text.length; i++) {
@@ -32,7 +32,7 @@ export var Spelling;
                 continue;
             }
             if ('\n' == char) {
-                last_y = 64;
+                last_y += 64;
                 last_x = 0;
                 continue;
             }

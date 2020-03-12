@@ -37,6 +37,7 @@ export var Four;
         Four.renderer.setSize(window.innerWidth, window.innerHeight);
         Four.renderer.autoClear = true;
         //renderer.setClearColor(0x777777, 1);
+        Four.renderer.domElement.id = "main";
         document.body.appendChild(Four.renderer.domElement);
         window.addEventListener('resize', onWindowResize, false);
     }

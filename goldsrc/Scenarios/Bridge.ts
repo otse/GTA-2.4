@@ -19,6 +19,7 @@ export namespace BridgeScenario {
 			let x = .5;
 			let y = 0;
 			let j = 0;
+			
 			for (let name of carNames) {
 
 				let car: Data2 = {
