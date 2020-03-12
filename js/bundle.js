@@ -431,7 +431,7 @@ var gta_kill = (function (exports, THREE) {
     })(Surfaces || (Surfaces = {}));
     var Surfaces$1 = Surfaces;
 
-    var Sheets;
+    var Sheets$1;
     (function (Sheets) {
         const sheets = {};
         function get(name) {
@@ -528,8 +528,8 @@ var gta_kill = (function (exports, THREE) {
             return canvasTexture;
         }
         Sheets.center = center;
-    })(Sheets || (Sheets = {}));
-    var Sheets$1 = Sheets;
+    })(Sheets$1 || (Sheets$1 = {}));
+    var Sheets$2 = Sheets$1;
 
     class Surface extends Object2 {
         constructor(data) {
@@ -555,9 +555,9 @@ var gta_kill = (function (exports, THREE) {
             let map;
             //let halfPixel = 0;
             if (hasSheet) {
-                let sheet = Sheets$1.get(this.data.sheet);
+                let sheet = Sheets$2.get(this.data.sheet);
                 {
-                    map = Sheets$1.cut(sheet, this.data.sprite);
+                    map = Sheets$2.cut(sheet, this.data.sprite);
                 }
             }
             else {
@@ -3900,6 +3900,48 @@ var gta_kill = (function (exports, THREE) {
         };
     })(Movie || (Movie = {}));
 
+    var Letterer;
+    (function (Letterer) {
+        function init() {
+            Letterer.canvas = document.createElement('canvas');
+            document.body.appendChild(Letterer.canvas);
+            console.log('letterer init');
+            let loader = new THREE.ImageLoader();
+            loader.load('sty/fonts/big.png', (image) => {
+                Letterer.bigFont = image;
+                KILL$1.checkin(KILL$1.MASKS.FONTS);
+            }, undefined, () => {
+                console.error('kill can\'t load font');
+            });
+        }
+        Letterer.init = init;
+        function makeNiceText(words) {
+            let canvasTexture = new THREE.CanvasTexture(Letterer.canvas);
+            Letterer.paint = () => {
+                console.log('called paint cb ');
+                canvasTexture.magFilter = THREE.NearestFilter;
+                canvasTexture.minFilter = THREE.NearestFilter;
+                const context = Letterer.canvas.getContext("2d");
+                Letterer.canvas.width = 512;
+                Letterer.canvas.height = 512;
+                for (let i = 0; i < words.length; i++) {
+                    let c = words[i];
+                    context.drawImage(Letterer.bigFont, 0, 0, 20, 20, 20, 20, 10, 10);
+                }
+                context.fillStyle = "blue";
+                context.font = "bold 32px Arial";
+                context.fillText(words, 0, 30);
+                let image = new Image();
+                image.src = Letterer.canvas.toDataURL();
+                canvasTexture.image = image;
+                canvasTexture.needsUpdate = true;
+            };
+            Letterer.paint();
+            return canvasTexture;
+        }
+        Letterer.makeNiceText = makeNiceText;
+    })(Letterer || (Letterer = {}));
+
     var Cinematics;
     (function (Cinematics) {
         function init() {
@@ -3909,6 +3951,10 @@ var gta_kill = (function (exports, THREE) {
         function update() {
         }
         Cinematics.update = update;
+        function missionText(words) {
+            Letterer.makeNiceText(words);
+        }
+        Cinematics.missionText = missionText;
     })(Cinematics || (Cinematics = {}));
 
     // For making vertical ~> horizontal
@@ -4652,6 +4698,47 @@ var gta_kill = (function (exports, THREE) {
     }
     window.TalkingHead = TalkingHead;
 
+    class WordBox {
+        constructor(words) {
+            console.log('new talking head');
+            this.img1 = Letterer.makeNiceText(words);
+            //Sheets.center(`sty/talking heads/${name}_1.bmp`);
+            this.make();
+        }
+        destroy() {
+            this.geometry.dispose();
+            this.material.dispose();
+        }
+        make() {
+            this.material = new THREE.MeshPhongMaterial({
+                map: this.img1,
+                transparent: true,
+                shininess: 0,
+                depthTest: false
+            });
+            this.materialShadow = this.material.clone();
+            this.materialShadow.opacity = 0.25;
+            this.materialShadow.color = new THREE.Color(0x0);
+            this.geometry = new THREE.PlaneBufferGeometry(64, 64, 1);
+            this.mesh = new THREE.Mesh(this.geometry, this.material);
+            this.meshShadow = new THREE.Mesh(this.geometry, this.materialShadow);
+            this.mesh.renderOrder = 2;
+            this.meshShadow.renderOrder = 1;
+            Four$1.scene.add(this.mesh);
+            Four$1.scene.add(this.meshShadow);
+            console.log('make word box');
+        }
+        update() {
+            let pos = Four$1.camera.position.clone();
+            let x = pos.x + 0;
+            let y = pos.y;
+            let z = pos.z - 200;
+            this.mesh.position.set(x, y, z);
+            this.meshShadow.position.set(x + 2, y - 2, z);
+        }
+    }
+    window.WordBox = WordBox;
+
     var BridgeScenario;
     (function (BridgeScenario) {
         function init() {
@@ -4684,12 +4771,15 @@ var gta_kill = (function (exports, THREE) {
             };
             let stage = 0;
             let talkingHead;
+            let wordBox;
             const update = function () {
                 if (stage == 0) {
                     talkingHead = new TalkingHead('jerkov');
+                    wordBox = new WordBox("Rig the big box truck and get the crates out of there.");
                     stage++;
                 }
                 talkingHead.update();
+                wordBox.update();
             };
             let bridgeScenario = {
                 name: 'Bridge',
@@ -4704,6 +4794,31 @@ var gta_kill = (function (exports, THREE) {
 
     var KILL;
     (function (KILL) {
+        var ready = false;
+        let MASKS;
+        (function (MASKS) {
+            MASKS[MASKS["FONTS"] = 0] = "FONTS";
+            //AUDIOS,
+            MASKS[MASKS["COUNT"] = 1] = "COUNT";
+        })(MASKS = KILL.MASKS || (KILL.MASKS = {}));
+        let systems = 0b0;
+        function checkin(mask) {
+            console.log('check-in ', mask);
+            const bit = 0b1 << mask;
+            systems |= bit;
+        }
+        KILL.checkin = checkin;
+        function checkins() {
+            let count = 0;
+            let i = 0;
+            for (; i < MASKS.COUNT; i++) {
+                (systems & 0b1 << i) ? count++ : void (0);
+            }
+            if (count == MASKS.COUNT) {
+                ready = true;
+                start();
+            }
+        }
         function init() {
             console.log('kill init');
             Phong2$1.rig();
@@ -4712,13 +4827,16 @@ var gta_kill = (function (exports, THREE) {
             Blocks$1.init();
             BoxCutter$1.init();
             Sprites$1.init();
-            Sheets$1.init();
+            Sheets$2.init();
             Cinematics.init();
+            Letterer.init();
             Movie.init();
             KILL.city = new City;
             window.KILL = KILL;
-            //PalmTrees.init();
-            //HighWayWithEveryCar.init();
+        }
+        KILL.init = init;
+        function start() {
+            console.log('start');
             BridgeScenario$1.init();
             let data = {
                 type: 'Ply',
@@ -4731,8 +4849,12 @@ var gta_kill = (function (exports, THREE) {
             KILL.city.chunkList.get2(0, 0);
             KILL.city.chunkList.get2(0, 1);
         }
-        KILL.init = init;
+        KILL.start = start;
         function update() {
+            if (!ready) {
+                checkins();
+                return;
+            }
             if (KILL.ply)
                 KILL.ply.update();
             Zoom$1.update();

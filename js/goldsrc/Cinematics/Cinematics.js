@@ -1,3 +1,4 @@
+import { Letterer } from "../Unsorted/Letterer";
 export var Cinematics;
 (function (Cinematics) {
     function init() {
@@ -7,6 +8,10 @@ export var Cinematics;
     function update() {
     }
     Cinematics.update = update;
+    function missionText(words) {
+        Letterer.makeNiceText(words);
+    }
+    Cinematics.missionText = missionText;
 })(Cinematics || (Cinematics = {}));
 ;
 export default Cinematics;

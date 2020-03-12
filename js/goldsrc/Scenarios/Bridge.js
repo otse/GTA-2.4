@@ -3,6 +3,7 @@ import Datas from "../Objects/Datas";
 import { Scenarios } from "./Scenarios";
 import { carNames } from "../Cars/Script codes";
 import TalkingHead from "../Cinematics/Talking head";
+import WordBox from "../Cinematics/Word box";
 export var BridgeScenario;
 (function (BridgeScenario) {
     function init() {
@@ -35,12 +36,15 @@ export var BridgeScenario;
         };
         let stage = 0;
         let talkingHead;
+        let wordBox;
         const update = function () {
             if (stage == 0) {
                 talkingHead = new TalkingHead('jerkov');
+                wordBox = new WordBox("Rig the big box truck and get the crates out of there.");
                 stage++;
             }
             talkingHead.update();
+            wordBox.update();
         };
         let bridgeScenario = {
             name: 'Bridge',

@@ -19,11 +19,45 @@ import HighWayWithEveryCar from "./Scenarios/Highway";
 import { Cinematics } from "./Cinematics/Cinematics";
 import BridgeScenario from "./Scenarios/Bridge";
 import { Scenarios } from "./Scenarios/Scenarios";
+import { Letterer } from "./Unsorted/Letterer";
 
 export namespace KILL {
 
 	export var ply: Ply | null;
 	export var city: City;
+
+	var ready = false;
+
+	export enum MASKS {
+		FONTS = 0,
+		//AUDIOS,
+		COUNT
+	}
+
+	let systems = 0b0;
+
+	export function checkin(mask: MASKS) {
+
+		console.log('check-in ', mask);
+
+		const bit = 0b1 << mask;
+
+		systems |= bit;
+	}
+
+	function checkins() {
+		let count = 0;
+
+		let i = 0;
+		for (; i < MASKS.COUNT; i++) {
+			(systems & 0b1 << i) ? count++ : void (0);
+		}
+
+		if (count == MASKS.COUNT) {
+			ready = true;
+			start();
+		}
+	}
 
 	export function init() {
 		console.log('kill init');
@@ -36,14 +70,18 @@ export namespace KILL {
 		Sprites.init();
 		Sheets.init();
 		Cinematics.init();
+		Letterer.init();
 		Movie.init();
 
 		city = new City;
 
 		(window as any).KILL = KILL;
+	}
 
-		//PalmTrees.init();
-		//HighWayWithEveryCar.init();
+	export function start() {
+
+		console.log('start');
+
 		BridgeScenario.init();
 
 		let data: Data2 = {
@@ -61,6 +99,11 @@ export namespace KILL {
 	}
 
 	export function update() {
+
+		if (!ready) {
+			checkins();
+			return;
+		}
 
 		if (ply)
 			ply.update();

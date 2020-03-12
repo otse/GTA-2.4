@@ -12,8 +12,34 @@ import { Movie } from "./Unsorted/RGB Shift";
 import { Cinematics } from "./Cinematics/Cinematics";
 import BridgeScenario from "./Scenarios/Bridge";
 import { Scenarios } from "./Scenarios/Scenarios";
+import { Letterer } from "./Unsorted/Letterer";
 export var KILL;
 (function (KILL) {
+    var ready = false;
+    let MASKS;
+    (function (MASKS) {
+        MASKS[MASKS["FONTS"] = 0] = "FONTS";
+        //AUDIOS,
+        MASKS[MASKS["COUNT"] = 1] = "COUNT";
+    })(MASKS = KILL.MASKS || (KILL.MASKS = {}));
+    let systems = 0b0;
+    function checkin(mask) {
+        console.log('check-in ', mask);
+        const bit = 0b1 << mask;
+        systems |= bit;
+    }
+    KILL.checkin = checkin;
+    function checkins() {
+        let count = 0;
+        let i = 0;
+        for (; i < MASKS.COUNT; i++) {
+            (systems & 0b1 << i) ? count++ : void (0);
+        }
+        if (count == MASKS.COUNT) {
+            ready = true;
+            start();
+        }
+    }
     function init() {
         console.log('kill init');
         Phong2.rig();
@@ -24,11 +50,14 @@ export var KILL;
         Sprites.init();
         Sheets.init();
         Cinematics.init();
+        Letterer.init();
         Movie.init();
         KILL.city = new City;
         window.KILL = KILL;
-        //PalmTrees.init();
-        //HighWayWithEveryCar.init();
+    }
+    KILL.init = init;
+    function start() {
+        console.log('start');
         BridgeScenario.init();
         let data = {
             type: 'Ply',
@@ -41,8 +70,12 @@ export var KILL;
         KILL.city.chunkList.get2(0, 0);
         KILL.city.chunkList.get2(0, 1);
     }
-    KILL.init = init;
+    KILL.start = start;
     function update() {
+        if (!ready) {
+            checkins();
+            return;
+        }
         if (KILL.ply)
             KILL.ply.update();
         Zoom.update();

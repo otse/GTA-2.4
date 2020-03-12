@@ -1,5 +1,6 @@
 import Data2 from "../Objects/Data";
 import Datas from "../Objects/Datas";
+import { Letterer } from "../Unsorted/Letterer";
 
 export namespace Cinematics {
 
@@ -7,12 +8,16 @@ export namespace Cinematics {
 
         console.log('cinematics init');
         
-        
-
 	}
 
 	export function update() {
         
+	}
+
+	export function missionText(words: string) {
+
+		Letterer.makeNiceText(words);
+
 	}
 
 };
