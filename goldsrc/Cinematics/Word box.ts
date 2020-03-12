@@ -43,9 +43,10 @@ export class WordBox {
 		this.materialShadow.opacity = 0.25;
 		this.materialShadow.color = new Color(0x0);
 
-		this.geometry = new PlaneBufferGeometry(64, 64, 1);
+		this.geometry = new PlaneBufferGeometry(64, 16, 1);
 
 		this.mesh = new Mesh(this.geometry, this.material);
+		this.mesh.scale.set(5, 5, 5);
 		this.meshShadow = new Mesh(this.geometry, this.materialShadow);
 		this.mesh.renderOrder = 2;
 		this.meshShadow.renderOrder = 1;

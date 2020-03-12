@@ -3906,11 +3906,15 @@ var gta_kill = (function (exports, THREE) {
         function symbol(a, b, c, d, e, f, g) {
             return { char: a, x: b, y: c, x2: d, y2: e, w: f, h: g };
         }
-        const alphabet = [
+        // https://gtamp.com/text/?bg=0&font=2&color=0&shiny=0&imgtype=0&text=ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.%2C%3F%21%3B%7E%27%22%60%24%28%29-
+        // ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.,?!;~'"`$()-
+        const symbols = [
             'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
             'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
             'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
-            'Y', 'Z'
+            'Y', 'Z', ' ',
+            '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
+            '.', ',', '?', '!', ';', '~', '\'', '"', '`', '$', '(', ')'
         ];
         function build(text, font_sizes) {
             text = text.toUpperCase();
@@ -3923,13 +3927,26 @@ var gta_kill = (function (exports, THREE) {
                     last_x += 33;
                     continue;
                 }
-                let index = alphabet.indexOf(char);
+                if ('\n' == char) {
+                    last_y = 64;
+                    last_x = 0;
+                    continue;
+                }
+                let index = symbols.indexOf(char);
                 if (index == -1)
                     continue;
-                let start = font_sizes[index];
+                let x = font_sizes[index];
+                let y, z = index + 1;
+                if (index < 26) {
+                    y = 0;
+                }
+                else {
+                    y = 64;
+                    //z -= 25 - index;
+                }
                 console.log('char', char, 'index', index);
-                let w = font_sizes[index + 1] - start;
-                sentence.symbols.push(symbol(char, last_x, last_y, start, 0, w, 64));
+                let w = font_sizes[z] - x;
+                sentence.symbols.push(symbol(char, last_x, last_y, x, y, w, 64));
                 last_x += w;
             }
             return sentence;
@@ -3941,7 +3958,8 @@ var gta_kill = (function (exports, THREE) {
     var Letterer;
     (function (Letterer) {
         const bigAlphabetPos = [
-            0, 33, 65, 96, 127, 152, 180, 212, 244, 261, 291, 327, 354, 393, 425, 456, 487, 519, 550, 580, 608, 640, 672, 711, 744, 777, 809
+            0, 33, 65, 96, 127, 152, 180, 212, 244, 261, 291, 327, 354, 393, 425, 456, 487, 519, 550, 580, 608, 640, 672, 711, 744, 777, /* this is after z*/ 809,
+            0, 22, 54, 85, 120, 150, 181, 211, 242, 274, 306, 323, 340, 371, 388, 405, 442, 459, 490, 507, 540, 562, 583
         ];
         function init() {
             Letterer.canvas = document.createElement('canvas');
@@ -3964,7 +3982,7 @@ var gta_kill = (function (exports, THREE) {
                 canvasTexture.minFilter = THREE.NearestFilter;
                 const context = Letterer.canvas.getContext("2d");
                 Letterer.canvas.width = 1024;
-                Letterer.canvas.height = 1024;
+                Letterer.canvas.height = 256;
                 for (let symbol of spelling.symbols) {
                     context.drawImage(Letterer.bigFont, symbol.x2, symbol.y2, symbol.w, symbol.h, symbol.x, symbol.y, symbol.w, symbol.h);
                 }
@@ -4756,8 +4774,9 @@ var gta_kill = (function (exports, THREE) {
             this.materialShadow = this.material.clone();
             this.materialShadow.opacity = 0.25;
             this.materialShadow.color = new THREE.Color(0x0);
-            this.geometry = new THREE.PlaneBufferGeometry(64, 64, 1);
+            this.geometry = new THREE.PlaneBufferGeometry(64, 16, 1);
             this.mesh = new THREE.Mesh(this.geometry, this.material);
+            this.mesh.scale.set(5, 5, 5);
             this.meshShadow = new THREE.Mesh(this.geometry, this.materialShadow);
             this.mesh.renderOrder = 2;
             this.meshShadow.renderOrder = 1;
@@ -4812,7 +4831,7 @@ var gta_kill = (function (exports, THREE) {
             const update = function () {
                 if (stage == 0) {
                     talkingHead = new TalkingHead('jerkov');
-                    wordBox = new WordBox("Get out of the car");
+                    wordBox = new WordBox("Get out of the car.\nYou're here.");
                     stage++;
                 }
                 talkingHead.update();

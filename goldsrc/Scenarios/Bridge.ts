@@ -54,7 +54,7 @@ export namespace BridgeScenario {
 			if (stage == 0) {
 				talkingHead = new TalkingHead('jerkov');
 
-				wordBox = new WordBox("Get out of the car");
+				wordBox = new WordBox("Get out of the car.\nYou're here.");
 
 				stage++;
 			}

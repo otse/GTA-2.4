@@ -12,7 +12,9 @@ export namespace Letterer {
 	export var bigFont;
 
 	const bigAlphabetPos = [
-		0, 33, 65, 96, 127, 152, 180, 212, 244, 261, 291, 327, 354, 393, 425, 456, 487, 519, 550, 580, 608, 640, 672, 711, 744, 777, 809];
+		0, 33, 65, 96, 127, 152, 180, 212, 244, 261, 291, 327, 354, 393, 425, 456, 487, 519, 550, 580, 608, 640, 672, 711, 744, 777, /* this is after z*/ 809, // z
+		0, 22, 54, 85, 120, 150, 181, 211, 242, 274, 306, 323, 340, 371, 388, 405, 442, 459, 490, 507, 540, 562, 583
+	];
 
 	export function init() {
 		canvas = document.createElement('canvas');
@@ -54,7 +56,7 @@ export namespace Letterer {
 			const context = canvas.getContext("2d");
 
 			canvas.width = 1024;
-			canvas.height = 1024;
+			canvas.height = 256;
 
 			for (let symbol of spelling.symbols) {
 
