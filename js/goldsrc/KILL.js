@@ -16,39 +16,43 @@ import { Letterer } from "./Unsorted/Letterer";
 export var KILL;
 (function (KILL) {
     var started = false;
-    let WORDS;
-    (function (WORDS) {
-        WORDS[WORDS["FONTS"] = 0] = "FONTS";
-        WORDS[WORDS["SPRITES"] = 1] = "SPRITES";
-        WORDS[WORDS["COUNT"] = 2] = "COUNT";
-    })(WORDS = KILL.WORDS || (KILL.WORDS = {}));
+    let MASKS;
+    (function (MASKS) {
+        MASKS[MASKS["INIT"] = 0] = "INIT";
+        MASKS[MASKS["FONTS"] = 1] = "FONTS";
+        MASKS[MASKS["SPRITES"] = 2] = "SPRITES";
+        MASKS[MASKS["COUNT"] = 3] = "COUNT";
+    })(MASKS = KILL.MASKS || (KILL.MASKS = {}));
     ;
     let words = 0b0;
     function checkin(word) {
-        var mask = WORDS[word];
-        if (undefined == mask) {
-            console.warn('checkin', word);
-            return;
-        }
+        let mask = MASKS[word];
         const bit = 0b1 << mask;
         words |= bit;
+        undefinedword(word, mask);
         checkins();
     }
     KILL.checkin = checkin;
     function checkins() {
         let count = 0;
         let i = 0;
-        for (; i < WORDS.COUNT; i++)
+        for (; i < MASKS.COUNT; i++)
             (words & 0b1 << i) ? count++ : void (0);
-        if (count == WORDS.COUNT)
+        if (count == MASKS.COUNT)
             start();
     }
+    function undefinedword(word, mask) {
+        if (undefined == mask)
+            console.warn("checkin ", word);
+    }
+    KILL.undefinedword = undefinedword;
     function fault(mask) {
         console.error('fault ', mask);
     }
     KILL.fault = fault;
     function init() {
         console.log('kill init');
+        checkin('INIT');
         Phong2.rig();
         Rectangles.init();
         Surfaces.init();
@@ -63,6 +67,8 @@ export var KILL;
     }
     KILL.init = init;
     function start() {
+        if (started)
+            return;
         console.log('kill starting');
         started = true;
         BridgeScenario.init();

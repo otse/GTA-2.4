@@ -28,8 +28,9 @@ export namespace KILL {
 
 	var started = false;
 
-	export enum WORDS {
-		FONTS = 0,
+	export enum MASKS {
+		INIT = 0,
+		FONTS,
 		SPRITES,
 		COUNT
 	};
@@ -38,17 +39,14 @@ export namespace KILL {
 
 	export function checkin(word: string) {
 
-		var mask: WORDS = (<any>WORDS)[word];
-
-		if (undefined == mask) {
-			console.warn('checkin', word);
-			return;
-		}
+		let mask: MASKS = (<any>MASKS)[word];
 
 		const bit = 0b1 << mask;
 
 		words |= bit;
 
+		undefinedword(word, mask);
+		
 		checkins();
 	}
 
@@ -56,11 +54,18 @@ export namespace KILL {
 		let count = 0;
 
 		let i = 0;
-		for (; i < WORDS.COUNT; i++)
+		for (; i < MASKS.COUNT; i++)
 			(words & 0b1 << i) ? count++ : void (0);
 
-		if (count == WORDS.COUNT)
+		if (count == MASKS.COUNT)
 			start();
+	}
+
+	export function undefinedword(word: string, mask: MASKS) {
+
+		if (undefined == mask)
+
+			console.warn("checkin ", word);
 	}
 
 	export function fault(mask: string) {
@@ -69,6 +74,8 @@ export namespace KILL {
 
 	export function init() {
 		console.log('kill init');
+
+		checkin('INIT');
 
 		Phong2.rig();
 		Rectangles.init();
@@ -86,6 +93,9 @@ export namespace KILL {
 
 	export function start() {
 
+		if (started)
+			return;
+			
 		console.log('kill starting');
 
 		started = true;
