@@ -451,7 +451,7 @@ var gta_kill = (function (exports, THREE) {
         function init() {
             Sheets.canvas = document.createElement('canvas');
             document.body.appendChild(Sheets.canvas);
-            console.log('Spritesheets init');
+            console.log('sheets init');
             let baseRoads = {
                 width: 320,
                 height: 320,
@@ -480,10 +480,10 @@ var gta_kill = (function (exports, THREE) {
             const key = `sh ${sheet} sp ${Points$1.string(sprite)}`;
             if (spriteTextures[key])
                 return spriteTextures[key];
-            let spriteTexture = new THREE.CanvasTexture(Sheets.canvas);
-            spriteTexture.magFilter = THREE.NearestFilter;
-            spriteTexture.minFilter = THREE.NearestFilter;
-            spriteTextures[key] = spriteTexture;
+            let canvasTexture = new THREE.CanvasTexture(Sheets.canvas);
+            canvasTexture.magFilter = THREE.NearestFilter;
+            canvasTexture.minFilter = THREE.NearestFilter;
+            spriteTextures[key] = canvasTexture;
             let callback = (texture) => {
                 const context = Sheets.canvas.getContext("2d");
                 Sheets.canvas.width = sheet.piece.w;
@@ -491,13 +491,43 @@ var gta_kill = (function (exports, THREE) {
                 context.drawImage(texture.image, (sprite.x - 1) * -sheet.piece.w, (sprite.y - 1) * -sheet.piece.h);
                 let image = new Image();
                 image.src = Sheets.canvas.toDataURL();
-                spriteTexture.image = image;
-                spriteTexture.needsUpdate = true;
+                canvasTexture.image = image;
+                canvasTexture.needsUpdate = true;
             };
-            let sheetTexture = new THREE.TextureLoader().load(sheet.file, callback, undefined, undefined);
-            return spriteTexture;
+            // optimize re-loading here
+            let fakeTexture = new THREE.TextureLoader().load(sheet.file, callback, undefined, undefined);
+            return canvasTexture;
         }
         Sheets.cut = cut;
+        function center(path) {
+            let canvasTexture = new THREE.CanvasTexture(Sheets.canvas);
+            let callback = (texture) => {
+                console.log('callback');
+                const context = Sheets.canvas.getContext("2d");
+                Sheets.canvas.width = texture.image.width;
+                Sheets.canvas.height = texture.image.height;
+                context.drawImage(texture.image, 0, 0);
+                let imgData = context.getImageData(0, 0, Sheets.canvas.width, Sheets.canvas.height);
+                const pixels = imgData.data;
+                for (let y = 0; y < Sheets.canvas.height; y++) {
+                    for (let x = 0; x < Sheets.canvas.width; x++) {
+                        break;
+                    }
+                    break;
+                }
+                //let ox = Math.ceil((T - bmp.width) / 2) + 1;
+                //let oy = Math.ceil((T - bmp.height) / 2) + 1;
+                context.putImageData(imgData, 0, 0);
+                // Now
+                let image = new Image();
+                image.src = Sheets.canvas.toDataURL();
+                canvasTexture.image = image;
+                canvasTexture.needsUpdate = true;
+            };
+            let fakeTexture = new THREE.TextureLoader().load(path, callback, undefined, undefined);
+            return canvasTexture;
+        }
+        Sheets.center = center;
     })(Sheets || (Sheets = {}));
     var Sheets$1 = Sheets;
 
@@ -3150,7 +3180,7 @@ var gta_kill = (function (exports, THREE) {
                 console.warn('Car data has no .car!');
             if (undefined == data.paint)
                 data.paint = Math.floor(Math.random() * 35);
-            console.log('Car ' + data.car + ' paint ', data.paint);
+            //console.log('Car ' + data.car + ' paint ', data.paint);
             this.lift = 1;
             const meta = CarMetas.getNullable(data.car);
             const physics = CarPhysics$1.getNullable(data.car);
@@ -3602,7 +3632,7 @@ var gta_kill = (function (exports, THREE) {
             SIDE_LINE_END: sprite(3, 1)
         };
         function init() {
-            console.log('Sprites init');
+            console.log('sprites init');
         }
         Sprites.init = init;
     })(Sprites || (Sprites = {}));
@@ -3869,6 +3899,17 @@ var gta_kill = (function (exports, THREE) {
 			}`
         };
     })(Movie || (Movie = {}));
+
+    var Cinematics;
+    (function (Cinematics) {
+        function init() {
+            console.log('cinematics init');
+        }
+        Cinematics.init = init;
+        function update() {
+        }
+        Cinematics.update = update;
+    })(Cinematics || (Cinematics = {}));
 
     // For making vertical ~> horizontal
     // So you only need to make one
@@ -4569,10 +4610,52 @@ var gta_kill = (function (exports, THREE) {
         Scenarios.update = update;
     })(Scenarios || (Scenarios = {}));
 
-    var HighWayWithEveryCar;
-    (function (HighWayWithEveryCar) {
+    class TalkingHead {
+        constructor(name) {
+            console.log('new talking head');
+            this.img1 = Util$1.loadTexture(`sty/talking heads/${name}_1.png`);
+            this.img2 = Util$1.loadTexture(`sty/talking heads/${name}_2.png`);
+            this.img3 = Util$1.loadTexture(`sty/talking heads/${name}_3.png`);
+            //Sheets.center(`sty/talking heads/${name}_1.bmp`);
+            this.make();
+        }
+        destroy() {
+            this.geometry.dispose();
+            this.material.dispose();
+        }
+        make() {
+            this.material = new THREE.MeshPhongMaterial({
+                map: this.img1,
+                transparent: true,
+                shininess: 0,
+                depthTest: false
+            });
+            this.materialShadow = this.material.clone();
+            this.materialShadow.opacity = 0.25;
+            this.materialShadow.color = new THREE.Color(0x0);
+            this.geometry = new THREE.PlaneBufferGeometry(64, 64, 1);
+            this.mesh = new THREE.Mesh(this.geometry, this.material);
+            this.meshShadow = new THREE.Mesh(this.geometry, this.materialShadow);
+            this.mesh.renderOrder = 2;
+            this.meshShadow.renderOrder = 1;
+            Four$1.scene.add(this.mesh);
+            Four$1.scene.add(this.meshShadow);
+        }
+        update() {
+            let pos = Four$1.camera.position.clone();
+            let x = pos.x + 150;
+            let y = pos.y;
+            let z = pos.z - 200;
+            this.mesh.position.set(x, y, z);
+            this.meshShadow.position.set(x + 2, y - 2, z);
+        }
+    }
+    window.TalkingHead = TalkingHead;
+
+    var BridgeScenario;
+    (function (BridgeScenario) {
         function init() {
-            console.log('Highway with every car init');
+            console.log('Bridge scenario init');
             const load = function () {
                 Generators$1.Roads.highway(1, [10, -7000, 0], 8000, 5, 'qualityRoads');
                 let x = .5;
@@ -4597,25 +4680,32 @@ var gta_kill = (function (exports, THREE) {
                     }
                     Datas$1.deliver(car);
                 }
-                console.log('loaded highway with every car');
+                console.log('loaded bridge scenario');
             };
+            let stage = 0;
+            let talkingHead;
             const update = function () {
+                if (stage == 0) {
+                    talkingHead = new TalkingHead('jerkov');
+                    stage++;
+                }
+                talkingHead.update();
             };
-            let highwayWithEveryCar = {
-                name: 'Highway with every car',
+            let bridgeScenario = {
+                name: 'Bridge',
                 load: load,
                 update: update
             };
-            Scenarios.load(highwayWithEveryCar);
+            Scenarios.load(bridgeScenario);
         }
-        HighWayWithEveryCar.init = init;
-    })(HighWayWithEveryCar || (HighWayWithEveryCar = {}));
-    var HighWayWithEveryCar$1 = HighWayWithEveryCar;
+        BridgeScenario.init = init;
+    })(BridgeScenario || (BridgeScenario = {}));
+    var BridgeScenario$1 = BridgeScenario;
 
     var KILL;
     (function (KILL) {
         function init() {
-            console.log('gta init');
+            console.log('kill init');
             Phong2$1.rig();
             Rectangles$1.init();
             Surfaces$1.init();
@@ -4623,11 +4713,13 @@ var gta_kill = (function (exports, THREE) {
             BoxCutter$1.init();
             Sprites$1.init();
             Sheets$1.init();
+            Cinematics.init();
             Movie.init();
             KILL.city = new City;
             window.KILL = KILL;
             //PalmTrees.init();
-            HighWayWithEveryCar$1.init();
+            //HighWayWithEveryCar.init();
+            BridgeScenario$1.init();
             let data = {
                 type: 'Ply',
                 x: 10.5,
@@ -4644,6 +4736,7 @@ var gta_kill = (function (exports, THREE) {
             if (KILL.ply)
                 KILL.ply.update();
             Zoom$1.update();
+            Scenarios.update();
             KILL.city.update(KILL.ply.data);
         }
         KILL.update = update;

@@ -8,7 +8,7 @@ export class Car extends Rectangle {
             console.warn('Car data has no .car!');
         if (undefined == data.paint)
             data.paint = Math.floor(Math.random() * 35);
-        console.log('Car ' + data.car + ' paint ', data.paint);
+        //console.log('Car ' + data.car + ' paint ', data.paint);
         this.lift = 1;
         const meta = CarMetas.getNullable(data.car);
         const physics = CarPhysics.getNullable(data.car);

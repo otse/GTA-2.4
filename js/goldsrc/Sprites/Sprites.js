@@ -37,7 +37,7 @@ var Sprites;
         SIDE_LINE_END: sprite(3, 1)
     };
     function init() {
-        console.log('Sprites init');
+        console.log('sprites init');
     }
     Sprites.init = init;
 })(Sprites || (Sprites = {}));

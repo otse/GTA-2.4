@@ -9,11 +9,13 @@ import Sprites from "./Sprites/Sprites";
 import Sheets from "./Sprites/Sheets";
 import Zoom from "./Unsorted/Zoom";
 import { Movie } from "./Unsorted/RGB Shift";
-import HighWayWithEveryCar from "./Scenarios/Highway with every car";
+import { Cinematics } from "./Cinematics/Cinematics";
+import BridgeScenario from "./Scenarios/Bridge";
+import { Scenarios } from "./Scenarios/Scenarios";
 export var KILL;
 (function (KILL) {
     function init() {
-        console.log('gta init');
+        console.log('kill init');
         Phong2.rig();
         Rectangles.init();
         Surfaces.init();
@@ -21,11 +23,13 @@ export var KILL;
         BoxCutter.init();
         Sprites.init();
         Sheets.init();
+        Cinematics.init();
         Movie.init();
         KILL.city = new City;
         window.KILL = KILL;
         //PalmTrees.init();
-        HighWayWithEveryCar.init();
+        //HighWayWithEveryCar.init();
+        BridgeScenario.init();
         let data = {
             type: 'Ply',
             x: 10.5,
@@ -42,6 +46,7 @@ export var KILL;
         if (KILL.ply)
             KILL.ply.update();
         Zoom.update();
+        Scenarios.update();
         KILL.city.update(KILL.ply.data);
     }
     KILL.update = update;

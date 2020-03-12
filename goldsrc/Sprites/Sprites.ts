@@ -46,7 +46,7 @@ namespace Sprites {
 
 	export function init() {
 
-		console.log('Sprites init');
+		console.log('sprites init');
 		
 	}
 }

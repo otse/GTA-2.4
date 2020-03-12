@@ -1,4 +1,4 @@
 REM simpler than wamp / xampp / and things like www folders
 
-start "" http://localhost:2/index.html
-http-server . -a localhost -p 2 -c-1
+start "" http://localhost:80/index.html
+http-server . -a localhost -p 80 -c-1

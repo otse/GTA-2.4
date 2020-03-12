@@ -15,15 +15,18 @@ import Levels from "./Generators/Levels";
 import Zoom from "./Unsorted/Zoom";
 import { Movie } from "./Unsorted/RGB Shift";
 import PalmTrees from "./Scenarios/Palm trees";
-import HighWayWithEveryCar from "./Scenarios/Highway with every car";
+import HighWayWithEveryCar from "./Scenarios/Highway";
+import { Cinematics } from "./Cinematics/Cinematics";
+import BridgeScenario from "./Scenarios/Bridge";
+import { Scenarios } from "./Scenarios/Scenarios";
 
 export namespace KILL {
 
 	export var ply: Ply | null;
 	export var city: City;
-	
+
 	export function init() {
-		console.log('gta init');
+		console.log('kill init');
 
 		Phong2.rig();
 		Rectangles.init();
@@ -32,14 +35,16 @@ export namespace KILL {
 		BoxCutter.init();
 		Sprites.init();
 		Sheets.init();
+		Cinematics.init();
 		Movie.init();
-		
+
 		city = new City;
-		
+
 		(window as any).KILL = KILL;
-		
+
 		//PalmTrees.init();
-		HighWayWithEveryCar.init();
+		//HighWayWithEveryCar.init();
+		BridgeScenario.init();
 
 		let data: Data2 = {
 			type: 'Ply',
@@ -56,11 +61,13 @@ export namespace KILL {
 	}
 
 	export function update() {
-		
+
 		if (ply)
 			ply.update();
 
 		Zoom.update();
+
+		Scenarios.update();
 
 		city.update(ply!.data);
 	}

@@ -15,7 +15,7 @@ export class Car extends Rectangle {
 		if (undefined == data.paint)
 			data.paint = Math.floor(Math.random() * 35);
 
-		console.log('Car ' + data.car + ' paint ', data.paint);
+		//console.log('Car ' + data.car + ' paint ', data.paint);
 
 		this.lift = 1;
 
