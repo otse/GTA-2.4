@@ -1,4 +1,4 @@
-import { Letterer } from "../Unsorted/Letterer";
+import { Letterer } from "./Letterer";
 export var Cinematics;
 (function (Cinematics) {
     function init() {

@@ -4,7 +4,7 @@ import { MeshPhongMaterial, PlaneBufferGeometry, Mesh, Texture, Color } from "th
 import Util from "../Random";
 import Sheets from "../Sprites/Sheets";
 import Four from "../Four";
-import { Letterer } from "../Unsorted/Letterer";
+import { Letterer } from "./Letterer";
 
 export class WordBox {
 	mesh: Mesh

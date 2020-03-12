@@ -3901,8 +3901,52 @@ var gta_kill = (function (exports, THREE) {
         };
     })(Movie || (Movie = {}));
 
+    var Spelling;
+    (function (Spelling) {
+        const lowercase = [
+            'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',
+            'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
+            'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
+        ];
+        const uppercase = [
+            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
+            'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
+            'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
+        ];
+        function build(text, font_sizes) {
+            let last_x = 0;
+            let last_y = 0;
+            let sentence = { symbols: [], word_lengths: [] };
+            for (let i = 0; i < text.length; i++) {
+                let char = text[i];
+                if (' ' == char) {
+                    last_x += 33;
+                    let letter = { char: ' ', x: last_x, y: 0, cx: -1, cy: -1, w: 0, h: 0 };
+                    sentence.symbols.push(letter);
+                    continue;
+                }
+                let a = lowercase.indexOf(char);
+                let b = uppercase.indexOf(char);
+                let index = a != -1 ? a : b != -1 ? b : 0;
+                let start = font_sizes[index];
+                console.log('char', char, 'index', index);
+                let x = start;
+                let w = font_sizes[index + 1] - start;
+                let letter = { char: char, x: last_x, y: last_y, cx: x, cy: 0, w: w, h: 64 };
+                last_x += w;
+                sentence.symbols.push(letter);
+            }
+            return sentence;
+        }
+        Spelling.build = build;
+    })(Spelling || (Spelling = {}));
+    var Spelling$1 = Spelling;
+
     var Letterer;
     (function (Letterer) {
+        const bigAlphabetPos = [
+            0, 33, 65, 96, 127, 152, 180, 212, 244, 261, 291, 327, 354, 393, 425, 456, 487, 519, 550, 580, 608, 640, 672, 711, 744, 777, 809
+        ];
         function init() {
             Letterer.canvas = document.createElement('canvas');
             document.body.appendChild(Letterer.canvas);
@@ -3916,22 +3960,20 @@ var gta_kill = (function (exports, THREE) {
             });
         }
         Letterer.init = init;
-        function makeNiceText(words) {
+        function makeNiceText(text) {
+            let spelling = Spelling$1.build(text, bigAlphabetPos);
             let canvasTexture = new THREE.CanvasTexture(Letterer.canvas);
             Letterer.paint = () => {
-                console.log('called paint cb ');
                 canvasTexture.magFilter = THREE.NearestFilter;
                 canvasTexture.minFilter = THREE.NearestFilter;
                 const context = Letterer.canvas.getContext("2d");
-                Letterer.canvas.width = 512;
-                Letterer.canvas.height = 512;
-                for (let i = 0; i < words.length; i++) {
-                    let c = words[i];
-                    context.drawImage(Letterer.bigFont, 0, 0, 20, 20, 20, 20, 10, 10);
+                Letterer.canvas.width = 1024;
+                Letterer.canvas.height = 1024;
+                for (let symbol of spelling.symbols) {
+                    if (' ' == symbol.char)
+                        continue;
+                    context.drawImage(Letterer.bigFont, symbol.cx, symbol.cy, symbol.w, symbol.h, symbol.x, symbol.y, symbol.w, symbol.h);
                 }
-                context.fillStyle = "blue";
-                context.font = "bold 32px Arial";
-                context.fillText(words, 0, 30);
                 let image = new Image();
                 image.src = Letterer.canvas.toDataURL();
                 canvasTexture.image = image;
@@ -4776,7 +4818,7 @@ var gta_kill = (function (exports, THREE) {
             const update = function () {
                 if (stage == 0) {
                     talkingHead = new TalkingHead('jerkov');
-                    wordBox = new WordBox("Rig the big box truck and get the crates out of there.");
+                    wordBox = new WordBox("Get out of the car");
                     stage++;
                 }
                 talkingHead.update();
@@ -4808,7 +4850,6 @@ var gta_kill = (function (exports, THREE) {
             let mask = MASKS[word];
             const bit = 0b1 << mask;
             words |= bit;
-            undefinedword(word, mask);
             checkins();
         }
         KILL.checkin = checkin;
@@ -4820,11 +4861,6 @@ var gta_kill = (function (exports, THREE) {
             if (count == MASKS.COUNT)
                 start();
         }
-        function undefinedword(word, mask) {
-            if (undefined == mask)
-                console.warn("checkin ", word);
-        }
-        KILL.undefinedword = undefinedword;
         function fault(mask) {
             console.error('fault ', mask);
         }

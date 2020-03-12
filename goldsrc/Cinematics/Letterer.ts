@@ -4,6 +4,7 @@ import Four from "../Four";
 import Util from "../Random";
 import Points from "../Objects/Points";
 import KILL from "../KILL";
+import Spelling from "./Spelling";
 
 export namespace Letterer {
 
@@ -12,9 +13,8 @@ export namespace Letterer {
 
 	export var paint: () => any;
 
-	const alphabetPos = [
-		0, 33, 65, 96, 127, 152, 180, 212, 244, 261, 291, 327, 354, 393, 425, 456, 487, 519, 550, 580, 608, 640, 672, 711, 744, 777
-	]
+	const bigAlphabetPos = [
+		0, 33, 65, 96, 127, 152, 180, 212, 244, 261, 291, 327, 354, 393, 425, 456, 487, 519, 550, 580, 608, 640, 672, 711, 744, 777, 809];
 
 	export function init() {
 		canvas = document.createElement('canvas');
@@ -41,41 +41,30 @@ export namespace Letterer {
 
 	var spriteTextures = [];
 
-	export function makeNiceText(words: string): Texture {
+	export function makeNiceText(text: string): Texture {
+
+		let spelling = Spelling.build(text, bigAlphabetPos);
 
 		let canvasTexture = new CanvasTexture(canvas);
 
 		paint = () => {
-
-			console.log('called paint cb ');
 
 			canvasTexture.magFilter = NearestFilter;
 			canvasTexture.minFilter = NearestFilter;
 
 			const context = canvas.getContext("2d");
 
-			canvas.width = 512;
-			canvas.height = 512;
+			canvas.width = 1024;
+			canvas.height = 1024;
 
-			for (let i = 0; i < words.length; i++) {
-				let c = words[i];
+			for (let symbol of spelling.symbols) {
+
+				if (' ' == symbol.char)
+					continue;
 
 				context.drawImage(
-					bigFont,
-					0,
-					0,
-					20,
-					20,
-					20,
-					20,
-					10,
-					10);
+					bigFont, symbol.cx, symbol.cy, symbol.w, symbol.h, symbol.x, symbol.y, symbol.w, symbol.h);
 			}
-
-			context.fillStyle = "blue";
-
-			context.font = "bold 32px Arial";
-			context.fillText(words, 0, 30);
 
 			let image = new Image();
 			image.src = canvas.toDataURL();

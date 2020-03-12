@@ -19,7 +19,7 @@ import HighWayWithEveryCar from "./Scenarios/Highway";
 import { Cinematics } from "./Cinematics/Cinematics";
 import BridgeScenario from "./Scenarios/Bridge";
 import { Scenarios } from "./Scenarios/Scenarios";
-import { Letterer } from "./Unsorted/Letterer";
+import { Letterer } from "./Cinematics/Letterer";
 
 export namespace KILL {
 
@@ -44,13 +44,12 @@ export namespace KILL {
 		const bit = 0b1 << mask;
 
 		words |= bit;
-
-		undefinedword(word, mask);
 		
 		checkins();
 	}
 
 	function checkins() {
+
 		let count = 0;
 
 		let i = 0;
@@ -61,15 +60,10 @@ export namespace KILL {
 			start();
 	}
 
-	export function undefinedword(word: string, mask: MASKS) {
-
-		if (undefined == mask)
-
-			console.warn("checkin ", word);
-	}
-
 	export function fault(mask: string) {
+
 		console.error('fault ', mask);
+
 	}
 
 	export function init() {
@@ -95,7 +89,7 @@ export namespace KILL {
 
 		if (started)
 			return;
-			
+
 		console.log('kill starting');
 
 		started = true;

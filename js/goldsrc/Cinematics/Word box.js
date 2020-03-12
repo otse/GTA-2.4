@@ -1,6 +1,6 @@
 import { MeshPhongMaterial, PlaneBufferGeometry, Mesh, Color } from "three";
 import Four from "../Four";
-import { Letterer } from "../Unsorted/Letterer";
+import { Letterer } from "./Letterer";
 export class WordBox {
     constructor(words) {
         console.log('new talking head');

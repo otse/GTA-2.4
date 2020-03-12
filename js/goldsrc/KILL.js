@@ -12,7 +12,7 @@ import { Movie } from "./Unsorted/RGB Shift";
 import { Cinematics } from "./Cinematics/Cinematics";
 import BridgeScenario from "./Scenarios/Bridge";
 import { Scenarios } from "./Scenarios/Scenarios";
-import { Letterer } from "./Unsorted/Letterer";
+import { Letterer } from "./Cinematics/Letterer";
 export var KILL;
 (function (KILL) {
     var started = false;
@@ -29,7 +29,6 @@ export var KILL;
         let mask = MASKS[word];
         const bit = 0b1 << mask;
         words |= bit;
-        undefinedword(word, mask);
         checkins();
     }
     KILL.checkin = checkin;
@@ -41,11 +40,6 @@ export var KILL;
         if (count == MASKS.COUNT)
             start();
     }
-    function undefinedword(word, mask) {
-        if (undefined == mask)
-            console.warn("checkin ", word);
-    }
-    KILL.undefinedword = undefinedword;
     function fault(mask) {
         console.error('fault ', mask);
     }

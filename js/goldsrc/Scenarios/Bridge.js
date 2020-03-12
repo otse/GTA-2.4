@@ -40,7 +40,7 @@ export var BridgeScenario;
         const update = function () {
             if (stage == 0) {
                 talkingHead = new TalkingHead('jerkov');
-                wordBox = new WordBox("Rig the big box truck and get the crates out of there.");
+                wordBox = new WordBox("Get out of the car");
                 stage++;
             }
             talkingHead.update();
