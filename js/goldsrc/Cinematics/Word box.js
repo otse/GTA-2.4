@@ -20,7 +20,7 @@ export class WordBox {
             depthTest: false
         });
         this.materialShadow = this.material.clone();
-        this.materialShadow.opacity = 0.25;
+        this.materialShadow.opacity = 0.35;
         this.materialShadow.color = new Color(0x0);
         this.geometry = new PlaneBufferGeometry(64, 16, 1);
         const scale = 5;

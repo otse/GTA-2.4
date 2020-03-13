@@ -3,6 +3,7 @@ import Surfaces from "../Shapes/Surfaces";
 import Sheets from "../../Sprites/Sheets";
 import Util from "../../Random";
 import { Mesh, MeshPhongMaterial, Color } from "three";
+import Water from "../../Unsorted/Water";
 const defaultSty = 'sty/commercial/storefront/577.bmp';
 export class Surface extends Object2 {
     constructor(data) {
@@ -48,8 +49,12 @@ export class Surface extends Object2 {
             shininess: 0,
             color: new Color(this.data.color),
         });
+        let material = this.material;
+        if ('sty/special/water/1.bmp' == this.data.sty) {
+            material = Water.material;
+        }
         //map.offset.set(.01, .01);
-        this.mesh = new Mesh(this.geometry, this.material);
+        this.mesh = new Mesh(this.geometry, material);
         this.mesh.matrixAutoUpdate = false;
         this.mesh.frustumCulled = false;
         this.mesh.castShadow = false;

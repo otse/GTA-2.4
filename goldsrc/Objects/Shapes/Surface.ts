@@ -9,6 +9,8 @@ import Util from "../../Random";
 
 import { default as THREE, Mesh, Material, PlaneBufferGeometry, MeshPhongMaterial, Color, DoubleSide, Texture, Shader } from "three";
 import Points from "../Points";
+import Four from "../../Four";
+import Water from "../../Unsorted/Water";
 
 const defaultSty = 'sty/commercial/storefront/577.bmp';
 
@@ -79,9 +81,15 @@ export class Surface extends Object2 {
 			//side: DoubleSide
 		});
 
+		let material = this.material;
+
+		if ('sty/special/water/1.bmp' == this.data.sty) {
+			material = Water.material;
+		}
+
 		//map.offset.set(.01, .01);
 
-		this.mesh = new Mesh(this.geometry, this.material);
+		this.mesh = new Mesh(this.geometry, material);
 		this.mesh.matrixAutoUpdate = false;
 		this.mesh.frustumCulled = false;
 		this.mesh.castShadow = false;

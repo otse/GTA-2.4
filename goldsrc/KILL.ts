@@ -20,6 +20,8 @@ import Cinematics from "./Cinematics/Cinematics";
 import BridgeScenario from "./Scenarios/Bridge";
 import Scenarios from "./Scenarios/Scenarios";
 import Letterer from "./Cinematics/Letterer";
+import { Rain as Rain } from "./Unsorted/Minecraft rain";
+import Water from "./Unsorted/Water";
 
 export namespace KILL {
 
@@ -83,6 +85,9 @@ export namespace KILL {
 		Letterer.init();
 		Movie.init();
 
+		Water.init();
+		Rain.init();
+
 		city = new City;
 	}
 
@@ -118,6 +123,9 @@ export namespace KILL {
 
 		if (ply)
 			ply.update();
+
+		Water.update();
+		Rain.update();
 
 		Zoom.update();
 

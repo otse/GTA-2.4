@@ -532,6 +532,31 @@ var gta_kill = (function (exports, THREE) {
     })(Sheets || (Sheets = {}));
     var Sheets$1 = Sheets;
 
+    var Water;
+    (function (Water) {
+        let time = 0;
+        let i = 0;
+        let waters = [];
+        function init() {
+            for (let i = 1; i <= 12; i++)
+                waters.push(Util$1.loadTexture(`sty/special/water/${i}.bmp`));
+            Water.material = new THREE.MeshPhongMaterial({
+                map: waters[0]
+            });
+        }
+        Water.init = init;
+        function update() {
+            time += Four$1.delta;
+            if (time >= 0.11) {
+                i += i < 11 ? 1 : -11;
+                Water.material.map = waters[i];
+                time = 0;
+            }
+        }
+        Water.update = update;
+    })(Water || (Water = {}));
+    var Water$1 = Water;
+
     class Surface extends Object2 {
         constructor(data) {
             super(data);
@@ -570,8 +595,12 @@ var gta_kill = (function (exports, THREE) {
                 shininess: 0,
                 color: new THREE.Color(this.data.color),
             });
+            let material = this.material;
+            if ('sty/special/water/1.bmp' == this.data.sty) {
+                material = Water$1.material;
+            }
             //map.offset.set(.01, .01);
-            this.mesh = new THREE.Mesh(this.geometry, this.material);
+            this.mesh = new THREE.Mesh(this.geometry, material);
             this.mesh.matrixAutoUpdate = false;
             this.mesh.frustumCulled = false;
             this.mesh.castShadow = false;
@@ -4754,7 +4783,7 @@ var gta_kill = (function (exports, THREE) {
                 depthTest: false
             });
             this.materialShadow = this.material.clone();
-            this.materialShadow.opacity = 0.25;
+            this.materialShadow.opacity = 0.35;
             this.materialShadow.color = new THREE.Color(0x0);
             this.geometry = new THREE.PlaneBufferGeometry(64, 64, 1);
             this.mesh = new THREE.Mesh(this.geometry, this.material);
@@ -4794,7 +4823,7 @@ var gta_kill = (function (exports, THREE) {
                 depthTest: false
             });
             this.materialShadow = this.material.clone();
-            this.materialShadow.opacity = 0.25;
+            this.materialShadow.opacity = 0.35;
             this.materialShadow.color = new THREE.Color(0x0);
             this.geometry = new THREE.PlaneBufferGeometry(64, 16, 1);
             const scale = 5;
@@ -4824,8 +4853,8 @@ var gta_kill = (function (exports, THREE) {
         function init() {
             console.log('Bridge scenario init');
             const load = function () {
-                Generators$1.Fill.fill([-500, -500, 0], [1000, 1000, 0], { sty: 'sty/nature/evergreen/836.bmp' }, { WHEEL: true });
-                Generators$1.Roads.highway(1, [10, -7000, 0], 8000, 5, 'qualityRoads');
+                Generators$1.Fill.fill([-500, -500, -3], [1000, 1000, 0], { sty: 'sty/special/water/1.bmp' }, { WHEEL: false });
+                Generators$1.Roads.highway(1, [10, -7000, 0], 8000, 4, 'qualityRoads');
                 let x = .5;
                 let y = 0;
                 let j = 0;
@@ -4840,7 +4869,7 @@ var gta_kill = (function (exports, THREE) {
                     };
                     y--;
                     j++;
-                    if (j > 14) {
+                    if (j > 16) {
                         j = 0;
                         // Begin spawning at new lane
                         y = 0;
@@ -4873,6 +4902,137 @@ var gta_kill = (function (exports, THREE) {
         BridgeScenario.init = init;
     })(BridgeScenario || (BridgeScenario = {}));
     var BridgeScenario$1 = BridgeScenario;
+
+    var Rain;
+    (function (Rain) {
+        Rain.what_a_rainy_day = true;
+        Rain.drops = [];
+        Rain.group = null;
+        /*export function smat_init() {
+
+            let map = td.map(`sty/drop.png`);
+
+            const params = {
+                name: 'Rain Material',
+                fog: false,
+
+                //map: map,
+                //color: 0x93e5ff,
+                side: THREE.DoubleSide,
+                transparent: true,
+                opacity: .5,
+                lights: false,
+                depthTest: false, // false: rain falls through everything
+
+                vertexShader: rain_vert,
+                fragmentShader: THREE.ShaderChunk.meshbasic_frag
+            };
+
+            const o = Object.assign({
+                uniforms: THREE.UniformsUtils.merge([
+                    THREE.ShaderLib['basic'].uniforms, {
+                        coords: { value: new THREE.Vector3(0, 0, 0) },
+                        descend: { value: 0 }
+                    }
+                ]),
+                defines: { 'USE_MAP': '', 'DISTANCE': '' },
+            }, params);
+
+            smat = new THREE.ShaderMaterial(o);
+
+            smat.map = map;
+
+            smat.uniforms.map.value = map;
+            smat.uniforms.diffuse.value = new THREE.Color(0x93e5ff);
+            smat.uniforms.opacity.value = params.opacity;
+        }*/
+        /*export function smat_clone() {
+            let mat = smat.clone();
+            
+            mat.uniforms.map.value = smat.map;
+            mat.uniforms.coords.value = new THREE.Vector3(0, 0, 0);
+            mat.uniforms.descend.value = 0;
+
+            return mat;
+        }*/
+        function init() {
+            //smat_init();
+            let map = Util$1.loadTexture(`sty/drop.png`);
+            Rain.basicmat = new THREE.MeshBasicMaterial({
+                map: map,
+                color: 0x93e5ff,
+                side: THREE.DoubleSide,
+                transparent: true,
+                opacity: .5,
+                //lights: false,
+                depthTest: false,
+            });
+            Rain.group = new THREE.Group();
+            //group.rotation.y += Math.PI / 15;
+            Rain.geometry = new THREE.PlaneBufferGeometry(4, 1, 1, 1);
+            Util$1.UV.rotatePlane(Rain.geometry, 0, 3);
+            Four$1.scene.add(Rain.group);
+        }
+        Rain.init = init;
+        Rain.spread = 6;
+        function make_drop() {
+            if (Rain.drops.length > 500)
+                return;
+            let mesh = new THREE.Mesh(Rain.geometry, Rain.basicmat);
+            //mesh.matrixAutoUpdate = false;
+            mesh.frustumCulled = false;
+            const z = Four$1.camera.position.z;
+            mesh.position.x = Four$1.camera.position.x + ((Math.random() - .5) * 64 * Rain.spread);
+            mesh.position.y = Four$1.camera.position.y + ((Math.random() - .5) * 64 * Rain.spread);
+            mesh.position.z = z;
+            mesh.rotation.y = Math.PI / 2;
+            //mesh.updateMatrix();
+            let drop = {
+                start: z,
+                mesh: mesh,
+                rand: Math.random()
+            };
+            Rain.drops.push(drop);
+            Rain.group.add(mesh);
+        }
+        Rain.make_drop = make_drop;
+        const speed =  7.0 ;
+        let alternate = false;
+        function update() {
+            if (!Rain.what_a_rainy_day)
+                return;
+            alternate = !alternate;
+            if ( alternate)
+                return;
+            make_drop();
+            make_drop();
+            make_drop();
+            make_drop();
+            make_drop();
+            make_drop();
+            make_drop();
+            make_drop();
+            make_drop();
+            make_drop();
+            let i = Rain.drops.length;
+            while (i--) {
+                let drop = Rain.drops[i];
+                const fall = speed + drop.rand;
+                drop.mesh.position.z -= fall;
+                if (drop.start > drop.mesh.position.z + 300 || drop.mesh.position.z <= 0) {
+                    //drops.splice(i, 1);
+                    const z = Four$1.camera.position.z;
+                    drop.start = z;
+                    drop.mesh.position.x = Four$1.camera.position.x + ((Math.random() - .5) * 64 * Rain.spread);
+                    drop.mesh.position.y = Four$1.camera.position.y + ((Math.random() - .5) * 64 * Rain.spread);
+                    drop.mesh.position.z = z;
+                    //drop.mesh.updateMatrix();
+                    //group.remove(drop.mesh);
+                }
+            }
+        }
+        Rain.update = update;
+    })(Rain || (Rain = {}));
 
     var KILL;
     (function (KILL) {
@@ -4918,6 +5078,8 @@ var gta_kill = (function (exports, THREE) {
             Cinematics$1.init();
             Letterer$1.init();
             Movie.init();
+            Water$1.init();
+            Rain.init();
             KILL.city = new City;
         }
         KILL.init = init;
@@ -4944,6 +5106,8 @@ var gta_kill = (function (exports, THREE) {
                 return;
             if (KILL.ply)
                 KILL.ply.update();
+            Water$1.update();
+            Rain.update();
             Zoom$1.update();
             Scenarios$1.update();
             KILL.city.update(KILL.ply.data);

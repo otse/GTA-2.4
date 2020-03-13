@@ -1,9 +1,10 @@
-import { default as THREE, Clock, Scene, WebGLRenderer, PerspectiveCamera, DirectionalLight, AmbientLight, BoxBufferGeometry } from 'three';
+import { default as THREE, Clock, Scene, WebGLRenderer, PerspectiveCamera, DirectionalLight, AmbientLight, BoxBufferGeometry, MeshPhongMaterial, Texture } from 'three';
 
 import KILL from './KILL';
 import Points from './Objects/Points';
 import { Movie } from './Unsorted/RGB Shift';
 import App from './App';
+import Util from './Random';
 
 //export { THREE };
 
@@ -32,10 +33,10 @@ export namespace Four {
 		if (Movie.enabled) {
 
 			Movie.update();
-			
+
 			Movie.composer.render();
 		}
-
+		
 		else
 
 			renderer.render(scene, camera);
@@ -74,6 +75,8 @@ export namespace Four {
 		document.body.appendChild(renderer.domElement);
 
 		window.addEventListener('resize', onWindowResize, false);
+
+		
 	}
 
 	function onWindowResize() {

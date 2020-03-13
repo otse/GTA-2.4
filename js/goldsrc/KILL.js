@@ -13,6 +13,8 @@ import Cinematics from "./Cinematics/Cinematics";
 import BridgeScenario from "./Scenarios/Bridge";
 import Scenarios from "./Scenarios/Scenarios";
 import Letterer from "./Cinematics/Letterer";
+import { Rain as Rain } from "./Unsorted/Minecraft rain";
+import Water from "./Unsorted/Water";
 export var KILL;
 (function (KILL) {
     var started = false;
@@ -58,6 +60,8 @@ export var KILL;
         Cinematics.init();
         Letterer.init();
         Movie.init();
+        Water.init();
+        Rain.init();
         KILL.city = new City;
     }
     KILL.init = init;
@@ -84,6 +88,8 @@ export var KILL;
             return;
         if (KILL.ply)
             KILL.ply.update();
+        Water.update();
+        Rain.update();
         Zoom.update();
         Scenarios.update();
         KILL.city.update(KILL.ply.data);

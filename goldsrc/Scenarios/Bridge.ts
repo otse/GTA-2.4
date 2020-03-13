@@ -15,9 +15,9 @@ export namespace BridgeScenario {
 
 		const load = function () {
 
-			Generators.Fill.fill([-500, -500, 0], [1000, 1000, 0], { sty: 'sty/nature/evergreen/836.bmp' }, { WHEEL: true });
+			Generators.Fill.fill([-500, -500, -3], [1000, 1000, 0], { sty: 'sty/special/water/1.bmp' }, { WHEEL: false });
 
-			Generators.Roads.highway(1, [10, -7000, 0], 8000, 5, 'qualityRoads');
+			Generators.Roads.highway(1, [10, -7000, 0], 8000, 4, 'qualityRoads');
 
 			let x = .5;
 			let y = 0;
@@ -36,7 +36,7 @@ export namespace BridgeScenario {
 
 				y--;
 				j++;
-				if (j > 14) {
+				if (j > 16) {
 					j = 0;
 					// Begin spawning at new lane
 					y = 0;
