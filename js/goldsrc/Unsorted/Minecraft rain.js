@@ -63,12 +63,12 @@ export var Rain;
             transparent: true,
             opacity: .5,
             //lights: false,
-            depthTest: false,
+            depthWrite: false,
         });
         Rain.group = new Group();
-        //group.rotation.y += Math.PI / 15;
-        Rain.geometry = new PlaneBufferGeometry(4, 1, 1, 1);
-        Util.UV.rotatePlane(Rain.geometry, 0, 3);
+        Rain.group.rotation.y += .3;
+        Rain.dropGeometry = new PlaneBufferGeometry(4, 1, 1, 1);
+        Util.UV.rotatePlane(Rain.dropGeometry, 0, 3);
         Four.scene.add(Rain.group);
     }
     Rain.init = init;
@@ -76,7 +76,7 @@ export var Rain;
     function make_drop() {
         if (Rain.drops.length > 500)
             return;
-        let mesh = new Mesh(Rain.geometry, Rain.basicmat);
+        let mesh = new Mesh(Rain.dropGeometry, Rain.basicmat);
         //mesh.matrixAutoUpdate = false;
         mesh.frustumCulled = false;
         const z = Four.camera.position.z;
@@ -120,7 +120,7 @@ export var Rain;
             drop.mesh.position.z -= fall;
             if (drop.start > drop.mesh.position.z + 300 || drop.mesh.position.z <= 0) {
                 //drops.splice(i, 1);
-                const z = Four.camera.position.z;
+                const z = Four.camera.position.z + 50;
                 drop.start = z;
                 drop.mesh.position.x = Four.camera.position.x + ((Math.random() - .5) * 64 * Rain.spread);
                 drop.mesh.position.y = Four.camera.position.y + ((Math.random() - .5) * 64 * Rain.spread);

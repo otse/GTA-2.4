@@ -40,7 +40,7 @@ export class WordBox {
         let y = pos.y - 80;
         let z = pos.z - 200;
         this.mesh.position.set(x, y, z);
-        this.meshShadow.position.set(x + 2, y - 2, z);
+        this.meshShadow.position.set(x + 1, y - 1, z);
     }
 }
 ;

@@ -19,7 +19,7 @@ export namespace Rain {
 
 	export var basicmat;
 	export var smat;
-	export var geometry;
+	export var dropGeometry;
 
 	/*export function smat_init() {
 
@@ -82,14 +82,14 @@ export namespace Rain {
 			transparent: true,
 			opacity: .5,
 			//lights: false,
-			depthTest: false,
+			depthWrite: false,
 		});
 
 		group = new Group();
-		//group.rotation.y += Math.PI / 15;
+		group.rotation.y += .3;
 
-		geometry = new PlaneBufferGeometry(4, 1, 1, 1);
-		Util.UV.rotatePlane(geometry, 0, 3);
+		dropGeometry = new PlaneBufferGeometry(4, 1, 1, 1);
+		Util.UV.rotatePlane(dropGeometry, 0, 3);
 
 		Four.scene.add(group);
 	}
@@ -101,7 +101,7 @@ export namespace Rain {
 		if (drops.length > 500)
 			return;
 
-		let mesh = new Mesh(geometry, basicmat);
+		let mesh = new Mesh(dropGeometry, basicmat);
 		//mesh.matrixAutoUpdate = false;
 		mesh.frustumCulled = false;
 
@@ -161,7 +161,7 @@ export namespace Rain {
 
 			if (drop.start > drop.mesh.position.z + 300 || drop.mesh.position.z <= 0) {
 				//drops.splice(i, 1);
-				const z = Four.camera.position.z;
+				const z = Four.camera.position.z+50;
 				drop.start = z;
 
 				drop.mesh.position.x = Four.camera.position.x + ((Math.random() - .5) * 64 * spread);

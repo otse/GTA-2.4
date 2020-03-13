@@ -56,10 +56,10 @@ export namespace BridgeScenario {
 		const update = function () {
 			
 			if (stage == 0) {
-				talkingHead = new TalkingHead('johny_zoo');
+				talkingHead = new TalkingHead('guider');
 
 				//wordBox = new WordBox("Out of the car. Move fast.\nNo room for stupidity today.");
-				wordBox = new WordBox("Out of the car. Move fast.\nNo room for stupidity today.");
+				wordBox = new WordBox("No room for stupidity today.\n... ");
 				//wordBox = new WordBox("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.,?!;~'\"`$()-");
 
 				stage++;

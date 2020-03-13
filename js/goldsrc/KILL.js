@@ -15,6 +15,7 @@ import Scenarios from "./Scenarios/Scenarios";
 import Letterer from "./Cinematics/Letterer";
 import { Rain as Rain } from "./Unsorted/Minecraft rain";
 import Water from "./Unsorted/Water";
+import Mist from "./Unsorted/Mist";
 export var KILL;
 (function (KILL) {
     var started = false;
@@ -61,6 +62,7 @@ export var KILL;
         Letterer.init();
         Movie.init();
         Water.init();
+        Mist.init();
         Rain.init();
         KILL.city = new City;
     }
@@ -89,6 +91,7 @@ export var KILL;
         if (KILL.ply)
             KILL.ply.update();
         Water.update();
+        Mist.update();
         Rain.update();
         Zoom.update();
         Scenarios.update();

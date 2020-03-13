@@ -3962,7 +3962,7 @@ var gta_kill = (function (exports, THREE) {
             'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
             'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
             'Y', 'Z', ' ', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
-            '.', ',', '?', '!', ';', '~', '\'', '"', '`', '$', '(', ')'
+            '.', ',', '?', '!', ';', '~', '\'', '"', '`', '$', '(', ')', '-'
         ];
         function build(text, font) {
             let typeface = typefaces[font];
@@ -4852,7 +4852,7 @@ var gta_kill = (function (exports, THREE) {
             let y = pos.y - 80;
             let z = pos.z - 200;
             this.mesh.position.set(x, y, z);
-            this.meshShadow.position.set(x + 2, y - 2, z);
+            this.meshShadow.position.set(x + 1, y - 1, z);
         }
     }
     window.WordBox = WordBox;
@@ -4893,9 +4893,9 @@ var gta_kill = (function (exports, THREE) {
             let wordBox;
             const update = function () {
                 if (stage == 0) {
-                    talkingHead = new TalkingHead('johny_zoo');
+                    talkingHead = new TalkingHead('guider');
                     //wordBox = new WordBox("Out of the car. Move fast.\nNo room for stupidity today.");
-                    wordBox = new WordBox("Out of the car. Move fast.\nNo room for stupidity today.");
+                    wordBox = new WordBox("No room for stupidity today.\n... ");
                     //wordBox = new WordBox("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.,?!;~'\"`$()-");
                     stage++;
                 }
@@ -4975,12 +4975,12 @@ var gta_kill = (function (exports, THREE) {
                 transparent: true,
                 opacity: .5,
                 //lights: false,
-                depthTest: false,
+                depthWrite: false,
             });
             Rain.group = new THREE.Group();
-            //group.rotation.y += Math.PI / 15;
-            Rain.geometry = new THREE.PlaneBufferGeometry(4, 1, 1, 1);
-            Util$1.UV.rotatePlane(Rain.geometry, 0, 3);
+            Rain.group.rotation.y += .3;
+            Rain.dropGeometry = new THREE.PlaneBufferGeometry(4, 1, 1, 1);
+            Util$1.UV.rotatePlane(Rain.dropGeometry, 0, 3);
             Four$1.scene.add(Rain.group);
         }
         Rain.init = init;
@@ -4988,7 +4988,7 @@ var gta_kill = (function (exports, THREE) {
         function make_drop() {
             if (Rain.drops.length > 500)
                 return;
-            let mesh = new THREE.Mesh(Rain.geometry, Rain.basicmat);
+            let mesh = new THREE.Mesh(Rain.dropGeometry, Rain.basicmat);
             //mesh.matrixAutoUpdate = false;
             mesh.frustumCulled = false;
             const z = Four$1.camera.position.z;
@@ -5031,7 +5031,7 @@ var gta_kill = (function (exports, THREE) {
                 drop.mesh.position.z -= fall;
                 if (drop.start > drop.mesh.position.z + 300 || drop.mesh.position.z <= 0) {
                     //drops.splice(i, 1);
-                    const z = Four$1.camera.position.z;
+                    const z = Four$1.camera.position.z + 50;
                     drop.start = z;
                     drop.mesh.position.x = Four$1.camera.position.x + ((Math.random() - .5) * 64 * Rain.spread);
                     drop.mesh.position.y = Four$1.camera.position.y + ((Math.random() - .5) * 64 * Rain.spread);
@@ -5043,6 +5043,55 @@ var gta_kill = (function (exports, THREE) {
         }
         Rain.update = update;
     })(Rain || (Rain = {}));
+
+    var Mist;
+    (function (Mist) {
+        let material;
+        let geometry;
+        let mesh;
+        let x, y;
+        function init() {
+            x = 0;
+            y = 0;
+            const w = 5;
+            geometry = new THREE.PlaneBufferGeometry(Chunks$1.tileSpan * 64 * w, Chunks$1.tileSpan * 64 * w, 1, 1);
+            let perlin = Util$1.loadTexture('sty/perlin_1.png');
+            perlin.wrapS = THREE.RepeatWrapping;
+            perlin.wrapT = THREE.RepeatWrapping;
+            perlin.repeat.set(w, w);
+            material = new THREE.MeshPhongMaterial({
+                map: perlin,
+                color: 0x93e5ff,
+                transparent: true,
+                opacity: .3,
+                depthWrite: false
+            });
+            mesh = new THREE.Mesh(geometry, material);
+            Four$1.scene.add(mesh);
+        }
+        Mist.init = init;
+        function normalize(n) {
+            if (n > 1)
+                n -= 1;
+            if (n < 0)
+                n += 1;
+            return n;
+        }
+        function update() {
+            let w = Four$1.camera.position;
+            let chunkSize = Chunks$1.tileSpan * 64;
+            let tiled = Points$1.floor2(w.x / 64, w.y / 64);
+            let p = Points$1.region(tiled, Chunks$1.tileSpan);
+            mesh.position.set(p.x * chunkSize, p.y * chunkSize, 5);
+            x += Four$1.delta / 18;
+            y += Four$1.delta / 55;
+            material.map.offset.set(x, y);
+            x = normalize(x);
+            y = normalize(y);
+        }
+        Mist.update = update;
+    })(Mist || (Mist = {}));
+    var Mist$1 = Mist;
 
     var KILL;
     (function (KILL) {
@@ -5089,6 +5138,7 @@ var gta_kill = (function (exports, THREE) {
             Letterer$1.init();
             Movie.init();
             Water$1.init();
+            Mist$1.init();
             Rain.init();
             KILL.city = new City;
         }
@@ -5117,6 +5167,7 @@ var gta_kill = (function (exports, THREE) {
             if (KILL.ply)
                 KILL.ply.update();
             Water$1.update();
+            Mist$1.update();
             Rain.update();
             Zoom$1.update();
             Scenarios$1.update();

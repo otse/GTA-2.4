@@ -22,6 +22,7 @@ import Scenarios from "./Scenarios/Scenarios";
 import Letterer from "./Cinematics/Letterer";
 import { Rain as Rain } from "./Unsorted/Minecraft rain";
 import Water from "./Unsorted/Water";
+import Mist from "./Unsorted/Mist";
 
 export namespace KILL {
 
@@ -42,12 +43,12 @@ export namespace KILL {
 
 	export function resourced(word: string) {
 
-		let mask: RESOURCES = (<any>RESOURCES)[word];
+		let mask: RESOURCES = RESOURCES[word];
 
 		const bit = 0b1 << mask;
 
 		words |= bit;
-		
+
 		can_we_begin_yet();
 	}
 
@@ -86,6 +87,7 @@ export namespace KILL {
 		Movie.init();
 
 		Water.init();
+		Mist.init();
 		Rain.init();
 
 		city = new City;
@@ -125,6 +127,7 @@ export namespace KILL {
 			ply.update();
 
 		Water.update();
+		Mist.update();
 		Rain.update();
 
 		Zoom.update();
