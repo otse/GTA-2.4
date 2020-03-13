@@ -13,16 +13,19 @@ export class TalkingHead {
 	materialShadow: MeshPhongMaterial
 	geometry: PlaneBufferGeometry
 
-	img1: Texture
-	img2: Texture
-	img3: Texture
+	time: number
+	img: number
+	imgs: Texture[]
 
 	constructor(name: string) {
 		console.log('new talking head');
 
-		this.img1 = Util.loadTexture(`sty/talking heads/${name}_1.png`);
-		this.img2 = Util.loadTexture(`sty/talking heads/${name}_2.png`);
-		this.img3 = Util.loadTexture(`sty/talking heads/${name}_3.png`);
+		this.time = 0;
+		this.img = 0;
+		this.imgs = [];
+		this.imgs.push(Util.loadTexture(`sty/talking heads/${name}_1.png`));
+		this.imgs.push(Util.loadTexture(`sty/talking heads/${name}_2.png`));
+		this.imgs.push(Util.loadTexture(`sty/talking heads/${name}_3.png`));
 
 		//Sheets.center(`sty/talking heads/${name}_1.bmp`);
 
@@ -36,7 +39,7 @@ export class TalkingHead {
 
 	make() {
 		this.material = new MeshPhongMaterial({
-			map: this.img1,
+			map: this.imgs[0],
 			transparent: true,
 			shininess: 0,
 			depthTest: false
@@ -58,8 +61,16 @@ export class TalkingHead {
 	}
 
 	update() {
+		this.time += Four.delta;
+		
+		if (this.time > 0.2) {
+			this.img = this.img < 2 ? this.img + 2 : 0;
+			this.material.map = this.imgs[this.img];
+			this.time = 0;
+		}
+
 		let pos = Four.camera.position.clone();
-		let x = pos.x + 150;
+		let x = pos.x + 160;
 		let y = pos.y - 80;
 		let z = pos.z - 200;
 

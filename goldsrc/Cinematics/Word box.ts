@@ -63,7 +63,7 @@ export class WordBox {
 
 	update() {
 		let pos = Four.camera.position.clone();
-		let x = pos.x + 150;
+		let x = pos.x + 100;
 		let y = pos.y - 80;
 		let z = pos.z - 200;
 

@@ -4765,9 +4765,12 @@ var gta_kill = (function (exports, THREE) {
     class TalkingHead {
         constructor(name) {
             console.log('new talking head');
-            this.img1 = Util$1.loadTexture(`sty/talking heads/${name}_1.png`);
-            this.img2 = Util$1.loadTexture(`sty/talking heads/${name}_2.png`);
-            this.img3 = Util$1.loadTexture(`sty/talking heads/${name}_3.png`);
+            this.time = 0;
+            this.img = 0;
+            this.imgs = [];
+            this.imgs.push(Util$1.loadTexture(`sty/talking heads/${name}_1.png`));
+            this.imgs.push(Util$1.loadTexture(`sty/talking heads/${name}_2.png`));
+            this.imgs.push(Util$1.loadTexture(`sty/talking heads/${name}_3.png`));
             //Sheets.center(`sty/talking heads/${name}_1.bmp`);
             this.make();
         }
@@ -4777,7 +4780,7 @@ var gta_kill = (function (exports, THREE) {
         }
         make() {
             this.material = new THREE.MeshPhongMaterial({
-                map: this.img1,
+                map: this.imgs[0],
                 transparent: true,
                 shininess: 0,
                 depthTest: false
@@ -4794,8 +4797,14 @@ var gta_kill = (function (exports, THREE) {
             Four$1.scene.add(this.meshShadow);
         }
         update() {
+            this.time += Four$1.delta;
+            if (this.time > 0.2) {
+                this.img = this.img < 2 ? this.img + 2 : 0;
+                this.material.map = this.imgs[this.img];
+                this.time = 0;
+            }
             let pos = Four$1.camera.position.clone();
-            let x = pos.x + 150;
+            let x = pos.x + 160;
             let y = pos.y - 80;
             let z = pos.z - 200;
             this.mesh.position.set(x, y, z);
@@ -4839,7 +4848,7 @@ var gta_kill = (function (exports, THREE) {
         }
         update() {
             let pos = Four$1.camera.position.clone();
-            let x = pos.x + 150;
+            let x = pos.x + 100;
             let y = pos.y - 80;
             let z = pos.z - 200;
             this.mesh.position.set(x, y, z);
@@ -4884,8 +4893,9 @@ var gta_kill = (function (exports, THREE) {
             let wordBox;
             const update = function () {
                 if (stage == 0) {
-                    talkingHead = new TalkingHead('jerkov');
-                    wordBox = new WordBox("Get out of the car.\nYou're here.");
+                    talkingHead = new TalkingHead('johny_zoo');
+                    //wordBox = new WordBox("Out of the car. Move fast.\nNo room for stupidity today.");
+                    wordBox = new WordBox("Out of the car. Move fast.\nNo room for stupidity today.");
                     //wordBox = new WordBox("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.,?!;~'\"`$()-");
                     stage++;
                 }
