@@ -59,6 +59,7 @@ export namespace BridgeScenario {
 				talkingHead = new TalkingHead('jerkov');
 
 				wordBox = new WordBox("Get out of the car.\nYou're here.");
+				//wordBox = new WordBox("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.,?!;~'\"`$()-");
 
 				stage++;
 			}

@@ -431,7 +431,7 @@ var gta_kill = (function (exports, THREE) {
     })(Surfaces || (Surfaces = {}));
     var Surfaces$1 = Surfaces;
 
-    var Sheets$1;
+    var Sheets;
     (function (Sheets) {
         const sheets = {};
         function get(name) {
@@ -471,7 +471,7 @@ var gta_kill = (function (exports, THREE) {
             put('greyRoadsMixed', clone(baseRoads, { file: 'sty/sheets/grey_roads_mixed.png' }));
             put('yellowyPavement', clone(basePavement, { file: 'sty/sheets/yellowy_pavement.png' }));
             put('greenPavement', clone(basePavement, { file: 'sty/sheets/green_pavement.png' }));
-            KILL$1.checkin('SPRITES');
+            KILL$1.resourced('SPRITES');
         }
         Sheets.init = init;
         var spriteTextures = [];
@@ -529,8 +529,8 @@ var gta_kill = (function (exports, THREE) {
             return canvasTexture;
         }
         Sheets.center = center;
-    })(Sheets$1 || (Sheets$1 = {}));
-    var Sheets$2 = Sheets$1;
+    })(Sheets || (Sheets = {}));
+    var Sheets$1 = Sheets;
 
     class Surface extends Object2 {
         constructor(data) {
@@ -556,9 +556,9 @@ var gta_kill = (function (exports, THREE) {
             let map;
             //let halfPixel = 0;
             if (hasSheet) {
-                let sheet = Sheets$2.get(this.data.sheet);
+                let sheet = Sheets$1.get(this.data.sheet);
                 {
-                    map = Sheets$2.cut(sheet, this.data.sprite);
+                    map = Sheets$1.cut(sheet, this.data.sprite);
                 }
             }
             else {
@@ -3903,6 +3903,26 @@ var gta_kill = (function (exports, THREE) {
 
     var Spelling;
     (function (Spelling) {
+        const typefaces = {
+            small: {
+                space: 9,
+                break: -1,
+                height: 23,
+                beginnings: [
+                    0, 11, 22, 33, 44, 55, 66, 77, 88, 96, 108, 121, 132, 148, 159, 170, 181, 192, 203, 214, 224, 235, 247, 263, 274, 286, 296,
+                    304, 313, 325, 337, 350, 362, 374, 386, 398, 410, 422, 429, 435, 446, 452, 458, 471, 477, 488, 500, 509, 518
+                ]
+            },
+            big: {
+                space: 33,
+                break: 26,
+                height: 64,
+                beginnings: [
+                    0, 33, 65, 96, 127, 152, 180, 212, 244, 261, 291, 327, 354, 393, 425, 456, 487, 519, 550, 580, 608, 640, 672, 711, 744, 777, /*after z*/ 809,
+                    0, 22, 54, 85, 120, 150, 181, 211, 242, 274, 306, 323, 340, 371, 388, 405, 442, 459, 490, 507, 540, 562, 583
+                ]
+            }
+        };
         function symbol(a, b, c, d, e, f, g) {
             return { char: a, x: b, y: c, x2: d, y2: e, w: f, h: g };
         }
@@ -3912,41 +3932,37 @@ var gta_kill = (function (exports, THREE) {
             'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
             'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
             'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
-            'Y', 'Z', ' ',
-            '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
+            'Y', 'Z', ' ', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
             '.', ',', '?', '!', ';', '~', '\'', '"', '`', '$', '(', ')'
         ];
-        function build(text, font_sizes) {
+        function build(text, font) {
+            let typeface = typefaces[font];
             text = text.toUpperCase();
             let last_x = 0;
-            let last_y = 256 - 128 - 64;
+            let last_y = 128 / 2 - typeface.height;
             let sentence = { symbols: [] };
             for (let i = 0; i < text.length; i++) {
                 let char = text[i];
                 if (' ' == char) {
-                    last_x += 33;
+                    last_x += typeface.space;
                     continue;
                 }
                 if ('\n' == char) {
-                    last_y += 64;
+                    last_y += typeface.height;
                     last_x = 0;
                     continue;
                 }
                 let index = symbols.indexOf(char);
                 if (index == -1)
                     continue;
-                let x = font_sizes[index];
-                let y, z = index + 1;
-                if (index < 26) {
-                    y = 0;
+                let x = typeface.beginnings[index];
+                let y = 0, z = index + 1;
+                if (typeface.break != -1 && index >= typeface.break) {
+                    y = typeface.height;
                 }
-                else {
-                    y = 64;
-                    //z -= 25 - index;
-                }
-                console.log('char', char, 'index', index);
-                let w = font_sizes[z] - x;
-                sentence.symbols.push(symbol(char, last_x, last_y, x, y, w, 64));
+                //console.log('char', char, 'index', index);
+                let w = typeface.beginnings[z] - x;
+                sentence.symbols.push(symbol(char, last_x, last_y, x, y, w, typeface.height));
                 last_x += w;
             }
             return sentence;
@@ -3957,34 +3973,37 @@ var gta_kill = (function (exports, THREE) {
 
     var Letterer;
     (function (Letterer) {
-        const bigAlphabetPos = [
-            0, 33, 65, 96, 127, 152, 180, 212, 244, 261, 291, 327, 354, 393, 425, 456, 487, 519, 550, 580, 608, 640, 672, 711, 744, 777, /* this is after z*/ 809,
-            0, 22, 54, 85, 120, 150, 181, 211, 242, 274, 306, 323, 340, 371, 388, 405, 442, 459, 490, 507, 540, 562, 583
-        ];
         function init() {
             Letterer.canvas = document.createElement('canvas');
             document.body.appendChild(Letterer.canvas);
             console.log('letterer init');
+            //let manager = new LoadingManager();
+            const error = () => {
+                KILL$1.critical('FONT');
+            };
             let loader = new THREE.ImageLoader();
-            loader.load('sty/fonts/big.png', (image) => {
+            loader.load('sty/fonts/small.png', (image) => {
+                Letterer.smallFont = image;
+                KILL$1.resourced('SMALL_FONT');
+            }, undefined, error);
+            let loader2 = new THREE.ImageLoader();
+            loader2.load('sty/fonts/big.png', (image) => {
                 Letterer.bigFont = image;
-                KILL$1.checkin('FONTS');
-            }, undefined, () => {
-                KILL$1.fault('BIG FONT');
-            });
+                KILL$1.resourced('BIG_FONT');
+            }, undefined, error);
         }
         Letterer.init = init;
         function makeNiceText(text) {
-            let spelling = Spelling$1.build(text, bigAlphabetPos);
+            let spelling = Spelling$1.build(text, 'small');
             let canvasTexture = new THREE.CanvasTexture(Letterer.canvas);
             const paint = () => {
                 canvasTexture.magFilter = THREE.NearestFilter;
                 canvasTexture.minFilter = THREE.NearestFilter;
                 const context = Letterer.canvas.getContext("2d");
-                Letterer.canvas.width = 1024;
-                Letterer.canvas.height = 256;
+                Letterer.canvas.width = 512;
+                Letterer.canvas.height = 128;
                 for (let symbol of spelling.symbols) {
-                    context.drawImage(Letterer.bigFont, symbol.x2, symbol.y2, symbol.w, symbol.h, symbol.x, symbol.y, symbol.w, symbol.h);
+                    context.drawImage(Letterer.smallFont, symbol.x2, symbol.y2, symbol.w, symbol.h, symbol.x, symbol.y, symbol.w, symbol.h);
                 }
                 let image = new Image();
                 image.src = Letterer.canvas.toDataURL();
@@ -3996,6 +4015,7 @@ var gta_kill = (function (exports, THREE) {
         }
         Letterer.makeNiceText = makeNiceText;
     })(Letterer || (Letterer = {}));
+    var Letterer$1 = Letterer;
 
     var Cinematics;
     (function (Cinematics) {
@@ -4011,6 +4031,7 @@ var gta_kill = (function (exports, THREE) {
         }
         Cinematics.missionText = missionText;
     })(Cinematics || (Cinematics = {}));
+    var Cinematics$1 = Cinematics;
 
     // For making vertical ~> horizontal
     // So you only need to make one
@@ -4710,6 +4731,7 @@ var gta_kill = (function (exports, THREE) {
         }
         Scenarios.update = update;
     })(Scenarios || (Scenarios = {}));
+    var Scenarios$1 = Scenarios;
 
     class TalkingHead {
         constructor(name) {
@@ -4745,7 +4767,7 @@ var gta_kill = (function (exports, THREE) {
         update() {
             let pos = Four$1.camera.position.clone();
             let x = pos.x + 150;
-            let y = pos.y;
+            let y = pos.y - 80;
             let z = pos.z - 200;
             this.mesh.position.set(x, y, z);
             this.meshShadow.position.set(x + 2, y - 2, z);
@@ -4775,20 +4797,21 @@ var gta_kill = (function (exports, THREE) {
             this.materialShadow.opacity = 0.25;
             this.materialShadow.color = new THREE.Color(0x0);
             this.geometry = new THREE.PlaneBufferGeometry(64, 16, 1);
+            const scale = 5;
             this.mesh = new THREE.Mesh(this.geometry, this.material);
             this.mesh.renderOrder = 2;
-            this.mesh.scale.set(5, 5, 5);
+            this.mesh.scale.set(scale, scale, scale);
             this.meshShadow = new THREE.Mesh(this.geometry, this.materialShadow);
             this.meshShadow.renderOrder = 1;
-            this.meshShadow.scale.set(5, 5, 5);
+            this.meshShadow.scale.set(scale, scale, scale);
             Four$1.scene.add(this.mesh);
             Four$1.scene.add(this.meshShadow);
             console.log('make word box');
         }
         update() {
             let pos = Four$1.camera.position.clone();
-            let x = pos.x + 100;
-            let y = pos.y;
+            let x = pos.x + 150;
+            let y = pos.y - 80;
             let z = pos.z - 200;
             this.mesh.position.set(x, y, z);
             this.meshShadow.position.set(x + 2, y - 2, z);
@@ -4834,6 +4857,7 @@ var gta_kill = (function (exports, THREE) {
                 if (stage == 0) {
                     talkingHead = new TalkingHead('jerkov');
                     wordBox = new WordBox("Get out of the car.\nYou're here.");
+                    //wordBox = new WordBox("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.,?!;~'\"`$()-");
                     stage++;
                 }
                 talkingHead.update();
@@ -4853,45 +4877,46 @@ var gta_kill = (function (exports, THREE) {
     var KILL;
     (function (KILL) {
         var started = false;
-        let MASKS;
-        (function (MASKS) {
-            MASKS[MASKS["UNDEFINED_OR_INIT"] = 0] = "UNDEFINED_OR_INIT";
-            MASKS[MASKS["FONTS"] = 1] = "FONTS";
-            MASKS[MASKS["SPRITES"] = 2] = "SPRITES";
-            MASKS[MASKS["COUNT"] = 3] = "COUNT";
-        })(MASKS = KILL.MASKS || (KILL.MASKS = {}));
+        let RESOURCES;
+        (function (RESOURCES) {
+            RESOURCES[RESOURCES["UNDEFINED_OR_INIT"] = 0] = "UNDEFINED_OR_INIT";
+            RESOURCES[RESOURCES["SMALL_FONT"] = 1] = "SMALL_FONT";
+            RESOURCES[RESOURCES["BIG_FONT"] = 2] = "BIG_FONT";
+            RESOURCES[RESOURCES["SPRITES"] = 3] = "SPRITES";
+            RESOURCES[RESOURCES["COUNT"] = 4] = "COUNT";
+        })(RESOURCES = KILL.RESOURCES || (KILL.RESOURCES = {}));
         let words = 0b0;
-        function checkin(word) {
-            let mask = MASKS[word];
+        function resourced(word) {
+            let mask = RESOURCES[word];
             const bit = 0b1 << mask;
             words |= bit;
-            checkins();
+            can_we_begin_yet();
         }
-        KILL.checkin = checkin;
-        function checkins() {
+        KILL.resourced = resourced;
+        function can_we_begin_yet() {
             let count = 0;
             let i = 0;
-            for (; i < MASKS.COUNT; i++)
+            for (; i < RESOURCES.COUNT; i++)
                 (words & 0b1 << i) ? count++ : void (0);
-            if (count == MASKS.COUNT)
+            if (count == RESOURCES.COUNT)
                 start();
         }
-        function fault(mask) {
-            console.error('fault ', mask);
+        function critical(mask) {
+            console.error('resource', mask);
         }
-        KILL.fault = fault;
+        KILL.critical = critical;
         function init() {
             console.log('kill init');
-            checkin('UNDEFINED_OR_INIT');
+            resourced('UNDEFINED_OR_INIT');
             Phong2$1.rig();
             Rectangles$1.init();
             Surfaces$1.init();
             Blocks$1.init();
             BoxCutter$1.init();
             Sprites$1.init();
-            Sheets$2.init();
-            Cinematics.init();
-            Letterer.init();
+            Sheets$1.init();
+            Cinematics$1.init();
+            Letterer$1.init();
             Movie.init();
             KILL.city = new City;
         }
@@ -4920,7 +4945,7 @@ var gta_kill = (function (exports, THREE) {
             if (KILL.ply)
                 KILL.ply.update();
             Zoom$1.update();
-            Scenarios.update();
+            Scenarios$1.update();
             KILL.city.update(KILL.ply.data);
         }
         KILL.update = update;

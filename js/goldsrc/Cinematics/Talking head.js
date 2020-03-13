@@ -35,7 +35,7 @@ export class TalkingHead {
     update() {
         let pos = Four.camera.position.clone();
         let x = pos.x + 150;
-        let y = pos.y;
+        let y = pos.y - 80;
         let z = pos.z - 200;
         this.mesh.position.set(x, y, z);
         this.meshShadow.position.set(x + 2, y - 2, z);

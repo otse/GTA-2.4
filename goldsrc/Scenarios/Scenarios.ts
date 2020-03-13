@@ -18,3 +18,5 @@ export namespace Scenarios {
 	}
 
 };
+
+export default Scenarios;

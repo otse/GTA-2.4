@@ -12,3 +12,4 @@ export var Scenarios;
     Scenarios.update = update;
 })(Scenarios || (Scenarios = {}));
 ;
+export default Scenarios;

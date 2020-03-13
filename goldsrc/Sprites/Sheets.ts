@@ -58,7 +58,7 @@ export namespace Sheets {
 		put('yellowyPavement', clone(basePavement, { file: 'sty/sheets/yellowy_pavement.png' }));
 		put('greenPavement', clone(basePavement, { file: 'sty/sheets/green_pavement.png' }));
 
-		KILL.checkin('SPRITES');
+		KILL.resourced('SPRITES');
 
 	}
 

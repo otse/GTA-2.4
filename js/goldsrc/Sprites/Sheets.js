@@ -41,7 +41,7 @@ export var Sheets;
         put('greyRoadsMixed', clone(baseRoads, { file: 'sty/sheets/grey_roads_mixed.png' }));
         put('yellowyPavement', clone(basePavement, { file: 'sty/sheets/yellowy_pavement.png' }));
         put('greenPavement', clone(basePavement, { file: 'sty/sheets/green_pavement.png' }));
-        KILL.checkin('SPRITES');
+        KILL.resourced('SPRITES');
     }
     Sheets.init = init;
     var spriteTextures = [];

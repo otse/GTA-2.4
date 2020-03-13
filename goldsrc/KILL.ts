@@ -16,10 +16,10 @@ import Zoom from "./Unsorted/Zoom";
 import { Movie } from "./Unsorted/RGB Shift";
 import PalmTrees from "./Scenarios/Palm trees";
 import HighWayWithEveryCar from "./Scenarios/Highway";
-import { Cinematics } from "./Cinematics/Cinematics";
+import Cinematics from "./Cinematics/Cinematics";
 import BridgeScenario from "./Scenarios/Bridge";
-import { Scenarios } from "./Scenarios/Scenarios";
-import { Letterer } from "./Cinematics/Letterer";
+import Scenarios from "./Scenarios/Scenarios";
+import Letterer from "./Cinematics/Letterer";
 
 export namespace KILL {
 
@@ -28,48 +28,49 @@ export namespace KILL {
 
 	var started = false;
 
-	export enum MASKS {
+	export enum RESOURCES {
 		UNDEFINED_OR_INIT = 0,
-		FONTS,
+		SMALL_FONT,
+		BIG_FONT,
 		SPRITES,
 		COUNT
 	};
 
 	let words = 0b0;
 
-	export function checkin(word: string) {
+	export function resourced(word: string) {
 
-		let mask: MASKS = (<any>MASKS)[word];
+		let mask: RESOURCES = (<any>RESOURCES)[word];
 
 		const bit = 0b1 << mask;
 
 		words |= bit;
 		
-		checkins();
+		can_we_begin_yet();
 	}
 
-	function checkins() {
+	function can_we_begin_yet() {
 
 		let count = 0;
 
 		let i = 0;
-		for (; i < MASKS.COUNT; i++)
+		for (; i < RESOURCES.COUNT; i++)
 			(words & 0b1 << i) ? count++ : void (0);
 
-		if (count == MASKS.COUNT)
+		if (count == RESOURCES.COUNT)
 			start();
 	}
 
-	export function fault(mask: string) {
+	export function critical(mask: string) {
 
-		console.error('fault ', mask);
+		console.error('resource', mask);
 
 	}
 
 	export function init() {
 		console.log('kill init');
 
-		checkin('UNDEFINED_OR_INIT');
+		resourced('UNDEFINED_OR_INIT');
 
 		Phong2.rig();
 		Rectangles.init();

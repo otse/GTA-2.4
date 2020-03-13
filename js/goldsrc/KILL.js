@@ -9,44 +9,45 @@ import Sprites from "./Sprites/Sprites";
 import Sheets from "./Sprites/Sheets";
 import Zoom from "./Unsorted/Zoom";
 import { Movie } from "./Unsorted/RGB Shift";
-import { Cinematics } from "./Cinematics/Cinematics";
+import Cinematics from "./Cinematics/Cinematics";
 import BridgeScenario from "./Scenarios/Bridge";
-import { Scenarios } from "./Scenarios/Scenarios";
-import { Letterer } from "./Cinematics/Letterer";
+import Scenarios from "./Scenarios/Scenarios";
+import Letterer from "./Cinematics/Letterer";
 export var KILL;
 (function (KILL) {
     var started = false;
-    let MASKS;
-    (function (MASKS) {
-        MASKS[MASKS["UNDEFINED_OR_INIT"] = 0] = "UNDEFINED_OR_INIT";
-        MASKS[MASKS["FONTS"] = 1] = "FONTS";
-        MASKS[MASKS["SPRITES"] = 2] = "SPRITES";
-        MASKS[MASKS["COUNT"] = 3] = "COUNT";
-    })(MASKS = KILL.MASKS || (KILL.MASKS = {}));
+    let RESOURCES;
+    (function (RESOURCES) {
+        RESOURCES[RESOURCES["UNDEFINED_OR_INIT"] = 0] = "UNDEFINED_OR_INIT";
+        RESOURCES[RESOURCES["SMALL_FONT"] = 1] = "SMALL_FONT";
+        RESOURCES[RESOURCES["BIG_FONT"] = 2] = "BIG_FONT";
+        RESOURCES[RESOURCES["SPRITES"] = 3] = "SPRITES";
+        RESOURCES[RESOURCES["COUNT"] = 4] = "COUNT";
+    })(RESOURCES = KILL.RESOURCES || (KILL.RESOURCES = {}));
     ;
     let words = 0b0;
-    function checkin(word) {
-        let mask = MASKS[word];
+    function resourced(word) {
+        let mask = RESOURCES[word];
         const bit = 0b1 << mask;
         words |= bit;
-        checkins();
+        can_we_begin_yet();
     }
-    KILL.checkin = checkin;
-    function checkins() {
+    KILL.resourced = resourced;
+    function can_we_begin_yet() {
         let count = 0;
         let i = 0;
-        for (; i < MASKS.COUNT; i++)
+        for (; i < RESOURCES.COUNT; i++)
             (words & 0b1 << i) ? count++ : void (0);
-        if (count == MASKS.COUNT)
+        if (count == RESOURCES.COUNT)
             start();
     }
-    function fault(mask) {
-        console.error('fault ', mask);
+    function critical(mask) {
+        console.error('resource', mask);
     }
-    KILL.fault = fault;
+    KILL.critical = critical;
     function init() {
         console.log('kill init');
-        checkin('UNDEFINED_OR_INIT');
+        resourced('UNDEFINED_OR_INIT');
         Phong2.rig();
         Rectangles.init();
         Surfaces.init();

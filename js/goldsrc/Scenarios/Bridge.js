@@ -42,6 +42,7 @@ export var BridgeScenario;
             if (stage == 0) {
                 talkingHead = new TalkingHead('jerkov');
                 wordBox = new WordBox("Get out of the car.\nYou're here.");
+                //wordBox = new WordBox("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.,?!;~'\"`$()-");
                 stage++;
             }
             talkingHead.update();
