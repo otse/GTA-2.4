@@ -8,6 +8,7 @@ import { Mesh, BoxGeometry, MeshBasicMaterial } from "three";
 export namespace Chunks {
 
 	export const tileSpan = 7
+	export const actualSize = tileSpan * 64
 
 	let geometry: THREE.BoxGeometry
 	let blue: THREE.MeshBasicMaterial

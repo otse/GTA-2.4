@@ -60,6 +60,7 @@ export namespace BridgeScenario {
 
 				//wordBox = new WordBox("Out of the car. Move fast.\nNo room for stupidity today.");
 				wordBox = new WordBox("No room for stupidity today.\n... ");
+				//wordBox = new WordBox(`Nurse... It's time to "OPERATE"\non these commuters! `);
 				//wordBox = new WordBox("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.,?!;~'\"`$()-");
 
 				stage++;

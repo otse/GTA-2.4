@@ -2,11 +2,26 @@ import { MeshPhongMaterial, PlaneBufferGeometry, Mesh, Color } from "three";
 import Four from "../Four";
 import { Letterer } from "./Letterer";
 export class WordBox {
-    constructor(words) {
+    constructor(text) {
         console.log('new talking head');
-        this.img1 = Letterer.makeNiceText(words);
         //Sheets.center(`sty/talking heads/${name}_1.bmp`);
+        this.setText(text);
         this.make();
+    }
+    setText(text) {
+        if (this.texture)
+            this.texture.dispose();
+        this.texture = Letterer.makeNiceText(text);
+        if (this.mesh) {
+            this.material.map = this.texture;
+            this.materialShadow.map = this.texture;
+            this.mesh.visible = false;
+            this.meshShadow.visible = false;
+            setTimeout(() => {
+                this.mesh.visible = true;
+                this.meshShadow.visible = true;
+            }, 500);
+        }
     }
     destroy() {
         this.geometry.dispose();
@@ -14,7 +29,7 @@ export class WordBox {
     }
     make() {
         this.material = new MeshPhongMaterial({
-            map: this.img1,
+            map: this.texture,
             transparent: true,
             shininess: 0,
             depthTest: false

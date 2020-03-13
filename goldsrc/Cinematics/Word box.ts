@@ -14,16 +14,32 @@ export class WordBox {
 	materialShadow: MeshPhongMaterial
 	geometry: PlaneBufferGeometry
 
-	img1: Texture
+	texture: Texture
 
-	constructor(words: string) {
+	constructor(text: string) {
 		console.log('new talking head');
-
-		this.img1 = Letterer.makeNiceText(words);
 
 		//Sheets.center(`sty/talking heads/${name}_1.bmp`);
 
+		this.setText(text);
+
 		this.make();
+	}
+
+	setText(text: string) {
+		if (this.texture)
+			this.texture.dispose();
+		this.texture = Letterer.makeNiceText(text);
+		if (this.mesh) {
+			this.material.map = this.texture;
+			this.materialShadow.map = this.texture;			
+			this.mesh.visible = false;
+			this.meshShadow.visible = false;
+			setTimeout(() => {
+				this.mesh.visible = true;
+				this.meshShadow.visible = true;
+			}, 500);
+		}
 	}
 
 	destroy() {
@@ -33,7 +49,7 @@ export class WordBox {
 
 	make() {
 		this.material = new MeshPhongMaterial({
-			map: this.img1,
+			map: this.texture,
 			transparent: true,
 			shininess: 0,
 			depthTest: false
@@ -50,7 +66,7 @@ export class WordBox {
 		this.mesh = new Mesh(this.geometry, this.material);
 		this.mesh.renderOrder = 2;
 		this.mesh.scale.set(scale, scale, scale);
-		
+
 		this.meshShadow = new Mesh(this.geometry, this.materialShadow);
 		this.meshShadow.renderOrder = 1;
 		this.meshShadow.scale.set(scale, scale, scale);

@@ -4,6 +4,7 @@ import { Mesh, BoxGeometry, MeshBasicMaterial } from "three";
 export var Chunks;
 (function (Chunks) {
     Chunks.tileSpan = 7;
+    Chunks.actualSize = Chunks.tileSpan * 64;
     let geometry;
     let blue;
     let purple;

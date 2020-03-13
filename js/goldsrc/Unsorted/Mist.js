@@ -3,6 +3,7 @@ import Four from "../Four";
 import Util from "../Random";
 import Chunks from "../Chunks/Chunks";
 import Points from "../Objects/Points";
+// http://kitfox.com/projects/perlinNoiseMaker/
 var Mist;
 (function (Mist) {
     let material;
@@ -39,10 +40,9 @@ var Mist;
     }
     function update() {
         let w = Four.camera.position;
-        let chunkSize = Chunks.tileSpan * 64;
         let tiled = Points.floor2(w.x / 64, w.y / 64);
         let p = Points.region(tiled, Chunks.tileSpan);
-        mesh.position.set(p.x * chunkSize, p.y * chunkSize, 5);
+        mesh.position.set(p.x * Chunks.actualSize, p.y * Chunks.actualSize, 5);
         if ('stormy' == Mist.mode) {
             x += Four.delta / 2;
             y += Four.delta / 6;

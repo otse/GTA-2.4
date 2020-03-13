@@ -9,8 +9,8 @@ import Sprites from "./Sprites/Sprites";
 import Sheets from "./Sprites/Sheets";
 import Zoom from "./Unsorted/Zoom";
 import { Movie } from "./Unsorted/RGB Shift";
+import HighWayWithEveryCar from "./Scenarios/Highway";
 import Cinematics from "./Cinematics/Cinematics";
-import BridgeScenario from "./Scenarios/Bridge";
 import Scenarios from "./Scenarios/Scenarios";
 import Letterer from "./Cinematics/Letterer";
 import { Rain as Rain } from "./Unsorted/Minecraft rain";
@@ -65,6 +65,7 @@ export var KILL;
         Mist.init();
         Rain.init();
         KILL.city = new City;
+        window.KILL = KILL;
     }
     KILL.init = init;
     function start() {
@@ -72,14 +73,16 @@ export var KILL;
             return;
         console.log('kill starting');
         started = true;
-        BridgeScenario.init();
+        HighWayWithEveryCar.init();
+        //BridgeScenario.init();
         let data = {
             type: 'Ply',
+            //remap: 16,
             x: 10.5,
             y: 1,
             z: 0
         };
-        data.remap = [40, 46, 47, 49, 50, 51][Math.floor(Math.random() * 6)];
+        //data.remap = [40, 46, 47, 49, 50, 51][Math.floor(Math.random() * 6)];
         KILL.ply = new Ply(data);
         KILL.city.chunkList.get2(0, 0);
         KILL.city.chunkList.get2(0, 1);

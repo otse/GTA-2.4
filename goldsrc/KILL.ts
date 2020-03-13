@@ -91,6 +91,8 @@ export namespace KILL {
 		Rain.init();
 
 		city = new City;
+
+		(window as any).KILL = KILL;
 	}
 
 	export function start() {
@@ -102,15 +104,17 @@ export namespace KILL {
 
 		started = true;
 
-		BridgeScenario.init();
+		HighWayWithEveryCar.init();
+		//BridgeScenario.init();
 
 		let data: Data2 = {
 			type: 'Ply',
+			//remap: 16,
 			x: 10.5,
 			y: 1,
 			z: 0
 		};
-		data.remap = [40, 46, 47, 49, 50, 51][Math.floor(Math.random() * 6)];
+		//data.remap = [40, 46, 47, 49, 50, 51][Math.floor(Math.random() * 6)];
 
 		ply = new Ply(data);
 

@@ -4,14 +4,27 @@ import Four from "../Four";
 export class TalkingHead {
     constructor(name) {
         console.log('new talking head');
-        this.time = 0;
+        this.talkTime = 0;
+        this.blinkTime = 0;
+        this.blinkDelay = 0;
+        this.openEyesDelay = 0.1;
         this.img = 0;
         this.imgs = [];
         this.imgs.push(Util.loadTexture(`sty/talking heads/${name}_1.png`));
         this.imgs.push(Util.loadTexture(`sty/talking heads/${name}_2.png`));
         this.imgs.push(Util.loadTexture(`sty/talking heads/${name}_3.png`));
+        this.animateMouth = true;
         //Sheets.center(`sty/talking heads/${name}_1.bmp`);
         this.make();
+    }
+    talk(aye, delay = 0) {
+        if (aye)
+            this.animateMouth = true;
+        else
+            setTimeout(() => {
+                this.animateMouth = false;
+                this.material.map = this.imgs[0];
+            }, delay);
     }
     destroy() {
         this.geometry.dispose();
@@ -36,11 +49,26 @@ export class TalkingHead {
         Four.scene.add(this.meshShadow);
     }
     update() {
-        this.time += Four.delta;
-        if (this.time > 0.2) {
-            this.img = this.img < 2 ? this.img + 2 : 0;
-            this.material.map = this.imgs[this.img];
-            this.time = 0;
+        if (this.animateMouth) {
+            this.talkTime += Four.delta;
+            if (this.talkTime > 0.2) {
+                this.img = this.img < 2 ? this.img + 2 : 0;
+                this.material.map = this.imgs[this.img];
+                this.talkTime = 0;
+            }
+        }
+        else {
+            this.blinkTime += Four.delta;
+            if (this.blinkTime > this.blinkDelay) {
+                this.blinkTime = 0;
+                this.blinkDelay = 3 + Math.random() * 3;
+            }
+            else if (this.blinkTime > 0.11) {
+                this.material.map = this.imgs[0];
+            }
+            else if (this.blinkTime > 0) {
+                this.material.map = this.imgs[1];
+            }
         }
         let pos = Four.camera.position.clone();
         let x = pos.x + 160;

@@ -30,8 +30,8 @@ export namespace Peds {
     export const sheet: Sheet = {
 
         file: 'ped/template_24.png',
-        width: 33 * 8,
-        height: 33 * 23,
+        width: 264,
+        height: 759,
         piece: {
             w: 33,
             h: 33

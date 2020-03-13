@@ -5,6 +5,7 @@ import Chunk from "../Chunks/Chunk";
 import Chunks from "../Chunks/Chunks";
 import Points from "../Objects/Points";
 
+// http://kitfox.com/projects/perlinNoiseMaker/
 namespace Mist {
 
 	let material: MeshPhongMaterial
@@ -52,13 +53,11 @@ namespace Mist {
 
 		let w = Four.camera.position;
 
-		let chunkSize = Chunks.tileSpan * 64;
-
 		let tiled = Points.floor2(w.x / 64, w.y / 64);
 
 		let p = Points.region(tiled, Chunks.tileSpan);
 
-		mesh.position.set(p.x * chunkSize, p.y * chunkSize, 5);
+		mesh.position.set(p.x * Chunks.actualSize, p.y * Chunks.actualSize, 5);
 
 		if ('stormy' == mode) {
 			x += Four.delta / 2;

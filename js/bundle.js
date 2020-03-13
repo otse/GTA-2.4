@@ -52,6 +52,7 @@ var gta_kill = (function (exports, THREE) {
     var Chunks;
     (function (Chunks) {
         Chunks.tileSpan = 7;
+        Chunks.actualSize = Chunks.tileSpan * 64;
         let geometry;
         let blue;
         let purple;
@@ -3465,8 +3466,8 @@ var gta_kill = (function (exports, THREE) {
         Peds.play = play;
         Peds.sheet = {
             file: 'ped/template_24.png',
-            width: 33 * 8,
-            height: 33 * 23,
+            width: 264,
+            height: 759,
             piece: {
                 w: 33,
                 h: 33
@@ -3929,138 +3930,6 @@ var gta_kill = (function (exports, THREE) {
 			}`
         };
     })(Movie || (Movie = {}));
-
-    var Spelling;
-    (function (Spelling) {
-        const typefaces = {
-            small: {
-                space: 9,
-                break: -1,
-                height: 23,
-                beginnings: [
-                    0, 11, 22, 33, 44, 55, 66, 77, 88, 96, 108, 121, 132, 148, 159, 170, 181, 192, 203, 214, 224, 235, 247, 263, 274, 286, 296,
-                    304, 313, 325, 337, 350, 362, 374, 386, 398, 410, 422, 429, 435, 446, 452, 458, 471, 477, 488, 500, 509, 518
-                ]
-            },
-            big: {
-                space: 33,
-                break: 26,
-                height: 64,
-                beginnings: [
-                    0, 33, 65, 96, 127, 152, 180, 212, 244, 261, 291, 327, 354, 393, 425, 456, 487, 519, 550, 580, 608, 640, 672, 711, 744, 777, /*after z*/ 809,
-                    0, 22, 54, 85, 120, 150, 181, 211, 242, 274, 306, 323, 340, 371, 388, 405, 442, 459, 490, 507, 540, 562, 583
-                ]
-            }
-        };
-        function symbol(a, b, c, d, e, f, g) {
-            return { char: a, x: b, y: c, x2: d, y2: e, w: f, h: g };
-        }
-        // https://gtamp.com/text/?bg=0&font=2&color=0&shiny=0&imgtype=0&text=ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.%2C%3F%21%3B%7E%27%22%60%24%28%29-
-        // ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.,?!;~'"`$()-
-        const symbols = [
-            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
-            'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
-            'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
-            'Y', 'Z', ' ', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
-            '.', ',', '?', '!', ';', '~', '\'', '"', '`', '$', '(', ')', '-'
-        ];
-        function build(text, font) {
-            let typeface = typefaces[font];
-            text = text.toUpperCase();
-            let last_x = 0;
-            let last_y = 128 / 2 - typeface.height;
-            let sentence = { symbols: [] };
-            for (let i = 0; i < text.length; i++) {
-                let char = text[i];
-                if (' ' == char) {
-                    last_x += typeface.space;
-                    continue;
-                }
-                if ('\n' == char) {
-                    last_y += typeface.height;
-                    last_x = 0;
-                    continue;
-                }
-                let index = symbols.indexOf(char);
-                if (index == -1)
-                    continue;
-                let x = typeface.beginnings[index];
-                let y = 0, z = index + 1;
-                if (typeface.break != -1 && index >= typeface.break) {
-                    y = typeface.height;
-                }
-                //console.log('char', char, 'index', index);
-                let w = typeface.beginnings[z] - x;
-                sentence.symbols.push(symbol(char, last_x, last_y, x, y, w, typeface.height));
-                last_x += w;
-            }
-            return sentence;
-        }
-        Spelling.build = build;
-    })(Spelling || (Spelling = {}));
-    var Spelling$1 = Spelling;
-
-    var Letterer;
-    (function (Letterer) {
-        function init() {
-            Letterer.canvas = document.createElement('canvas');
-            document.body.appendChild(Letterer.canvas);
-            console.log('letterer init');
-            //let manager = new LoadingManager();
-            const error = () => {
-                KILL$1.critical('FONT');
-            };
-            let loader = new THREE.ImageLoader();
-            loader.load('sty/fonts/small.png', (image) => {
-                Letterer.smallFont = image;
-                KILL$1.resourced('SMALL_FONT');
-            }, undefined, error);
-            let loader2 = new THREE.ImageLoader();
-            loader2.load('sty/fonts/big.png', (image) => {
-                Letterer.bigFont = image;
-                KILL$1.resourced('BIG_FONT');
-            }, undefined, error);
-        }
-        Letterer.init = init;
-        function makeNiceText(text) {
-            let spelling = Spelling$1.build(text, 'small');
-            let canvasTexture = new THREE.CanvasTexture(Letterer.canvas);
-            const paint = () => {
-                canvasTexture.magFilter = THREE.NearestFilter;
-                canvasTexture.minFilter = THREE.NearestFilter;
-                const context = Letterer.canvas.getContext("2d");
-                Letterer.canvas.width = 512;
-                Letterer.canvas.height = 128;
-                for (let symbol of spelling.symbols) {
-                    context.drawImage(Letterer.smallFont, symbol.x2, symbol.y2, symbol.w, symbol.h, symbol.x, symbol.y, symbol.w, symbol.h);
-                }
-                let image = new Image();
-                image.src = Letterer.canvas.toDataURL();
-                canvasTexture.image = image;
-                canvasTexture.needsUpdate = true;
-            };
-            paint();
-            return canvasTexture;
-        }
-        Letterer.makeNiceText = makeNiceText;
-    })(Letterer || (Letterer = {}));
-    var Letterer$1 = Letterer;
-
-    var Cinematics;
-    (function (Cinematics) {
-        function init() {
-            console.log('cinematics init');
-        }
-        Cinematics.init = init;
-        function update() {
-        }
-        Cinematics.update = update;
-        function missionText(words) {
-            Letterer.makeNiceText(words);
-        }
-        Cinematics.missionText = missionText;
-    })(Cinematics || (Cinematics = {}));
-    var Cinematics$1 = Cinematics;
 
     // For making vertical ~> horizontal
     // So you only need to make one
@@ -4762,63 +4631,143 @@ var gta_kill = (function (exports, THREE) {
     })(Scenarios || (Scenarios = {}));
     var Scenarios$1 = Scenarios;
 
-    class TalkingHead {
-        constructor(name) {
-            console.log('new talking head');
-            this.time = 0;
-            this.img = 0;
-            this.imgs = [];
-            this.imgs.push(Util$1.loadTexture(`sty/talking heads/${name}_1.png`));
-            this.imgs.push(Util$1.loadTexture(`sty/talking heads/${name}_2.png`));
-            this.imgs.push(Util$1.loadTexture(`sty/talking heads/${name}_3.png`));
-            //Sheets.center(`sty/talking heads/${name}_1.bmp`);
-            this.make();
-        }
-        destroy() {
-            this.geometry.dispose();
-            this.material.dispose();
-        }
-        make() {
-            this.material = new THREE.MeshPhongMaterial({
-                map: this.imgs[0],
-                transparent: true,
-                shininess: 0,
-                depthTest: false
-            });
-            this.materialShadow = this.material.clone();
-            this.materialShadow.opacity = 0.35;
-            this.materialShadow.color = new THREE.Color(0x0);
-            this.geometry = new THREE.PlaneBufferGeometry(64, 64, 1);
-            this.mesh = new THREE.Mesh(this.geometry, this.material);
-            this.meshShadow = new THREE.Mesh(this.geometry, this.materialShadow);
-            this.mesh.renderOrder = 2;
-            this.meshShadow.renderOrder = 1;
-            Four$1.scene.add(this.mesh);
-            Four$1.scene.add(this.meshShadow);
-        }
-        update() {
-            this.time += Four$1.delta;
-            if (this.time > 0.2) {
-                this.img = this.img < 2 ? this.img + 2 : 0;
-                this.material.map = this.imgs[this.img];
-                this.time = 0;
+    var Spelling;
+    (function (Spelling) {
+        const typefaces = {
+            small: {
+                space: 9,
+                break: -1,
+                height: 23,
+                beginnings: [
+                    0, 11, 22, 33, 44, 55, 66, 77, 88, 96, 108, 121, 132, 148, 159, 170, 181, 192, 203, 214, 224, 235, 247, 263, 274, 286, 296,
+                    304, 313, 325, 337, 350, 362, 374, 386, 398, 410, 422, 429, 435, 446, 452, 458, 471, 477, 488, 500, 509, 518
+                ]
+            },
+            big: {
+                space: 33,
+                break: 26,
+                height: 64,
+                beginnings: [
+                    0, 33, 65, 96, 127, 152, 180, 212, 244, 261, 291, 327, 354, 393, 425, 456, 487, 519, 550, 580, 608, 640, 672, 711, 744, 777, /*after z*/ 809,
+                    0, 22, 54, 85, 120, 150, 181, 211, 242, 274, 306, 323, 340, 371, 388, 405, 442, 459, 490, 507, 540, 562, 583
+                ]
             }
-            let pos = Four$1.camera.position.clone();
-            let x = pos.x + 160;
-            let y = pos.y - 80;
-            let z = pos.z - 200;
-            this.mesh.position.set(x, y, z);
-            this.meshShadow.position.set(x + 2, y - 2, z);
+        };
+        function symbol(a, b, c, d, e, f, g) {
+            return { char: a, x: b, y: c, x2: d, y2: e, w: f, h: g };
         }
-    }
-    window.TalkingHead = TalkingHead;
+        // https://gtamp.com/text/?bg=0&font=2&color=0&shiny=0&imgtype=0&text=ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.%2C%3F%21%3B%7E%27%22%60%24%28%29-
+        // ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.,?!;~'"`$()-
+        const symbols = [
+            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
+            'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
+            'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
+            'Y', 'Z', ' ', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
+            '.', ',', '?', '!', ';', '~', '\'', '"', '`', '$', '(', ')', '-'
+        ];
+        function build(text, font) {
+            let typeface = typefaces[font];
+            text = text.toUpperCase();
+            let last_x = 0;
+            let last_y = 128 / 2 - typeface.height;
+            let sentence = { symbols: [] };
+            for (let i = 0; i < text.length; i++) {
+                let char = text[i];
+                if (' ' == char) {
+                    last_x += typeface.space;
+                    continue;
+                }
+                if ('\n' == char) {
+                    last_y += typeface.height;
+                    last_x = 0;
+                    continue;
+                }
+                let index = symbols.indexOf(char);
+                if (index == -1)
+                    continue;
+                let x = typeface.beginnings[index];
+                let y = 0, z = index + 1;
+                if (typeface.break != -1 && index >= typeface.break) {
+                    y = typeface.height;
+                }
+                //console.log('char', char, 'index', index);
+                let w = typeface.beginnings[z] - x;
+                sentence.symbols.push(symbol(char, last_x, last_y, x, y, w, typeface.height));
+                last_x += w;
+            }
+            return sentence;
+        }
+        Spelling.build = build;
+    })(Spelling || (Spelling = {}));
+    var Spelling$1 = Spelling;
+
+    var Letterer;
+    (function (Letterer) {
+        function init() {
+            Letterer.canvas = document.createElement('canvas');
+            document.body.appendChild(Letterer.canvas);
+            console.log('letterer init');
+            //let manager = new LoadingManager();
+            const error = () => {
+                KILL$1.critical('FONT');
+            };
+            let loader = new THREE.ImageLoader();
+            loader.load('sty/fonts/small.png', (image) => {
+                Letterer.smallFont = image;
+                KILL$1.resourced('SMALL_FONT');
+            }, undefined, error);
+            let loader2 = new THREE.ImageLoader();
+            loader2.load('sty/fonts/big.png', (image) => {
+                Letterer.bigFont = image;
+                KILL$1.resourced('BIG_FONT');
+            }, undefined, error);
+        }
+        Letterer.init = init;
+        function makeNiceText(text) {
+            let spelling = Spelling$1.build(text, 'small');
+            let canvasTexture = new THREE.CanvasTexture(Letterer.canvas);
+            const paint = () => {
+                canvasTexture.magFilter = THREE.NearestFilter;
+                canvasTexture.minFilter = THREE.NearestFilter;
+                const context = Letterer.canvas.getContext("2d");
+                Letterer.canvas.width = 512;
+                Letterer.canvas.height = 128;
+                for (let symbol of spelling.symbols) {
+                    context.drawImage(Letterer.smallFont, symbol.x2, symbol.y2, symbol.w, symbol.h, symbol.x, symbol.y, symbol.w, symbol.h);
+                }
+                let image = new Image();
+                image.src = Letterer.canvas.toDataURL();
+                canvasTexture.image = image;
+                canvasTexture.needsUpdate = true;
+            };
+            paint();
+            return canvasTexture;
+        }
+        Letterer.makeNiceText = makeNiceText;
+    })(Letterer || (Letterer = {}));
+    var Letterer$1 = Letterer;
 
     class WordBox {
-        constructor(words) {
+        constructor(text) {
             console.log('new talking head');
-            this.img1 = Letterer.makeNiceText(words);
             //Sheets.center(`sty/talking heads/${name}_1.bmp`);
+            this.setText(text);
             this.make();
+        }
+        setText(text) {
+            if (this.texture)
+                this.texture.dispose();
+            this.texture = Letterer.makeNiceText(text);
+            if (this.mesh) {
+                this.material.map = this.texture;
+                this.materialShadow.map = this.texture;
+                this.mesh.visible = false;
+                this.meshShadow.visible = false;
+                setTimeout(() => {
+                    this.mesh.visible = true;
+                    this.meshShadow.visible = true;
+                }, 500);
+            }
         }
         destroy() {
             this.geometry.dispose();
@@ -4826,7 +4775,7 @@ var gta_kill = (function (exports, THREE) {
         }
         make() {
             this.material = new THREE.MeshPhongMaterial({
-                map: this.img1,
+                map: this.texture,
                 transparent: true,
                 shininess: 0,
                 depthTest: false
@@ -4857,10 +4806,89 @@ var gta_kill = (function (exports, THREE) {
     }
     window.WordBox = WordBox;
 
-    var BridgeScenario;
-    (function (BridgeScenario) {
+    class TalkingHead {
+        constructor(name) {
+            console.log('new talking head');
+            this.talkTime = 0;
+            this.blinkTime = 0;
+            this.blinkDelay = 0;
+            this.openEyesDelay = 0.1;
+            this.img = 0;
+            this.imgs = [];
+            this.imgs.push(Util$1.loadTexture(`sty/talking heads/${name}_1.png`));
+            this.imgs.push(Util$1.loadTexture(`sty/talking heads/${name}_2.png`));
+            this.imgs.push(Util$1.loadTexture(`sty/talking heads/${name}_3.png`));
+            this.animateMouth = true;
+            //Sheets.center(`sty/talking heads/${name}_1.bmp`);
+            this.make();
+        }
+        talk(aye, delay = 0) {
+            if (aye)
+                this.animateMouth = true;
+            else
+                setTimeout(() => {
+                    this.animateMouth = false;
+                    this.material.map = this.imgs[0];
+                }, delay);
+        }
+        destroy() {
+            this.geometry.dispose();
+            this.material.dispose();
+        }
+        make() {
+            this.material = new THREE.MeshPhongMaterial({
+                map: this.imgs[0],
+                transparent: true,
+                shininess: 0,
+                depthTest: false
+            });
+            this.materialShadow = this.material.clone();
+            this.materialShadow.opacity = 0.35;
+            this.materialShadow.color = new THREE.Color(0x0);
+            this.geometry = new THREE.PlaneBufferGeometry(64, 64, 1);
+            this.mesh = new THREE.Mesh(this.geometry, this.material);
+            this.meshShadow = new THREE.Mesh(this.geometry, this.materialShadow);
+            this.mesh.renderOrder = 2;
+            this.meshShadow.renderOrder = 1;
+            Four$1.scene.add(this.mesh);
+            Four$1.scene.add(this.meshShadow);
+        }
+        update() {
+            if (this.animateMouth) {
+                this.talkTime += Four$1.delta;
+                if (this.talkTime > 0.2) {
+                    this.img = this.img < 2 ? this.img + 2 : 0;
+                    this.material.map = this.imgs[this.img];
+                    this.talkTime = 0;
+                }
+            }
+            else {
+                this.blinkTime += Four$1.delta;
+                if (this.blinkTime > this.blinkDelay) {
+                    this.blinkTime = 0;
+                    this.blinkDelay = 3 + Math.random() * 3;
+                }
+                else if (this.blinkTime > 0.11) {
+                    this.material.map = this.imgs[0];
+                }
+                else if (this.blinkTime > 0) {
+                    this.material.map = this.imgs[1];
+                }
+            }
+            let pos = Four$1.camera.position.clone();
+            let x = pos.x + 160;
+            let y = pos.y - 80;
+            let z = pos.z - 200;
+            this.mesh.position.set(x, y, z);
+            this.meshShadow.position.set(x + 2, y - 2, z);
+        }
+    }
+    window.TalkingHead = TalkingHead;
+
+    var HighWayWithEveryCar;
+    (function (HighWayWithEveryCar) {
         function init() {
-            console.log('Bridge scenario init');
+            console.log('Highway with every car init');
             const load = function () {
                 Generators$1.Fill.fill([-500, -500, -3], [1000, 1000, 0], { sty: 'sty/special/water/1.bmp' }, { WHEEL: false });
                 Generators$1.Roads.highway(1, [10, -7000, 0], 8000, 4, 'qualityRoads');
@@ -4893,25 +4921,50 @@ var gta_kill = (function (exports, THREE) {
             let wordBox;
             const update = function () {
                 if (stage == 0) {
-                    talkingHead = new TalkingHead('guider');
-                    //wordBox = new WordBox("Out of the car. Move fast.\nNo room for stupidity today.");
-                    wordBox = new WordBox("No room for stupidity today.\n... ");
-                    //wordBox = new WordBox("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.,?!;~'\"`$()-");
+                    talkingHead = new TalkingHead('johny_zoo');
+                    wordBox = new WordBox("This highway has every car\nin a random color...");
+                    setTimeout(() => {
+                        //talkingHead.talk(false);
+                        wordBox.setText("Walk near a vehicle, and I'll\ntell you more about it.");
+                        setTimeout(() => {
+                            wordBox.setText("");
+                            talkingHead.talk(false);
+                        }, 6000);
+                    }, 6000);
+                    stage++;
+                }
+                else if (stage == 1) {
                     stage++;
                 }
                 talkingHead.update();
                 wordBox.update();
             };
-            let bridgeScenario = {
-                name: 'Bridge',
+            let highwayWithEveryCar = {
+                name: 'Highway with every car',
                 load: load,
                 update: update
             };
-            Scenarios.load(bridgeScenario);
+            Scenarios.load(highwayWithEveryCar);
         }
-        BridgeScenario.init = init;
-    })(BridgeScenario || (BridgeScenario = {}));
-    var BridgeScenario$1 = BridgeScenario;
+        HighWayWithEveryCar.init = init;
+    })(HighWayWithEveryCar || (HighWayWithEveryCar = {}));
+    var HighWayWithEveryCar$1 = HighWayWithEveryCar;
+
+    var Cinematics;
+    (function (Cinematics) {
+        function init() {
+            console.log('cinematics init');
+        }
+        Cinematics.init = init;
+        function update() {
+        }
+        Cinematics.update = update;
+        function missionText(words) {
+            Letterer.makeNiceText(words);
+        }
+        Cinematics.missionText = missionText;
+    })(Cinematics || (Cinematics = {}));
+    var Cinematics$1 = Cinematics;
 
     var Rain;
     (function (Rain) {
@@ -5043,6 +5096,7 @@ var gta_kill = (function (exports, THREE) {
         Rain.update = update;
     })(Rain || (Rain = {}));
 
+    // http://kitfox.com/projects/perlinNoiseMaker/
     var Mist;
     (function (Mist) {
         let material;
@@ -5079,10 +5133,9 @@ var gta_kill = (function (exports, THREE) {
         }
         function update() {
             let w = Four$1.camera.position;
-            let chunkSize = Chunks$1.tileSpan * 64;
             let tiled = Points$1.floor2(w.x / 64, w.y / 64);
             let p = Points$1.region(tiled, Chunks$1.tileSpan);
-            mesh.position.set(p.x * chunkSize, p.y * chunkSize, 5);
+            mesh.position.set(p.x * Chunks$1.actualSize, p.y * Chunks$1.actualSize, 5);
             if ('stormy' == Mist.mode) {
                 x += Four$1.delta / 2;
                 y += Four$1.delta / 6;
@@ -5147,6 +5200,7 @@ var gta_kill = (function (exports, THREE) {
             Mist$1.init();
             Rain.init();
             KILL.city = new City;
+            window.KILL = KILL;
         }
         KILL.init = init;
         function start() {
@@ -5154,14 +5208,16 @@ var gta_kill = (function (exports, THREE) {
                 return;
             console.log('kill starting');
             started = true;
-            BridgeScenario$1.init();
+            HighWayWithEveryCar$1.init();
+            //BridgeScenario.init();
             let data = {
                 type: 'Ply',
+                //remap: 16,
                 x: 10.5,
                 y: 1,
                 z: 0
             };
-            data.remap = [40, 46, 47, 49, 50, 51][Math.floor(Math.random() * 6)];
+            //data.remap = [40, 46, 47, 49, 50, 51][Math.floor(Math.random() * 6)];
             KILL.ply = new Ply(data);
             KILL.city.chunkList.get2(0, 0);
             KILL.city.chunkList.get2(0, 1);

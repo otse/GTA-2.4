@@ -160,7 +160,9 @@ export namespace Rain {
 
 			if (drop.start > drop.mesh.position.z + 300 || drop.mesh.position.z <= 0) {
 				//drops.splice(i, 1);
+
 				const z = Four.camera.position.z+100;
+				
 				drop.start = z;
 
 				drop.mesh.position.x = Four.camera.position.x + ((Math.random() - .5) * 64 * spread);
