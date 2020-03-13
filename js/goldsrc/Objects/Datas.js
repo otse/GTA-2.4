@@ -9,7 +9,7 @@ var Datas;
     //	data.y = Math.floor(data.y);
     //}
     function big(data) {
-        let w = Points.make(Math.floor(data.x / Chunks.tileSpan), Math.floor(data.y / Chunks.tileSpan));
+        let w = Points.floor2(data.x / Chunks.tileSpan, data.y / Chunks.tileSpan);
         return w;
     }
     Datas.big = big;

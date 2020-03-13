@@ -2,13 +2,12 @@ import { MeshPhongMaterial, PlaneBufferGeometry, Mesh, Color } from "three";
 import Four from "../Four";
 import { Letterer } from "./Letterer";
 export class WordBox {
-    constructor(text) {
+    constructor() {
         console.log('new talking head');
         //Sheets.center(`sty/talking heads/${name}_1.bmp`);
-        this.setText(text);
         this.make();
     }
-    setText(text) {
+    setText(text, delay = 650) {
         if (this.texture)
             this.texture.dispose();
         this.texture = Letterer.makeNiceText(text);
@@ -20,7 +19,7 @@ export class WordBox {
             setTimeout(() => {
                 this.mesh.visible = true;
                 this.meshShadow.visible = true;
-            }, 500);
+            }, delay);
         }
     }
     destroy() {
@@ -42,9 +41,11 @@ export class WordBox {
         this.mesh = new Mesh(this.geometry, this.material);
         this.mesh.renderOrder = 2;
         this.mesh.scale.set(scale, scale, scale);
+        this.mesh.visible = false;
         this.meshShadow = new Mesh(this.geometry, this.materialShadow);
         this.meshShadow.renderOrder = 1;
         this.meshShadow.scale.set(scale, scale, scale);
+        this.meshShadow.visible = false;
         Four.scene.add(this.mesh);
         Four.scene.add(this.meshShadow);
         console.log('make word box');

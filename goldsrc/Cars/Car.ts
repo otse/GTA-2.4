@@ -4,10 +4,13 @@ import Data2 from "../Objects/Data";
 import { CarMetas } from "./Metas";
 import CarPhysics from "./Every line is a physic";
 import PaintJobs from "./Paints";
+import Cars from "./Cars";
 
 export class Car extends Rectangle {
 	constructor(data: Data2) {
 		super(data);
+
+		Cars.add(this);
 
 		if (undefined == data.car)
 			console.warn('Car data has no .car!');
@@ -38,6 +41,12 @@ export class Car extends Rectangle {
 			shadow: data.sty
 		});
 
+	}
+
+	destroy() {
+		super.destroy();
+
+		Cars.remove(this);
 	}
 }
 

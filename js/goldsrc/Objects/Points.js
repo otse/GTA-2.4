@@ -41,5 +41,10 @@ export var Points;
         return floor2(a.x / n, a.y / n);
     }
     Points.region = region;
+    function dist(a, b) {
+        const dx = a.x - b.x, dy = a.y - b.y;
+        return dx * dx + dy * dy;
+    }
+    Points.dist = dist;
 })(Points || (Points = {}));
 export default Points;

@@ -23,6 +23,7 @@ import Letterer from "./Cinematics/Letterer";
 import { Rain as Rain } from "./Unsorted/Minecraft rain";
 import Water from "./Unsorted/Water";
 import Mist from "./Unsorted/Mist";
+import Cars from "./Cars/Cars";
 
 export namespace KILL {
 
@@ -80,6 +81,7 @@ export namespace KILL {
 		Surfaces.init();
 		Blocks.init();
 		BoxCutter.init();
+		Cars.init();
 		Sprites.init();
 		Sheets.init();
 		Cinematics.init();

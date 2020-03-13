@@ -6,7 +6,7 @@ export class TalkingHead {
         console.log('new talking head');
         this.talkTime = 0;
         this.blinkTime = 0;
-        this.blinkDelay = 0;
+        this.blinkDelay = 3;
         this.openEyesDelay = 0.1;
         this.img = 0;
         this.imgs = [];
@@ -23,6 +23,8 @@ export class TalkingHead {
         else
             setTimeout(() => {
                 this.animateMouth = false;
+                this.blinkTime = .11;
+                this.blinkDelay = 3;
                 this.material.map = this.imgs[0];
             }, delay);
     }

@@ -46,6 +46,11 @@ var gta_kill = (function (exports, THREE) {
             return floor2(a.x / n, a.y / n);
         }
         Points.region = region;
+        function dist(a, b) {
+            const dx = a.x - b.x, dy = a.y - b.y;
+            return dx * dx + dy * dy;
+        }
+        Points.dist = dist;
     })(Points || (Points = {}));
     var Points$1 = Points;
 
@@ -3204,9 +3209,87 @@ var gta_kill = (function (exports, THREE) {
     })(CarPhysics || (CarPhysics = {}));
     var CarPhysics$1 = CarPhysics;
 
+    const parkedCarNames = [
+        "Romero", "Wellard", "Aniston BD4",
+        "Beamer",
+        "Bug", "Bulwark", /*"Bus",*/ "Cop Car",
+        "Minx", "Eddy", "Panto",
+        "Shark", "GT-A1",
+        /*"Hot Dog Van", "Ice-Cream Van", "Dementia Limousine",*/ "Dementia",
+        "Land Roamer", "Jefferson",
+        /*"Medicar",*/ "Benson", "Schmidt", "Miara",
+        "Big Bug", "Morton", "Maurice", "Pickup",
+        "A-Type", "Arachnid", "Spritzer", "Stinger",
+        "Meteor", /*"Meteor Twoo?",*/ "Hachura", "B-Type",
+        "Taxi Xpress", /*"SWAT Van",*/ "Michelli Roadster",
+        "Taxi", "T-Rex",
+        /*"Train", "Train Cab", "Train FB",*/ "Trance-Am",
+        /*"Truck Cab", "Truck Cab SX", "Container", "Transporter",*/
+        "TV Van", "Van", "U-Jerk Truck", "Z-Type",
+        "Rumbler",
+        "Jagular XK",
+        "Furore GT", "Special Agent Car" /*, "Karma Bus",*/
+    ];
+    window.parkedCarNames = parkedCarNames;
+    const carNames = [
+        "Romero", "Wellard", "Aniston BD4", "Pacifier",
+        "G4 Bank Van", "Beamer", "Box Car", "Box Truck",
+        "Bug", "Bulwark", "Bus", "Cop Car",
+        "Minx", "Eddy", "Panto", "Fire Truck",
+        "Shark", "GT-A1", "Garbage Truck", "Armed Land Roamer",
+        "Hot Dog Van", "Ice-Cream Van", "Dementia Limousine", "Dementia",
+        "Land Roamer", "Jefferson", "Stretch Limousine", "Sports Limousine",
+        "Medicar", "Benson", "Schmidt", "Miara",
+        "Big Bug", "Morton", "Maurice", "Pickup",
+        "A-Type", "Arachnid", "Spritzer", "Stinger",
+        "Meteor", /*"Meteor Twoo?",*/ "Hachura", "B-Type",
+        "Taxi Xpress", "SWAT Van", "Michelli Roadster",
+        "Taxi", "T-Rex", "Tow Truck",
+        /*"Train", "Train Cab", "Train FB",*/ "Trance-Am",
+        "Truck Cab", "Truck Cab SX", "Container", "Transporter",
+        "TV Van", "Van", "U-Jerk Truck", "Z-Type",
+        "Rumbler",
+        "Jagular XK",
+        "Furore GT", "Special Agent Car",
+    ];
+
+    var Cars;
+    (function (Cars) {
+        var cars;
+        function init() {
+            cars = [];
+        }
+        Cars.init = init;
+        function getArray() {
+            return cars;
+        }
+        Cars.getArray = getArray;
+        function add(car) {
+            cars.push(car);
+        }
+        Cars.add = add;
+        function remove(car) {
+            cars.splice(cars.indexOf(car), 1);
+        }
+        Cars.remove = remove;
+        function getPaint(car) {
+            return '';
+        }
+        Cars.getPaint = getPaint;
+        function GetRandomName() {
+            let i = Math.floor(Math.random() * parkedCarNames.length);
+            let name = parkedCarNames[i];
+            console.log('GetRandomName ' + i + ' ' + name);
+            return name;
+        }
+        Cars.GetRandomName = GetRandomName;
+    })(Cars || (Cars = {}));
+    var Cars$1 = Cars;
+
     class Car extends Rectangle {
         constructor(data) {
             super(data);
+            Cars$1.add(this);
             if (undefined == data.car)
                 console.warn('Car data has no .car!');
             if (undefined == data.paint)
@@ -3226,6 +3309,10 @@ var gta_kill = (function (exports, THREE) {
                 blur: `sty/car/blurs/GTA2_CAR_${model}.png`,
                 shadow: data.sty
             });
+        }
+        destroy() {
+            super.destroy();
+            Cars$1.remove(this);
         }
     }
 
@@ -3343,7 +3430,7 @@ var gta_kill = (function (exports, THREE) {
         //	data.y = Math.floor(data.y);
         //}
         function big(data) {
-            let w = Points$1.make(Math.floor(data.x / Chunks$1.tileSpan), Math.floor(data.y / Chunks$1.tileSpan));
+            let w = Points$1.floor2(data.x / Chunks$1.tileSpan, data.y / Chunks$1.tileSpan);
             return w;
         }
         Datas.big = big;
@@ -3988,63 +4075,6 @@ var gta_kill = (function (exports, THREE) {
         var radians = (Math.PI / 180) * angle, cos = Math.cos(radians), sin = Math.sin(radians), nx = (cos * (x - cx)) + (sin * (y - cy)) + cx, ny = (cos * (y - cy)) - (sin * (x - cx)) + cy;
         return [Math.round(nx), Math.round(ny)];
     }
-
-    const parkedCarNames = [
-        "Romero", "Wellard", "Aniston BD4",
-        "Beamer",
-        "Bug", "Bulwark", /*"Bus",*/ "Cop Car",
-        "Minx", "Eddy", "Panto",
-        "Shark", "GT-A1",
-        /*"Hot Dog Van", "Ice-Cream Van", "Dementia Limousine",*/ "Dementia",
-        "Land Roamer", "Jefferson",
-        /*"Medicar",*/ "Benson", "Schmidt", "Miara",
-        "Big Bug", "Morton", "Maurice", "Pickup",
-        "A-Type", "Arachnid", "Spritzer", "Stinger",
-        "Meteor", /*"Meteor Twoo?",*/ "Hachura", "B-Type",
-        "Taxi Xpress", /*"SWAT Van",*/ "Michelli Roadster",
-        "Taxi", "T-Rex",
-        /*"Train", "Train Cab", "Train FB",*/ "Trance-Am",
-        /*"Truck Cab", "Truck Cab SX", "Container", "Transporter",*/
-        "TV Van", "Van", "U-Jerk Truck", "Z-Type",
-        "Rumbler",
-        "Jagular XK",
-        "Furore GT", "Special Agent Car" /*, "Karma Bus",*/
-    ];
-    window.parkedCarNames = parkedCarNames;
-    const carNames = [
-        "Romero", "Wellard", "Aniston BD4", "Pacifier",
-        "G4 Bank Van", "Beamer", "Box Car", "Box Truck",
-        "Bug", "Bulwark", "Bus", "Cop Car",
-        "Minx", "Eddy", "Panto", "Fire Truck",
-        "Shark", "GT-A1", "Garbage Truck", "Armed Land Roamer",
-        "Hot Dog Van", "Ice-Cream Van", "Dementia Limousine", "Dementia",
-        "Land Roamer", "Jefferson", "Stretch Limousine", "Sports Limousine",
-        "Medicar", "Benson", "Schmidt", "Miara",
-        "Big Bug", "Morton", "Maurice", "Pickup",
-        "A-Type", "Arachnid", "Spritzer", "Stinger",
-        "Meteor", /*"Meteor Twoo?",*/ "Hachura", "B-Type",
-        "Taxi Xpress", "SWAT Van", "Michelli Roadster",
-        "Taxi", "T-Rex", "Tow Truck",
-        /*"Train", "Train Cab", "Train FB",*/ "Trance-Am",
-        "Truck Cab", "Truck Cab SX", "Container", "Transporter",
-        "TV Van", "Van", "U-Jerk Truck", "Z-Type",
-        "Rumbler",
-        "Jagular XK",
-        "Furore GT", "Special Agent Car",
-    ];
-
-    // PLURAL "LIKE A C API"
-    var Cars;
-    (function (Cars) {
-        function GetRandomName() {
-            let i = Math.floor(Math.random() * parkedCarNames.length);
-            let name = parkedCarNames[i];
-            console.log('GetRandomName ' + i + ' ' + name);
-            return name;
-        }
-        Cars.GetRandomName = GetRandomName;
-    })(Cars || (Cars = {}));
-    var Cars$1 = Cars;
 
     var Generators;
     (function (Generators) {
@@ -4748,13 +4778,12 @@ var gta_kill = (function (exports, THREE) {
     var Letterer$1 = Letterer;
 
     class WordBox {
-        constructor(text) {
+        constructor() {
             console.log('new talking head');
             //Sheets.center(`sty/talking heads/${name}_1.bmp`);
-            this.setText(text);
             this.make();
         }
-        setText(text) {
+        setText(text, delay = 650) {
             if (this.texture)
                 this.texture.dispose();
             this.texture = Letterer.makeNiceText(text);
@@ -4766,7 +4795,7 @@ var gta_kill = (function (exports, THREE) {
                 setTimeout(() => {
                     this.mesh.visible = true;
                     this.meshShadow.visible = true;
-                }, 500);
+                }, delay);
             }
         }
         destroy() {
@@ -4788,9 +4817,11 @@ var gta_kill = (function (exports, THREE) {
             this.mesh = new THREE.Mesh(this.geometry, this.material);
             this.mesh.renderOrder = 2;
             this.mesh.scale.set(scale, scale, scale);
+            this.mesh.visible = false;
             this.meshShadow = new THREE.Mesh(this.geometry, this.materialShadow);
             this.meshShadow.renderOrder = 1;
             this.meshShadow.scale.set(scale, scale, scale);
+            this.meshShadow.visible = false;
             Four$1.scene.add(this.mesh);
             Four$1.scene.add(this.meshShadow);
             console.log('make word box');
@@ -4811,7 +4842,7 @@ var gta_kill = (function (exports, THREE) {
             console.log('new talking head');
             this.talkTime = 0;
             this.blinkTime = 0;
-            this.blinkDelay = 0;
+            this.blinkDelay = 3;
             this.openEyesDelay = 0.1;
             this.img = 0;
             this.imgs = [];
@@ -4828,6 +4859,8 @@ var gta_kill = (function (exports, THREE) {
             else
                 setTimeout(() => {
                     this.animateMouth = false;
+                    this.blinkTime = .11;
+                    this.blinkDelay = 3;
                     this.material.map = this.imgs[0];
                 }, delay);
         }
@@ -4919,22 +4952,39 @@ var gta_kill = (function (exports, THREE) {
             let stage = 0;
             let talkingHead;
             let wordBox;
+            let viewingCar;
             const update = function () {
                 if (stage == 0) {
                     talkingHead = new TalkingHead('johny_zoo');
-                    wordBox = new WordBox("This highway has every car\nin a random color...");
+                    wordBox = new WordBox();
+                    wordBox.setText(`This highway has every car.`, 1000); // \nwith a "random" paint...
                     setTimeout(() => {
                         //talkingHead.talk(false);
-                        wordBox.setText("Walk near a vehicle, and I'll\ntell you more about it.");
+                        wordBox.setText("Walk near a vehicle to see\nwhat it is.");
                         setTimeout(() => {
                             wordBox.setText("");
                             talkingHead.talk(false);
-                        }, 6000);
-                    }, 6000);
+                            stage++;
+                        }, 7000);
+                    }, 7000);
                     stage++;
                 }
-                else if (stage == 1) {
-                    stage++;
+                else if (stage == 2) {
+                    let chunk = Datas$1.getChunk(KILL$1.ply.data);
+                    const carArray = Cars$1.getArray();
+                    let closest = 200;
+                    let closestCar = null;
+                    for (let car of carArray) {
+                        let dist = Points$1.dist(car.data, KILL$1.ply.data);
+                        if (dist < closest) {
+                            closest = dist;
+                            closestCar = car;
+                        }
+                    }
+                    if (closestCar != viewingCar) {
+                        viewingCar = closestCar;
+                        wordBox.setText(`Car: ${closestCar.data.car}`);
+                    }
                 }
                 talkingHead.update();
                 wordBox.update();
@@ -5191,6 +5241,7 @@ var gta_kill = (function (exports, THREE) {
             Surfaces$1.init();
             Blocks$1.init();
             BoxCutter$1.init();
+            Cars$1.init();
             Sprites$1.init();
             Sheets$1.init();
             Cinematics$1.init();

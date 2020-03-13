@@ -1,9 +1,11 @@
 import Rectangle from "../Objects/Rectangle";
 import { CarMetas } from "./Metas";
 import CarPhysics from "./Every line is a physic";
+import Cars from "./Cars";
 export class Car extends Rectangle {
     constructor(data) {
         super(data);
+        Cars.add(this);
         if (undefined == data.car)
             console.warn('Car data has no .car!');
         if (undefined == data.paint)
@@ -23,6 +25,10 @@ export class Car extends Rectangle {
             blur: `sty/car/blurs/GTA2_CAR_${model}.png`,
             shadow: data.sty
         });
+    }
+    destroy() {
+        super.destroy();
+        Cars.remove(this);
     }
 }
 export default Car;

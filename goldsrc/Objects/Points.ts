@@ -22,7 +22,6 @@ export namespace Points {
 		return make(Math.floor(x), Math.floor(y))
 	}
 
-
 	export function different(a: Point, b: Point) {
 		return a.x - b.x || a.y - b.y
 	}
@@ -47,6 +46,12 @@ export namespace Points {
 		return floor2(
 			a.x / n,
 			a.y / n);
+	}
+
+	export function dist(a: Point, b: Point): number {
+		const dx = a.x - b.x, dy = a.y - b.y;
+		
+		return dx * dx + dy * dy;
 	}
 
 }

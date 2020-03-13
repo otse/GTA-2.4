@@ -50,8 +50,8 @@ export namespace BridgeScenario {
 		};
 
 		let stage = 0;
-		let talkingHead;
-		let wordBox;
+		let talkingHead: TalkingHead;
+		let wordBox: WordBox;
 
 		const update = function () {
 			
@@ -59,7 +59,8 @@ export namespace BridgeScenario {
 				talkingHead = new TalkingHead('guider');
 
 				//wordBox = new WordBox("Out of the car. Move fast.\nNo room for stupidity today.");
-				wordBox = new WordBox("No room for stupidity today.\n... ");
+				wordBox = new WordBox();
+				wordBox.setText("No room for stupidity today.\n... ");
 				//wordBox = new WordBox(`Nurse... It's time to "OPERATE"\non these commuters! `);
 				//wordBox = new WordBox("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.,?!;~'\"`$()-");
 

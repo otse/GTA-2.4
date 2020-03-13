@@ -17,10 +17,9 @@ namespace Datas {
 	//}
 
 	export function big(data: Point): Point {
-		let w = Points.make(
-			Math.floor(data.x / Chunks.tileSpan),
-			Math.floor(data.y / Chunks.tileSpan)
-		);
+		let w = Points.floor2(
+			data.x / Chunks.tileSpan,
+			data.y / Chunks.tileSpan);
 
 		return w;
 	}
