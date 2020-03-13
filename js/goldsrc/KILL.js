@@ -18,7 +18,7 @@ export var KILL;
     var started = false;
     let MASKS;
     (function (MASKS) {
-        MASKS[MASKS["INIT"] = 0] = "INIT";
+        MASKS[MASKS["UNDEFINED_OR_INIT"] = 0] = "UNDEFINED_OR_INIT";
         MASKS[MASKS["FONTS"] = 1] = "FONTS";
         MASKS[MASKS["SPRITES"] = 2] = "SPRITES";
         MASKS[MASKS["COUNT"] = 3] = "COUNT";
@@ -46,7 +46,7 @@ export var KILL;
     KILL.fault = fault;
     function init() {
         console.log('kill init');
-        checkin('INIT');
+        checkin('UNDEFINED_OR_INIT');
         Phong2.rig();
         Rectangles.init();
         Surfaces.init();

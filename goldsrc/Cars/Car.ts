@@ -26,7 +26,7 @@ export class Car extends Rectangle {
 		const model = physics!.model_corrected || physics!.model;
 
 		if (meta!.COLORLESS)
-			data.sty = `sty/car/painted/GTA2_CAR_${model}.bmp`;
+			data.sty = `sty/car/unpainted/GTA2_CAR_${model}X.bmp`;
 		else
 			data.sty = `sty/car/painted/GTA2_CAR_${model}_PAL_${data.paint}.bmp`;
 

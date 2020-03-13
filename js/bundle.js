@@ -3187,7 +3187,7 @@ var gta_kill = (function (exports, THREE) {
             const physics = CarPhysics$1.getNullable(data.car);
             const model = physics.model_corrected || physics.model;
             if (meta.COLORLESS)
-                data.sty = `sty/car/painted/GTA2_CAR_${model}.bmp`;
+                data.sty = `sty/car/unpainted/GTA2_CAR_${model}X.bmp`;
             else
                 data.sty = `sty/car/painted/GTA2_CAR_${model}_PAL_${data.paint}.bmp`;
             data.width = meta.IMG_WIDTH;
@@ -4801,6 +4801,7 @@ var gta_kill = (function (exports, THREE) {
         function init() {
             console.log('Bridge scenario init');
             const load = function () {
+                Generators$1.Fill.fill([-500, -500, 0], [1000, 1000, 0], { sty: 'sty/nature/evergreen/836.bmp' }, { WHEEL: true });
                 Generators$1.Roads.highway(1, [10, -7000, 0], 8000, 5, 'qualityRoads');
                 let x = .5;
                 let y = 0;
@@ -4854,7 +4855,7 @@ var gta_kill = (function (exports, THREE) {
         var started = false;
         let MASKS;
         (function (MASKS) {
-            MASKS[MASKS["INIT"] = 0] = "INIT";
+            MASKS[MASKS["UNDEFINED_OR_INIT"] = 0] = "UNDEFINED_OR_INIT";
             MASKS[MASKS["FONTS"] = 1] = "FONTS";
             MASKS[MASKS["SPRITES"] = 2] = "SPRITES";
             MASKS[MASKS["COUNT"] = 3] = "COUNT";
@@ -4881,7 +4882,7 @@ var gta_kill = (function (exports, THREE) {
         KILL.fault = fault;
         function init() {
             console.log('kill init');
-            checkin('INIT');
+            checkin('UNDEFINED_OR_INIT');
             Phong2$1.rig();
             Rectangles$1.init();
             Surfaces$1.init();

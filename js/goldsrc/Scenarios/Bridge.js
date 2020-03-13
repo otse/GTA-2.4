@@ -9,6 +9,7 @@ export var BridgeScenario;
     function init() {
         console.log('Bridge scenario init');
         const load = function () {
+            Generators.Fill.fill([-500, -500, 0], [1000, 1000, 0], { sty: 'sty/nature/evergreen/836.bmp' }, { WHEEL: true });
             Generators.Roads.highway(1, [10, -7000, 0], 8000, 5, 'qualityRoads');
             let x = .5;
             let y = 0;

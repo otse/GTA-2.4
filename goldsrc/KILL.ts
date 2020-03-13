@@ -29,7 +29,7 @@ export namespace KILL {
 	var started = false;
 
 	export enum MASKS {
-		INIT = 0,
+		UNDEFINED_OR_INIT = 0,
 		FONTS,
 		SPRITES,
 		COUNT
@@ -69,7 +69,7 @@ export namespace KILL {
 	export function init() {
 		console.log('kill init');
 
-		checkin('INIT');
+		checkin('UNDEFINED_OR_INIT');
 
 		Phong2.rig();
 		Rectangles.init();
