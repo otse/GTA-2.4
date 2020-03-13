@@ -10,6 +10,7 @@ var Mist;
     let mesh;
     let x, y;
     function init() {
+        Mist.mode = 'stormy';
         x = 0;
         y = 0;
         const w = 5;
@@ -42,11 +43,17 @@ var Mist;
         let tiled = Points.floor2(w.x / 64, w.y / 64);
         let p = Points.region(tiled, Chunks.tileSpan);
         mesh.position.set(p.x * chunkSize, p.y * chunkSize, 5);
-        x += Four.delta / 18;
-        y += Four.delta / 55;
-        material.map.offset.set(x, y);
+        if ('stormy' == Mist.mode) {
+            x += Four.delta / 2;
+            y += Four.delta / 6;
+        }
+        else {
+            x += Four.delta / 18;
+            y += Four.delta / 55;
+        }
         x = normalize(x);
         y = normalize(y);
+        material.map.offset.set(x, y);
     }
     Mist.update = update;
 })(Mist || (Mist = {}));

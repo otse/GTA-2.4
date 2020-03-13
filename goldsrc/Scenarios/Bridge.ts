@@ -36,7 +36,7 @@ export namespace BridgeScenario {
 
 				y--;
 				j++;
-				if (j > 16) {
+				if (j > 15) {
 					j = 0;
 					// Begin spawning at new lane
 					y = 0;

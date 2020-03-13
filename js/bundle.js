@@ -4878,7 +4878,7 @@ var gta_kill = (function (exports, THREE) {
                     };
                     y--;
                     j++;
-                    if (j > 16) {
+                    if (j > 15) {
                         j = 0;
                         // Begin spawning at new lane
                         y = 0;
@@ -4970,15 +4970,14 @@ var gta_kill = (function (exports, THREE) {
             let map = Util$1.loadTexture(`sty/drop.png`);
             Rain.basicmat = new THREE.MeshBasicMaterial({
                 map: map,
-                color: 0x93e5ff,
+                color: 0xe5f7fc,
                 side: THREE.DoubleSide,
                 transparent: true,
                 opacity: .5,
-                //lights: false,
                 depthWrite: false,
             });
             Rain.group = new THREE.Group();
-            Rain.group.rotation.y += .3;
+            Rain.group.rotation.y += 0.3;
             Rain.dropGeometry = new THREE.PlaneBufferGeometry(4, 1, 1, 1);
             Util$1.UV.rotatePlane(Rain.dropGeometry, 0, 3);
             Four$1.scene.add(Rain.group);
@@ -5031,7 +5030,7 @@ var gta_kill = (function (exports, THREE) {
                 drop.mesh.position.z -= fall;
                 if (drop.start > drop.mesh.position.z + 300 || drop.mesh.position.z <= 0) {
                     //drops.splice(i, 1);
-                    const z = Four$1.camera.position.z + 50;
+                    const z = Four$1.camera.position.z + 100;
                     drop.start = z;
                     drop.mesh.position.x = Four$1.camera.position.x + ((Math.random() - .5) * 64 * Rain.spread);
                     drop.mesh.position.y = Four$1.camera.position.y + ((Math.random() - .5) * 64 * Rain.spread);
@@ -5051,6 +5050,7 @@ var gta_kill = (function (exports, THREE) {
         let mesh;
         let x, y;
         function init() {
+            Mist.mode = 'stormy';
             x = 0;
             y = 0;
             const w = 5;
@@ -5083,11 +5083,17 @@ var gta_kill = (function (exports, THREE) {
             let tiled = Points$1.floor2(w.x / 64, w.y / 64);
             let p = Points$1.region(tiled, Chunks$1.tileSpan);
             mesh.position.set(p.x * chunkSize, p.y * chunkSize, 5);
-            x += Four$1.delta / 18;
-            y += Four$1.delta / 55;
-            material.map.offset.set(x, y);
+            if ('stormy' == Mist.mode) {
+                x += Four$1.delta / 2;
+                y += Four$1.delta / 6;
+            }
+            else {
+                x += Four$1.delta / 18;
+                y += Four$1.delta / 55;
+            }
             x = normalize(x);
             y = normalize(y);
+            material.map.offset.set(x, y);
         }
         Mist.update = update;
     })(Mist || (Mist = {}));

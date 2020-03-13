@@ -58,15 +58,14 @@ export var Rain;
         let map = Util.loadTexture(`sty/drop.png`);
         Rain.basicmat = new MeshBasicMaterial({
             map: map,
-            color: 0x93e5ff,
+            color: 0xe5f7fc,
             side: DoubleSide,
             transparent: true,
             opacity: .5,
-            //lights: false,
             depthWrite: false,
         });
         Rain.group = new Group();
-        Rain.group.rotation.y += .3;
+        Rain.group.rotation.y += 0.3;
         Rain.dropGeometry = new PlaneBufferGeometry(4, 1, 1, 1);
         Util.UV.rotatePlane(Rain.dropGeometry, 0, 3);
         Four.scene.add(Rain.group);
@@ -120,7 +119,7 @@ export var Rain;
             drop.mesh.position.z -= fall;
             if (drop.start > drop.mesh.position.z + 300 || drop.mesh.position.z <= 0) {
                 //drops.splice(i, 1);
-                const z = Four.camera.position.z + 50;
+                const z = Four.camera.position.z + 100;
                 drop.start = z;
                 drop.mesh.position.x = Four.camera.position.x + ((Math.random() - .5) * 64 * Rain.spread);
                 drop.mesh.position.y = Four.camera.position.y + ((Math.random() - .5) * 64 * Rain.spread);
