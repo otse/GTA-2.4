@@ -4767,7 +4767,7 @@ var gta_kill = (function (exports, THREE) {
             'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
             'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
             'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
-            'Y', 'Z', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
+            'Y', 'Z', ' ', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
             '.', ',', '?', '!', ';', '~', '\'', '"', '`', '$', '(', ')', '-'
         ];
         function build(text, font) {
@@ -5031,9 +5031,7 @@ var gta_kill = (function (exports, THREE) {
                 if (stage == 0) {
                     talkingHead = new TalkingHead('johny_zoo');
                     wordBox = new WordBox();
-                    //wordBox.setText(`This highway has #every car#.`, 1000); // \nwith a "random" paint...
-                    wordBox.setText("ABCDEFGHIJKLMNOPQRSTUVWXYZ\n1234567890.,?!;~'\"`$()-");
-                    wordBox.setText("The (cat) ate - apple");
+                    wordBox.setText(`This highway has every car.`, 1000);
                     setTimeout(() => {
                         //talkingHead.talk(false);
                         wordBox.setText("I will tell you about\nthe #nearest car#.");

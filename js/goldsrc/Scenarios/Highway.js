@@ -47,9 +47,7 @@ export var HighWayWithEveryCar;
             if (stage == 0) {
                 talkingHead = new TalkingHead('johny_zoo');
                 wordBox = new WordBox();
-                //wordBox.setText(`This highway has #every car#.`, 1000); // \nwith a "random" paint...
-                wordBox.setText("ABCDEFGHIJKLMNOPQRSTUVWXYZ\n1234567890.,?!;~'\"`$()-");
-                wordBox.setText("The (cat) ate - apple");
+                wordBox.setText(`This highway has every car.`, 1000);
                 setTimeout(() => {
                     //talkingHead.talk(false);
                     wordBox.setText("I will tell you about\nthe #nearest car#.");
