@@ -13,7 +13,7 @@ import HighWayWithEveryCar from "./Scenarios/Highway";
 import Cinematics from "./Cinematics/Cinematics";
 import Scenarios from "./Scenarios/Scenarios";
 import Letterer from "./Cinematics/Letterer";
-import { Rain as Rain } from "./Unsorted/Minecraft rain";
+import Rain from "./Unsorted/Minecraft rain";
 import Water from "./Unsorted/Water";
 import Mist from "./Unsorted/Mist";
 import Cars from "./Cars/Cars";
@@ -24,9 +24,10 @@ export var KILL;
     (function (RESOURCES) {
         RESOURCES[RESOURCES["UNDEFINED_OR_INIT"] = 0] = "UNDEFINED_OR_INIT";
         RESOURCES[RESOURCES["SMALL_FONT"] = 1] = "SMALL_FONT";
-        RESOURCES[RESOURCES["BIG_FONT"] = 2] = "BIG_FONT";
-        RESOURCES[RESOURCES["SPRITES"] = 3] = "SPRITES";
-        RESOURCES[RESOURCES["COUNT"] = 4] = "COUNT";
+        RESOURCES[RESOURCES["SMALL_FONT_YELLOW"] = 2] = "SMALL_FONT_YELLOW";
+        RESOURCES[RESOURCES["BIG_FONT"] = 3] = "BIG_FONT";
+        RESOURCES[RESOURCES["SPRITES"] = 4] = "SPRITES";
+        RESOURCES[RESOURCES["COUNT"] = 5] = "COUNT";
     })(RESOURCES = KILL.RESOURCES || (KILL.RESOURCES = {}));
     ;
     let words = 0b0;
@@ -46,6 +47,7 @@ export var KILL;
             start();
     }
     function critical(mask) {
+        // Hi. It couldn't load this resource
         console.error('resource', mask);
     }
     KILL.critical = critical;

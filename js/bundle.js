@@ -1297,6 +1297,7 @@ var gta_kill = (function (exports, THREE) {
             }
         };
     })(CarMetas || (CarMetas = {}));
+    var CarMetas$1 = CarMetas;
 
     var CarPhysics;
     (function (CarPhysics) {
@@ -4646,6 +4647,80 @@ var gta_kill = (function (exports, THREE) {
     })(Generators || (Generators = {}));
     var Generators$1 = Generators;
 
+    // Automobiles, trains
+    // Resources
+    // https://gta.fandom.com/wiki/Vehicles_in_GTA_2
+    // http://en.wikigta.org/wiki/Code_lists_%28GTA2%29
+    var PaintJobs;
+    (function (PaintJobs) {
+        let Enum;
+        (function (Enum) {
+            Enum[Enum["BLUE1"] = 0] = "BLUE1";
+            Enum[Enum["PURPLE1"] = 1] = "PURPLE1";
+            Enum[Enum["BLACK"] = 2] = "BLACK";
+            Enum[Enum["BLUE2"] = 3] = "BLUE2";
+            Enum[Enum["BLUE_GRAY"] = 4] = "BLUE_GRAY";
+            Enum[Enum["BRIGHT_GREEN"] = 5] = "BRIGHT_GREEN";
+            Enum[Enum["BRIGHT_RED"] = 6] = "BRIGHT_RED";
+            Enum[Enum["BROWN1"] = 7] = "BROWN1";
+            Enum[Enum["BROWN2"] = 8] = "BROWN2";
+            Enum[Enum["SILVER_BLUE"] = 9] = "SILVER_BLUE";
+            Enum[Enum["CREAM"] = 10] = "CREAM";
+            Enum[Enum["YELLOW"] = 11] = "YELLOW";
+            Enum[Enum["CYAN"] = 12] = "CYAN";
+            Enum[Enum["DARK_BEIGE"] = 13] = "DARK_BEIGE";
+            Enum[Enum["DARK_BLUE"] = 14] = "DARK_BLUE";
+            Enum[Enum["DEEP_BLUE"] = 15] = "DEEP_BLUE";
+            Enum[Enum["DARK_GREEN"] = 16] = "DARK_GREEN";
+            Enum[Enum["DARK_RED"] = 17] = "DARK_RED";
+            Enum[Enum["DARK_RUST"] = 18] = "DARK_RUST";
+            Enum[Enum["GOLD"] = 19] = "GOLD";
+            Enum[Enum["GREEN"] = 20] = "GREEN";
+            Enum[Enum["GRAY"] = 21] = "GRAY";
+            Enum[Enum["YELLOW_GREEN"] = 22] = "YELLOW_GREEN";
+            Enum[Enum["OLIVE"] = 23] = "OLIVE";
+            Enum[Enum["ORANGE"] = 24] = "ORANGE";
+            Enum[Enum["PALE_BLUE"] = 25] = "PALE_BLUE";
+            Enum[Enum["PINK_RED"] = 26] = "PINK_RED";
+            Enum[Enum["PURPLE2"] = 27] = "PURPLE2";
+            Enum[Enum["RED"] = 28] = "RED";
+            Enum[Enum["RUST"] = 29] = "RUST";
+            Enum[Enum["SILVER"] = 30] = "SILVER";
+            Enum[Enum["SKY_BLUE"] = 31] = "SKY_BLUE";
+            Enum[Enum["TURQUOISE"] = 32] = "TURQUOISE";
+            Enum[Enum["WHITE_GRAY"] = 33] = "WHITE_GRAY";
+            Enum[Enum["WHITE"] = 34] = "WHITE";
+            Enum[Enum["COP"] = 35] = "COP";
+        })(Enum = PaintJobs.Enum || (PaintJobs.Enum = {}));
+        PaintJobs.deltasSheets = {};
+        function init() {
+            const list = CarPhysics$1.List();
+            for (let name in list) {
+                const physic = list[name];
+                const meta = CarMetas$1.getNullable(name);
+                const sheet = {
+                    file: `D_GTA2_CAR_${physic.model}`,
+                    padding: 4,
+                    width: (meta.IMG_WIDTH * 10) + 36,
+                    height: (meta.IMG_HEIGHT * 2) + 4,
+                    nr: {
+                        w: 10,
+                        h: 2
+                    },
+                    piece: {
+                        w: meta.IMG_WIDTH,
+                        h: meta.IMG_HEIGHT
+                    }
+                };
+                PaintJobs.deltasSheets[name] = sheet;
+            }
+            console.log('build car delta sheets');
+            window.carsDeltas = PaintJobs.deltasSheets;
+        }
+        PaintJobs.init = init;
+    })(PaintJobs || (PaintJobs = {}));
+    var PaintJobs$1 = PaintJobs;
+
     var Scenarios;
     (function (Scenarios) {
         function load(p) {
@@ -4666,16 +4741,16 @@ var gta_kill = (function (exports, THREE) {
         const typefaces = {
             small: {
                 space: 9,
-                break: -1,
                 height: 23,
                 beginnings: [
                     0, 11, 22, 33, 44, 55, 66, 77, 88, 96, 108, 121, 132, 148, 159, 170, 181, 192, 203, 214, 224, 235, 247, 263, 274, 286, 296,
-                    304, 313, 325, 337, 350, 362, 374, 386, 398, 410, 422, 429, 435, 446, 452, 458, 471, 477, 488, 500, 509, 518
+                    //a b  c   d   e   f   g   h   i   j    k    l    m    n    o    p    q    r    s    t    u    v    w    x    y    z
+                    304, 313, 325, 337, 350, 362, 374, 386, 398, 410, 422, 429, 435, 446, 452, 458, 471, 477, 488, 500, 509, 518, 529
+                    //1   2    3    4    5    6    7    8    9    0    .    ,    ?    !    ;    ~    '    "    $    (    )    -
                 ]
             },
             big: {
                 space: 33,
-                break: 26,
                 height: 64,
                 beginnings: [
                     0, 33, 65, 96, 127, 152, 180, 212, 244, 261, 291, 327, 354, 393, 425, 456, 487, 519, 550, 580, 608, 640, 672, 711, 744, 777, /*after z*/ 809,
@@ -4683,16 +4758,16 @@ var gta_kill = (function (exports, THREE) {
                 ]
             }
         };
-        function symbol(a, b, c, d, e, f, g) {
-            return { char: a, x: b, y: c, x2: d, y2: e, w: f, h: g };
+        function symbol(a, b, c, d, e, f, g, h) {
+            return { char: a, x: b, y: c, x2: d, y2: e, w: f, h: g, color: h };
         }
-        // https://gtamp.com/text/?bg=0&font=2&color=0&shiny=0&imgtype=0&text=ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.%2C%3F%21%3B%7E%27%22%60%24%28%29-
-        // ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.,?!;~'"`$()-
+        // https://gtamp.com/text/?bg=0&font=1&color=6&shiny=0&imgtype=0&text=ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.%2C%3F%21%3B%7E%27%22%60%24%28%29-
+        // ABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890.,?!;~'"`$()-
         const symbols = [
             'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
             'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
             'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
-            'Y', 'Z', ' ', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
+            'Y', 'Z', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
             '.', ',', '?', '!', ';', '~', '\'', '"', '`', '$', '(', ')', '-'
         ];
         function build(text, font) {
@@ -4701,6 +4776,7 @@ var gta_kill = (function (exports, THREE) {
             let last_x = 0;
             let last_y = 128 / 2 - typeface.height;
             let sentence = { symbols: [] };
+            let color = false;
             for (let i = 0; i < text.length; i++) {
                 let char = text[i];
                 if (' ' == char) {
@@ -4712,17 +4788,19 @@ var gta_kill = (function (exports, THREE) {
                     last_x = 0;
                     continue;
                 }
+                if ('#' == char) {
+                    color = !color;
+                    console.log('color', color);
+                    continue;
+                }
                 let index = symbols.indexOf(char);
                 if (index == -1)
                     continue;
                 let x = typeface.beginnings[index];
                 let y = 0, z = index + 1;
-                if (typeface.break != -1 && index >= typeface.break) {
-                    y = typeface.height;
-                }
                 //console.log('char', char, 'index', index);
                 let w = typeface.beginnings[z] - x;
-                sentence.symbols.push(symbol(char, last_x, last_y, x, y, w, typeface.height));
+                sentence.symbols.push(symbol(char, last_x, last_y, x, y, w, typeface.height, color));
                 last_x += w;
             }
             return sentence;
@@ -4738,19 +4816,16 @@ var gta_kill = (function (exports, THREE) {
             document.body.appendChild(Letterer.canvas);
             console.log('letterer init');
             //let manager = new LoadingManager();
-            const error = () => {
-                KILL$1.critical('FONT');
+            const load = (path, resource, func) => {
+                let loader = new THREE.ImageLoader();
+                loader.load(path, (out) => {
+                    func(out);
+                    KILL$1.resourced(resource);
+                }, undefined, () => KILL$1.critical(resource));
             };
-            let loader = new THREE.ImageLoader();
-            loader.load('sty/fonts/small.png', (image) => {
-                Letterer.smallFont = image;
-                KILL$1.resourced('SMALL_FONT');
-            }, undefined, error);
-            let loader2 = new THREE.ImageLoader();
-            loader2.load('sty/fonts/big.png', (image) => {
-                Letterer.bigFont = image;
-                KILL$1.resourced('BIG_FONT');
-            }, undefined, error);
+            load('sty/fonts/small.png', 'SMALL_FONT', (image) => Letterer.smallWhite = image);
+            load('sty/fonts/small_yellow.png', 'SMALL_FONT_YELLOW', (image) => Letterer.smallYellow = image);
+            load('sty/fonts/big.png', 'BIG_FONT', (image) => Letterer.missionFont = image);
         }
         Letterer.init = init;
         function makeNiceText(text) {
@@ -4763,7 +4838,7 @@ var gta_kill = (function (exports, THREE) {
                 Letterer.canvas.width = 512;
                 Letterer.canvas.height = 128;
                 for (let symbol of spelling.symbols) {
-                    context.drawImage(Letterer.smallFont, symbol.x2, symbol.y2, symbol.w, symbol.h, symbol.x, symbol.y, symbol.w, symbol.h);
+                    context.drawImage(symbol.color ? Letterer.smallYellow : Letterer.smallWhite, symbol.x2, symbol.y2, symbol.w, symbol.h, symbol.x, symbol.y, symbol.w, symbol.h);
                 }
                 let image = new Image();
                 image.src = Letterer.canvas.toDataURL();
@@ -4813,7 +4888,7 @@ var gta_kill = (function (exports, THREE) {
             this.materialShadow.opacity = 0.35;
             this.materialShadow.color = new THREE.Color(0x0);
             this.geometry = new THREE.PlaneBufferGeometry(64, 16, 1);
-            const scale = 5;
+            const scale = 6;
             this.mesh = new THREE.Mesh(this.geometry, this.material);
             this.mesh.renderOrder = 2;
             this.mesh.scale.set(scale, scale, scale);
@@ -4823,7 +4898,7 @@ var gta_kill = (function (exports, THREE) {
             this.meshShadow.scale.set(scale, scale, scale);
             this.meshShadow.visible = false;
             Four$1.scene.add(this.mesh);
-            Four$1.scene.add(this.meshShadow);
+            //Four.scene.add(this.meshShadow);
             console.log('make word box');
         }
         update() {
@@ -4932,7 +5007,6 @@ var gta_kill = (function (exports, THREE) {
                     let car = {
                         type: 'Car',
                         car: name,
-                        //paint: PaintJobs.Enum.DARK_GREEN,
                         x: 10 + x,
                         y: y + 7,
                         z: 0
@@ -4957,16 +5031,18 @@ var gta_kill = (function (exports, THREE) {
                 if (stage == 0) {
                     talkingHead = new TalkingHead('johny_zoo');
                     wordBox = new WordBox();
-                    wordBox.setText(`This highway has every car.`, 1000); // \nwith a "random" paint...
+                    //wordBox.setText(`This highway has #every car#.`, 1000); // \nwith a "random" paint...
+                    wordBox.setText("ABCDEFGHIJKLMNOPQRSTUVWXYZ\n1234567890.,?!;~'\"`$()-");
+                    wordBox.setText("The (cat) ate - apple");
                     setTimeout(() => {
                         //talkingHead.talk(false);
-                        wordBox.setText("Walk near a vehicle to see\nwhat it is.");
+                        wordBox.setText("I will tell you about\nthe #nearest car#.");
                         setTimeout(() => {
                             wordBox.setText("");
                             talkingHead.talk(false);
                             stage++;
-                        }, 7000);
-                    }, 7000);
+                        }, 5000);
+                    }, 5000);
                     stage++;
                 }
                 else if (stage == 2) {
@@ -4983,7 +5059,7 @@ var gta_kill = (function (exports, THREE) {
                     }
                     if (closestCar != viewingCar) {
                         viewingCar = closestCar;
-                        wordBox.setText(`Car: ${closestCar.data.car}`);
+                        wordBox.setText(`${closestCar.data.car},\n${PaintJobs$1.Enum[closestCar.data.paint]}`);
                     }
                 }
                 talkingHead.update();
@@ -5145,6 +5221,7 @@ var gta_kill = (function (exports, THREE) {
         }
         Rain.update = update;
     })(Rain || (Rain = {}));
+    var Rain$1 = Rain;
 
     // http://kitfox.com/projects/perlinNoiseMaker/
     var Mist;
@@ -5209,9 +5286,10 @@ var gta_kill = (function (exports, THREE) {
         (function (RESOURCES) {
             RESOURCES[RESOURCES["UNDEFINED_OR_INIT"] = 0] = "UNDEFINED_OR_INIT";
             RESOURCES[RESOURCES["SMALL_FONT"] = 1] = "SMALL_FONT";
-            RESOURCES[RESOURCES["BIG_FONT"] = 2] = "BIG_FONT";
-            RESOURCES[RESOURCES["SPRITES"] = 3] = "SPRITES";
-            RESOURCES[RESOURCES["COUNT"] = 4] = "COUNT";
+            RESOURCES[RESOURCES["SMALL_FONT_YELLOW"] = 2] = "SMALL_FONT_YELLOW";
+            RESOURCES[RESOURCES["BIG_FONT"] = 3] = "BIG_FONT";
+            RESOURCES[RESOURCES["SPRITES"] = 4] = "SPRITES";
+            RESOURCES[RESOURCES["COUNT"] = 5] = "COUNT";
         })(RESOURCES = KILL.RESOURCES || (KILL.RESOURCES = {}));
         let words = 0b0;
         function resourced(word) {
@@ -5230,6 +5308,7 @@ var gta_kill = (function (exports, THREE) {
                 start();
         }
         function critical(mask) {
+            // Hi. It couldn't load this resource
             console.error('resource', mask);
         }
         KILL.critical = critical;
@@ -5249,7 +5328,7 @@ var gta_kill = (function (exports, THREE) {
             Movie.init();
             Water$1.init();
             Mist$1.init();
-            Rain.init();
+            Rain$1.init();
             KILL.city = new City;
             window.KILL = KILL;
         }
@@ -5281,7 +5360,7 @@ var gta_kill = (function (exports, THREE) {
                 KILL.ply.update();
             Water$1.update();
             Mist$1.update();
-            Rain.update();
+            Rain$1.update();
             Zoom$1.update();
             Scenarios$1.update();
             KILL.city.update(KILL.ply.data);

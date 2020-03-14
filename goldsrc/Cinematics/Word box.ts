@@ -59,7 +59,7 @@ export class WordBox {
 
 		this.geometry = new PlaneBufferGeometry(64, 16, 1);
 
-		const scale = 5;
+		const scale = 6;
 
 		this.mesh = new Mesh(this.geometry, this.material);
 		this.mesh.renderOrder = 2;
@@ -72,7 +72,7 @@ export class WordBox {
 		this.meshShadow.visible = false;
 
 		Four.scene.add(this.mesh);
-		Four.scene.add(this.meshShadow);
+		//Four.scene.add(this.meshShadow);
 
 		console.log('make word box');
 	}

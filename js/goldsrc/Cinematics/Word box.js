@@ -37,7 +37,7 @@ export class WordBox {
         this.materialShadow.opacity = 0.35;
         this.materialShadow.color = new Color(0x0);
         this.geometry = new PlaneBufferGeometry(64, 16, 1);
-        const scale = 5;
+        const scale = 6;
         this.mesh = new Mesh(this.geometry, this.material);
         this.mesh.renderOrder = 2;
         this.mesh.scale.set(scale, scale, scale);
@@ -47,7 +47,7 @@ export class WordBox {
         this.meshShadow.scale.set(scale, scale, scale);
         this.meshShadow.visible = false;
         Four.scene.add(this.mesh);
-        Four.scene.add(this.meshShadow);
+        //Four.scene.add(this.meshShadow);
         console.log('make word box');
     }
     update() {

@@ -31,7 +31,6 @@ export namespace HighWayWithEveryCar {
 				let car: Data2 = {
 					type: 'Car',
 					car: name,
-					//paint: PaintJobs.Enum.DARK_GREEN,
 					x: 10 + x,
 					y: y + 7,
 					z: 0
@@ -67,18 +66,20 @@ export namespace HighWayWithEveryCar {
 				talkingHead = new TalkingHead('johny_zoo');
 
 				wordBox = new WordBox();
-				wordBox.setText(`This highway has every car.`, 1000); // \nwith a "random" paint...
+				//wordBox.setText(`This highway has #every car#.`, 1000); // \nwith a "random" paint...
+				wordBox.setText("ABCDEFGHIJKLMNOPQRSTUVWXYZ\n1234567890.,?!;~'\"`$()-");
+				wordBox.setText("The (cat) ate - apple");
 
 				setTimeout(() => {
 					//talkingHead.talk(false);
-					wordBox.setText("Walk near a vehicle to see\nwhat it is.");
+					wordBox.setText("I will tell you about\nthe #nearest car#.");
 
 					setTimeout(() => {
 						wordBox.setText("");
 						talkingHead.talk(false);
 						stage++;
-					}, 7000);
-				}, 7000);
+					}, 5000);
+				}, 5000);
 
 				stage++;
 			}
@@ -100,7 +101,7 @@ export namespace HighWayWithEveryCar {
 
 				if (closestCar != viewingCar) {
 					viewingCar = closestCar;
-					wordBox.setText(`Car: ${closestCar.data.car}`);
+					wordBox.setText(`${closestCar.data.car},\n${PaintJobs.Enum[closestCar.data.paint]}`);
 				}
 			}
 			

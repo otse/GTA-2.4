@@ -131,3 +131,4 @@ export var Rain;
     }
     Rain.update = update;
 })(Rain || (Rain = {}));
+export default Rain;

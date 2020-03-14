@@ -9,8 +9,9 @@ import Spelling from "./Spelling";
 export namespace Letterer {
 
 	export var canvas;
-	export var bigFont;
-	export var smallFont;
+	export var missionFont;
+	export var smallWhite;
+	export var smallYellow;
 
 	export function init() {
 		canvas = document.createElement('canvas');
@@ -21,33 +22,23 @@ export namespace Letterer {
 
 		//let manager = new LoadingManager();
 
-		const error = () => {
-			KILL.critical('FONT');
+		const load = (path, resource, func: (image) => any) => {
+			let loader = new ImageLoader();
+			let image;
+			loader.load(
+				path,
+				(out) => {
+					func(out);
+					KILL.resourced(resource);
+				},
+				undefined,
+				() => KILL.critical(resource)
+			);
 		};
 
-
-		let loader = new ImageLoader();
-		loader.load(
-			'sty/fonts/small.png',
-			(image) => {
-				smallFont = image;
-				KILL.resourced('SMALL_FONT');
-			},
-			undefined,
-			error
-		);
-
-		let loader2 = new ImageLoader();
-		loader2.load(
-			'sty/fonts/big.png',
-			(image) => {
-				bigFont = image;
-				KILL.resourced('BIG_FONT');
-			},
-			undefined,
-			error
-		);
-
+		load('sty/fonts/small.png', 'SMALL_FONT', (image) => smallWhite = image);
+		load('sty/fonts/small_yellow.png', 'SMALL_FONT_YELLOW', (image) => smallYellow = image);
+		load('sty/fonts/big.png', 'BIG_FONT', (image) => missionFont = image);
 	}
 
 	var spriteTextures = [];
@@ -69,9 +60,9 @@ export namespace Letterer {
 			canvas.height = 128;
 
 			for (let symbol of spelling.symbols) {
-
+				
 				context.drawImage(
-					smallFont, symbol.x2, symbol.y2, symbol.w, symbol.h, symbol.x, symbol.y, symbol.w, symbol.h);
+					symbol.color ? smallYellow : smallWhite, symbol.x2, symbol.y2, symbol.w, symbol.h, symbol.x, symbol.y, symbol.w, symbol.h);
 			}
 
 			let image = new Image();

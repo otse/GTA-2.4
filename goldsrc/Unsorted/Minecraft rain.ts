@@ -175,3 +175,5 @@ export namespace Rain {
 
 	}
 }
+
+export default Rain;

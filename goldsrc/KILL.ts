@@ -20,7 +20,7 @@ import Cinematics from "./Cinematics/Cinematics";
 import BridgeScenario from "./Scenarios/Bridge";
 import Scenarios from "./Scenarios/Scenarios";
 import Letterer from "./Cinematics/Letterer";
-import { Rain as Rain } from "./Unsorted/Minecraft rain";
+import Rain from "./Unsorted/Minecraft rain";
 import Water from "./Unsorted/Water";
 import Mist from "./Unsorted/Mist";
 import Cars from "./Cars/Cars";
@@ -35,6 +35,7 @@ export namespace KILL {
 	export enum RESOURCES {
 		UNDEFINED_OR_INIT = 0,
 		SMALL_FONT,
+		SMALL_FONT_YELLOW,
 		BIG_FONT,
 		SPRITES,
 		COUNT
@@ -66,6 +67,8 @@ export namespace KILL {
 	}
 
 	export function critical(mask: string) {
+
+		// Hi. It couldn't load this resource
 
 		console.error('resource', mask);
 

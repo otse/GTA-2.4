@@ -8,19 +8,17 @@ export var Letterer;
         document.body.appendChild(Letterer.canvas);
         console.log('letterer init');
         //let manager = new LoadingManager();
-        const error = () => {
-            KILL.critical('FONT');
+        const load = (path, resource, func) => {
+            let loader = new ImageLoader();
+            let image;
+            loader.load(path, (out) => {
+                func(out);
+                KILL.resourced(resource);
+            }, undefined, () => KILL.critical(resource));
         };
-        let loader = new ImageLoader();
-        loader.load('sty/fonts/small.png', (image) => {
-            Letterer.smallFont = image;
-            KILL.resourced('SMALL_FONT');
-        }, undefined, error);
-        let loader2 = new ImageLoader();
-        loader2.load('sty/fonts/big.png', (image) => {
-            Letterer.bigFont = image;
-            KILL.resourced('BIG_FONT');
-        }, undefined, error);
+        load('sty/fonts/small.png', 'SMALL_FONT', (image) => Letterer.smallWhite = image);
+        load('sty/fonts/small_yellow.png', 'SMALL_FONT_YELLOW', (image) => Letterer.smallYellow = image);
+        load('sty/fonts/big.png', 'BIG_FONT', (image) => Letterer.missionFont = image);
     }
     Letterer.init = init;
     var spriteTextures = [];
@@ -34,7 +32,7 @@ export var Letterer;
             Letterer.canvas.width = 512;
             Letterer.canvas.height = 128;
             for (let symbol of spelling.symbols) {
-                context.drawImage(Letterer.smallFont, symbol.x2, symbol.y2, symbol.w, symbol.h, symbol.x, symbol.y, symbol.w, symbol.h);
+                context.drawImage(symbol.color ? Letterer.smallYellow : Letterer.smallWhite, symbol.x2, symbol.y2, symbol.w, symbol.h, symbol.x, symbol.y, symbol.w, symbol.h);
             }
             let image = new Image();
             image.src = Letterer.canvas.toDataURL();
