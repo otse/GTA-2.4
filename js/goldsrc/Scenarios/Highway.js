@@ -47,16 +47,8 @@ export var HighWayWithEveryCar;
             if (stage == 0) {
                 talkingHead = new TalkingHead('johny_zoo');
                 wordBox = new WordBox();
-                wordBox.setText(`This highway has every car.`, 1000);
-                setTimeout(() => {
-                    //talkingHead.talk(false);
-                    wordBox.setText("I will tell you about\nthe #nearest car#.");
-                    setTimeout(() => {
-                        wordBox.setText("");
-                        talkingHead.talk(false);
-                        stage++;
-                    }, 5000);
-                }, 5000);
+                wordBox.setText(`The highway has every car.\nI will tell you which.`, 1000);
+                setTimeout(() => stage++, 5000);
                 stage++;
             }
             else if (stage == 2) {
@@ -73,7 +65,8 @@ export var HighWayWithEveryCar;
                 }
                 if (closestCar != viewingCar) {
                     viewingCar = closestCar;
-                    wordBox.setText(`${closestCar.data.car},\n${PaintJobs.Enum[closestCar.data.paint]}`);
+                    let d = closestCar.data;
+                    wordBox.setText(`${d.car},\n${PaintJobs.Enum[d.paint]} ${d.paint}`);
                 }
             }
             talkingHead.update();

@@ -4762,13 +4762,13 @@ var gta_kill = (function (exports, THREE) {
             return { char: a, x: b, y: c, x2: d, y2: e, w: f, h: g, color: h };
         }
         // https://gtamp.com/text/?bg=0&font=1&color=6&shiny=0&imgtype=0&text=ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.%2C%3F%21%3B%7E%27%22%60%24%28%29-
-        // ABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890.,?!;~'"`$()-
+        // ABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890.,?!;~'"$()-
         const symbols = [
             'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
             'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
             'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
             'Y', 'Z', ' ', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
-            '.', ',', '?', '!', ';', '~', '\'', '"', '`', '$', '(', ')', '-'
+            '.', ',', '?', '!', ';', '~', '\'', '"', '$', '(', ')', '-'
         ];
         function build(text, font) {
             let typeface = typefaces[font];
@@ -5031,16 +5031,8 @@ var gta_kill = (function (exports, THREE) {
                 if (stage == 0) {
                     talkingHead = new TalkingHead('johny_zoo');
                     wordBox = new WordBox();
-                    wordBox.setText(`This highway has every car.`, 1000);
-                    setTimeout(() => {
-                        //talkingHead.talk(false);
-                        wordBox.setText("I will tell you about\nthe #nearest car#.");
-                        setTimeout(() => {
-                            wordBox.setText("");
-                            talkingHead.talk(false);
-                            stage++;
-                        }, 5000);
-                    }, 5000);
+                    wordBox.setText(`The highway has every car.\nI will tell you which.`, 1000);
+                    setTimeout(() => stage++, 5000);
                     stage++;
                 }
                 else if (stage == 2) {
@@ -5057,7 +5049,8 @@ var gta_kill = (function (exports, THREE) {
                     }
                     if (closestCar != viewingCar) {
                         viewingCar = closestCar;
-                        wordBox.setText(`${closestCar.data.car},\n${PaintJobs$1.Enum[closestCar.data.paint]}`);
+                        let d = closestCar.data;
+                        wordBox.setText(`${d.car},\n${PaintJobs$1.Enum[d.paint]} ${d.paint}`);
                     }
                 }
                 talkingHead.update();

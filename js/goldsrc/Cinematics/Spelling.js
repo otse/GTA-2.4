@@ -27,13 +27,13 @@ export var Spelling;
         return { char: a, x: b, y: c, x2: d, y2: e, w: f, h: g, color: h };
     }
     // https://gtamp.com/text/?bg=0&font=1&color=6&shiny=0&imgtype=0&text=ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.%2C%3F%21%3B%7E%27%22%60%24%28%29-
-    // ABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890.,?!;~'"`$()-
+    // ABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890.,?!;~'"$()-
     const symbols = [
         'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
         'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
         'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
         'Y', 'Z', ' ', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
-        '.', ',', '?', '!', ';', '~', '\'', '"', '`', '$', '(', ')', '-'
+        '.', ',', '?', '!', ';', '~', '\'', '"', '$', '(', ')', '-'
     ];
     function build(text, font) {
         let typeface = typefaces[font];
