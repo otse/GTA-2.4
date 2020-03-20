@@ -2,7 +2,7 @@ import { default as THREE, Clock, Scene, WebGLRenderer, PerspectiveCamera, Direc
 
 import KILL from './KILL';
 import Points from './Objects/Points';
-import { Movie } from './Unsorted/RGB Shift';
+import { Shift } from './Unsorted/Shift';
 import App from './App';
 import Util from './Random';
 
@@ -11,6 +11,7 @@ import Util from './Random';
 export namespace Four {
 
 	export var delta = 0;
+	export var aspect = 0;
 
 	// todo, redo
 	export var boxBufferGeometry: BoxBufferGeometry
@@ -24,19 +25,20 @@ export namespace Four {
 	export function update() {
 
 		delta = clock.getDelta();
+		delta = Math.max(0.007, Math.min(delta, 0.033)); // cap 30 - 144 fps
 
 		KILL.update();
 
 		if (App.map[115] == 1)
-			Movie.enabled = !Movie.enabled;
+			Shift.enabled = !Shift.enabled;
 
-		if (Movie.enabled) {
+		if (Shift.enabled) {
 
-			Movie.update();
+			Shift.update();
 
-			Movie.composer.render();
+			Shift.composer.render();
 		}
-		
+
 		else
 
 			renderer.render(scene, camera);
@@ -50,6 +52,7 @@ export namespace Four {
 
 		camera = new PerspectiveCamera(
 			70, window.innerWidth / window.innerHeight, 1, 2000);
+		aspect = camera.aspect;
 		camera.position.z = 200;
 
 		scene = new Scene();
@@ -76,19 +79,22 @@ export namespace Four {
 
 		window.addEventListener('resize', onWindowResize, false);
 
-		
+
 	}
 
 	function onWindowResize() {
 
-		camera.aspect = window.innerWidth / window.innerHeight;
+		aspect = camera.aspect = window.innerWidth / window.innerHeight;
 
 		camera.updateProjectionMatrix();
 
-		Movie.resize();
+		Shift.resize();
 
 		renderer.setSize(
 			window.innerWidth, window.innerHeight);
+
+		console.log('aspect ', aspect);
+
 	}
 }
 

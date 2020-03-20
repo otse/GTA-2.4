@@ -5,7 +5,7 @@ import { default as THREE, Vector2 } from "three";
 
 const TWO = (THREE as any)
 
-export namespace Movie {
+export namespace Shift {
 	export var enabled = true;
 
 	export var composer;
@@ -14,8 +14,8 @@ export namespace Movie {
 
 	export function cityView() {
 		Zoom.set(2);
-		Movie.effect.uniforms["pixelSize"].value = 1.0;
-		Movie.effect.uniforms["zoom"].value = 0.0;
+		Shift.effect.uniforms["pixelSize"].value = 1.0;
+		Shift.effect.uniforms["zoom"].value = 0.0;
 	}
 
 	function cart(a: number, n: number) {
@@ -40,10 +40,9 @@ export namespace Movie {
 		orange = cart(orange, 1.5);
 		meat = cart(meat, 0.4);
 
-		// sin = -1 - 1
 		let x = Math.sin(strawberry);
 		let y = Math.cos(orange) / 2;
-		let z = Math.sin(meat) + 1 / 4; // 
+		let z = Math.sin(meat) + 1 / 4;
 
 		effect.uniforms['angle'].value = x * strawberry;
 		effect.uniforms['redblue'].value = y * z * 0.0045;

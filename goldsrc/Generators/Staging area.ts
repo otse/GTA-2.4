@@ -44,33 +44,31 @@ class StagingArea {
 
 			// aabb
 			if (!set) {
-				this.min = [data.x, data.y, data.z!];
-				this.max = [data.x, data.y, data.z!];
+				this.min = [data.x, data.y, data.z];
+				this.max = [data.x, data.y, data.z];
 				set = true;
 			}
 
 			this.min[0] = Math.min(data.x, this.min[0]);
 			this.min[1] = Math.min(data.y, this.min[1]);
-			this.min[2] = Math.min(data.z!, this.min[2]);
+			this.min[2] = Math.min(data.z, this.min[2]);
 			this.max[0] = Math.max(data.x, this.max[0]);
 			this.max[1] = Math.max(data.y, this.max[1]);
-			this.max[2] = Math.max(data.z!, this.max[2]);
+			this.max[2] = Math.max(data.z, this.max[2]);
 		}
 	}
 
-	ccw(n: 1 | 2 | 3) {
+	ccw(n: 1 | 2 | 3 = 1) {
 		
 		this.findExtents();
-
-		let newDatas: Data2[] = [];
-
-		for (let y = 0; y < this.max[1]; y++) {
-			for (let x = 0; x < this.min[0]; x++) {
-			}
-		}
 		
 		for (let data of this.datas) {
-			let p = rotate(this.min[0], this.min[1], data.x, data.y, n * 90);
+			let p = rotate(
+				this.min[0], 
+				this.min[1],
+				data.x,
+				data.y,
+				n * 90);
 
 			//console.log('rotate is', p[0], p[1]);
 			

@@ -57,7 +57,7 @@ export var pedRemapTitles = [
       "Light grey shirt and dark grey jeans",
       "Short sleeve grey/blue shirt and drak grey jeans",
       "Short sleeve light purple shirt and light grey trousers",
-      "Purple shirt with light purple sleeves and light grey trousers",
+      "Purple shirt with light purple sleeves and light grey trousers", // nice
       "Grey/green shirt and grey trousers",
 /*52*/"Pink shirt and jeans"
 ]

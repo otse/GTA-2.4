@@ -1,6 +1,6 @@
 import Data2 from "../Objects/Data";
 import Datas from "../Objects/Datas";
-import { Letterer } from "./Letterer";
+import { Fonts } from "./Fonts";
 
 export namespace Cinematics {
 
@@ -14,9 +14,9 @@ export namespace Cinematics {
         
 	}
 
-	export function missionText(words: string) {
+	export function test_missionText(words: string) {
 
-		Letterer.makeNiceText(words);
+		Fonts.textTexture(words);
 
 	}
 

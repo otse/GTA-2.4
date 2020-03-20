@@ -17,37 +17,37 @@ export namespace Spelling {
 				//1   2    3    4    5    6    7    8    9    0    .    ,    ?    !    ;    ~    '    "    $    (    )    -    _
 			]
 		},
-		big: {
+
+		mission: {
 			space: 33,
 			height: 64,
-			beginnings: [
-				0, 33, 65, 96, 127, 152, 180, 212, 244, 261, 291, 327, 354, 393, 425, 456, 487, 519, 550, 580, 608, 640, 672, 711, 744, 777, /*after z*/ 809,
-				0, 22, 54, 85, 120, 150, 181, 211, 242, 274, 306, 323, 340, 371, 388, 405, 442, 459, 490, 507, 540, 562, 583
-			]
+			beginnings: []
 		}
 	}
 
 	interface Sentence {
 		symbols: Symbol[];
-	};
+	}
 
 	interface Symbol {
-		char; x; y; x2; y2; w; h; color;
-	};
+		char; x; y; x2; y2; w; h; colorize;
+	}
 
 	function symbol(a: string, b: number, c: number, d: number, e: number, f: number, g: number, h: boolean): Symbol {
-		return { char: a, x: b, y: c, x2: d, y2: e, w: f, h: g, color: h }
+		return { char: a, x: b, y: c, x2: d, y2: e, w: f, h: g, colorize: h }
 	}
 
 	// https://gtamp.com/text/?bg=0&font=1&color=6&shiny=0&imgtype=0&text=ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.%2C%3F%21%3B%7E%27%22%60%24%28%29-
 	// ABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890.,?!;~'"$()-
 
-	const symbols = [
+	const symbols_all = [
 		'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
 		'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
 		'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
-		'Y', 'Z', ' ', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
-		'.', ',', '?', '!', ';', '~', '\'', '"', '$', '(', ')', '-', '_'];
+		'Y', 'Z', ' ', '1', '2', '3', '4', '5',
+		'6', '7', '8', '9', '0', '.', ',', '?',
+		'!', ';', '~', '\'', '"', '$', '(', ')',
+		'-', '_'];
 
 	export function build(text: string, font: string): Sentence {
 		
@@ -60,7 +60,7 @@ export namespace Spelling {
 
 		let sentence = { symbols: [] };
 
-		let color = false;
+		let colorize = false;
 
 		for (let i = 0; i < text.length; i++) {
 
@@ -70,6 +70,7 @@ export namespace Spelling {
 				last_x += typeface.space;
 				continue;
 			}
+
 			if ('\n' == char) {
 				last_y += typeface.height;
 				last_x = 0;
@@ -77,25 +78,24 @@ export namespace Spelling {
 			}
 
 			if ('#' == char) {
-				color = ! color;
-				console.log('color',color);
+				colorize = ! colorize;
 				continue;
 			}
 
-			let index = symbols.indexOf(char);
+			let index = symbols_all.indexOf(char);
 
 			if (index == -1)
 				continue;
 
 			let x = typeface.beginnings[index];
-			let y = 0, z = index + 1;
+			let y = 0;
 
 			//console.log('char', char, 'index', index);
 
-			let w = typeface.beginnings[z] - x;
+			let w = typeface.beginnings[index + 1] - x;
 
 			sentence.symbols.push(
-				symbol(char, last_x, last_y, x, y, w, typeface.height, color)
+				symbol(char, last_x, last_y, x, y, w, typeface.height, colorize)
 			);
 
 			last_x += w

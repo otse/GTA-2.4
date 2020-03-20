@@ -4,7 +4,7 @@ import { MeshPhongMaterial, PlaneBufferGeometry, Mesh, Texture, Color } from "th
 import Util from "../Random";
 import Sheets from "../Sprites/Sheets";
 import Four from "../Four";
-import { Letterer } from "./Letterer";
+import { Fonts } from "./Fonts";
 
 export class WordBox {
 	mesh: Mesh
@@ -27,7 +27,7 @@ export class WordBox {
 	setText(text: string, delay = 650) {
 		if (this.texture)
 			this.texture.dispose();
-		this.texture = Letterer.makeNiceText(text);
+		this.texture = Fonts.textTexture(text);
 		if (this.mesh) {
 			this.material.map = this.texture;
 			this.materialShadow.map = this.texture;			
@@ -79,7 +79,7 @@ export class WordBox {
 
 	update() {
 		let pos = Four.camera.position.clone();
-		let x = pos.x + 100;
+		let x = pos.x + 100 * Four.aspect;
 		let y = pos.y - 80;
 		let z = pos.z - 200;
 

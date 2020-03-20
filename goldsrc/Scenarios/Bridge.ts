@@ -15,39 +15,44 @@ export namespace BridgeScenario {
 
 		const load = function () {
 
-			Generators.Fill.fill([-500, -500, -3], [1000, 1000, 0], { sty: 'sty/special/water/1.bmp' }, { WHEEL: false });
+			//Generators.Fill.fill([-500, -500, -3], [1000, 1000, 0], { sty: 'sty/special/water/1.bmp' }, { WHEEL: false });
 
-			Generators.Roads.highway(1, [10, -7000, 0], 8000, 4, 'qualityRoads');
+			Generators.Roads.highway(1, [10, -7000, 0], 8000, 2, 'qualityRoads');
 
-			let x = .5;
-			let y = 0;
-			let j = 0;
+			let pickup: Data2 = {
+				type: 'Car',
+				car: 'Pickup',
+				//paint: PaintJobs.Enum.BLUE2,
+				x: 10.5,
+				y: 3,
+				z: 0
+			};
 
-			for (let name of carNames) {
+			let morton: Data2 = {
+				type: 'Car',
+				car: 'Morton',
+				//paint: PaintJobs.Enum.BRIGHT_RED,
+				x: 10.5,
+				y: 1.5,
+				z: 0
+			};
 
-				let car: Data2 = {
-					type: 'Car',
-					car: name,
-					//paint: PaintJobs.Enum.DARK_GREEN,
-					x: 10 + x,
-					y: y + 7,
-					z: 0
-				}
+			let bank_van: Data2 = {
+				type: 'Car',
+				car: 'G4 Bank Van',
+				x: 10.5,
+				y: 0,
+				z: 0
+			};
 
-				y--;
-				j++;
-				if (j > 15) {
-					j = 0;
-					// Begin spawning at new lane
-					y = 0;
-					x += 1;
-				}
-
-				Datas.deliver(car);
-			}
+			Datas.deliver(pickup);
+			Datas.deliver(morton);
+			Datas.deliver(bank_van);
 
 			console.log('loaded bridge scenario');
 		};
+
+		
 
 		let stage = 0;
 		let talkingHead: TalkingHead;

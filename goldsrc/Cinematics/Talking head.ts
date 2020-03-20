@@ -1,6 +1,6 @@
 import Data2 from "../Objects/Data";
 import Datas from "../Objects/Datas";
-import { MeshPhongMaterial, PlaneBufferGeometry, Mesh, Texture, Color } from "three";
+import { MeshPhongMaterial, PlaneBufferGeometry, Mesh, Texture, Color, Camera } from "three";
 import Util from "../Random";
 import Sheets from "../Sprites/Sheets";
 import Four from "../Four";
@@ -109,7 +109,7 @@ export class TalkingHead {
 		}
 
 		let pos = Four.camera.position.clone();
-		let x = pos.x + 160;
+		let x = pos.x + 100 * Four.aspect;
 		let y = pos.y - 80;
 		let z = pos.z - 200;
 

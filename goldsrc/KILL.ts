@@ -13,14 +13,13 @@ import Sheets from "./Sprites/Sheets";
 import Levels from "./Generators/Levels";
 
 import Zoom from "./Unsorted/Zoom";
-import { Movie } from "./Unsorted/RGB Shift";
+import { Shift } from "./Unsorted/Shift";
 import PalmTrees from "./Scenarios/Palm trees";
 import HighWayWithEveryCar from "./Scenarios/Highway";
 import Cinematics from "./Cinematics/Cinematics";
 import BridgeScenario from "./Scenarios/Bridge";
 import Scenarios from "./Scenarios/Scenarios";
-import Letterer from "./Cinematics/Letterer";
-import Rain from "./Unsorted/Minecraft rain";
+import Fonts from "./Cinematics/Fonts";
 import Water from "./Unsorted/Water";
 import Mist from "./Unsorted/Mist";
 import Cars from "./Cars/Cars";
@@ -34,9 +33,9 @@ export namespace KILL {
 
 	export enum RESOURCES {
 		UNDEFINED_OR_INIT = 0,
-		SMALL_FONT,
-		SMALL_FONT_YELLOW,
-		BIG_FONT,
+		FONT_WHITE,
+		FONT_YELLOW,
+		FONT_MISSION,
 		SPRITES,
 		COUNT
 	};
@@ -88,12 +87,11 @@ export namespace KILL {
 		Sprites.init();
 		Sheets.init();
 		Cinematics.init();
-		Letterer.init();
-		Movie.init();
+		Fonts.init();
+		Shift.init();
 
 		Water.init();
 		Mist.init();
-		Rain.init();
 
 		city = new City;
 
@@ -109,8 +107,10 @@ export namespace KILL {
 
 		started = true;
 
-		HighWayWithEveryCar.init();
-		//BridgeScenario.init();
+		if (window.location.href.indexOf("#highway") != -1)
+			HighWayWithEveryCar.init();
+		else
+			BridgeScenario.init();
 
 		let data: Data2 = {
 			type: 'Ply',
@@ -137,7 +137,6 @@ export namespace KILL {
 
 		Water.update();
 		Mist.update();
-		Rain.update();
 
 		Zoom.update();
 
