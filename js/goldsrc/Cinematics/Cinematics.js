@@ -1,4 +1,4 @@
-import { Letterer } from "./Letterer";
+import { Fonts } from "./Fonts";
 export var Cinematics;
 (function (Cinematics) {
     function init() {
@@ -8,10 +8,10 @@ export var Cinematics;
     function update() {
     }
     Cinematics.update = update;
-    function missionText(words) {
-        Letterer.makeNiceText(words);
+    function test_missionText(words) {
+        Fonts.textTexture(words);
     }
-    Cinematics.missionText = missionText;
+    Cinematics.test_missionText = test_missionText;
 })(Cinematics || (Cinematics = {}));
 ;
 export default Cinematics;

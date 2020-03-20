@@ -6,11 +6,16 @@ import Points from "../Objects/Points";
 // http://kitfox.com/projects/perlinNoiseMaker/
 var Mist;
 (function (Mist) {
+    let enabled = false;
     let material;
     let geometry;
     let mesh;
+    const HALF_FPS = true;
+    let alternate = false;
     let x, y;
     function init() {
+        if (!enabled)
+            return;
         Mist.mode = 'stormy';
         x = 0;
         y = 0;
@@ -22,9 +27,9 @@ var Mist;
         perlin.repeat.set(w, w);
         material = new MeshPhongMaterial({
             map: perlin,
-            color: 0x93e5ff,
+            color: 0x777777,
+            opacity: 0.15,
             transparent: true,
-            opacity: .3,
             depthWrite: false
         });
         mesh = new Mesh(geometry, material);
@@ -39,17 +44,25 @@ var Mist;
         return n;
     }
     function update() {
+        if (!enabled)
+            return;
+        if (HALF_FPS) {
+            alternate = !alternate;
+            if (!alternate)
+                return;
+        }
+        let delta = HALF_FPS ? Four.delta * 2 : Four.delta;
         let w = Four.camera.position;
         let tiled = Points.floor2(w.x / 64, w.y / 64);
         let p = Points.region(tiled, Chunks.tileSpan);
         mesh.position.set(p.x * Chunks.actualSize, p.y * Chunks.actualSize, 5);
         if ('stormy' == Mist.mode) {
-            x += Four.delta / 2;
-            y += Four.delta / 6;
+            x += delta / 2;
+            y += delta / 6;
         }
         else {
-            x += Four.delta / 18;
-            y += Four.delta / 55;
+            x += delta / 18;
+            y += delta / 55;
         }
         x = normalize(x);
         y = normalize(y);

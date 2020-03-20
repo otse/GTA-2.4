@@ -37,13 +37,8 @@ class StagingArea {
             this.max[2] = Math.max(data.z, this.max[2]);
         }
     }
-    ccw(n) {
+    ccw(n = 1) {
         this.findExtents();
-        let newDatas = [];
-        for (let y = 0; y < this.max[1]; y++) {
-            for (let x = 0; x < this.min[0]; x++) {
-            }
-        }
         for (let data of this.datas) {
             let p = rotate(this.min[0], this.min[1], data.x, data.y, n * 90);
             //console.log('rotate is', p[0], p[1]);

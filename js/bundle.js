@@ -3868,15 +3868,15 @@ var gta_kill = (function (exports, THREE) {
     var Zoom$1 = Zoom;
 
     const TWO = THREE__default;
-    var Movie;
-    (function (Movie) {
-        Movie.enabled = true;
+    var Shift;
+    (function (Shift) {
+        Shift.enabled = true;
         function cityView() {
             Zoom$1.set(2);
-            Movie.effect.uniforms["pixelSize"].value = 1.0;
-            Movie.effect.uniforms["zoom"].value = 0.0;
+            Shift.effect.uniforms["pixelSize"].value = 1.0;
+            Shift.effect.uniforms["zoom"].value = 0.0;
         }
-        Movie.cityView = cityView;
+        Shift.cityView = cityView;
         function cart(a, n) {
             if (a < Math.PI * 2)
                 a += n * Four$1.delta;
@@ -3893,39 +3893,38 @@ var gta_kill = (function (exports, THREE) {
             strawberry = cart(strawberry, 0.9);
             orange = cart(orange, 1.5);
             meat = cart(meat, 0.4);
-            // sin = -1 - 1
             let x = Math.sin(strawberry);
             let y = Math.cos(orange) / 2;
-            let z = Math.sin(meat) + 1 / 4; // 
-            Movie.effect.uniforms['angle'].value = x * strawberry;
-            Movie.effect.uniforms['redblue'].value = y * z * 0.0045;
+            let z = Math.sin(meat) + 1 / 4;
+            Shift.effect.uniforms['angle'].value = x * strawberry;
+            Shift.effect.uniforms['redblue'].value = y * z * 0.0045;
         }
-        Movie.update = update;
+        Shift.update = update;
         let bat = 0;
         function updateHyper() {
             bat = cart(bat, 5);
-            Movie.effect.uniforms['angle'].value = bat;
-            Movie.effect.uniforms['redblue'].value = bat * 0.5;
+            Shift.effect.uniforms['angle'].value = bat;
+            Shift.effect.uniforms['redblue'].value = bat * 0.5;
         }
-        Movie.updateHyper = updateHyper;
+        Shift.updateHyper = updateHyper;
         function resize() {
-            Movie.effect.uniforms["resolution"].value.set(window.innerWidth, window.innerHeight).multiplyScalar(window.devicePixelRatio);
+            Shift.effect.uniforms["resolution"].value.set(window.innerWidth, window.innerHeight).multiplyScalar(window.devicePixelRatio);
         }
-        Movie.resize = resize;
+        Shift.resize = resize;
         function init() {
-            Movie.composer = new TWO.EffectComposer(Four$1.renderer);
-            Movie.renderPass = new TWO.RenderPass(Four$1.scene, Four$1.camera);
-            Movie.composer.addPass(Movie.renderPass);
-            Movie.effect = new TWO.ShaderPass(Movie.retroShader);
-            Movie.effect.uniforms['redblue'].value = 0.0015 * 0.5;
-            Movie.effect.uniforms["resolution"].value =
+            Shift.composer = new TWO.EffectComposer(Four$1.renderer);
+            Shift.renderPass = new TWO.RenderPass(Four$1.scene, Four$1.camera);
+            Shift.composer.addPass(Shift.renderPass);
+            Shift.effect = new TWO.ShaderPass(Shift.retroShader);
+            Shift.effect.uniforms['redblue'].value = 0.0015 * 0.5;
+            Shift.effect.uniforms["resolution"].value =
                 new THREE.Vector2(window.innerWidth, window.innerHeight);
-            Movie.effect.uniforms["resolution"].value.multiplyScalar(window.devicePixelRatio);
-            Movie.effect.renderToScreen = true;
-            Movie.composer.addPass(Movie.effect);
+            Shift.effect.uniforms["resolution"].value.multiplyScalar(window.devicePixelRatio);
+            Shift.effect.renderToScreen = true;
+            Shift.composer.addPass(Shift.effect);
         }
-        Movie.init = init;
-        Movie.retroShader = {
+        Shift.init = init;
+        Shift.retroShader = {
             uniforms: {
                 "tDiffuse": { value: null },
                 "redblue": { value: 0.005 },
@@ -4017,7 +4016,7 @@ var gta_kill = (function (exports, THREE) {
 				#endif
 			}`
         };
-    })(Movie || (Movie = {}));
+    })(Shift || (Shift = {}));
 
     // For making vertical ~> horizontal
     // So you only need to make one
@@ -4057,12 +4056,8 @@ var gta_kill = (function (exports, THREE) {
                 this.max[2] = Math.max(data.z, this.max[2]);
             }
         }
-        ccw(n) {
+        ccw(n = 1) {
             this.findExtents();
-            for (let y = 0; y < this.max[1]; y++) {
-                for (let x = 0; x < this.min[0]; x++) {
-                }
-            }
             for (let data of this.datas) {
                 let p = rotate(this.min[0], this.min[1], data.x, data.y, n * 90);
                 //console.log('rotate is', p[0], p[1]);
@@ -4749,26 +4744,25 @@ var gta_kill = (function (exports, THREE) {
                     //1   2    3    4    5    6    7    8    9    0    .    ,    ?    !    ;    ~    '    "    $    (    )    -    _
                 ]
             },
-            big: {
+            mission: {
                 space: 33,
                 height: 64,
-                beginnings: [
-                    0, 33, 65, 96, 127, 152, 180, 212, 244, 261, 291, 327, 354, 393, 425, 456, 487, 519, 550, 580, 608, 640, 672, 711, 744, 777, /*after z*/ 809,
-                    0, 22, 54, 85, 120, 150, 181, 211, 242, 274, 306, 323, 340, 371, 388, 405, 442, 459, 490, 507, 540, 562, 583
-                ]
+                beginnings: []
             }
         };
         function symbol(a, b, c, d, e, f, g, h) {
-            return { char: a, x: b, y: c, x2: d, y2: e, w: f, h: g, color: h };
+            return { char: a, x: b, y: c, x2: d, y2: e, w: f, h: g, colorize: h };
         }
         // https://gtamp.com/text/?bg=0&font=1&color=6&shiny=0&imgtype=0&text=ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.%2C%3F%21%3B%7E%27%22%60%24%28%29-
         // ABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890.,?!;~'"$()-
-        const symbols = [
+        const symbols_all = [
             'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
             'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
             'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
-            'Y', 'Z', ' ', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
-            '.', ',', '?', '!', ';', '~', '\'', '"', '$', '(', ')', '-', '_'
+            'Y', 'Z', ' ', '1', '2', '3', '4', '5',
+            '6', '7', '8', '9', '0', '.', ',', '?',
+            '!', ';', '~', '\'', '"', '$', '(', ')',
+            '-', '_'
         ];
         function build(text, font) {
             let typeface = typefaces[font];
@@ -4776,7 +4770,7 @@ var gta_kill = (function (exports, THREE) {
             let last_x = 0;
             let last_y = 128 / 2 - typeface.height;
             let sentence = { symbols: [] };
-            let color = false;
+            let colorize = false;
             for (let i = 0; i < text.length; i++) {
                 let char = text[i];
                 if (' ' == char) {
@@ -4789,18 +4783,17 @@ var gta_kill = (function (exports, THREE) {
                     continue;
                 }
                 if ('#' == char) {
-                    color = !color;
-                    console.log('color', color);
+                    colorize = !colorize;
                     continue;
                 }
-                let index = symbols.indexOf(char);
+                let index = symbols_all.indexOf(char);
                 if (index == -1)
                     continue;
                 let x = typeface.beginnings[index];
-                let y = 0, z = index + 1;
+                let y = 0;
                 //console.log('char', char, 'index', index);
-                let w = typeface.beginnings[z] - x;
-                sentence.symbols.push(symbol(char, last_x, last_y, x, y, w, typeface.height, color));
+                let w = typeface.beginnings[index + 1] - x;
+                sentence.symbols.push(symbol(char, last_x, last_y, x, y, w, typeface.height, colorize));
                 last_x += w;
             }
             return sentence;
@@ -4809,48 +4802,52 @@ var gta_kill = (function (exports, THREE) {
     })(Spelling || (Spelling = {}));
     var Spelling$1 = Spelling;
 
-    var Letterer;
-    (function (Letterer) {
+    var Fonts;
+    (function (Fonts) {
+        Fonts.fonts = {
+            white: null,
+            yellow: null,
+            mission: null
+        };
         function init() {
-            Letterer.canvas = document.createElement('canvas');
-            document.body.appendChild(Letterer.canvas);
+            Fonts.canvas = document.createElement('canvas');
+            document.body.appendChild(Fonts.canvas);
             console.log('letterer init');
-            //let manager = new LoadingManager();
-            const load = (path, resource, func) => {
-                let loader = new THREE.ImageLoader();
-                loader.load(path, (out) => {
-                    func(out);
-                    KILL$1.resourced(resource);
-                }, undefined, () => KILL$1.critical(resource));
+            const get_font = (name, rs, func) => {
+                new THREE.ImageLoader().load(`sty/fonts/${name}.png`, (img) => {
+                    func(img);
+                    KILL$1.resourced(rs);
+                }, () => { }, () => KILL$1.critical(rs));
             };
-            load('sty/fonts/small.png', 'SMALL_FONT', (image) => Letterer.smallWhite = image);
-            load('sty/fonts/small_yellow.png', 'SMALL_FONT_YELLOW', (image) => Letterer.smallYellow = image);
-            load('sty/fonts/big.png', 'BIG_FONT', (image) => Letterer.missionFont = image);
+            get_font(`white`, `FONT_WHITE`, (e) => Fonts.fonts.white = e);
+            get_font(`yellow`, `FONT_YELLOW`, (e) => Fonts.fonts.yellow = e);
+            get_font(`mission`, `FONT_MISSION`, (e) => Fonts.fonts.mission = e);
         }
-        Letterer.init = init;
-        function makeNiceText(text) {
+        Fonts.init = init;
+        function textTexture(text) {
             let spelling = Spelling$1.build(text, 'small');
-            let canvasTexture = new THREE.CanvasTexture(Letterer.canvas);
+            let texture = new THREE.CanvasTexture(Fonts.canvas);
+            texture.magFilter = THREE.NearestFilter;
+            texture.minFilter = THREE.NearestFilter;
             const paint = () => {
-                canvasTexture.magFilter = THREE.NearestFilter;
-                canvasTexture.minFilter = THREE.NearestFilter;
-                const context = Letterer.canvas.getContext("2d");
-                Letterer.canvas.width = 512;
-                Letterer.canvas.height = 128;
+                const context = Fonts.canvas.getContext("2d");
+                Fonts.canvas.width = 512;
+                Fonts.canvas.height = 128;
                 for (let symbol of spelling.symbols) {
-                    context.drawImage(symbol.color ? Letterer.smallYellow : Letterer.smallWhite, symbol.x2, symbol.y2, symbol.w, symbol.h, symbol.x, symbol.y, symbol.w, symbol.h);
+                    let font = symbol.colorize ? Fonts.fonts.yellow : Fonts.fonts.white;
+                    context.drawImage(font, symbol.x2, symbol.y2, symbol.w, symbol.h, symbol.x, symbol.y, symbol.w, symbol.h);
                 }
                 let image = new Image();
-                image.src = Letterer.canvas.toDataURL();
-                canvasTexture.image = image;
-                canvasTexture.needsUpdate = true;
+                image.src = Fonts.canvas.toDataURL();
+                texture.image = image;
+                texture.needsUpdate = true;
             };
             paint();
-            return canvasTexture;
+            return texture;
         }
-        Letterer.makeNiceText = makeNiceText;
-    })(Letterer || (Letterer = {}));
-    var Letterer$1 = Letterer;
+        Fonts.textTexture = textTexture;
+    })(Fonts || (Fonts = {}));
+    var Fonts$1 = Fonts;
 
     class WordBox {
         constructor() {
@@ -4861,7 +4858,7 @@ var gta_kill = (function (exports, THREE) {
         setText(text, delay = 650) {
             if (this.texture)
                 this.texture.dispose();
-            this.texture = Letterer.makeNiceText(text);
+            this.texture = Fonts.textTexture(text);
             if (this.mesh) {
                 this.material.map = this.texture;
                 this.materialShadow.map = this.texture;
@@ -4903,7 +4900,7 @@ var gta_kill = (function (exports, THREE) {
         }
         update() {
             let pos = Four$1.camera.position.clone();
-            let x = pos.x + 100;
+            let x = pos.x + 100 * Four$1.aspect;
             let y = pos.y - 80;
             let z = pos.z - 200;
             this.mesh.position.set(x, y, z);
@@ -4984,7 +4981,7 @@ var gta_kill = (function (exports, THREE) {
                 }
             }
             let pos = Four$1.camera.position.clone();
-            let x = pos.x + 160;
+            let x = pos.x + 100 * Four$1.aspect;
             let y = pos.y - 80;
             let z = pos.z - 200;
             this.mesh.position.set(x, y, z);
@@ -5076,195 +5073,84 @@ var gta_kill = (function (exports, THREE) {
         function update() {
         }
         Cinematics.update = update;
-        function missionText(words) {
-            Letterer.makeNiceText(words);
+        function test_missionText(words) {
+            Fonts.textTexture(words);
         }
-        Cinematics.missionText = missionText;
+        Cinematics.test_missionText = test_missionText;
     })(Cinematics || (Cinematics = {}));
     var Cinematics$1 = Cinematics;
 
-    var Rain;
-    (function (Rain) {
-        Rain.what_a_rainy_day = true;
-        Rain.drops = [];
-        Rain.group = null;
-        /*export function smat_init() {
-
-            let map = td.map(`sty/drop.png`);
-
-            const params = {
-                name: 'Rain Material',
-                fog: false,
-
-                //map: map,
-                //color: 0x93e5ff,
-                side: THREE.DoubleSide,
-                transparent: true,
-                opacity: .5,
-                lights: false,
-                depthTest: false, // false: rain falls through everything
-
-                vertexShader: rain_vert,
-                fragmentShader: THREE.ShaderChunk.meshbasic_frag
-            };
-
-            const o = Object.assign({
-                uniforms: THREE.UniformsUtils.merge([
-                    THREE.ShaderLib['basic'].uniforms, {
-                        coords: { value: new THREE.Vector3(0, 0, 0) },
-                        descend: { value: 0 }
-                    }
-                ]),
-                defines: { 'USE_MAP': '', 'DISTANCE': '' },
-            }, params);
-
-            smat = new THREE.ShaderMaterial(o);
-
-            smat.map = map;
-
-            smat.uniforms.map.value = map;
-            smat.uniforms.diffuse.value = new THREE.Color(0x93e5ff);
-            smat.uniforms.opacity.value = params.opacity;
-        }*/
-        /*export function smat_clone() {
-            let mat = smat.clone();
-            
-            mat.uniforms.map.value = smat.map;
-            mat.uniforms.coords.value = new THREE.Vector3(0, 0, 0);
-            mat.uniforms.descend.value = 0;
-
-            return mat;
-        }*/
+    var BridgeScenario;
+    (function (BridgeScenario) {
         function init() {
-            //smat_init();
-            let map = Util$1.loadTexture(`sty/drop.png`);
-            Rain.basicmat = new THREE.MeshBasicMaterial({
-                map: map,
-                color: 0xe5f7fc,
-                side: THREE.DoubleSide,
-                transparent: true,
-                opacity: .5,
-                depthWrite: false,
-            });
-            Rain.group = new THREE.Group();
-            Rain.group.rotation.y += 0.3;
-            Rain.dropGeometry = new THREE.PlaneBufferGeometry(4, 1, 1, 1);
-            Util$1.UV.rotatePlane(Rain.dropGeometry, 0, 3);
-            Four$1.scene.add(Rain.group);
-        }
-        Rain.init = init;
-        Rain.spread = 6;
-        function make_drop() {
-            if (Rain.drops.length > 500)
-                return;
-            let mesh = new THREE.Mesh(Rain.dropGeometry, Rain.basicmat);
-            //mesh.matrixAutoUpdate = false;
-            mesh.frustumCulled = false;
-            const z = Four$1.camera.position.z;
-            mesh.position.x = Four$1.camera.position.x + ((Math.random() - .5) * 64 * Rain.spread);
-            mesh.position.y = Four$1.camera.position.y + ((Math.random() - .5) * 64 * Rain.spread);
-            mesh.position.z = z;
-            mesh.rotation.y = Math.PI / 2;
-            //mesh.updateMatrix();
-            let drop = {
-                start: z,
-                mesh: mesh,
-                rand: Math.random()
+            console.log('Bridge scenario init');
+            const load = function () {
+                //Generators.Fill.fill([-500, -500, -3], [1000, 1000, 0], { sty: 'sty/special/water/1.bmp' }, { WHEEL: false });
+                Generators$1.Roads.highway(1, [10, -7000, 0], 8000, 2, 'qualityRoads');
+                let pickup = {
+                    type: 'Car',
+                    car: 'Pickup',
+                    //paint: PaintJobs.Enum.BLUE2,
+                    x: 10.5,
+                    y: 3,
+                    z: 0
+                };
+                let morton = {
+                    type: 'Car',
+                    car: 'Morton',
+                    //paint: PaintJobs.Enum.BRIGHT_RED,
+                    x: 10.5,
+                    y: 1.5,
+                    z: 0
+                };
+                let bank_van = {
+                    type: 'Car',
+                    car: 'G4 Bank Van',
+                    x: 10.5,
+                    y: 0,
+                    z: 0
+                };
+                Datas$1.deliver(pickup);
+                Datas$1.deliver(morton);
+                Datas$1.deliver(bank_van);
+                console.log('loaded bridge scenario');
             };
-            Rain.drops.push(drop);
-            Rain.group.add(mesh);
-        }
-        Rain.make_drop = make_drop;
-        const speed =  7.0 ;
-        let alternate = false;
-        function update() {
-            if (!Rain.what_a_rainy_day)
-                return;
-            alternate = !alternate;
-            if ( alternate)
-                return;
-            make_drop();
-            make_drop();
-            make_drop();
-            make_drop();
-            make_drop();
-            make_drop();
-            make_drop();
-            make_drop();
-            make_drop();
-            make_drop();
-            let i = Rain.drops.length;
-            while (i--) {
-                let drop = Rain.drops[i];
-                const fall = speed + drop.rand;
-                drop.mesh.position.z -= fall;
-                if (drop.start > drop.mesh.position.z + 300 || drop.mesh.position.z <= 0) {
-                    //drops.splice(i, 1);
-                    const z = Four$1.camera.position.z + 100;
-                    drop.start = z;
-                    drop.mesh.position.x = Four$1.camera.position.x + ((Math.random() - .5) * 64 * Rain.spread);
-                    drop.mesh.position.y = Four$1.camera.position.y + ((Math.random() - .5) * 64 * Rain.spread);
-                    drop.mesh.position.z = z;
-                    //drop.mesh.updateMatrix();
-                    //group.remove(drop.mesh);
+            let stage = 0;
+            let talkingHead;
+            let wordBox;
+            const update = function () {
+                if (stage == 0) {
+                    talkingHead = new TalkingHead('guider');
+                    //wordBox = new WordBox("Out of the car. Move fast.\nNo room for stupidity today.");
+                    wordBox = new WordBox();
+                    wordBox.setText("No room for stupidity today.\n... ");
+                    //wordBox = new WordBox(`Nurse... It's time to "OPERATE"\non these commuters! `);
+                    //wordBox = new WordBox("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.,?!;~'\"`$()-");
+                    stage++;
                 }
-            }
+                talkingHead.update();
+                wordBox.update();
+            };
+            let bridgeScenario = {
+                name: 'Bridge',
+                load: load,
+                update: update
+            };
+            Scenarios.load(bridgeScenario);
         }
-        Rain.update = update;
-    })(Rain || (Rain = {}));
-    var Rain$1 = Rain;
+        BridgeScenario.init = init;
+    })(BridgeScenario || (BridgeScenario = {}));
+    var BridgeScenario$1 = BridgeScenario;
 
     // http://kitfox.com/projects/perlinNoiseMaker/
     var Mist;
     (function (Mist) {
-        let material;
-        let geometry;
-        let mesh;
-        let x, y;
         function init() {
-            Mist.mode = 'stormy';
-            x = 0;
-            y = 0;
-            const w = 5;
-            geometry = new THREE.PlaneBufferGeometry(Chunks$1.tileSpan * 64 * w, Chunks$1.tileSpan * 64 * w, 1, 1);
-            let perlin = Util$1.loadTexture('sty/perlin_1.png');
-            perlin.wrapS = THREE.RepeatWrapping;
-            perlin.wrapT = THREE.RepeatWrapping;
-            perlin.repeat.set(w, w);
-            material = new THREE.MeshPhongMaterial({
-                map: perlin,
-                color: 0x93e5ff,
-                transparent: true,
-                opacity: .3,
-                depthWrite: false
-            });
-            mesh = new THREE.Mesh(geometry, material);
-            Four$1.scene.add(mesh);
+            return;
         }
         Mist.init = init;
-        function normalize(n) {
-            if (n > 1)
-                n -= 1;
-            if (n < 0)
-                n += 1;
-            return n;
-        }
         function update() {
-            let w = Four$1.camera.position;
-            let tiled = Points$1.floor2(w.x / 64, w.y / 64);
-            let p = Points$1.region(tiled, Chunks$1.tileSpan);
-            mesh.position.set(p.x * Chunks$1.actualSize, p.y * Chunks$1.actualSize, 5);
-            if ('stormy' == Mist.mode) {
-                x += Four$1.delta / 2;
-                y += Four$1.delta / 6;
-            }
-            else {
-                x += Four$1.delta / 18;
-                y += Four$1.delta / 55;
-            }
-            x = normalize(x);
-            y = normalize(y);
-            material.map.offset.set(x, y);
+            return;
         }
         Mist.update = update;
     })(Mist || (Mist = {}));
@@ -5276,9 +5162,9 @@ var gta_kill = (function (exports, THREE) {
         let RESOURCES;
         (function (RESOURCES) {
             RESOURCES[RESOURCES["UNDEFINED_OR_INIT"] = 0] = "UNDEFINED_OR_INIT";
-            RESOURCES[RESOURCES["SMALL_FONT"] = 1] = "SMALL_FONT";
-            RESOURCES[RESOURCES["SMALL_FONT_YELLOW"] = 2] = "SMALL_FONT_YELLOW";
-            RESOURCES[RESOURCES["BIG_FONT"] = 3] = "BIG_FONT";
+            RESOURCES[RESOURCES["FONT_WHITE"] = 1] = "FONT_WHITE";
+            RESOURCES[RESOURCES["FONT_YELLOW"] = 2] = "FONT_YELLOW";
+            RESOURCES[RESOURCES["FONT_MISSION"] = 3] = "FONT_MISSION";
             RESOURCES[RESOURCES["SPRITES"] = 4] = "SPRITES";
             RESOURCES[RESOURCES["COUNT"] = 5] = "COUNT";
         })(RESOURCES = KILL.RESOURCES || (KILL.RESOURCES = {}));
@@ -5315,11 +5201,10 @@ var gta_kill = (function (exports, THREE) {
             Sprites$1.init();
             Sheets$1.init();
             Cinematics$1.init();
-            Letterer$1.init();
-            Movie.init();
+            Fonts$1.init();
+            Shift.init();
             Water$1.init();
             Mist$1.init();
-            Rain$1.init();
             KILL.city = new City;
             window.KILL = KILL;
         }
@@ -5329,8 +5214,10 @@ var gta_kill = (function (exports, THREE) {
                 return;
             console.log('kill starting');
             started = true;
-            HighWayWithEveryCar$1.init();
-            //BridgeScenario.init();
+            if (window.location.href.indexOf("#highway") != -1)
+                HighWayWithEveryCar$1.init();
+            else
+                BridgeScenario$1.init();
             let data = {
                 type: 'Ply',
                 //remap: 16,
@@ -5351,7 +5238,6 @@ var gta_kill = (function (exports, THREE) {
                 KILL.ply.update();
             Water$1.update();
             Mist$1.update();
-            Rain$1.update();
             Zoom$1.update();
             Scenarios$1.update();
             KILL.city.update(KILL.ply.data);
@@ -5364,14 +5250,16 @@ var gta_kill = (function (exports, THREE) {
     var Four;
     (function (Four) {
         Four.delta = 0;
+        Four.aspect = 0;
         function update() {
             Four.delta = Four.clock.getDelta();
+            Four.delta = Math.max(0.007, Math.min(Four.delta, 0.033)); // cap 30 - 144 fps
             KILL$1.update();
             if (App.map[115] == 1)
-                Movie.enabled = !Movie.enabled;
-            if (Movie.enabled) {
-                Movie.update();
-                Movie.composer.render();
+                Shift.enabled = !Shift.enabled;
+            if (Shift.enabled) {
+                Shift.update();
+                Shift.composer.render();
             }
             else
                 Four.renderer.render(Four.scene, Four.camera);
@@ -5381,6 +5269,7 @@ var gta_kill = (function (exports, THREE) {
             console.log('four init');
             Four.clock = new THREE.Clock();
             Four.camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 2000);
+            Four.aspect = Four.camera.aspect;
             Four.camera.position.z = 200;
             Four.scene = new THREE.Scene();
             Four.directionalLight = new THREE.DirectionalLight(0x355886, 1.0);
@@ -5401,10 +5290,11 @@ var gta_kill = (function (exports, THREE) {
         }
         Four.init = init;
         function onWindowResize() {
-            Four.camera.aspect = window.innerWidth / window.innerHeight;
+            Four.aspect = Four.camera.aspect = window.innerWidth / window.innerHeight;
             Four.camera.updateProjectionMatrix();
-            Movie.resize();
+            Shift.resize();
             Four.renderer.setSize(window.innerWidth, window.innerHeight);
+            console.log('aspect ', Four.aspect);
         }
     })(Four || (Four = {}));
     window['Four'] = Four;

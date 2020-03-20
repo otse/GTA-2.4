@@ -8,12 +8,12 @@ import BoxCutter from "./Objects/Shapes/Box cutter";
 import Sprites from "./Sprites/Sprites";
 import Sheets from "./Sprites/Sheets";
 import Zoom from "./Unsorted/Zoom";
-import { Movie } from "./Unsorted/RGB Shift";
+import { Shift } from "./Unsorted/Shift";
 import HighWayWithEveryCar from "./Scenarios/Highway";
 import Cinematics from "./Cinematics/Cinematics";
+import BridgeScenario from "./Scenarios/Bridge";
 import Scenarios from "./Scenarios/Scenarios";
-import Letterer from "./Cinematics/Letterer";
-import Rain from "./Unsorted/Minecraft rain";
+import Fonts from "./Cinematics/Fonts";
 import Water from "./Unsorted/Water";
 import Mist from "./Unsorted/Mist";
 import Cars from "./Cars/Cars";
@@ -23,9 +23,9 @@ export var KILL;
     let RESOURCES;
     (function (RESOURCES) {
         RESOURCES[RESOURCES["UNDEFINED_OR_INIT"] = 0] = "UNDEFINED_OR_INIT";
-        RESOURCES[RESOURCES["SMALL_FONT"] = 1] = "SMALL_FONT";
-        RESOURCES[RESOURCES["SMALL_FONT_YELLOW"] = 2] = "SMALL_FONT_YELLOW";
-        RESOURCES[RESOURCES["BIG_FONT"] = 3] = "BIG_FONT";
+        RESOURCES[RESOURCES["FONT_WHITE"] = 1] = "FONT_WHITE";
+        RESOURCES[RESOURCES["FONT_YELLOW"] = 2] = "FONT_YELLOW";
+        RESOURCES[RESOURCES["FONT_MISSION"] = 3] = "FONT_MISSION";
         RESOURCES[RESOURCES["SPRITES"] = 4] = "SPRITES";
         RESOURCES[RESOURCES["COUNT"] = 5] = "COUNT";
     })(RESOURCES = KILL.RESOURCES || (KILL.RESOURCES = {}));
@@ -63,11 +63,10 @@ export var KILL;
         Sprites.init();
         Sheets.init();
         Cinematics.init();
-        Letterer.init();
-        Movie.init();
+        Fonts.init();
+        Shift.init();
         Water.init();
         Mist.init();
-        Rain.init();
         KILL.city = new City;
         window.KILL = KILL;
     }
@@ -77,8 +76,10 @@ export var KILL;
             return;
         console.log('kill starting');
         started = true;
-        HighWayWithEveryCar.init();
-        //BridgeScenario.init();
+        if (window.location.href.indexOf("#highway") != -1)
+            HighWayWithEveryCar.init();
+        else
+            BridgeScenario.init();
         let data = {
             type: 'Ply',
             //remap: 16,
@@ -99,7 +100,6 @@ export var KILL;
             KILL.ply.update();
         Water.update();
         Mist.update();
-        Rain.update();
         Zoom.update();
         Scenarios.update();
         KILL.city.update(KILL.ply.data);

@@ -2,15 +2,15 @@ import Zoom from "./Zoom";
 import Four from "../Four";
 import { default as THREE, Vector2 } from "three";
 const TWO = THREE;
-export var Movie;
-(function (Movie) {
-    Movie.enabled = true;
+export var Shift;
+(function (Shift) {
+    Shift.enabled = true;
     function cityView() {
         Zoom.set(2);
-        Movie.effect.uniforms["pixelSize"].value = 1.0;
-        Movie.effect.uniforms["zoom"].value = 0.0;
+        Shift.effect.uniforms["pixelSize"].value = 1.0;
+        Shift.effect.uniforms["zoom"].value = 0.0;
     }
-    Movie.cityView = cityView;
+    Shift.cityView = cityView;
     function cart(a, n) {
         if (a < Math.PI * 2)
             a += n * Four.delta;
@@ -27,39 +27,38 @@ export var Movie;
         strawberry = cart(strawberry, 0.9);
         orange = cart(orange, 1.5);
         meat = cart(meat, 0.4);
-        // sin = -1 - 1
         let x = Math.sin(strawberry);
         let y = Math.cos(orange) / 2;
-        let z = Math.sin(meat) + 1 / 4; // 
-        Movie.effect.uniforms['angle'].value = x * strawberry;
-        Movie.effect.uniforms['redblue'].value = y * z * 0.0045;
+        let z = Math.sin(meat) + 1 / 4;
+        Shift.effect.uniforms['angle'].value = x * strawberry;
+        Shift.effect.uniforms['redblue'].value = y * z * 0.0045;
     }
-    Movie.update = update;
+    Shift.update = update;
     let bat = 0;
     function updateHyper() {
         bat = cart(bat, 5);
-        Movie.effect.uniforms['angle'].value = bat;
-        Movie.effect.uniforms['redblue'].value = bat * 0.5;
+        Shift.effect.uniforms['angle'].value = bat;
+        Shift.effect.uniforms['redblue'].value = bat * 0.5;
     }
-    Movie.updateHyper = updateHyper;
+    Shift.updateHyper = updateHyper;
     function resize() {
-        Movie.effect.uniforms["resolution"].value.set(window.innerWidth, window.innerHeight).multiplyScalar(window.devicePixelRatio);
+        Shift.effect.uniforms["resolution"].value.set(window.innerWidth, window.innerHeight).multiplyScalar(window.devicePixelRatio);
     }
-    Movie.resize = resize;
+    Shift.resize = resize;
     function init() {
-        Movie.composer = new TWO.EffectComposer(Four.renderer);
-        Movie.renderPass = new TWO.RenderPass(Four.scene, Four.camera);
-        Movie.composer.addPass(Movie.renderPass);
-        Movie.effect = new TWO.ShaderPass(Movie.retroShader);
-        Movie.effect.uniforms['redblue'].value = 0.0015 * 0.5;
-        Movie.effect.uniforms["resolution"].value =
+        Shift.composer = new TWO.EffectComposer(Four.renderer);
+        Shift.renderPass = new TWO.RenderPass(Four.scene, Four.camera);
+        Shift.composer.addPass(Shift.renderPass);
+        Shift.effect = new TWO.ShaderPass(Shift.retroShader);
+        Shift.effect.uniforms['redblue'].value = 0.0015 * 0.5;
+        Shift.effect.uniforms["resolution"].value =
             new Vector2(window.innerWidth, window.innerHeight);
-        Movie.effect.uniforms["resolution"].value.multiplyScalar(window.devicePixelRatio);
-        Movie.effect.renderToScreen = true;
-        Movie.composer.addPass(Movie.effect);
+        Shift.effect.uniforms["resolution"].value.multiplyScalar(window.devicePixelRatio);
+        Shift.effect.renderToScreen = true;
+        Shift.composer.addPass(Shift.effect);
     }
-    Movie.init = init;
-    Movie.retroShader = {
+    Shift.init = init;
+    Shift.retroShader = {
         uniforms: {
             "tDiffuse": { value: null },
             "redblue": { value: 0.005 },
@@ -151,4 +150,4 @@ export var Movie;
 				#endif
 			}`
     };
-})(Movie || (Movie = {}));
+})(Shift || (Shift = {}));

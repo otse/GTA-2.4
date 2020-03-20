@@ -1,6 +1,6 @@
 import { MeshPhongMaterial, PlaneBufferGeometry, Mesh, Color } from "three";
 import Four from "../Four";
-import { Letterer } from "./Letterer";
+import { Fonts } from "./Fonts";
 export class WordBox {
     constructor() {
         console.log('new talking head');
@@ -10,7 +10,7 @@ export class WordBox {
     setText(text, delay = 650) {
         if (this.texture)
             this.texture.dispose();
-        this.texture = Letterer.makeNiceText(text);
+        this.texture = Fonts.textTexture(text);
         if (this.mesh) {
             this.material.map = this.texture;
             this.materialShadow.map = this.texture;
@@ -52,7 +52,7 @@ export class WordBox {
     }
     update() {
         let pos = Four.camera.position.clone();
-        let x = pos.x + 100;
+        let x = pos.x + 100 * Four.aspect;
         let y = pos.y - 80;
         let z = pos.z - 200;
         this.mesh.position.set(x, y, z);
