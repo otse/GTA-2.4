@@ -540,10 +540,13 @@ var gta_kill = (function (exports, THREE) {
 
     var Water;
     (function (Water) {
-        let time = 0;
-        let i = 0;
-        let waters = [];
+        let time;
+        let j;
+        let waters;
         function init() {
+            time = 0;
+            j = 0;
+            waters = [];
             for (let i = 1; i <= 12; i++)
                 waters.push(Util$1.loadTexture(`sty/special/water/${i}.bmp`));
             Water.material = new THREE.MeshPhongMaterial({
@@ -554,8 +557,8 @@ var gta_kill = (function (exports, THREE) {
         function update() {
             time += Four$1.delta;
             if (time >= 0.11) {
-                i += i < 11 ? 1 : -11;
-                Water.material.map = waters[i];
+                j += j < 11 ? 1 : -11;
+                Water.material.map = waters[j];
                 time = 0;
             }
         }
@@ -3382,14 +3385,14 @@ var gta_kill = (function (exports, THREE) {
             this.objects.splice(this.objects.indexOf(object), 1);
         }
         makeAdd() {
-            //console.log('Chunk make n add');
+            //console.log('Chunk make add');
             for (let data of this.datas)
                 this.fabricate(data);
             this.currentlyActive = true;
             Four$1.scene.add(this.group);
         }
         destroyRemove() {
-            //console.log('Chunk destroy n remove');
+            //console.log('Chunk destroy remove');
             for (let object of this.objects)
                 object.destroy();
             this.objects.length = 0; // Reset array
@@ -4731,45 +4734,48 @@ var gta_kill = (function (exports, THREE) {
     })(Scenarios || (Scenarios = {}));
     var Scenarios$1 = Scenarios;
 
-    var Spelling;
-    (function (Spelling) {
-        const typefaces = {
-            small: {
-                space: 9,
-                height: 23,
-                beginnings: [
-                    0, 11, 22, 33, 44, 55, 66, 77, 88, 96, 108, 121, 132, 148, 159, 170, 181, 192, 203, 214, 224, 235, 247, 263, 274, 286, 296,
-                    //a b  c   d   e   f   g   h   i   j    k    l    m    n    o    p    q    r    s    t    u    v    w    x    y    z
-                    304, 313, 325, 337, 350, 362, 374, 386, 398, 410, 422, 429, 435, 446, 452, 458, 471, 477, 488, 500, 509, 518, 529, 540
-                    //1   2    3    4    5    6    7    8    9    0    .    ,    ?    !    ;    ~    '    "    $    (    )    -    _
-                ]
-            },
-            mission: {
-                space: 33,
-                height: 64,
-                beginnings: []
-            }
-        };
+    var FontsSpelling;
+    (function (FontsSpelling) {
         function symbol(a, b, c, d, e, f, g, h) {
             return { char: a, x: b, y: c, x2: d, y2: e, w: f, h: g, colorize: h };
         }
-        // https://gtamp.com/text/?bg=0&font=1&color=6&shiny=0&imgtype=0&text=ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.%2C%3F%21%3B%7E%27%22%60%24%28%29-
-        // ABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890.,?!;~'"$()-
-        const symbols_all = [
-            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
-            'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
-            'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
-            'Y', 'Z', ' ', '1', '2', '3', '4', '5',
-            '6', '7', '8', '9', '0', '.', ',', '?',
-            '!', ';', '~', '\'', '"', '$', '(', ')',
-            '-', '_'
+        const characters = [
+            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+            'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', ' ',
+            '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
+            '.', ',', '?', '!',
+            ';', '~', '\'', '"', '$', '(', ')', '-', '_'
         ];
-        function build(text, font) {
+        const typefaces = {
+            small: {
+                positions: [
+                    0, 11, 22, 33, 44, 55, 66, 77, 88, 96, 108, 121, 132, 148,
+                    //A B  C   D   E   F   G   H   I   J   K    L    M    N
+                    159, 170, 181, 192, 203, 214, 224, 235, 247, 263, 274, 286, 296,
+                    //O  P    Q    R    S    T    U    V    W    X    Y    Z
+                    304, 313, 325, 337, 350, 362, 374, 386, 398, 410,
+                    //1  2    3    4    5    6    7    8    9    0    
+                    422, 429, 435, 446,
+                    //.  ,    ?    !
+                    452, 458, 471, 477, 488, 500, 509, 518, 529, 540
+                    //;  ~    '    "    $    (    )    -    _
+                ],
+                space: 9,
+                line_height: 23,
+            },
+            mission: {
+                positions: [],
+                space: 33,
+                line_height: 64,
+            }
+        };
+        // https://gtamp.com/text/?bg=0&font=1&color=6&shiny=0&imgtype=0&text=ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.%2C%3F%21%3B%7E%27%22%60%24%28%29-
+        function symbolize(canvas, text, font) {
             let typeface = typefaces[font];
             text = text.toUpperCase();
             let last_x = 0;
-            let last_y = 128 / 2 - typeface.height;
-            let sentence = { symbols: [] };
+            let last_y = canvas.height / 2 - typeface.line_height;
+            let symbols = [];
             let colorize = false;
             for (let i = 0; i < text.length; i++) {
                 let char = text[i];
@@ -4778,7 +4784,7 @@ var gta_kill = (function (exports, THREE) {
                     continue;
                 }
                 if ('\n' == char) {
-                    last_y += typeface.height;
+                    last_y += typeface.line_height;
                     last_x = 0;
                     continue;
                 }
@@ -4786,33 +4792,36 @@ var gta_kill = (function (exports, THREE) {
                     colorize = !colorize;
                     continue;
                 }
-                let index = symbols_all.indexOf(char);
+                let index = characters.indexOf(char);
                 if (index == -1)
                     continue;
-                let x = typeface.beginnings[index];
+                let x = typeface.positions[index];
                 let y = 0;
-                //console.log('char', char, 'index', index);
-                let w = typeface.beginnings[index + 1] - x;
-                sentence.symbols.push(symbol(char, last_x, last_y, x, y, w, typeface.height, colorize));
+                let w = typeface.positions[index + 1] - x;
+                symbols.push(symbol(char, last_x, last_y, x, y, w, typeface.line_height, colorize));
                 last_x += w;
             }
-            return sentence;
+            return symbols;
         }
-        Spelling.build = build;
-    })(Spelling || (Spelling = {}));
-    var Spelling$1 = Spelling;
+        FontsSpelling.symbolize = symbolize;
+    })(FontsSpelling || (FontsSpelling = {}));
+    var FontsSpelling$1 = FontsSpelling;
 
     var Fonts;
     (function (Fonts) {
         Fonts.fonts = {
-            white: null,
-            yellow: null,
-            mission: null
+            white: undefined,
+            yellow: undefined,
+            mission: undefined
         };
         function init() {
             Fonts.canvas = document.createElement('canvas');
             document.body.appendChild(Fonts.canvas);
-            console.log('letterer init');
+            console.log('fonts init');
+            load();
+        }
+        Fonts.init = init;
+        function load() {
             const get_font = (name, rs, func) => {
                 new THREE.ImageLoader().load(`sty/fonts/${name}.png`, (img) => {
                     func(img);
@@ -4823,26 +4832,22 @@ var gta_kill = (function (exports, THREE) {
             get_font(`yellow`, `FONT_YELLOW`, (e) => Fonts.fonts.yellow = e);
             get_font(`mission`, `FONT_MISSION`, (e) => Fonts.fonts.mission = e);
         }
-        Fonts.init = init;
-        function textTexture(text) {
-            let spelling = Spelling$1.build(text, 'small');
+        function textTexture(text, width, height) {
+            Fonts.canvas.width = width;
+            Fonts.canvas.height = height;
+            let symbols = FontsSpelling$1.symbolize(Fonts.canvas, text, 'small');
             let texture = new THREE.CanvasTexture(Fonts.canvas);
             texture.magFilter = THREE.NearestFilter;
             texture.minFilter = THREE.NearestFilter;
-            const paint = () => {
-                const context = Fonts.canvas.getContext("2d");
-                Fonts.canvas.width = 512;
-                Fonts.canvas.height = 128;
-                for (let symbol of spelling.symbols) {
-                    let font = symbol.colorize ? Fonts.fonts.yellow : Fonts.fonts.white;
-                    context.drawImage(font, symbol.x2, symbol.y2, symbol.w, symbol.h, symbol.x, symbol.y, symbol.w, symbol.h);
-                }
-                let image = new Image();
-                image.src = Fonts.canvas.toDataURL();
-                texture.image = image;
-                texture.needsUpdate = true;
-            };
-            paint();
+            const context = Fonts.canvas.getContext("2d");
+            for (let s of symbols) {
+                let font = s.colorize ? Fonts.fonts.yellow : Fonts.fonts.white;
+                context.drawImage(font, s.x2, s.y2, s.w, s.h, s.x, s.y, s.w, s.h);
+            }
+            let image = new Image();
+            image.src = Fonts.canvas.toDataURL();
+            texture.image = image;
+            texture.needsUpdate = true;
             return texture;
         }
         Fonts.textTexture = textTexture;
@@ -4858,7 +4863,7 @@ var gta_kill = (function (exports, THREE) {
         setText(text, delay = 650) {
             if (this.texture)
                 this.texture.dispose();
-            this.texture = Fonts.textTexture(text);
+            this.texture = Fonts.textTexture(text, 512, 128);
             if (this.mesh) {
                 this.material.map = this.texture;
                 this.materialShadow.map = this.texture;
@@ -4909,6 +4914,44 @@ var gta_kill = (function (exports, THREE) {
     }
     window.WordBox = WordBox;
 
+    class Widget {
+        constructor(pos) {
+            console.log('ui element');
+            this.pos = pos;
+            this.make();
+        }
+        destroy() {
+            this.geometry.dispose();
+            this.material.dispose();
+        }
+        make() {
+            this.material = new THREE.MeshBasicMaterial({
+                map: Util$1.loadTexture(`sty/a square.png`),
+                transparent: true,
+                depthTest: false
+            });
+            this.geometry = new THREE.PlaneBufferGeometry(this.pos.w, this.pos.h, 1);
+            const scale = 1;
+            this.mesh = new THREE.Mesh(this.geometry, this.material);
+            this.mesh.renderOrder = 2;
+            this.mesh.scale.set(scale, scale, scale);
+            this.update();
+            console.log('adding ui element');
+            Four$1.scene.add(this.mesh);
+        }
+        update() {
+            let cam = Four$1.camera.position.clone();
+            let x = cam.x + this.pos.x;
+            let y = cam.y + this.pos.y;
+            let z = cam.z + this.pos.z - 680; // magic number
+            const scale = Four$1.aspect;
+            this.mesh.position.set(x, y, z);
+            this.mesh.scale.set(scale, scale, scale);
+        }
+    }
+    window.Widget = Widget;
+
+    // Apparently a band
     class TalkingHead {
         constructor(name) {
             console.log('new talking head');
@@ -4933,37 +4976,21 @@ var gta_kill = (function (exports, THREE) {
                     this.animateMouth = false;
                     this.blinkTime = .11;
                     this.blinkDelay = 3;
-                    this.material.map = this.imgs[0];
+                    this.widget.material.map = this.imgs[0];
                 }, delay);
         }
         destroy() {
-            this.geometry.dispose();
-            this.material.dispose();
+            this.widget.destroy();
         }
         make() {
-            this.material = new THREE.MeshPhongMaterial({
-                map: this.imgs[0],
-                transparent: true,
-                shininess: 0,
-                depthTest: false
-            });
-            this.materialShadow = this.material.clone();
-            this.materialShadow.opacity = 0.35;
-            this.materialShadow.color = new THREE.Color(0x0);
-            this.geometry = new THREE.PlaneBufferGeometry(64, 64, 1);
-            this.mesh = new THREE.Mesh(this.geometry, this.material);
-            this.meshShadow = new THREE.Mesh(this.geometry, this.materialShadow);
-            this.mesh.renderOrder = 2;
-            this.meshShadow.renderOrder = 1;
-            Four$1.scene.add(this.mesh);
-            Four$1.scene.add(this.meshShadow);
+            this.widget = new Widget({ x: 0, y: 0, z: 0, w: 64, h: 64 });
         }
         update() {
             if (this.animateMouth) {
                 this.talkTime += Four$1.delta;
                 if (this.talkTime > 0.2) {
                     this.img = this.img < 2 ? this.img + 2 : 0;
-                    this.material.map = this.imgs[this.img];
+                    this.widget.material.map = this.imgs[this.img];
                     this.talkTime = 0;
                 }
             }
@@ -4974,18 +5001,13 @@ var gta_kill = (function (exports, THREE) {
                     this.blinkDelay = 3 + Math.random() * 3;
                 }
                 else if (this.blinkTime > 0.11) {
-                    this.material.map = this.imgs[0];
+                    this.widget.material.map = this.imgs[0];
                 }
                 else if (this.blinkTime > 0) {
-                    this.material.map = this.imgs[1];
+                    this.widget.material.map = this.imgs[1];
                 }
             }
-            let pos = Four$1.camera.position.clone();
-            let x = pos.x + 100 * Four$1.aspect;
-            let y = pos.y - 80;
-            let z = pos.z - 200;
-            this.mesh.position.set(x, y, z);
-            this.meshShadow.position.set(x + 2, y - 2, z);
+            this.widget.update();
         }
     }
     window.TalkingHead = TalkingHead;
@@ -5064,22 +5086,6 @@ var gta_kill = (function (exports, THREE) {
     })(HighWayWithEveryCar || (HighWayWithEveryCar = {}));
     var HighWayWithEveryCar$1 = HighWayWithEveryCar;
 
-    var Cinematics;
-    (function (Cinematics) {
-        function init() {
-            console.log('cinematics init');
-        }
-        Cinematics.init = init;
-        function update() {
-        }
-        Cinematics.update = update;
-        function test_missionText(words) {
-            Fonts.textTexture(words);
-        }
-        Cinematics.test_missionText = test_missionText;
-    })(Cinematics || (Cinematics = {}));
-    var Cinematics$1 = Cinematics;
-
     var BridgeScenario;
     (function (BridgeScenario) {
         function init() {
@@ -5126,10 +5132,12 @@ var gta_kill = (function (exports, THREE) {
                     wordBox.setText("No room for stupidity today.\n... ");
                     //wordBox = new WordBox(`Nurse... It's time to "OPERATE"\non these commuters! `);
                     //wordBox = new WordBox("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.,?!;~'\"`$()-");
+                    //testElement = new Widget({x: 0, y: 0, z: 0, w: window.innerWidth, h: window.innerHeight});
                     stage++;
                 }
                 talkingHead.update();
                 wordBox.update();
+                //testElement.update();
             };
             let bridgeScenario = {
                 name: 'Bridge',
@@ -5200,11 +5208,10 @@ var gta_kill = (function (exports, THREE) {
             Cars$1.init();
             Sprites$1.init();
             Sheets$1.init();
-            Cinematics$1.init();
             Fonts$1.init();
-            Shift.init();
             Water$1.init();
             Mist$1.init();
+            Shift.init();
             KILL.city = new City;
             window.KILL = KILL;
         }

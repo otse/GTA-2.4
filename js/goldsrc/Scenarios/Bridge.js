@@ -1,8 +1,8 @@
 import Generators from "../Generators/Generators";
 import Datas from "../Objects/Datas";
 import { Scenarios } from "./Scenarios";
-import TalkingHead from "../Cinematics/Talking head";
-import WordBox from "../Cinematics/Word box";
+import TalkingHead from "../UI/Cutscene/Talking Heads";
+import WordBox from "../UI/Cutscene/Word box";
 export var BridgeScenario;
 (function (BridgeScenario) {
     function init() {
@@ -41,6 +41,7 @@ export var BridgeScenario;
         let stage = 0;
         let talkingHead;
         let wordBox;
+        let testElement;
         const update = function () {
             if (stage == 0) {
                 talkingHead = new TalkingHead('guider');
@@ -49,10 +50,12 @@ export var BridgeScenario;
                 wordBox.setText("No room for stupidity today.\n... ");
                 //wordBox = new WordBox(`Nurse... It's time to "OPERATE"\non these commuters! `);
                 //wordBox = new WordBox("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.,?!;~'\"`$()-");
+                //testElement = new Widget({x: 0, y: 0, z: 0, w: window.innerWidth, h: window.innerHeight});
                 stage++;
             }
             talkingHead.update();
             wordBox.update();
+            //testElement.update();
         };
         let bridgeScenario = {
             name: 'Bridge',

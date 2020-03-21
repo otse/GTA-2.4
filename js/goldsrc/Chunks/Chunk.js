@@ -38,14 +38,14 @@ export class Chunk {
         this.objects.splice(this.objects.indexOf(object), 1);
     }
     makeAdd() {
-        //console.log('Chunk make n add');
+        //console.log('Chunk make add');
         for (let data of this.datas)
             this.fabricate(data);
         this.currentlyActive = true;
         Four.scene.add(this.group);
     }
     destroyRemove() {
-        //console.log('Chunk destroy n remove');
+        //console.log('Chunk destroy remove');
         for (let object of this.objects)
             object.destroy();
         this.objects.length = 0; // Reset array

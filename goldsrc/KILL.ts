@@ -16,10 +16,9 @@ import Zoom from "./Unsorted/Zoom";
 import { Shift } from "./Unsorted/Shift";
 import PalmTrees from "./Scenarios/Palm trees";
 import HighWayWithEveryCar from "./Scenarios/Highway";
-import Cinematics from "./Cinematics/Cinematics";
 import BridgeScenario from "./Scenarios/Bridge";
 import Scenarios from "./Scenarios/Scenarios";
-import Fonts from "./Cinematics/Fonts";
+import Fonts from "./UI/Fonts";
 import Water from "./Unsorted/Water";
 import Mist from "./Unsorted/Mist";
 import Cars from "./Cars/Cars";
@@ -86,12 +85,13 @@ export namespace KILL {
 		Cars.init();
 		Sprites.init();
 		Sheets.init();
-		Cinematics.init();
-		Fonts.init();
-		Shift.init();
 
+		Fonts.init();
+		
 		Water.init();
 		Mist.init();
+		
+		Shift.init();
 
 		city = new City;
 

@@ -11,7 +11,7 @@ var Mist;
     let geometry;
     let mesh;
     const HALF_FPS = true;
-    let alternate = false;
+    let alt = false;
     let x, y;
     function init() {
         if (!enabled)
@@ -46,12 +46,13 @@ var Mist;
     function update() {
         if (!enabled)
             return;
+        let delta = Four.delta;
         if (HALF_FPS) {
-            alternate = !alternate;
-            if (!alternate)
+            delta *= 2;
+            alt = !alt;
+            if (!alt)
                 return;
         }
-        let delta = HALF_FPS ? Four.delta * 2 : Four.delta;
         let w = Four.camera.position;
         let tiled = Points.floor2(w.x / 64, w.y / 64);
         let p = Points.region(tiled, Chunks.tileSpan);

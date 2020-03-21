@@ -15,7 +15,7 @@ namespace Mist {
 	let mesh: Mesh
 
 	const HALF_FPS = true
-	let alternate = false
+	let alt = false
 
 	export var mode: 'normal' | 'stormy';
 	let x, y;
@@ -23,7 +23,7 @@ namespace Mist {
 	export function init() {
 		if (!enabled)
 			return;
-			
+
 		mode = 'stormy';
 		x = 0;
 		y = 0;
@@ -62,13 +62,14 @@ namespace Mist {
 		if (!enabled)
 			return;
 
+		let delta = Four.delta;
+
 		if (HALF_FPS) {
-			alternate = !alternate;
-			if (!alternate)
+			delta *= 2;
+			alt = !alt;
+			if (!alt)
 				return;
 		}
-
-		let delta = HALF_FPS ? Four.delta * 2 : Four.delta;
 
 		let w = Four.camera.position;
 

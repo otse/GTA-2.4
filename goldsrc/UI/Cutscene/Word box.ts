@@ -1,10 +1,10 @@
-import Data2 from "../Objects/Data";
-import Datas from "../Objects/Datas";
+import Data2 from "../../Objects/Data";
+import Datas from "../../Objects/Datas";
 import { MeshPhongMaterial, PlaneBufferGeometry, Mesh, Texture, Color } from "three";
-import Util from "../Random";
-import Sheets from "../Sprites/Sheets";
-import Four from "../Four";
-import { Fonts } from "./Fonts";
+import Util from "../../Random";
+import Sheets from "../../Sprites/Sheets";
+import Four from "../../Four";
+import { Fonts } from "../Fonts";
 
 export class WordBox {
 	mesh: Mesh
@@ -27,7 +27,7 @@ export class WordBox {
 	setText(text: string, delay = 650) {
 		if (this.texture)
 			this.texture.dispose();
-		this.texture = Fonts.textTexture(text);
+		this.texture = Fonts.textTexture(text, 512, 128);
 		if (this.mesh) {
 			this.material.map = this.texture;
 			this.materialShadow.map = this.texture;			

@@ -70,7 +70,7 @@ export class Chunk {
 	}
 
 	makeAdd() {
-		//console.log('Chunk make n add');
+		//console.log('Chunk make add');
 
 		for (let data of this.datas)
 			this.fabricate(data);
@@ -81,7 +81,7 @@ export class Chunk {
 	}
 
 	destroyRemove() {
-		//console.log('Chunk destroy n remove');
+		//console.log('Chunk destroy remove');
 
 		for (let object of this.objects)
 			object.destroy();

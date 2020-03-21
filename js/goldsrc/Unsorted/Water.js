@@ -3,10 +3,13 @@ import Four from "../Four";
 import Util from "../Random";
 var Water;
 (function (Water) {
-    let time = 0;
-    let i = 0;
-    let waters = [];
+    let time;
+    let j;
+    let waters;
     function init() {
+        time = 0;
+        j = 0;
+        waters = [];
         for (let i = 1; i <= 12; i++)
             waters.push(Util.loadTexture(`sty/special/water/${i}.bmp`));
         Water.material = new MeshPhongMaterial({
@@ -17,8 +20,8 @@ var Water;
     function update() {
         time += Four.delta;
         if (time >= 0.11) {
-            i += i < 11 ? 1 : -11;
-            Water.material.map = waters[i];
+            j += j < 11 ? 1 : -11;
+            Water.material.map = waters[j];
             time = 0;
         }
     }

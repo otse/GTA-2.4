@@ -5,8 +5,9 @@ import Data2 from "../Objects/Data";
 import Datas from "../Objects/Datas";
 import { Scenarios } from "./Scenarios";
 import { carNames } from "../Cars/Script codes";
-import TalkingHead from "../Cinematics/Talking head";
-import WordBox from "../Cinematics/Word box";
+import TalkingHead from "../UI/Cutscene/Talking Heads";
+import WordBox from "../UI/Cutscene/Word box";
+import Widget from "../UI/Widget";
 
 export namespace BridgeScenario {
 
@@ -52,11 +53,10 @@ export namespace BridgeScenario {
 			console.log('loaded bridge scenario');
 		};
 
-		
-
 		let stage = 0;
 		let talkingHead: TalkingHead;
 		let wordBox: WordBox;
+		let testElement: Widget;
 
 		const update = function () {
 			
@@ -69,11 +69,14 @@ export namespace BridgeScenario {
 				//wordBox = new WordBox(`Nurse... It's time to "OPERATE"\non these commuters! `);
 				//wordBox = new WordBox("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.,?!;~'\"`$()-");
 
+				//testElement = new Widget({x: 0, y: 0, z: 0, w: window.innerWidth, h: window.innerHeight});
+
 				stage++;
 			}
 
 			talkingHead.update();
 			wordBox.update();
+			//testElement.update();
 		}
 
 		let bridgeScenario: Scenario = {

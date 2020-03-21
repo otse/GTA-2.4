@@ -1,17 +1,15 @@
-import Data2 from "../Objects/Data";
-import Datas from "../Objects/Datas";
+import Data2 from "../../Objects/Data";
+import Datas from "../../Objects/Datas";
 import { MeshPhongMaterial, PlaneBufferGeometry, Mesh, Texture, Color, Camera } from "three";
-import Util from "../Random";
-import Sheets from "../Sprites/Sheets";
-import Four from "../Four";
+import Util from "../../Random";
+import Sheets from "../../Sprites/Sheets";
+import Four from "../../Four";
+import Widget from "../Widget";
+
+// Apparently a band
 
 export class TalkingHead {
-	mesh: Mesh
-	meshShadow: Mesh
-
-	material: MeshPhongMaterial
-	materialShadow: MeshPhongMaterial
-	geometry: PlaneBufferGeometry
+	widget: Widget
 
 	talkTime: number
 	blinkTime: number
@@ -49,36 +47,16 @@ export class TalkingHead {
 				this.animateMouth = false;
 				this.blinkTime = .11;
 				this.blinkDelay = 3;
-				this.material.map = this.imgs[0];
+				this.widget.material.map = this.imgs[0];
 			}, delay);
 	}
 
 	destroy() {
-		this.geometry.dispose();
-		this.material.dispose();
+		this.widget.destroy();
 	}
 
 	make() {
-		this.material = new MeshPhongMaterial({
-			map: this.imgs[0],
-			transparent: true,
-			shininess: 0,
-			depthTest: false
-		});
-
-		this.materialShadow = this.material.clone();
-		this.materialShadow.opacity = 0.35;
-		this.materialShadow.color = new Color(0x0);
-
-		this.geometry = new PlaneBufferGeometry(64, 64, 1);
-
-		this.mesh = new Mesh(this.geometry, this.material);
-		this.meshShadow = new Mesh(this.geometry, this.materialShadow);
-		this.mesh.renderOrder = 2;
-		this.meshShadow.renderOrder = 1;
-
-		Four.scene.add(this.mesh);
-		Four.scene.add(this.meshShadow);
+		this.widget = new Widget({ x: 0, y: 0, z: 0, w: 64, h: 64 });
 	}
 
 	update() {
@@ -88,7 +66,7 @@ export class TalkingHead {
 
 			if (this.talkTime > 0.2) {
 				this.img = this.img < 2 ? this.img + 2 : 0;
-				this.material.map = this.imgs[this.img];
+				this.widget.material.map = this.imgs[this.img];
 				this.talkTime = 0;
 			}
 		}
@@ -100,21 +78,14 @@ export class TalkingHead {
 				this.blinkDelay = 3 + Math.random() * 3;
 			}
 			else if (this.blinkTime > 0.11) {
-				this.material.map = this.imgs[0];
+				this.widget.material.map = this.imgs[0];
 			}
 			else if (this.blinkTime > 0) {
-				this.material.map = this.imgs[1];
+				this.widget.material.map = this.imgs[1];
 			}
-
 		}
 
-		let pos = Four.camera.position.clone();
-		let x = pos.x + 100 * Four.aspect;
-		let y = pos.y - 80;
-		let z = pos.z - 200;
-
-		this.mesh.position.set(x, y, z);
-		this.meshShadow.position.set(x + 2, y - 2, z);
+		this.widget.update();
 	}
 
 };
