@@ -102,13 +102,12 @@ var gta_kill = (function (exports, THREE) {
                 data.z = 0;
             if (!data.r)
                 data.r = 0;
-            if (!data.flip)
-                data.flip = false;
+            if (!data.f)
+                data.f = false;
             if (data.r > 3)
                 data.r -= 4;
             if (data.r < 0)
                 data.r += 4;
-            this.broke = false;
             this.data = data;
         }
         destroy() {
@@ -408,7 +407,7 @@ var gta_kill = (function (exports, THREE) {
                 // Now, see if this is upside
                 if (this.geometry.groups[faceCount].materialIndex != 4)
                     continue;
-                if (this.data.flip)
+                if (this.data.f)
                     Util$1.UV.flipPlane(this.geometry, faceCount, true);
                 if (this.data.r)
                     Util$1.UV.rotatePlane(this.geometry, faceCount, this.data.r);
@@ -619,7 +618,7 @@ var gta_kill = (function (exports, THREE) {
             this.mesh.receiveShadow = true;
             this.mesh.position.set(this.data.x * 64 + 32, this.data.y * 64 + 32, this.data.z * 64);
             this.mesh.updateMatrix();
-            if (this.data.flip)
+            if (this.data.f)
                 Util$1.UV.flipPlane(this.geometry, 0, true);
             if (this.data.r)
                 Util$1.UV.rotatePlane(this.geometry, 0, this.data.r);
@@ -711,7 +710,7 @@ var gta_kill = (function (exports, THREE) {
             this.mesh.frustumCulled = false;
             this.mesh.position.set(this.data.x * 64 + 32, this.data.y * 64 + 32, this.data.z * 64);
             this.mesh.updateMatrix();
-            if (this.data.flip)
+            if (this.data.f)
                 Util$1.UV.flipPlane(this.geometry, 0, true);
             if (this.data.r)
                 Util$1.UV.rotatePlane(this.geometry, 0, this.data.r);
@@ -2941,7 +2940,7 @@ var gta_kill = (function (exports, THREE) {
         }
         Cars.getPaint = getPaint;
         function getRandomName() {
-            let i = Math.floor(Math.random() * parkedCarNames.length);
+            let i = KILL$1.floorrandom(parkedCarNames.length);
             let name = parkedCarNames[i];
             return name;
         }
@@ -2967,16 +2966,11 @@ var gta_kill = (function (exports, THREE) {
             super(data);
             Cars$1.add(this);
             if (undefined == data.car)
-                console.warn('Car data has no .car!');
+                data.car = 'Minx';
             if (undefined == data.paint)
-                data.paint = Math.floor(Math.random() * 35);
+                data.paint = KILL$1.floorrandom(35);
             this.lift = 1;
             this.physics = EveryLineIsAPhysic$1.get(data.car);
-            this.broke = !data.car || !this.physics;
-            if (this.broke) {
-                console.warn('this car object is broke');
-                return;
-            }
             const model = this.physics.model_corrected || this.physics.model;
             if (this.physics.meta.colorless)
                 data.sty = `sty/car/unpainted/GTA2_CAR_${model}X.bmp`;
@@ -3307,7 +3301,7 @@ var gta_kill = (function (exports, THREE) {
             this.timers = {};
             // Defaults
             if (!data.remap)
-                data.remap = 15 + Math.floor(Math.random() * 53 - 15);
+                data.remap = 15 + KILL$1.floorrandom(53) - 15;
             data.height = data.width = 33;
             if (data.sty) ;
             data.sty = `sty/ped/template_${data.remap}.png`;
@@ -3777,7 +3771,7 @@ var gta_kill = (function (exports, THREE) {
                 }
                 else if (p[0] == max[0] && p[1] == max[1]) { // rt
                     data.wall = 'concave';
-                    data.flip = true;
+                    data.f = true;
                     data.r = 0;
                 }
                 else if (p[0] == min[0] && p[1] == max[1]) { // lt
@@ -3794,7 +3788,7 @@ var gta_kill = (function (exports, THREE) {
                 }
                 else if (p[1] == max[1]) {
                     data.wall = 'side';
-                    data.flip = true;
+                    data.f = true;
                     data.r = 0;
                 }
                 else if (p[0] == max[0]) {
@@ -3825,7 +3819,7 @@ var gta_kill = (function (exports, THREE) {
                     }
                     else if (p[0] == max[0] && p[1] == max[1]) { // rt
                         block.faces[4] = 'sty/roofs/green/784.bmp';
-                        block.flip = true;
+                        block.f = true;
                         block.r = 0;
                     }
                     else if (p[0] == min[0] && p[1] == max[1]) { // lt
@@ -3842,7 +3836,7 @@ var gta_kill = (function (exports, THREE) {
                     }
                     else if (p[1] == max[1]) {
                         block.faces[4] = 'sty/roofs/green/790.bmp';
-                        block.flip = true;
+                        block.f = true;
                         block.r = 2;
                     }
                     else if (p[0] == max[0]) {
@@ -3942,7 +3936,7 @@ var gta_kill = (function (exports, THREE) {
                         else if (lane == lanes - 1 && seg == 1 ||
                             !lane && seg == segs - 2) {
                             road.sprite = Sprites$1.ROADS.SIDE_STOP_LINE; // sideStopLine
-                            road.flip = true;
+                            road.f = true;
                         }
                         staging.addData(road);
                     }
@@ -4035,7 +4029,7 @@ var gta_kill = (function (exports, THREE) {
                                 road.sprite = Sprites$1.ROADS.CUSTOM_NOTCH;
                                 road.r = 1;
                                 if (seg == 1)
-                                    road.flip = true;
+                                    road.f = true;
                             }
                             else if (lane == lanes - 1) {
                                 road.sprite = Sprites$1.ROADS.CORNER;
@@ -4167,7 +4161,7 @@ var gta_kill = (function (exports, THREE) {
                             // Bottom
                             if (!lane) {
                                 road.r += 1;
-                                road.flip = true;
+                                road.f = true;
                                 parkedCar.r = Math.PI / 4;
                                 parkedCar.x = road.x + 0.5 + 0.6;
                                 parkedCar.y = road.y + 0.5;
@@ -4210,7 +4204,7 @@ var gta_kill = (function (exports, THREE) {
                         };
                         Object.assign(pav, object);
                         if (extras.WHEEL)
-                            pav.r = Math.floor(Math.random() * 4);
+                            pav.r = KILL$1.floorrandom(4);
                         staging.addData(pav);
                     }
                 }
@@ -5081,6 +5075,9 @@ var gta_kill = (function (exports, THREE) {
                 let y = 0;
                 let j = 0;
                 for (let name of Cars$1.Names2) {
+                    let physics = EveryLineIsAPhysic$1.get(name);
+                    let half_size = (physics.meta.img_height + 15) / 2 / 64;
+                    y -= half_size;
                     let car = {
                         type: 'Car',
                         car: name,
@@ -5088,9 +5085,9 @@ var gta_kill = (function (exports, THREE) {
                         y: y + 7,
                         z: 0
                     };
-                    y--;
+                    y -= half_size;
                     j++;
-                    if (j > 15) {
+                    if (j > 16) {
                         j = 0;
                         // Begin spawning at new lane
                         y = 0;
@@ -5258,6 +5255,10 @@ var gta_kill = (function (exports, THREE) {
     var KILL;
     (function (KILL) {
         var started = false;
+        function floorrandom(n) {
+            return Math.floor(Math.random() * n);
+        }
+        KILL.floorrandom = floorrandom;
         let RESOURCES;
         (function (RESOURCES) {
             RESOURCES[RESOURCES["UNDEFINED_OR_INIT"] = 0] = "UNDEFINED_OR_INIT";

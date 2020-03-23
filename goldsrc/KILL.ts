@@ -31,6 +31,10 @@ export namespace KILL {
 
 	var started = false;
 
+	export function floorrandom(n) {
+		return Math.floor(Math.random() * n)
+	}
+
 	export enum RESOURCES {
 		UNDEFINED_OR_INIT = 0,
 		FONT_WHITE,

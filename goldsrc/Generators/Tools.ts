@@ -140,10 +140,10 @@ export namespace GenTools {
 									//data.color = 'pink';
 
 									if ((data.r == 1) && p.y == w[1] + height - 1)
-										data.flip = true;
+										data.f = true;
 
 									if ((data.r == 3) && p.y == w[1])
-										data.flip = true;
+										data.f = true;
 								}
 							}
 

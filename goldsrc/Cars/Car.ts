@@ -8,6 +8,7 @@ import Cars from "./Cars";
 import Util from "../Random";
 
 import { Texture } from "three";
+import KILL from "../KILL";
 
 export class Car extends Rectangle {
 
@@ -18,19 +19,12 @@ export class Car extends Rectangle {
 
 		Cars.add(this);
 
-		if (undefined == data.car) console.warn('Car data has no .car!');
-		if (undefined == data.paint) data.paint = Math.floor(Math.random() * 35);
+		if (undefined == data.car) data.car = 'Minx';
+		if (undefined == data.paint) data.paint = KILL.floorrandom(35);
 
 		this.lift = 1;
 
 		this.physics = EveryLineIsAPhysic.get(data.car as any);
-
-		this.broke = !data.car || !this.physics;
-
-		if (this.broke) {
-			console.warn('this car object is broke');
-			return;
-		}
 
 		const model = this.physics.model_corrected || this.physics.model;
 

@@ -104,7 +104,7 @@ export class Wall extends Object2 {
 
         this.mesh.updateMatrix();
 
-        if (this.data.flip)
+        if (this.data.f)
             Util.UV.flipPlane(this.geometry, 0, true);
         if (this.data.r)
             Util.UV.rotatePlane(this.geometry, 0, this.data.r);

@@ -1,6 +1,7 @@
 import { parkedCarNames } from "./Script codes"
 
 import Car from "./Car";
+import KILL from "../KILL";
 
 namespace Cars {
 
@@ -53,7 +54,7 @@ namespace Cars {
 	}
 
 	export function getRandomName() {
-		let i = Math.floor(Math.random() * parkedCarNames.length);
+		let i = KILL.floorrandom(parkedCarNames.length);
 
 		let name = parkedCarNames[i];
 

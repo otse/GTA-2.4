@@ -4,6 +4,7 @@ import StagingArea from "./Staging area";
 
 import Cars from "../Cars/Cars";
 import Sprites from "../Sprites/Sprites";
+import KILL from "../KILL";
 
 export namespace Generators {
 
@@ -103,7 +104,7 @@ export namespace Generators {
 			}
 			else if (p[0] == max[0] && p[1] == max[1]) { // rt
 				data.wall = 'concave';
-				data.flip = true;
+				data.f = true;
 				data.r = 0;
 			}
 			else if (p[0] == min[0] && p[1] == max[1]) { // lt
@@ -121,7 +122,7 @@ export namespace Generators {
 			}
 			else if (p[1] == max[1]) {
 				data.wall = 'side';
-				data.flip = true;
+				data.f = true;
 				data.r = 0;
 			}
 			else if (p[0] == max[0]) {
@@ -162,7 +163,7 @@ export namespace Generators {
 				}
 				else if (p[0] == max[0] && p[1] == max[1]) { // rt
 					block.faces![4] = 'sty/roofs/green/784.bmp';
-					block.flip = true;
+					block.f = true;
 					block.r = 0;
 				}
 				else if (p[0] == min[0] && p[1] == max[1]) { // lt
@@ -180,7 +181,7 @@ export namespace Generators {
 				}
 				else if (p[1] == max[1]) {
 					block.faces![4] = 'sty/roofs/green/790.bmp';
-					block.flip = true;
+					block.f = true;
 					block.r = 2;
 				}
 				else if (p[0] == max[0]) {
@@ -321,7 +322,7 @@ export namespace Generators {
 					else if (lane == lanes - 1 && seg == 1 ||
 						!lane && seg == segs - 2) {
 						road.sprite = Sprites.ROADS.SIDE_STOP_LINE; // sideStopLine
-						road.flip = true;
+						road.f = true;
 					}
 
 					staging.addData(road);
@@ -447,7 +448,7 @@ export namespace Generators {
 							road.r = 1;
 
 							if (seg == 1)
-								road.flip = true;
+								road.f = true;
 						}
 						else if (lane == lanes - 1) {
 							road.sprite = Sprites.ROADS.CORNER;
@@ -603,7 +604,7 @@ export namespace Generators {
 						// Bottom
 						if (!lane) {
 							road.r! += 1;
-							road.flip = true;
+							road.f = true;
 
 							parkedCar.r = Math.PI / 4;
 							parkedCar.x = road.x + 0.5 + 0.6;
@@ -672,7 +673,7 @@ export namespace Generators {
 					Object.assign(pav, object);
 
 					if (extras.WHEEL)
-						pav.r = Math.floor(Math.random() * 4);
+						pav.r = KILL.floorrandom(4);
 
 					staging.addData(pav);
 				}

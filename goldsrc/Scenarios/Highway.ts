@@ -9,6 +9,7 @@ import TalkingHead from "../YM/Cutscene/Talking Heads";
 import KILL from "../KILL";
 import Cars from "../Cars/Cars";
 import Points from "../Objects/Points";
+import EveryLineIsAPhysic from "../Cars/Every line is a physic";
 
 export namespace HighWayWithEveryCar {
 
@@ -26,6 +27,12 @@ export namespace HighWayWithEveryCar {
 			let j = 0;
 
 			for (let name of Cars.Names2) {
+				
+				let physics = EveryLineIsAPhysic.get(name);
+				
+				let half_size = (physics.meta.img_height + 15) / 2 / 64;
+
+				y -= half_size;
 
 				let car: Data2 = {
 					type: 'Car',
@@ -35,9 +42,10 @@ export namespace HighWayWithEveryCar {
 					z: 0
 				}
 
-				y--;
+				y -= half_size;
+
 				j++;
-				if (j > 15) {
+				if (j > 16) {
 					j = 0;
 					// Begin spawning at new lane
 					y = 0;
