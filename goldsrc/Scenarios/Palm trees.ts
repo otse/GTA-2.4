@@ -1,9 +1,9 @@
 import Scenario from "./Scenario";
 import Generators from "../Generators/Generators";
-import PaintJobs from "../Cars/Wang cars";
 import Data2 from "../Objects/Data";
 import Datas from "../Objects/Datas";
 import { Scenarios } from "./Scenarios";
+import Cars from "../Cars/Cars";
 
 export namespace PalmTrees {
 
@@ -16,7 +16,7 @@ export namespace PalmTrees {
             let car: Data2 = {
                 type: 'Car',
                 car: 'Minx',
-                paint: PaintJobs.Enum.DARK_GREEN,
+                spray: Cars.Sprays.DARK_GREEN,
                 x: 10.5,
                 y: 0,
                 z: 0
@@ -34,8 +34,8 @@ export namespace PalmTrees {
 
         let palmTrees: Scenario = {
             name: 'Palm Trees',
-            load: load,
-            update: update
+            loadCb: load,
+            updateCb: update
         }
 
         Scenarios.load(palmTrees);

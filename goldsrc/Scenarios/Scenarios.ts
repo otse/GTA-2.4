@@ -9,12 +9,12 @@ export namespace Scenarios {
 	export function load(p: Scenario) {
 		current = p;
 
-		current.load();
+		current.loadCb();
 	}
 
 	export function update() {
 		if (current)
-			current.update();
+			current.updateCb();
 	}
 
 };

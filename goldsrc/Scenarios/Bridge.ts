@@ -1,6 +1,5 @@
 import Scenario from "./Scenario";
 import Generators from "../Generators/Generators";
-import PaintJobs from "../Cars/Wang cars";
 import Data2 from "../Objects/Data";
 import Datas from "../Objects/Datas";
 import { Scenarios } from "./Scenarios";
@@ -80,8 +79,8 @@ export namespace BridgeScenario {
 
 		let bridgeScenario: Scenario = {
 			name: 'Bridge',
-			load: load,
-			update: update
+			loadCb: load,
+			updateCb: update
 		}
 
 		Scenarios.load(bridgeScenario);

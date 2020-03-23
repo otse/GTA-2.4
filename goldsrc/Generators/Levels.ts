@@ -4,7 +4,7 @@ import Generators from "./Generators";
 import Sprites from "../Sprites/Sprites";
 import GenTools from "./Tools";
 import Datas from "../Objects/Datas";
-import PaintJobs from "../Cars/Wang cars";
+import Cars from "../Cars/Cars";
 
 export namespace Levels {
 
@@ -91,8 +91,7 @@ export namespace Levels {
 		return;
 
 		// I removed this because I wanted a lonely gas station
-
-
+		
 		//Pavements.Horz(3, -50, 0, 100, 1);
 		//FillerBuildings.Type1([13, 5, 0], [5, 2, 2]);
 
@@ -117,7 +116,7 @@ export namespace Levels {
 		let car: Data2 = {
 			type: 'Car',
 			car: 'Minx',
-			paint: PaintJobs.Enum.DARK_GREEN,
+			spray: Cars.Sprays.DARK_GREEN,
 			x: 10.5,
 			y: 0,
 			z: 0

@@ -46,7 +46,7 @@ export interface Data2 {
 
 	// car
 	car?: string; // gci.keys;
-	paint?: number;
+	spray?: number;
 
 	// lamp
 	intensity?: number;

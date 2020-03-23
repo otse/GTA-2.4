@@ -3,8 +3,8 @@ import Datas from "../Objects/Datas";
 
 export interface Scenario {
 	name: string;
-	load: () => any;
-	update: () => any;
+	loadCb: () => void;
+	updateCb: () => void;
 };
 
 export default Scenario;

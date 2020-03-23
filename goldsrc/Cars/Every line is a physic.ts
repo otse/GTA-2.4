@@ -53,7 +53,7 @@ namespace EveryLineIsAPhysic {
 		return car || null;
 	}
 
-	export function getList(): Readonly<List> {
+	export function getROList(): Readonly<List> {
 		return list;
 	}
 
@@ -2070,3 +2070,18 @@ image_height: 64
 }
 
 export default EveryLineIsAPhysic;
+
+interface NotUsedYet {
+	too_high_for_a_ped_to_jump?: boolean;
+	emergency_lights?: boolean;
+	roof_lights?: boolean;
+	cab?: boolean;
+	trailer?: boolean;
+	forhire_lights?: boolean;
+	roof_decal?: boolean;
+	rear_emergency_lights?: boolean;
+	can_drive_over_other_cars?: boolean;
+	has_popup_headlights?: boolean;
+	bulletproof?: boolean;
+	info_flags_x?: boolean;
+}

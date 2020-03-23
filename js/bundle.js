@@ -903,10 +903,10 @@ var gta_kill = (function (exports, THREE) {
             return car || null;
         }
         EveryLineIsAPhysic.get = get;
-        function getList() {
+        function getROList() {
             return list;
         }
-        EveryLineIsAPhysic.getList = getList;
+        EveryLineIsAPhysic.getROList = getROList;
         const list = {
             'Romero': {
                 model: 0,
@@ -2872,30 +2872,9 @@ var gta_kill = (function (exports, THREE) {
     })(EveryLineIsAPhysic || (EveryLineIsAPhysic = {}));
     var EveryLineIsAPhysic$1 = EveryLineIsAPhysic;
 
-    const parkedCarNames = [
-        "Romero", "Wellard", "Aniston BD4",
-        "Beamer",
-        "Bug", "Bulwark", /*"Bus",*/ "Cop Car",
-        "Minx", "Eddy", "Panto",
-        "Shark", "GT-A1",
-        /*"Hot Dog Van", "Ice-Cream Van", "Dementia Limousine",*/ "Dementia",
-        "Land Roamer", "Jefferson",
-        /*"Medicar",*/ "Benson", "Schmidt", "Miara",
-        "Big Bug", "Morton", "Maurice", "Pickup",
-        "A-Type", "Arachnid", "Spritzer", "Stinger",
-        "Meteor", /*"Meteor Twoo?",*/ "Hachura", "B-Type",
-        "Taxi Xpress", /*"SWAT Van",*/ "Michelli Roadster",
-        "Taxi", "T-Rex",
-        /*"Train", "Train Cab", "Train FB",*/ "Trance-Am",
-        /*"Truck Cab", "Truck Cab SX", "Container", "Transporter",*/
-        "TV Van", "Van", "U-Jerk Truck", "Z-Type",
-        "Rumbler",
-        "Jagular XK",
-        "Furore GT", "Special Agent Car" /*, "Karma Bus",*/
-    ];
-
     var Cars;
     (function (Cars) {
+        /// names
         // const contexts
         Cars.Names2 = [
             "Romero", "Wellard", "Aniston BD4", "Pacifier",
@@ -2918,15 +2897,60 @@ var gta_kill = (function (exports, THREE) {
             "Jagular XK",
             "Furore GT", "Special Agent Car", "Karma Bus"
         ];
-        var cars;
+        /// sprays 
+        let Sprays;
+        (function (Sprays) {
+            Sprays[Sprays["BLUE1"] = 0] = "BLUE1";
+            Sprays[Sprays["PURPLE1"] = 1] = "PURPLE1";
+            Sprays[Sprays["BLACK"] = 2] = "BLACK";
+            Sprays[Sprays["BLUE2"] = 3] = "BLUE2";
+            Sprays[Sprays["BLUE_GRAY"] = 4] = "BLUE_GRAY";
+            Sprays[Sprays["BRIGHT_GREEN"] = 5] = "BRIGHT_GREEN";
+            Sprays[Sprays["BRIGHT_RED"] = 6] = "BRIGHT_RED";
+            Sprays[Sprays["BROWN1"] = 7] = "BROWN1";
+            Sprays[Sprays["BROWN2"] = 8] = "BROWN2";
+            Sprays[Sprays["SILVER_BLUE"] = 9] = "SILVER_BLUE";
+            Sprays[Sprays["CREAM"] = 10] = "CREAM";
+            Sprays[Sprays["YELLOW"] = 11] = "YELLOW";
+            Sprays[Sprays["CYAN"] = 12] = "CYAN";
+            Sprays[Sprays["DARK_BEIGE"] = 13] = "DARK_BEIGE";
+            Sprays[Sprays["DARK_BLUE"] = 14] = "DARK_BLUE";
+            Sprays[Sprays["DEEP_BLUE"] = 15] = "DEEP_BLUE";
+            Sprays[Sprays["DARK_GREEN"] = 16] = "DARK_GREEN";
+            Sprays[Sprays["DARK_RED"] = 17] = "DARK_RED";
+            Sprays[Sprays["DARK_RUST"] = 18] = "DARK_RUST";
+            Sprays[Sprays["GOLD"] = 19] = "GOLD";
+            Sprays[Sprays["GREEN"] = 20] = "GREEN";
+            Sprays[Sprays["GRAY"] = 21] = "GRAY";
+            Sprays[Sprays["YELLOW_GREEN"] = 22] = "YELLOW_GREEN";
+            Sprays[Sprays["OLIVE"] = 23] = "OLIVE";
+            Sprays[Sprays["ORANGE"] = 24] = "ORANGE";
+            Sprays[Sprays["PALE_BLUE"] = 25] = "PALE_BLUE";
+            Sprays[Sprays["PINK_RED"] = 26] = "PINK_RED";
+            Sprays[Sprays["PURPLE2"] = 27] = "PURPLE2";
+            Sprays[Sprays["RED"] = 28] = "RED";
+            Sprays[Sprays["RUST"] = 29] = "RUST";
+            Sprays[Sprays["SILVER"] = 30] = "SILVER";
+            Sprays[Sprays["SKY_BLUE"] = 31] = "SKY_BLUE";
+            Sprays[Sprays["TURQUOISE"] = 32] = "TURQUOISE";
+            Sprays[Sprays["WHITE_GRAY"] = 33] = "WHITE_GRAY";
+            Sprays[Sprays["WHITE"] = 34] = "WHITE";
+            Sprays[Sprays["COP"] = 35] = "COP";
+        })(Sprays = Cars.Sprays || (Cars.Sprays = {}));
+        function getSpray(id) {
+            return Sprays[name];
+        }
+        Cars.getSpray = getSpray;
+        /// functions
         function init() {
             cars = [];
         }
         Cars.init = init;
-        function getArray() {
+        var cars;
+        function getCars() {
             return cars;
         }
-        Cars.getArray = getArray;
+        Cars.getCars = getCars;
         function add(car) {
             cars.push(car);
         }
@@ -2935,17 +2959,104 @@ var gta_kill = (function (exports, THREE) {
             cars.splice(cars.indexOf(car), 1);
         }
         Cars.remove = remove;
-        function getPaint(car) {
-            return '';
+        // sheets
+        Cars.deltasSheets = {};
+        function make_sheets() {
+            const list = EveryLineIsAPhysic$1.getROList();
+            for (let name in list) {
+                let physics = EveryLineIsAPhysic$1.get(name);
+                const sheet = {
+                    file: ``,
+                    padding: 4,
+                    width: (physics.meta.img_width * 10) + 9 * 4,
+                    height: (physics.meta.img_height * 2) + 4,
+                    nr: {
+                        w: 10,
+                        h: 2
+                    },
+                    piece: {
+                        w: physics.meta.img_width,
+                        h: physics.meta.img_height
+                    }
+                };
+                Cars.deltasSheets[name] = sheet;
+            }
+            console.log('build car delta sheets');
+            window.carsDeltas = Cars.deltasSheets;
         }
-        Cars.getPaint = getPaint;
-        function getRandomName() {
-            let i = KILL$1.floorrandom(parkedCarNames.length);
-            let name = parkedCarNames[i];
-            return name;
-        }
-        Cars.getRandomName = getRandomName;
-        // things to try on the #highway:
+        Cars.make_sheets = make_sheets;
+        Cars.scriptCodes = {
+            'Aniston BD4': 'AMDB4',
+            'Arachnid': 'SPIDER',
+            'Armed Land Roamer': 'GUNJEEP',
+            'A-Type': 'RTYPE',
+            'Beamer': 'BMW',
+            'Benson': 'MERC',
+            'Box Truck': 'BOXTRUCK',
+            'Big Bug': 'MONSTER',
+            'B-Type': 'STYPE',
+            'Bug': 'BUG',
+            'Bus': 'BUS',
+            'Bulwark': 'BUICK',
+            'Box Car': 'BOXCAR',
+            'Container': 'TRUKCONT',
+            'Cop Car': 'COPCAR',
+            'Dementia': 'ISETTA',
+            'Dementia Limousine': 'ISETLIMO',
+            'Eddy': 'EDSEL',
+            'Fire Truck': 'FIRETRUK',
+            'Furore GT': 'ZCX5',
+            'G4 Bank Van': 'BANKVAN',
+            'Garbage Truck': 'GTRUCK',
+            'GT-A1': 'GT24640',
+            'Hachura': 'STRIPETB',
+            'Hot Dog Van': 'HOTDOG',
+            'Ice-Cream Van': 'ICECREAM',
+            'Jagular XK': 'XK120',
+            'Jefferson': 'JEFFREY',
+            'Karma Bus': 'KRSNABUS',
+            'Land Roamer': 'JEEP',
+            'Maurice': 'MORRIS',
+            'Medicar': 'MEDICAR',
+            'Meteor': 'STRATOS',
+            'Meteor Turbo': 'STRATOSB',
+            'Miara': 'MIURA',
+            'Michelli Roadster': 'T2000GT',
+            'Minx': 'DART',
+            'Morton': 'MORGAN',
+            'Pacifier': 'APC',
+            'Panto': 'FIAT',
+            'Pickup': 'PICKUP',
+            'Romero': 'ALFA',
+            'Rumbler': 'WBTWIN',
+            'Schmidt': 'MESSER',
+            'Shark': 'GRAHAM',
+            'Special Agent Car': 'EDSELFBI',
+            'Sports Limousine': 'LIMO2',
+            'Spritzer': 'SPRITE',
+            'Stinger': 'STINGRAY',
+            'Stretch Limousine': 'LIMO',
+            'SWAT Van': 'SWATVAN',
+            'Tank': 'TANK',
+            'Tanker': 'TANKER',
+            'Taxi': 'TAXI',
+            'Taxi Xpress': 'STYPECAB',
+            'Tow Truck': 'TOWTRUCK',
+            'Train': 'TRAIN',
+            'Train Cab': 'TRAINCAB',
+            'Train FB': 'TRAINFB',
+            'Trance-Am': 'TRANCEAM',
+            'Transporter': 'TRUKTRNS',
+            'T-Rex': 'TBIRD',
+            'Truck Cab': 'TRUKCAB1',
+            'Truck Cab SX': 'TRUKCAB2',
+            'TV Van': 'TVVAN',
+            'U-Jerk Truck': 'VESPA',
+            'Van': 'VAN',
+            'Wellard': 'ALLARD',
+            'Z-Type': 'VTYPE'
+        };
+        /// tests, useful for #highway
         function checkDims() {
             for (let car of cars) {
                 let mat = car.material;
@@ -2967,15 +3078,15 @@ var gta_kill = (function (exports, THREE) {
             Cars$1.add(this);
             if (undefined == data.car)
                 data.car = 'Minx';
-            if (undefined == data.paint)
-                data.paint = KILL$1.floorrandom(35);
+            if (undefined == data.spray)
+                data.spray = KILL$1.floorrandom(35);
             this.lift = 1;
             this.physics = EveryLineIsAPhysic$1.get(data.car);
             const model = this.physics.model_corrected || this.physics.model;
             if (this.physics.meta.colorless)
                 data.sty = `sty/car/unpainted/GTA2_CAR_${model}X.bmp`;
             else
-                data.sty = `sty/car/painted/GTA2_CAR_${model}_PAL_${data.paint}.bmp`;
+                data.sty = `sty/car/painted/GTA2_CAR_${model}_PAL_${data.spray}.bmp`;
             data.width = this.physics.meta.img_width;
             data.height = this.physics.meta.img_height;
             this.makeRectangle({
@@ -3708,6 +3819,27 @@ var gta_kill = (function (exports, THREE) {
         return [Math.round(nx), Math.round(ny)];
     }
 
+    const parkedCarNames = [
+        "Romero", "Wellard", "Aniston BD4",
+        "Beamer",
+        "Bug", "Bulwark", /*"Bus",*/ "Cop Car",
+        "Minx", "Eddy", "Panto",
+        "Shark", "GT-A1",
+        /*"Hot Dog Van", "Ice-Cream Van", "Dementia Limousine",*/ "Dementia",
+        "Land Roamer", "Jefferson",
+        /*"Medicar",*/ "Benson", "Schmidt", "Miara",
+        "Big Bug", "Morton", "Maurice", "Pickup",
+        "A-Type", "Arachnid", "Spritzer", "Stinger",
+        "Meteor", /*"Meteor Twoo?",*/ "Hachura", "B-Type",
+        "Taxi Xpress", /*"SWAT Van",*/ "Michelli Roadster",
+        "Taxi", "T-Rex",
+        /*"Train", "Train Cab", "Train FB",*/ "Trance-Am",
+        /*"Truck Cab", "Truck Cab SX", "Container", "Transporter",*/
+        "TV Van", "Van", "U-Jerk Truck", "Z-Type",
+        "Rumbler",
+        "Jagular XK",
+        "Furore GT", "Special Agent Car" /*, "Karma Bus",*/
+    ];
     var Generators;
     (function (Generators) {
         Generators.roadMode = 'Normal';
@@ -4001,9 +4133,10 @@ var gta_kill = (function (exports, THREE) {
                             z: w[2],
                             r: !lane ? 3 : 1
                         };
+                        let randomCar = parkedCarNames[KILL$1.floorrandom(parkedCarNames.length)];
                         let parkedCar = {
                             type: 'Car',
-                            car: Cars$1.getRandomName(),
+                            car: randomCar,
                             x: road.x,
                             y: road.y,
                             z: road.z
@@ -4080,9 +4213,10 @@ var gta_kill = (function (exports, THREE) {
                             z: w[2],
                             r: 1
                         };
+                        let randomCar = parkedCarNames[KILL$1.floorrandom(parkedCarNames.length)];
                         let parkedCar = {
                             type: 'Car',
-                            car: Cars$1.getRandomName(),
+                            car: randomCar,
                             x: road.x,
                             y: road.y,
                             z: road.z
@@ -4278,94 +4412,16 @@ var gta_kill = (function (exports, THREE) {
     })(Generators || (Generators = {}));
     var Generators$1 = Generators;
 
-    // Automobiles, trains
-    // Resources
-    // https://gta.fandom.com/wiki/Vehicles_in_GTA_2
-    // http://en.wikigta.org/wiki/Code_lists_%28GTA2%29
-    var PaintJobs;
-    (function (PaintJobs) {
-        let Enum;
-        (function (Enum) {
-            Enum[Enum["BLUE1"] = 0] = "BLUE1";
-            Enum[Enum["PURPLE1"] = 1] = "PURPLE1";
-            Enum[Enum["BLACK"] = 2] = "BLACK";
-            Enum[Enum["BLUE2"] = 3] = "BLUE2";
-            Enum[Enum["BLUE_GRAY"] = 4] = "BLUE_GRAY";
-            Enum[Enum["BRIGHT_GREEN"] = 5] = "BRIGHT_GREEN";
-            Enum[Enum["BRIGHT_RED"] = 6] = "BRIGHT_RED";
-            Enum[Enum["BROWN1"] = 7] = "BROWN1";
-            Enum[Enum["BROWN2"] = 8] = "BROWN2";
-            Enum[Enum["SILVER_BLUE"] = 9] = "SILVER_BLUE";
-            Enum[Enum["CREAM"] = 10] = "CREAM";
-            Enum[Enum["YELLOW"] = 11] = "YELLOW";
-            Enum[Enum["CYAN"] = 12] = "CYAN";
-            Enum[Enum["DARK_BEIGE"] = 13] = "DARK_BEIGE";
-            Enum[Enum["DARK_BLUE"] = 14] = "DARK_BLUE";
-            Enum[Enum["DEEP_BLUE"] = 15] = "DEEP_BLUE";
-            Enum[Enum["DARK_GREEN"] = 16] = "DARK_GREEN";
-            Enum[Enum["DARK_RED"] = 17] = "DARK_RED";
-            Enum[Enum["DARK_RUST"] = 18] = "DARK_RUST";
-            Enum[Enum["GOLD"] = 19] = "GOLD";
-            Enum[Enum["GREEN"] = 20] = "GREEN";
-            Enum[Enum["GRAY"] = 21] = "GRAY";
-            Enum[Enum["YELLOW_GREEN"] = 22] = "YELLOW_GREEN";
-            Enum[Enum["OLIVE"] = 23] = "OLIVE";
-            Enum[Enum["ORANGE"] = 24] = "ORANGE";
-            Enum[Enum["PALE_BLUE"] = 25] = "PALE_BLUE";
-            Enum[Enum["PINK_RED"] = 26] = "PINK_RED";
-            Enum[Enum["PURPLE2"] = 27] = "PURPLE2";
-            Enum[Enum["RED"] = 28] = "RED";
-            Enum[Enum["RUST"] = 29] = "RUST";
-            Enum[Enum["SILVER"] = 30] = "SILVER";
-            Enum[Enum["SKY_BLUE"] = 31] = "SKY_BLUE";
-            Enum[Enum["TURQUOISE"] = 32] = "TURQUOISE";
-            Enum[Enum["WHITE_GRAY"] = 33] = "WHITE_GRAY";
-            Enum[Enum["WHITE"] = 34] = "WHITE";
-            Enum[Enum["COP"] = 35] = "COP";
-        })(Enum = PaintJobs.Enum || (PaintJobs.Enum = {}));
-        function getString(s) {
-            return PaintJobs.Enum[s];
-        }
-        PaintJobs.getString = getString;
-        PaintJobs.deltasSheets = {};
-        function init() {
-            const list = EveryLineIsAPhysic$1.getList();
-            for (let name in list) {
-                const physic = list[name];
-                let physics = EveryLineIsAPhysic$1.get(name);
-                const sheet = {
-                    file: `D_GTA2_CAR_${physic.model}`,
-                    padding: 4,
-                    width: (physics.meta.img_width * 10) + 36,
-                    height: (physics.meta.img_height * 2) + 4,
-                    nr: {
-                        w: 10,
-                        h: 2
-                    },
-                    piece: {
-                        w: physics.meta.img_width,
-                        h: physics.meta.img_height
-                    }
-                };
-                PaintJobs.deltasSheets[name] = sheet;
-            }
-            console.log('build car delta sheets');
-            window.carsDeltas = PaintJobs.deltasSheets;
-        }
-        PaintJobs.init = init;
-    })(PaintJobs || (PaintJobs = {}));
-    var PaintJobs$1 = PaintJobs;
-
     var Scenarios;
     (function (Scenarios) {
         function load(p) {
             Scenarios.current = p;
-            Scenarios.current.load();
+            Scenarios.current.loadCb();
         }
         Scenarios.load = load;
         function update() {
             if (Scenarios.current)
-                Scenarios.current.update();
+                Scenarios.current.updateCb();
         }
         Scenarios.update = update;
     })(Scenarios || (Scenarios = {}));
@@ -4705,7 +4761,7 @@ var gta_kill = (function (exports, THREE) {
                 }
                 else if (stage == 2) {
                     let chunk = Datas$1.getChunk(KILL$1.ply.data);
-                    const carArray = Cars$1.getArray();
+                    const carArray = Cars$1.getCars();
                     let closest = 200;
                     let closestCar = null;
                     for (let car of carArray) {
@@ -4718,7 +4774,7 @@ var gta_kill = (function (exports, THREE) {
                     if (closestCar != viewingCar) {
                         viewingCar = closestCar;
                         let d = closestCar.data;
-                        wordBox.setText(`${d.car},\n${PaintJobs$1.getString(d.paint)} ${d.paint}`);
+                        wordBox.setText(`${d.car},\n${Cars$1.getSpray(d.spray)} ${d.spray}`);
                     }
                 }
                 talkingHead.update();
@@ -4726,8 +4782,8 @@ var gta_kill = (function (exports, THREE) {
             };
             let highwayWithEveryCar = {
                 name: 'Highway with every car',
-                load: load,
-                update: update
+                loadCb: load,
+                updateCb: update
             };
             Scenarios.load(highwayWithEveryCar);
         }
@@ -4790,8 +4846,8 @@ var gta_kill = (function (exports, THREE) {
             };
             let bridgeScenario = {
                 name: 'Bridge',
-                load: load,
-                update: update
+                loadCb: load,
+                updateCb: update
             };
             Scenarios.load(bridgeScenario);
         }

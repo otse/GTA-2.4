@@ -1,6 +1,5 @@
 import Scenario from "./Scenario";
 import Generators from "../Generators/Generators";
-import PaintJobs from "../Cars/Wang cars";
 import Data2 from "../Objects/Data";
 import Datas from "../Objects/Datas";
 import { Scenarios } from "./Scenarios";
@@ -84,7 +83,7 @@ export namespace HighWayWithEveryCar {
 			else if (stage == 2) {
 				let chunk = Datas.getChunk(KILL.ply.data);
 
-				const carArray = Cars.getArray();
+				const carArray = Cars.getCars();
 
 				let closest = 200;
 				let closestCar = null;
@@ -99,7 +98,7 @@ export namespace HighWayWithEveryCar {
 				if (closestCar != viewingCar) {
 					viewingCar = closestCar;
 					let d = closestCar.data;
-					wordBox.setText(`${d.car},\n${PaintJobs.getString(d.paint)} ${d.paint}`);
+					wordBox.setText(`${d.car},\n${Cars.getSpray(d.spray)} ${d.spray}`);
 				}
 			}
 
@@ -109,8 +108,8 @@ export namespace HighWayWithEveryCar {
 
 		let highwayWithEveryCar: Scenario = {
 			name: 'Highway with every car',
-			load: load,
-			update: update
+			loadCb: load,
+			updateCb: update
 		}
 
 		Scenarios.load(highwayWithEveryCar);

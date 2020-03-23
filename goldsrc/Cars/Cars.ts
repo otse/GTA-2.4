@@ -1,9 +1,11 @@
-import { parkedCarNames } from "./Script codes"
-
 import Car from "./Car";
 import KILL from "../KILL";
+import Sheet from "../Sprites/Sheet";
+import EveryLineIsAPhysic from "./Every line is a physic";
 
 namespace Cars {
+
+	/// names
 
 	// const contexts
 	export const Names2 = [
@@ -31,13 +33,33 @@ namespace Cars {
 
 	export type Names = typeof Names2[number]
 
-	var cars: Car[]
+	/// sprays 
+
+	export enum Sprays {
+		BLUE1, PURPLE1, BLACK, BLUE2,
+		BLUE_GRAY, BRIGHT_GREEN, BRIGHT_RED, BROWN1,
+		BROWN2, SILVER_BLUE, CREAM, YELLOW,
+		CYAN, DARK_BEIGE, DARK_BLUE, DEEP_BLUE,
+		DARK_GREEN, DARK_RED, DARK_RUST, GOLD,
+		GREEN, GRAY, YELLOW_GREEN, OLIVE,
+		ORANGE, PALE_BLUE, PINK_RED, PURPLE2,
+		RED, RUST, SILVER, SKY_BLUE,
+		TURQUOISE, WHITE_GRAY, WHITE, COP
+	}
+
+	export function getSpray(id: number): string {
+		return Sprays[name]
+	}
+
+	/// functions
 
 	export function init() {
 		cars = []
 	}
 
-	export function getArray(): ReadonlyArray<Car> {
+	var cars: Car[]
+
+	export function getCars(): ReadonlyArray<Car> {
 		return cars
 	}
 
@@ -49,19 +71,150 @@ namespace Cars {
 		cars.splice(cars.indexOf(car), 1)
 	}
 
-	export function getPaint(car: Car): string {
-		return ''
+	// sheets
+
+	export const deltasSheets: { [name: string]: Sheet } = {};
+
+	export function make_sheets() {
+
+		const list = EveryLineIsAPhysic.getROList();
+
+		for (let name in list) {
+
+			let physics = EveryLineIsAPhysic.get(name as any);
+
+			const sheet: Sheet = {
+				file: ``,
+				padding: 4,
+				width: (physics.meta.img_width * 10) + 9 * 4,
+				height: (physics.meta.img_height * 2) + 4,
+				nr: {
+					w: 10,
+					h: 2
+				},
+				piece: {
+					w: physics.meta.img_width,
+					h: physics.meta.img_height
+				}
+			};
+
+			deltasSheets[name] = sheet;
+		}
+
+		console.log('build car delta sheets');
+
+		(window as any).carsDeltas = deltasSheets;
 	}
 
-	export function getRandomName() {
-		let i = KILL.floorrandom(parkedCarNames.length);
+	const squares = {
+		dent_behind_left: { x: 1, y: 1 },
+		dent_behind_right: { x: 2, y: 1 },
+		dent_front_right: { x: 3, y: 1 },
+		dent_front_left: { x: 4, y: 1 },
 
-		let name = parkedCarNames[i];
+		dent_in_the_roof_here: { x: 5, y: 1 },
 
-		return name;
-	}
+		tail_light_right: { x: 6, y: 1 },
+		tail_light_left: { x: 6, y: 1 },
+		head_light_right: { x: 7, y: 1 },
+		head_light_left: { x: 7, y: 1 },
 
-	// things to try on the #highway:
+		front_door1: { x: 8, y: 1 },
+		front_door2: { x: 9, y: 1 },
+		front_door3: { x: 10, y: 1 },
+		front_door4: { x: 1, y: 2 },
+
+		rear_door1: { x: 2, y: 2 },
+		rear_door2: { x: 3, y: 2 },
+		rear_door3: { x: 4, y: 2 },
+		rear_door4: { x: 5, y: 2 },
+
+		tv_van_dish: { x: 6, y: 2 }
+	};
+
+	/// script codes
+
+	type ScriptName = string
+
+	// mapped object type
+	type Foo = {
+		[K in Cars.Names]: ScriptName
+	};
+
+	export const scriptCodes: Foo =
+	{
+		'Aniston BD4': 'AMDB4',
+		'Arachnid': 'SPIDER',
+		'Armed Land Roamer': 'GUNJEEP',
+		'A-Type': 'RTYPE',
+		'Beamer': 'BMW',
+		'Benson': 'MERC',
+		'Box Truck': 'BOXTRUCK',
+		'Big Bug': 'MONSTER',
+		'B-Type': 'STYPE',
+		'Bug': 'BUG',
+		'Bus': 'BUS',
+		'Bulwark': 'BUICK',
+		'Box Car': 'BOXCAR',
+		'Container': 'TRUKCONT',
+		'Cop Car': 'COPCAR',
+		'Dementia': 'ISETTA',
+		'Dementia Limousine': 'ISETLIMO',
+		'Eddy': 'EDSEL',
+		'Fire Truck': 'FIRETRUK',
+		'Furore GT': 'ZCX5',
+		'G4 Bank Van': 'BANKVAN',
+		'Garbage Truck': 'GTRUCK',
+		'GT-A1': 'GT24640',
+		'Hachura': 'STRIPETB',
+		'Hot Dog Van': 'HOTDOG',
+		'Ice-Cream Van': 'ICECREAM',
+		'Jagular XK': 'XK120',
+		'Jefferson': 'JEFFREY',
+		'Karma Bus': 'KRSNABUS',
+		'Land Roamer': 'JEEP',
+		'Maurice': 'MORRIS',
+		'Medicar': 'MEDICAR',
+		'Meteor': 'STRATOS',
+		'Meteor Turbo': 'STRATOSB',
+		'Miara': 'MIURA',
+		'Michelli Roadster': 'T2000GT',
+		'Minx': 'DART',
+		'Morton': 'MORGAN',
+		'Pacifier': 'APC',
+		'Panto': 'FIAT',
+		'Pickup': 'PICKUP',
+		'Romero': 'ALFA',
+		'Rumbler': 'WBTWIN',
+		'Schmidt': 'MESSER',
+		'Shark': 'GRAHAM',
+		'Special Agent Car': 'EDSELFBI',
+		'Sports Limousine': 'LIMO2',
+		'Spritzer': 'SPRITE',
+		'Stinger': 'STINGRAY',
+		'Stretch Limousine': 'LIMO',
+		'SWAT Van': 'SWATVAN',
+		'Tank': 'TANK',
+		'Tanker': 'TANKER',
+		'Taxi': 'TAXI',
+		'Taxi Xpress': 'STYPECAB',
+		'Tow Truck': 'TOWTRUCK',
+		'Train': 'TRAIN',
+		'Train Cab': 'TRAINCAB',
+		'Train FB': 'TRAINFB',
+		'Trance-Am': 'TRANCEAM',
+		'Transporter': 'TRUKTRNS',
+		'T-Rex': 'TBIRD',
+		'Truck Cab': 'TRUKCAB1',
+		'Truck Cab SX': 'TRUKCAB2',
+		'TV Van': 'TVVAN',
+		'U-Jerk Truck': 'VESPA',
+		'Van': 'VAN',
+		'Wellard': 'ALLARD',
+		'Z-Type': 'VTYPE'
+	};
+
+	/// tests, useful for #highway
 
 	export function checkDims() {
 
