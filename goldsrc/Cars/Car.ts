@@ -2,7 +2,7 @@ import Rectangle from "../Objects/Rectangle";
 import Data2 from "../Objects/Data";
 
 import { CarMetas } from "./Metas";
-import CarPhysics from "./Every line is a physic";
+import EveryLineIsAPhysic from "./Every line is a physic";
 import PaintJobs from "./Paints";
 import Cars from "./Cars";
 
@@ -20,11 +20,11 @@ export class Car extends Rectangle {
 
 		this.lift = 1;
 
-		const meta = CarMetas.getNullable(data.car!);
+		const meta = CarMetas.getNullable(data.car);
 
-		const physics = CarPhysics.getNullable(data.car!);
+		const physics = EveryLineIsAPhysic.get(data.car as any);
 
-		const model = physics!.model_corrected || physics!.model;
+		const model = physics.model_corrected || physics.model;
 
 		if (meta!.COLORLESS)
 			data.sty = `sty/car/unpainted/GTA2_CAR_${model}X.bmp`;

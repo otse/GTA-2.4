@@ -2,7 +2,6 @@ import Generators from "../Generators/Generators";
 import PaintJobs from "../Cars/Paints";
 import Datas from "../Objects/Datas";
 import { Scenarios } from "./Scenarios";
-import { carNames } from "../Cars/Script codes";
 import WordBox from "../YM/Cutscene/Word box";
 import TalkingHead from "../YM/Cutscene/Talking Heads";
 import KILL from "../KILL";
@@ -18,7 +17,7 @@ export var HighWayWithEveryCar;
             let x = .5;
             let y = 0;
             let j = 0;
-            for (let name of carNames) {
+            for (let name of Cars.Names2) {
                 let car = {
                     type: 'Car',
                     car: name,

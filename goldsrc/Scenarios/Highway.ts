@@ -4,7 +4,6 @@ import PaintJobs from "../Cars/Paints";
 import Data2 from "../Objects/Data";
 import Datas from "../Objects/Datas";
 import { Scenarios } from "./Scenarios";
-import { carNames } from "../Cars/Script codes";
 import WordBox from "../YM/Cutscene/Word box";
 import TalkingHead from "../YM/Cutscene/Talking Heads";
 import KILL from "../KILL";
@@ -26,7 +25,7 @@ export namespace HighWayWithEveryCar {
 			let y = 0;
 			let j = 0;
 
-			for (let name of carNames) {
+			for (let name of Cars.Names2) {
 
 				let car: Data2 = {
 					type: 'Car',

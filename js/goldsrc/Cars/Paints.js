@@ -1,4 +1,4 @@
-import CarPhysics from "./Every line is a physic";
+import EveryLineIsAPhysic from "./Every line is a physic";
 import CarMetas from "./Metas";
 // Automobiles, trains
 // Resources
@@ -47,7 +47,7 @@ var PaintJobs;
     })(Enum = PaintJobs.Enum || (PaintJobs.Enum = {}));
     PaintJobs.deltasSheets = {};
     function init() {
-        const list = CarPhysics.getList();
+        const list = EveryLineIsAPhysic.getList();
         for (let name in list) {
             const physic = list[name];
             const meta = CarMetas.getNullable(name);

@@ -1,18 +1,17 @@
-var CarPhysics;
-(function (CarPhysics) {
-    function getNullable(name) {
-        const car = list[name];
-        if (!car) {
-            console.warn('a physic lines are null ' + name);
-            return null;
-        }
-        return car;
+// joke taken from the gta wikia when it described nyc.gci
+var EveryLineIsAPhysic;
+(function (EveryLineIsAPhysic) {
+    function get(needle) {
+        const car = list[needle];
+        if (!car)
+            console.warn(`Can\'t get eliap for car ${needle}`);
+        return car || null;
     }
-    CarPhysics.getNullable = getNullable;
+    EveryLineIsAPhysic.get = get;
     function getList() {
         return list;
     }
-    CarPhysics.getList = getList;
+    EveryLineIsAPhysic.getList = getList;
     const list = {
         'Romero': {
             model: 0,
@@ -1906,5 +1905,5 @@ image_height: 64
             gear3_speed: 0.165,
         }
     };
-})(CarPhysics || (CarPhysics = {}));
-export default CarPhysics;
+})(EveryLineIsAPhysic || (EveryLineIsAPhysic = {}));
+export default EveryLineIsAPhysic;

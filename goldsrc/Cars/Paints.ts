@@ -1,5 +1,5 @@
 import Sheet from "../Sprites/Sheet";
-import CarPhysics from "./Every line is a physic";
+import EveryLineIsAPhysic from "./Every line is a physic";
 import CarMetas from "./Metas";
 
 // Automobiles, trains
@@ -53,7 +53,7 @@ namespace PaintJobs {
 
 	export function init() {
 
-		const list = CarPhysics.getList();
+		const list = EveryLineIsAPhysic.getList();
 
 		for (let name in list) {
 

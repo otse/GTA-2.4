@@ -4,7 +4,6 @@ import PaintJobs from "../Cars/Paints";
 import Data2 from "../Objects/Data";
 import Datas from "../Objects/Datas";
 import { Scenarios } from "./Scenarios";
-import { carNames } from "../Cars/Script codes";
 import TalkingHead from "../YM/Cutscene/Talking Heads";
 import WordBox from "../YM/Cutscene/Word box";
 import Widget from "../YM/Widget";

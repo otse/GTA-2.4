@@ -1302,21 +1302,20 @@ var gta_kill = (function (exports, THREE) {
     })(CarMetas || (CarMetas = {}));
     var CarMetas$1 = CarMetas;
 
-    var CarPhysics;
-    (function (CarPhysics) {
-        function getNullable(name) {
-            const car = list[name];
-            if (!car) {
-                console.warn('a physic lines are null ' + name);
-                return null;
-            }
-            return car;
+    // joke taken from the gta wikia when it described nyc.gci
+    var EveryLineIsAPhysic;
+    (function (EveryLineIsAPhysic) {
+        function get(needle) {
+            const car = list[needle];
+            if (!car)
+                console.warn(`Can\'t get eliap for car ${needle}`);
+            return car || null;
         }
-        CarPhysics.getNullable = getNullable;
+        EveryLineIsAPhysic.get = get;
         function getList() {
             return list;
         }
-        CarPhysics.getList = getList;
+        EveryLineIsAPhysic.getList = getList;
         const list = {
             'Romero': {
                 model: 0,
@@ -3210,8 +3209,8 @@ var gta_kill = (function (exports, THREE) {
                 gear3_speed: 0.165,
             }
         };
-    })(CarPhysics || (CarPhysics = {}));
-    var CarPhysics$1 = CarPhysics;
+    })(EveryLineIsAPhysic || (EveryLineIsAPhysic = {}));
+    var EveryLineIsAPhysic$1 = EveryLineIsAPhysic;
 
     const parkedCarNames = [
         "Romero", "Wellard", "Aniston BD4",
@@ -3234,31 +3233,31 @@ var gta_kill = (function (exports, THREE) {
         "Jagular XK",
         "Furore GT", "Special Agent Car" /*, "Karma Bus",*/
     ];
-    window.parkedCarNames = parkedCarNames;
-    const carNames = [
-        "Romero", "Wellard", "Aniston BD4", "Pacifier",
-        "G4 Bank Van", "Beamer", "Box Car", "Box Truck",
-        "Bug", "Bulwark", "Bus", "Cop Car",
-        "Minx", "Eddy", "Panto", "Fire Truck",
-        "Shark", "GT-A1", "Garbage Truck", "Armed Land Roamer",
-        "Hot Dog Van", "Ice-Cream Van", "Dementia Limousine", "Dementia",
-        "Land Roamer", "Jefferson", "Stretch Limousine", "Sports Limousine",
-        "Medicar", "Benson", "Schmidt", "Miara",
-        "Big Bug", "Morton", "Maurice", "Pickup",
-        "A-Type", "Arachnid", "Spritzer", "Stinger",
-        "Meteor", /*"Meteor Twoo?",*/ "Hachura", "B-Type",
-        "Taxi Xpress", "SWAT Van", "Michelli Roadster",
-        "Taxi", "T-Rex", "Tow Truck",
-        /*"Train", "Train Cab", "Train FB",*/ "Trance-Am",
-        "Truck Cab", "Truck Cab SX", "Container", "Transporter",
-        "TV Van", "Van", "U-Jerk Truck", "Z-Type",
-        "Rumbler",
-        "Jagular XK",
-        "Furore GT", "Special Agent Car",
-    ];
 
     var Cars;
     (function (Cars) {
+        // const contexts
+        Cars.Names2 = [
+            "Romero", "Wellard", "Aniston BD4", "Pacifier",
+            "G4 Bank Van", "Beamer", "Box Car", "Box Truck",
+            "Bug", "Bulwark", "Bus", "Cop Car",
+            "Minx", "Eddy", "Panto", "Fire Truck",
+            "Shark", "GT-A1", "Garbage Truck", "Armed Land Roamer",
+            "Hot Dog Van", "Ice-Cream Van", "Dementia Limousine", "Dementia",
+            "Land Roamer", "Jefferson", "Stretch Limousine", "Sports Limousine",
+            "Medicar", "Benson", "Schmidt", "Miara",
+            "Big Bug", "Morton", "Maurice", "Pickup",
+            "A-Type", "Arachnid", "Spritzer", "Stinger",
+            "Meteor", "Meteor Turbo", "Hachura", "B-Type",
+            "Taxi Xpress", "SWAT Van", "Michelli Roadster", "Tank",
+            "Tanker", "Taxi", "T-Rex", "Tow Truck",
+            "Train", "Train Cab", "Train FB", "Trance-Am",
+            "Truck Cab", "Truck Cab SX", "Container", "Transporter",
+            "TV Van", "Van", "U-Jerk Truck", "Z-Type",
+            "Rumbler",
+            "Jagular XK",
+            "Furore GT", "Special Agent Car", "Karma Bus"
+        ];
         var cars;
         function init() {
             cars = [];
@@ -3301,7 +3300,7 @@ var gta_kill = (function (exports, THREE) {
             //console.log('Car ' + data.car + ' paint ', data.paint);
             this.lift = 1;
             const meta = CarMetas.getNullable(data.car);
-            const physics = CarPhysics$1.getNullable(data.car);
+            const physics = EveryLineIsAPhysic$1.get(data.car);
             const model = physics.model_corrected || physics.model;
             if (meta.COLORLESS)
                 data.sty = `sty/car/unpainted/GTA2_CAR_${model}X.bmp`;
@@ -4656,7 +4655,7 @@ var gta_kill = (function (exports, THREE) {
         })(Enum = PaintJobs.Enum || (PaintJobs.Enum = {}));
         PaintJobs.deltasSheets = {};
         function init() {
-            const list = CarPhysics$1.getList();
+            const list = EveryLineIsAPhysic$1.getList();
             for (let name in list) {
                 const physic = list[name];
                 const meta = CarMetas$1.getNullable(name);
@@ -4994,7 +4993,7 @@ var gta_kill = (function (exports, THREE) {
                 let x = .5;
                 let y = 0;
                 let j = 0;
-                for (let name of carNames) {
+                for (let name of Cars$1.Names2) {
                     let car = {
                         type: 'Car',
                         car: name,

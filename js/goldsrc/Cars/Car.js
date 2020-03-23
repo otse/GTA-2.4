@@ -1,6 +1,6 @@
 import Rectangle from "../Objects/Rectangle";
 import { CarMetas } from "./Metas";
-import CarPhysics from "./Every line is a physic";
+import EveryLineIsAPhysic from "./Every line is a physic";
 import Cars from "./Cars";
 export class Car extends Rectangle {
     constructor(data) {
@@ -13,7 +13,7 @@ export class Car extends Rectangle {
         //console.log('Car ' + data.car + ' paint ', data.paint);
         this.lift = 1;
         const meta = CarMetas.getNullable(data.car);
-        const physics = CarPhysics.getNullable(data.car);
+        const physics = EveryLineIsAPhysic.get(data.car);
         const model = physics.model_corrected || physics.model;
         if (meta.COLORLESS)
             data.sty = `sty/car/unpainted/GTA2_CAR_${model}X.bmp`;

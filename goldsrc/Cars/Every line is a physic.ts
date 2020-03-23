@@ -1,9 +1,12 @@
 
-namespace CarPhysics {
+// joke taken from the gta wikia when it described nyc.gci
 
-	interface ELIAP {
+import Cars from "./Cars";
+
+namespace EveryLineIsAPhysic {
+
+	interface Interface {
 		model_corrected?: number
-
 		model: number
 		turbo: number
 		value: number
@@ -27,18 +30,20 @@ namespace CarPhysics {
 		gear3_speed: number
 	}
 
-	export function getNullable(name: string): ELIAP | null {
-		const car = list[name];
+	type Foo = {
+		[K in Cars.Names]: Interface
+	};
 
-		if (!car) {
-			console.warn('a physic lines are null ' + name);
-			return null;
-		}
+	type List = Foo;
 
-		return car;
+	export function get(needle: Cars.Names): Readonly<Interface> | null {
+		const car = list[needle];
+
+		if (!car)
+			console.warn(`Can\'t get eliap for car ${needle}`);
+
+		return car || null;
 	}
-
-	type List = { readonly [name: string]: ELIAP };
 
 	export function getList(): Readonly<List> {
 		return list;
@@ -1987,4 +1992,4 @@ image_height: 64
 	}
 }
 
-export default CarPhysics;
+export default EveryLineIsAPhysic;
