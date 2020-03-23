@@ -1,9 +1,8 @@
 import Rectangle from "../Objects/Rectangle";
 import Data2 from "../Objects/Data";
 
-import { CarMetas } from "./Metas";
 import EveryLineIsAPhysic from "./Every line is a physic";
-import PaintJobs from "./Paints";
+import PaintJobs from "./Wang cars";
 import Cars from "./Cars";
 import Util from "../Random";
 

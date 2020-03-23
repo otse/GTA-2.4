@@ -1,3 +1,4 @@
+import Cars from "./Cars";
 
 export const parkedCarNames: string[] = [
 	"Romero", "Wellard", "Aniston BD4", /*"Pacifier",
@@ -22,8 +23,14 @@ export const parkedCarNames: string[] = [
 	"Furore GT", "Special Agent Car"/*, "Karma Bus",*/
 ];
 
-export const carScriptCodes =
+// mapped object type
+type Foo = {
+	[K in Cars.Names]: string
+};
+
+export const carScriptCodes: Foo =
 {
+	'Aniston BD4': 'AMDB4',
 	'Arachnid': 'SPIDER',
 	'Armed Land Roamer': 'GUNJEEP',
 	'A-Type': 'RTYPE',
@@ -35,6 +42,7 @@ export const carScriptCodes =
 	'Bug': 'BUG',
 	'Bus': 'BUS',
 	'Bulwark': 'BUICK',
+	'Box Car': 'BOXCAR',
 	'Container': 'TRUKCONT',
 	'Cop Car': 'COPCAR',
 	'Dementia': 'ISETTA',
@@ -55,7 +63,7 @@ export const carScriptCodes =
 	'Maurice': 'MORRIS',
 	'Medicar': 'MEDICAR',
 	'Meteor': 'STRATOS',
-	'Meteor Twoo?': 'STRATOSB',
+	'Meteor Turbo': 'STRATOSB',
 	'Miara': 'MIURA',
 	'Michelli Roadster': 'T2000GT',
 	'Minx': 'DART',
@@ -78,6 +86,9 @@ export const carScriptCodes =
 	'Taxi': 'TAXI',
 	'Taxi Xpress': 'STYPECAB',
 	'Tow Truck': 'TOWTRUCK',
+	'Train': 'TRAIN',
+	'Train Cab': 'TRAINCAB',
+	'Train FB': 'TRAINFB',
 	'Trance-Am': 'TRANCEAM',
 	'Transporter': 'TRUKTRNS',
 	'T-Rex': 'TBIRD',

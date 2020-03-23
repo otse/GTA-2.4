@@ -1,6 +1,6 @@
 import Scenario from "./Scenario";
 import Generators from "../Generators/Generators";
-import PaintJobs from "../Cars/Paints";
+import PaintJobs from "../Cars/Wang cars";
 import Data2 from "../Objects/Data";
 import Datas from "../Objects/Datas";
 import { Scenarios } from "./Scenarios";

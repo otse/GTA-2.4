@@ -1,6 +1,5 @@
 import Sheet from "../Sprites/Sheet";
 import EveryLineIsAPhysic from "./Every line is a physic";
-import CarMetas from "./Metas";
 
 // Automobiles, trains
 
@@ -11,42 +10,19 @@ import CarMetas from "./Metas";
 namespace PaintJobs {
 
 	export enum Enum {
-		BLUE1,
-		PURPLE1,
-		BLACK,
-		BLUE2,
-		BLUE_GRAY,
-		BRIGHT_GREEN,
-		BRIGHT_RED,
-		BROWN1,
-		BROWN2,
-		SILVER_BLUE,
-		CREAM,
-		YELLOW,
-		CYAN,
-		DARK_BEIGE,
-		DARK_BLUE,
-		DEEP_BLUE,
-		DARK_GREEN,
-		DARK_RED,
-		DARK_RUST,
-		GOLD,
-		GREEN,
-		GRAY,
-		YELLOW_GREEN,
-		OLIVE,
-		ORANGE,
-		PALE_BLUE,
-		PINK_RED,
-		PURPLE2,
-		RED,
-		RUST,
-		SILVER,
-		SKY_BLUE,
-		TURQUOISE,
-		WHITE_GRAY,
-		WHITE,
-		COP
+		BLUE1, PURPLE1, BLACK, BLUE2,
+		BLUE_GRAY, BRIGHT_GREEN, BRIGHT_RED, BROWN1,
+		BROWN2, SILVER_BLUE, CREAM, YELLOW,
+		CYAN, DARK_BEIGE, DARK_BLUE, DEEP_BLUE,
+		DARK_GREEN, DARK_RED, DARK_RUST, GOLD,
+		GREEN, GRAY, YELLOW_GREEN, OLIVE,
+		ORANGE, PALE_BLUE, PINK_RED, PURPLE2,
+		RED, RUST, SILVER, SKY_BLUE,
+		TURQUOISE, WHITE_GRAY, WHITE, COP
+	}
+
+	export function getString(s: string) {
+		return PaintJobs.Enum[s]
 	}
 
 	export const deltasSheets: { [name: string]: Sheet } = {};
@@ -59,20 +35,20 @@ namespace PaintJobs {
 
 			const physic = list[name];
 
-			const meta = CarMetas.getNullable(name);
+			let physics = EveryLineIsAPhysic.get(name as any);
 
 			const sheet: Sheet = {
 				file: `D_GTA2_CAR_${physic.model}`,
 				padding: 4,
-				width: (meta!.IMG_WIDTH * 10) + 36, // (9 * 4)
-				height: (meta!.IMG_HEIGHT * 2) + 4,
+				width: (physics.meta.img_width * 10) + 36, // (9 * 4)
+				height: (physics.meta.img_height * 2) + 4,
 				nr: {
 					w: 10,
 					h: 2
 				},
 				piece: {
-					w: meta!.IMG_WIDTH,
-					h: meta!.IMG_HEIGHT
+					w: physics.meta.img_width,
+					h: physics.meta.img_height
 				}
 			};
 

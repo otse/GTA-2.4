@@ -1,6 +1,6 @@
 import Scenario from "./Scenario";
 import Generators from "../Generators/Generators";
-import PaintJobs from "../Cars/Paints";
+import PaintJobs from "../Cars/Wang cars";
 import Data2 from "../Objects/Data";
 import Datas from "../Objects/Datas";
 import { Scenarios } from "./Scenarios";
@@ -30,7 +30,8 @@ export namespace HighWayWithEveryCar {
 				
 				let physics = EveryLineIsAPhysic.get(name);
 				
-				let half_size = (physics.meta.img_height + 15) / 2 / 64;
+				const apartness = 15;
+				let half_size = (physics.meta.img_height + apartness) / 2 / 64;
 
 				y -= half_size;
 
@@ -98,7 +99,7 @@ export namespace HighWayWithEveryCar {
 				if (closestCar != viewingCar) {
 					viewingCar = closestCar;
 					let d = closestCar.data;
-					wordBox.setText(`${d.car},\n${PaintJobs.Enum[d.paint]} ${d.paint}`);
+					wordBox.setText(`${d.car},\n${PaintJobs.getString(d.paint)} ${d.paint}`);
 				}
 			}
 

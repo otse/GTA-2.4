@@ -4,7 +4,7 @@ import Generators from "./Generators";
 import Sprites from "../Sprites/Sprites";
 import GenTools from "./Tools";
 import Datas from "../Objects/Datas";
-import PaintJobs from "../Cars/Paints";
+import PaintJobs from "../Cars/Wang cars";
 
 export namespace Levels {
 
