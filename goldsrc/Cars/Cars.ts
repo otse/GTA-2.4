@@ -3,7 +3,7 @@ import { parkedCarNames } from "./Script codes"
 import Car from "./Car";
 
 namespace Cars {
-	
+
 	// const contexts
 	export const Names2 = [
 		"Romero", "Wellard", "Aniston BD4", "Pacifier",
@@ -36,7 +36,7 @@ namespace Cars {
 		cars = []
 	}
 
-	export function getArray(): ReadonlyArray<Car>{
+	export function getArray(): ReadonlyArray<Car> {
 		return cars
 	}
 
@@ -57,11 +57,23 @@ namespace Cars {
 		let i = Math.floor(Math.random() * parkedCarNames.length);
 
 		let name = parkedCarNames[i];
-		
-		console.log('getRandomName ' + i + ' ' + name);
 
 		return name;
 	}
+
+	// the http://localhost#highway
+	export function checkDims() {
+		for (let car of cars) {
+			if (!car.physics || !(car.material as any).map.image)
+				continue;
+
+			if (car.physics.meta.w != (car.material as any).map.image.width ||
+				car.physics.meta.h != (car.material as any).map.image.height)
+				console.warn(`warning for ${car.data.car}`);
+		}
+	}
 }
+
+(window as any).Cars = Cars;
 
 export default Cars;

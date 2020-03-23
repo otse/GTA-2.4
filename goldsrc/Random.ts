@@ -4,16 +4,19 @@ import { default as THREE, Texture, TextureLoader, NearestFilter, LinearFilter, 
 
 export namespace Util {
 
-	let mem = [];
+	let mem: Texture[] = [];
 
 	export function loadTexture(path: string | undefined, salt = ''): Texture | null {
 
 		let pepper = path + salt;
 
-		if (mem[pepper])
-			return mem[pepper];
+		let texture = mem[pepper];
 
-		let texture = new TextureLoader().load(path);
+		if (texture)
+			return texture;
+
+		texture = new TextureLoader().load(path);
+		texture.name = pepper;
 
 		texture.generateMipmaps = false;
 

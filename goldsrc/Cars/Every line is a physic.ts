@@ -5,7 +5,7 @@ import Cars from "./Cars";
 
 namespace EveryLineIsAPhysic {
 
-	interface Interface {
+	export interface Interface {
 		model_corrected?: number
 		model: number
 		turbo: number
@@ -28,8 +28,22 @@ namespace EveryLineIsAPhysic {
 		gear3_multiplier: number
 		gear2_speed: number
 		gear3_speed: number
+
+		meta: {
+			w
+            h
+            GOOD?
+            NOTE?
+            MAX_SPEED_ORIG?
+            NO_SPAWN?
+            COLORLESS?
+            ENGINE_TYPE?
+            AIR_BRAKES?
+            DELTA_TRANSPARENCY?
+		}
 	}
 
+	// mapped object type
 	type Foo = {
 		[K in Cars.Names]: Interface
 	};
@@ -72,6 +86,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.107,
 			gear3_speed: 0.165,
+			meta: { w: 62, h: 64 }
 		},
 		'Wellard': {
 			model: 1,
@@ -95,6 +110,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.125,
 			gear3_speed: 0.228,
+			meta: { w: 44, h: 64 }
 		},
 		'Aniston BD4': {
 			model: 2,
@@ -118,6 +134,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.11,
 			gear3_speed: 0.175,
+			meta: { w: 62, h: 64 }
 		},
 		'Pacifier': {
 			model: 3,
@@ -141,6 +158,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.103,
 			gear3_speed: 0.192,
+			meta: { w: 50, h: 98 }
 		},
 		'G4 Bank Van': {
 			model: 4,
@@ -164,6 +182,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.081,
 			gear3_speed: 0.13,
+			meta: { w: 60, h: 104 }
 		},
 		'Beamer': {
 			model: 5,
@@ -187,6 +206,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.185,
 			gear3_speed: 0.275,
+			meta: { w: 62, h: 64 }
 		},
 		'Box Car': {
 			model: 6,
@@ -210,6 +230,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.152,
 			gear3_speed: 0.228,
+			meta: { w: 42, h: 128 }
 		},
 		'Box Truck': {
 			model: 7,
@@ -233,6 +254,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.088,
 			gear3_speed: 0.114,
+			meta: { w: 52, h: 128 }
 		},
 		'Bug': {
 			model: 8,
@@ -256,6 +278,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.125,
 			gear3_speed: 0.152,
+			meta: { w: 50, h: 52 }
 		},
 		'Bulwark': {
 			model_corrected: 9,
@@ -281,6 +304,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.155,
 			gear3_speed: 0.225,
+			meta: { w: 64, h: 64 }
 		},
 		'Bus': {
 			model_corrected: 10,
@@ -306,6 +330,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.1,
 			gear3_speed: 0.161,
+			meta: { w: 52, h: 128 }
 		},
 		'Cop Car': {
 			model_corrected: 11,
@@ -331,6 +356,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.18,
 			gear3_speed: 0.29,
+			meta: { w: 58, h: 64 }
 		},
 		'Minx': {
 			model_corrected: 12,
@@ -356,6 +382,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.12,
 			gear3_speed: 0.166,
+			meta: { w: 58, h: 58 }
 		},
 		'Eddy': {
 			model_corrected: 13,
@@ -381,6 +408,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.12,
 			gear3_speed: 0.197,
+			meta: { w: 54, h: 62 }
 		},
 		'Panto': {
 			model_corrected: 14,
@@ -406,6 +434,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.082,
 			gear3_speed: 0.12,
+			meta: { w: 62, h: 56 }
 		},
 		'Fire Truck': {
 			model_corrected: 15,
@@ -431,6 +460,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.124,
 			gear3_speed: 0.19,
+			meta: { w: 58, h: 124 }
 		},
 		'Shark': {
 			model_corrected: 16,
@@ -456,6 +486,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.125,
 			gear3_speed: 0.22,
+			meta: { w: 54, h: 64 }
 		},
 		'GT-A1': {
 			model_corrected: 17,
@@ -481,6 +512,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.225,
 			gear3_speed: 0.35,
+			meta: { w: 54, h: 64 }
 		},
 		'Garbage Truck': {
 			model_corrected: 18,
@@ -506,6 +538,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.085,
 			gear3_speed: 0.12,
+			meta: { w: 52, h: 86 }
 		},
 		'Armed Land Roamer': {
 			model_corrected: 24,
@@ -531,6 +564,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.12,
 			gear3_speed: 0.152,
+			meta: { w: 42, h: 48 }
 		},
 		'Hot Dog Van': {
 			model_corrected: 20,
@@ -556,6 +590,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.094,
 			gear3_speed: 0.146,
+			meta: { w: 58, h: 88 }
 		},
 		'Ice-Cream Van': {
 			model_corrected: 21,
@@ -581,6 +616,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.08,
 			gear3_speed: 0.142,
+			meta: { w: 58, h: 88 }
 		},
 		'Dementia Limousine': {
 			model_corrected: 22,
@@ -606,6 +642,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.111,
 			gear3_speed: 0.173,
+			meta: { w: 48, h: 78 }
 		},
 		'Dementia': {
 			model_corrected: 23,
@@ -631,6 +668,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.125,
 			gear3_speed: 0.152,
+			meta: { w: 50, h: 46 }
 		},
 		'Land Roamer': {
 			model_corrected: 24,
@@ -656,6 +694,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.12,
 			gear3_speed: 0.152,
+			meta: { w: 42, h: 48 }
 		},
 		'Jefferson': {
 			model_corrected: 25,
@@ -681,6 +720,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.2,
 			gear3_speed: 0.3,
+			meta: { w: 46, h: 62 }
 		},
 		'Stretch Limousine': {
 			model_corrected: 27,
@@ -706,6 +746,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.12,
 			gear3_speed: 0.215,
+			meta: { w: 60, h: 112 }
 		},
 		'Sports Limousine': {
 			model_corrected: 28,
@@ -731,6 +772,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.135,
 			gear3_speed: 0.23,
+			meta: { w: 56, h: 110 }
 		},
 		'Medicar': {
 			model_corrected: 29,
@@ -756,6 +798,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.135,
 			gear3_speed: 0.237,
+			meta: { w: 62, h: 114 }
 		},
 		'Benson': {
 			model_corrected: 30,
@@ -780,6 +823,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.165,
 			gear3_speed: 0.251,
+			meta: { w: 38, h: 64 }
 		},
 		'Schmidt': {
 			model_corrected: 31,
@@ -804,6 +848,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.1,
 			gear3_speed: 0.15,
+			meta: { w: 38, h: 56 }
 		},
 		'Miara': {
 			model_corrected: 32,
@@ -828,6 +873,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.145,
 			gear3_speed: 0.245,
+			meta: { w: 62, h: 64 }
 		},
 		'Big Bug': {
 			model_corrected: 33,
@@ -852,6 +898,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.104,
 			gear3_speed: 0.175,
+			meta: { w: 58, h: 58 }
 		},
 		'Morton': {
 			model_corrected: 34,
@@ -876,6 +923,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.125,
 			gear3_speed: 0.19,
+			meta: { w: 48, h: 60 }
 		},
 		'Maurice': {
 			model_corrected: 35,
@@ -901,6 +949,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.12,
 			gear3_speed: 0.175,
+			meta: { w: 56, h: 58 }
 		},
 		'Pickup': {
 			model_corrected: 36,
@@ -925,6 +974,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.12,
 			gear3_speed: 0.19,
+			meta: { w: 58, h: 64 }
 		},
 		'A-Type': {
 			model_corrected: 37,
@@ -950,6 +1000,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.175,
 			gear3_speed: 0.272,
+			meta: { w: 60, h: 64 }
 		},
 		'Arachnid': {
 			model_corrected: 38,
@@ -975,6 +1026,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.135,
 			gear3_speed: 0.2,
+			meta: { w: 54, h: 62 }
 		},
 		'Spritzer': {
 			model_corrected: 39,
@@ -1000,6 +1052,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.125,
 			gear3_speed: 0.162,
+			meta: { w: 60, h: 56 }
 		},
 		'Stinger': {
 			model_corrected: 40,
@@ -1025,6 +1078,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.174,
 			gear3_speed: 0.285,
+			meta: { w: 52, h: 62 }
 		},
 		'Meteor': {
 			model_corrected: 41,
@@ -1050,6 +1104,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.185,
 			gear3_speed: 0.265,
+			meta: { w: 60, h: 64 }
 		},
 		'Meteor Turbo': {
 			model_corrected: 42,
@@ -1075,6 +1130,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.235,
 			gear3_speed: 0.36,
+			meta: { w: 60, h: 64 }
 		},
 		'Hachura': {
 			model_corrected: 43,
@@ -1100,6 +1156,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.185,
 			gear3_speed: 0.3,
+			meta: { w: 64, h: 64 }
 		},
 		'B-Type': {
 			model_corrected: 44,
@@ -1125,6 +1182,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.174,
 			gear3_speed: 0.29,
+			meta: { w: 56, h: 64 }
 		},
 		'Taxi Xpress': {
 			model_corrected: 45,
@@ -1150,6 +1208,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.135,
 			gear3_speed: 0.21,
+			meta: { w: 56, h: 64 }
 		},
 		'SWAT Van': {
 			model_corrected: 46,
@@ -1175,6 +1234,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.115,
 			gear3_speed: 0.166,
+			meta: { w: 64, h: 98 }
 		},
 		'Michelli Roadster': {
 			model_corrected: 47,
@@ -1200,6 +1260,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.165,
 			gear3_speed: 0.275,
+			meta: { w: 50, h: 64 }
 		},
 		'Tank': {
 			model_corrected: 48,
@@ -1225,6 +1286,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.05,
 			gear3_speed: 0.06,
+			meta: { w: 46, h: 82 }
 		},
 		'Tanker': {
 			model: 55,
@@ -1248,6 +1310,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.152,
 			gear3_speed: 0.228,
+			meta: { w: 44, h: 128 }
 		},
 		'Taxi': {
 			model_corrected: 50,
@@ -1273,6 +1336,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.125,
 			gear3_speed: 0.175,
+			meta: { w: 60, h: 64 }
 		},
 		'T-Rex': {
 			model_corrected: 51,
@@ -1298,6 +1362,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.175,
 			gear3_speed: 0.255,
+			meta: { w: 60, h: 64 }
 		},
 		'Tow Truck': {
 			model_corrected: 52,
@@ -1323,6 +1388,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.1,
 			gear3_speed: 0.133,
+			meta: { w: 58, h: 80 }
 		},
 		'Train': {
 			model: 59,
@@ -1346,6 +1412,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.152,
 			gear3_speed: 0.228,
+			meta: { w: 42, h: 128 }
 		},
 		'Train Cab': {
 			model: 60,
@@ -1369,6 +1436,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.152,
 			gear3_speed: 0.228,
+			meta: { w: 40, h: 128 }
 		},
 		'Train FB': {
 			model: 61,
@@ -1392,6 +1460,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.152,
 			gear3_speed: 0.228,
+			meta: { w: 58, h: 74 }
 		},
 		'Trance-Am': {
 			model_corrected: 56,
@@ -1417,6 +1486,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.152,
 			gear3_speed: 0.25,
+			meta: { w: 54, h: 64 }
 		},
 		'Truck Cab': {
 			model_corrected: 57,
@@ -1442,6 +1512,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.075,
 			gear3_speed: 0.108,
+			meta: { w: 64, h: 64 }
 		},
 		'Truck Cab SX': {
 			model_corrected: 58,
@@ -1467,6 +1538,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.075,
 			gear3_speed: 0.108,
+			meta: { w: 64, h: 64 }
 		},
 		'Container': {
 			model_corrected: 59,
@@ -1492,6 +1564,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0,
 			gear3_speed: 0,
+			meta: { w: 42, h: 128 }
 		},
 		'Transporter': {
 			model_corrected: 60,
@@ -1517,6 +1590,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0,
 			gear3_speed: 0,
+			meta: { w: 40, h: 128 }
 		},
 		'TV Van': {
 			model_corrected: 61,
@@ -1542,6 +1616,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.1,
 			gear3_speed: 0.14,
+			meta: { w: 58, h: 74 }
 		},
 		'Van': {
 			model: 61,
@@ -1565,6 +1640,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.1,
 			gear3_speed: 0.14,
+			meta: { w: 58, h: 74 }
 		},
 		'U-Jerk Truck': {
 			model_corrected: 62,
@@ -1590,6 +1666,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.085,
 			gear3_speed: 0.15,
+			meta: { w: 54, h: 56 }
 		},
 		'Z-Type': {
 			model_corrected: 44,
@@ -1615,6 +1692,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.19,
 			gear3_speed: 0.284,
+			meta: { w: 56, h: 64 }
 		},
 		'Rumbler': {
 			model_corrected: 64,
@@ -1640,6 +1718,7 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.175,
 			gear3_speed: 0.27,
+			meta: { w: 56, h: 64 }
 		},
 		/*'Wreck 0': {
 model: 72,
@@ -1915,6 +1994,7 @@ image_height: 64
 			gear3_multiplier: 1,
 			gear2_speed: 0.18,
 			gear3_speed: 0.255,
+			meta: { w: 52, h: 64 }
 		},
 		'Furore GT': {
 			model_corrected: 76,
@@ -1940,6 +2020,7 @@ image_height: 64
 			gear3_multiplier: 1,
 			gear2_speed: 0.235,
 			gear3_speed: 0.35,
+			meta: { w: 50, h: 64 }
 		},
 		'Special Agent Car': {
 			model: 84,
@@ -1963,6 +2044,7 @@ image_height: 64
 			gear3_multiplier: 1,
 			gear2_speed: 0.13,
 			gear3_speed: 0.195,
+			meta: { w: 64, h: 64 }
 		},
 		'Karma Bus': {
 			model_corrected: 26,
@@ -1988,6 +2070,7 @@ image_height: 64
 			gear3_multiplier: 1,
 			gear2_speed: 0.115,
 			gear3_speed: 0.165,
+			meta: { w: 44, h: 100 }
 		}
 	}
 }

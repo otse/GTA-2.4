@@ -47,9 +47,20 @@ var Cars;
     function getRandomName() {
         let i = Math.floor(Math.random() * parkedCarNames.length);
         let name = parkedCarNames[i];
-        console.log('getRandomName ' + i + ' ' + name);
         return name;
     }
     Cars.getRandomName = getRandomName;
+    // the http://localhost#highway
+    function checkDims() {
+        for (let car of cars) {
+            if (!car.physics || !car.material.map.image)
+                continue;
+            if (car.physics.meta.w != car.material.map.image.width ||
+                car.physics.meta.h != car.material.map.image.height)
+                console.warn(`warning for ${car.data.car}`);
+        }
+    }
+    Cars.checkDims = checkDims;
 })(Cars || (Cars = {}));
+window.Cars = Cars;
 export default Cars;

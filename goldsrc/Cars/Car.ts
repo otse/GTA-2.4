@@ -5,8 +5,13 @@ import { CarMetas } from "./Metas";
 import EveryLineIsAPhysic from "./Every line is a physic";
 import PaintJobs from "./Paints";
 import Cars from "./Cars";
+import Util from "../Random";
+
+import { Texture } from "three";
 
 export class Car extends Rectangle {
+
+	physics: EveryLineIsAPhysic.Interface;
 
 	constructor(data: Data2) {
 		super(data);
@@ -20,19 +25,17 @@ export class Car extends Rectangle {
 
 		this.lift = 1;
 
-		const meta = CarMetas.getNullable(data.car);
+		this.physics = EveryLineIsAPhysic.get(data.car as any);
 
-		const physics = EveryLineIsAPhysic.get(data.car as any);
+		const model = this.physics.model_corrected || this.physics.model;
 
-		const model = physics.model_corrected || physics.model;
+		//if (meta!.COLORLESS)
+		//data.sty = `sty/car/unpainted/GTA2_CAR_${model}X.bmp`;
+		//else
+		data.sty = `sty/car/painted/GTA2_CAR_${model}_PAL_${data.paint}.bmp`;
 
-		if (meta!.COLORLESS)
-			data.sty = `sty/car/unpainted/GTA2_CAR_${model}X.bmp`;
-		else
-			data.sty = `sty/car/painted/GTA2_CAR_${model}_PAL_${data.paint}.bmp`;
-
-		data.width = meta!.IMG_WIDTH;
-		data.height = meta!.IMG_HEIGHT;
+		data.width = this.physics.meta.w;
+		data.height = this.physics.meta.h;
 
 		this.makeRectangle({
 			blur: `sty/car/blurs/GTA2_CAR_${model}.png`,

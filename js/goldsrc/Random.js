@@ -4,9 +4,11 @@ export var Util;
     let mem = [];
     function loadTexture(path, salt = '') {
         let pepper = path + salt;
-        if (mem[pepper])
-            return mem[pepper];
-        let texture = new TextureLoader().load(path);
+        let texture = mem[pepper];
+        if (texture)
+            return texture;
+        texture = new TextureLoader().load(path);
+        texture.name = pepper;
         texture.generateMipmaps = false;
         texture.magFilter = NearestFilter;
         texture.minFilter = NearestFilter;
