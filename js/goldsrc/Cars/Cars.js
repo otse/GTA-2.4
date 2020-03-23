@@ -50,13 +50,14 @@ var Cars;
         return name;
     }
     Cars.getRandomName = getRandomName;
-    // the http://localhost#highway
+    // things to try on the #highway:
     function checkDims() {
         for (let car of cars) {
-            if (!car.physics || !car.material.map.image)
+            let mat = car.material;
+            if (!car.physics || !mat.map.image)
                 continue;
-            if (car.physics.meta.w != car.material.map.image.width ||
-                car.physics.meta.h != car.material.map.image.height)
+            if (car.physics.meta.img_width != mat.map.image.width ||
+                car.physics.meta.img_height != mat.map.image.height)
                 console.warn(`warning for ${car.data.car}`);
         }
     }

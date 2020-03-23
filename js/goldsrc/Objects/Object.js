@@ -18,6 +18,7 @@ export class Object2 {
             data.r -= 4;
         if (data.r < 0)
             data.r += 4;
+        this.broke = false;
         this.data = data;
     }
     destroy() {

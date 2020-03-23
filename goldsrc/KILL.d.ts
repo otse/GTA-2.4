@@ -4,6 +4,7 @@ declare type Zx = [number, number]
 
 declare class Object2 {
 	data: any
+	broke: boolean
 	destroy()
 	update()
 }

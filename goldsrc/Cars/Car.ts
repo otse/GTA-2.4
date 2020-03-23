@@ -21,21 +21,27 @@ export class Car extends Rectangle {
 		if (undefined == data.car) console.warn('Car data has no .car!');
 		if (undefined == data.paint) data.paint = Math.floor(Math.random() * 35);
 
-		//console.log('Car ' + data.car + ' paint ', data.paint);
-
 		this.lift = 1;
 
 		this.physics = EveryLineIsAPhysic.get(data.car as any);
 
+		this.broke = !data.car || !this.physics;
+
+		if (this.broke) {
+			console.warn('this car object is broke');
+			return;
+		}
+
 		const model = this.physics.model_corrected || this.physics.model;
 
-		//if (meta!.COLORLESS)
-		//data.sty = `sty/car/unpainted/GTA2_CAR_${model}X.bmp`;
-		//else
-		data.sty = `sty/car/painted/GTA2_CAR_${model}_PAL_${data.paint}.bmp`;
+		if (this.physics.meta.colorless)
+			data.sty = `sty/car/unpainted/GTA2_CAR_${model}X.bmp`;
 
-		data.width = this.physics.meta.w;
-		data.height = this.physics.meta.h;
+		else
+			data.sty = `sty/car/painted/GTA2_CAR_${model}_PAL_${data.paint}.bmp`;
+
+		data.width = this.physics.meta.img_width;
+		data.height = this.physics.meta.img_height;
 
 		this.makeRectangle({
 			blur: `sty/car/blurs/GTA2_CAR_${model}.png`,

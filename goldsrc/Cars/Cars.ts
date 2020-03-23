@@ -53,7 +53,6 @@ namespace Cars {
 	}
 
 	export function getRandomName() {
-
 		let i = Math.floor(Math.random() * parkedCarNames.length);
 
 		let name = parkedCarNames[i];
@@ -61,14 +60,16 @@ namespace Cars {
 		return name;
 	}
 
-	// the http://localhost#highway
-	export function checkDims() {
-		for (let car of cars) {
-			if (!car.physics || !(car.material as any).map.image)
-				continue;
+	// things to try on the #highway:
 
-			if (car.physics.meta.w != (car.material as any).map.image.width ||
-				car.physics.meta.h != (car.material as any).map.image.height)
+	export function checkDims() {
+
+		for (let car of cars) {
+			let mat = (car.material as any);
+			if (!car.physics || !mat.map.image)
+				continue;
+			if (car.physics.meta.img_width != mat.map.image.width ||
+				car.physics.meta.img_height != mat.map.image.height)
 				console.warn(`warning for ${car.data.car}`);
 		}
 	}
