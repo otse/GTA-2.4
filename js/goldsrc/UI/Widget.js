@@ -1,6 +1,7 @@
 import { MeshBasicMaterial, PlaneBufferGeometry, Mesh } from "three";
 import Four from "../Four";
 import Util from "../Random";
+// we use canvas now tho
 export class Widget {
     constructor(pos) {
         console.log('ui element');
@@ -28,8 +29,9 @@ export class Widget {
     }
     update() {
         let cam = Four.camera.position.clone();
-        let x = cam.x + this.pos.x;
-        let y = cam.y + this.pos.y;
+        // x / y range to -500 to 500
+        let x = cam.x + this.pos.x * Four.aspect;
+        let y = cam.y + this.pos.y * Four.aspect;
         let z = cam.z + this.pos.z - 680; // magic number
         const scale = Four.aspect;
         this.mesh.position.set(x, y, z);

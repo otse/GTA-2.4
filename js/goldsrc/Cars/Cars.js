@@ -22,12 +22,12 @@ var Cars;
         return '';
     }
     Cars.getPaint = getPaint;
-    function GetRandomName() {
+    function getRandomName() {
         let i = Math.floor(Math.random() * parkedCarNames.length);
         let name = parkedCarNames[i];
-        console.log('GetRandomName ' + i + ' ' + name);
+        console.log('getRandomName ' + i + ' ' + name);
         return name;
     }
-    Cars.GetRandomName = GetRandomName;
+    Cars.getRandomName = getRandomName;
 })(Cars || (Cars = {}));
 export default Cars;

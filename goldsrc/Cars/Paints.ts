@@ -53,7 +53,7 @@ namespace PaintJobs {
 
 	export function init() {
 
-		const list = CarPhysics.List();
+		const list = CarPhysics.getList();
 
 		for (let name in list) {
 

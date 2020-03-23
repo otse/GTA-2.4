@@ -3,7 +3,7 @@ import { parkedCarNames } from "./Script codes"
 import Car from "./Car";
 
 namespace Cars {
-	var cars: Car[];
+	var cars: Car[]
 
 	export function init() {
 		cars = [];
@@ -25,13 +25,13 @@ namespace Cars {
 		return '';
 	}
 
-	export function GetRandomName() {
+	export function getRandomName() {
 
 		let i = Math.floor(Math.random() * parkedCarNames.length);
 
 		let name = parkedCarNames[i];
 		
-		console.log('GetRandomName ' + i + ' ' + name);
+		console.log('getRandomName ' + i + ' ' + name);
 
 		return name;
 	}

@@ -1,3 +1,5 @@
+*.js
+js/
 node_modules/
 sty/
 gen/js/

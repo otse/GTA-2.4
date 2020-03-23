@@ -1,8 +1,8 @@
 import Generators from "../Generators/Generators";
 import Datas from "../Objects/Datas";
 import { Scenarios } from "./Scenarios";
-import TalkingHead from "../UI/Cutscene/Talking Heads";
-import WordBox from "../UI/Cutscene/Word box";
+import TalkingHead from "../YM/Cutscene/Talking Heads";
+import WordBox from "../YM/Cutscene/Word box";
 export var BridgeScenario;
 (function (BridgeScenario) {
     function init() {

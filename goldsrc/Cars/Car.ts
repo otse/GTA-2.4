@@ -7,16 +7,14 @@ import PaintJobs from "./Paints";
 import Cars from "./Cars";
 
 export class Car extends Rectangle {
+
 	constructor(data: Data2) {
 		super(data);
 
 		Cars.add(this);
 
-		if (undefined == data.car)
-			console.warn('Car data has no .car!');
-
-		if (undefined == data.paint)
-			data.paint = Math.floor(Math.random() * 35);
+		if (undefined == data.car) console.warn('Car data has no .car!');
+		if (undefined == data.paint) data.paint = Math.floor(Math.random() * 35);
 
 		//console.log('Car ' + data.car + ' paint ', data.paint);
 

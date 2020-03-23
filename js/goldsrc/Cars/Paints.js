@@ -47,7 +47,7 @@ var PaintJobs;
     })(Enum = PaintJobs.Enum || (PaintJobs.Enum = {}));
     PaintJobs.deltasSheets = {};
     function init() {
-        const list = CarPhysics.List();
+        const list = CarPhysics.getList();
         for (let name in list) {
             const physic = list[name];
             const meta = CarMetas.getNullable(name);

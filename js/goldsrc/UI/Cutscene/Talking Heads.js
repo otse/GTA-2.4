@@ -1,6 +1,7 @@
 import Util from "../../Random";
 import Four from "../../Four";
 import Widget from "../Widget";
+import App from "../../App";
 // Apparently a band
 export class TalkingHead {
     constructor(name) {
@@ -33,7 +34,7 @@ export class TalkingHead {
         this.widget.destroy();
     }
     make() {
-        this.widget = new Widget({ x: 0, y: 0, z: 0, w: 64, h: 64 });
+        this.widget = new Widget({ x: 350, y: -200, z: 0, w: 200, h: 200 });
     }
     update() {
         if (this.animateMouth) {
@@ -58,6 +59,16 @@ export class TalkingHead {
             }
         }
         this.widget.update();
+        const s = 10;
+        if (App.map[39]) // right
+            this.widget.pos.x += s;
+        if (App.map[37]) // left
+            this.widget.pos.x -= s;
+        if (App.map[38]) // up
+            this.widget.pos.y += s;
+        if (App.map[40]) // down
+            this.widget.pos.y -= s;
+        //console.log(this.widget.pos);
     }
 }
 ;

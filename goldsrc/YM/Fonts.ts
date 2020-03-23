@@ -19,8 +19,6 @@ export namespace Fonts {
 	export function init() {
 		canvas = document.createElement('canvas');
 
-		document.body.appendChild(canvas);
-
 		console.log('fonts init');
 
 		load();
@@ -67,10 +65,6 @@ export namespace Fonts {
 				font, s.x2, s.y2, s.w, s.h, s.x, s.y, s.w, s.h);
 		}
 
-		let image = new Image();
-		image.src = canvas.toDataURL();
-
-		texture.image = image;
 		texture.needsUpdate = true;
 
 		return texture;

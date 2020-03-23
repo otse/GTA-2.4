@@ -18,10 +18,11 @@ import PalmTrees from "./Scenarios/Palm trees";
 import HighWayWithEveryCar from "./Scenarios/Highway";
 import BridgeScenario from "./Scenarios/Bridge";
 import Scenarios from "./Scenarios/Scenarios";
-import Fonts from "./UI/Fonts";
+import Fonts from "./YM/Fonts";
 import Water from "./Unsorted/Water";
 import Mist from "./Unsorted/Mist";
 import Cars from "./Cars/Cars";
+import YM from "./YM/You me";
 
 export namespace KILL {
 
@@ -39,26 +40,22 @@ export namespace KILL {
 		COUNT
 	};
 
-	let words = 0b0;
+	let resources_loaded = 0b0;
 
 	export function resourced(word: string) {
 
-		let mask: RESOURCES = RESOURCES[word];
+		resources_loaded |= 0b1 << RESOURCES[word];
 
-		const bit = 0b1 << mask;
-
-		words |= bit;
-
-		can_we_begin_yet();
+		try_start();
 	}
 
-	function can_we_begin_yet() {
+	function try_start() {
 
 		let count = 0;
 
 		let i = 0;
 		for (; i < RESOURCES.COUNT; i++)
-			(words & 0b1 << i) ? count++ : void (0);
+			(resources_loaded & 0b1 << i) ? count++ : void (0);
 
 		if (count == RESOURCES.COUNT)
 			start();
@@ -66,7 +63,7 @@ export namespace KILL {
 
 	export function critical(mask: string) {
 
-		// Hi. It couldn't load this resource
+		// Couldn't load
 
 		console.error('resource', mask);
 
@@ -86,6 +83,7 @@ export namespace KILL {
 		Sprites.init();
 		Sheets.init();
 
+		YM.init();
 		Fonts.init();
 		
 		Water.init();
@@ -109,6 +107,7 @@ export namespace KILL {
 
 		if (window.location.href.indexOf("#highway") != -1)
 			HighWayWithEveryCar.init();
+
 		else
 			BridgeScenario.init();
 
