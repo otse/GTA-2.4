@@ -435,7 +435,7 @@ export namespace Generators {
 						r: !lane ? 3 : 1
 					};
 
-					let randomCar = parkedCarNames[KILL.floorrandom(parkedCarNames.length)];
+					let randomCar = parkedCarNames[KILL.floor_random(parkedCarNames.length)];
 
 					let parkedCar: Data2 = {
 						type: 'Car',
@@ -538,7 +538,7 @@ export namespace Generators {
 						r: 1
 					};
 					
-					let randomCar = parkedCarNames[KILL.floorrandom(parkedCarNames.length)];
+					let randomCar = parkedCarNames[KILL.floor_random(parkedCarNames.length)];
 
 					let parkedCar: Data2 = {
 						type: 'Car',
@@ -700,7 +700,7 @@ export namespace Generators {
 					Object.assign(pav, object);
 
 					if (extras.WHEEL)
-						pav.r = KILL.floorrandom(4);
+						pav.r = KILL.floor_random(4);
 
 					staging.addData(pav);
 				}

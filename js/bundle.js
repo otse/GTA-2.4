@@ -930,7 +930,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.107,
                 gear3_speed: 0.165,
-                meta: { img_width: 62, img_height: 64, colorless: false }
+                img_width: 62,
+                img_height: 64,
+                colorless: false
             },
             'Wellard': {
                 model: 1,
@@ -954,7 +956,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.125,
                 gear3_speed: 0.228,
-                meta: { img_width: 44, img_height: 64, colorless: false }
+                img_width: 44,
+                img_height: 64,
+                colorless: false
             },
             'Aniston BD4': {
                 model: 2,
@@ -978,7 +982,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.11,
                 gear3_speed: 0.175,
-                meta: { img_width: 62, img_height: 64, colorless: false }
+                img_width: 62,
+                img_height: 64,
+                colorless: false
             },
             'Pacifier': {
                 model: 3,
@@ -1002,7 +1008,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.103,
                 gear3_speed: 0.192,
-                meta: { img_width: 50, img_height: 98, colorless: true }
+                img_width: 50,
+                img_height: 98,
+                colorless: true
             },
             'G4 Bank Van': {
                 model: 4,
@@ -1026,7 +1034,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.081,
                 gear3_speed: 0.13,
-                meta: { img_width: 60, img_height: 104, colorless: true }
+                img_width: 60,
+                img_height: 104,
+                colorless: true
             },
             'Beamer': {
                 model: 5,
@@ -1050,7 +1060,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.185,
                 gear3_speed: 0.275,
-                meta: { img_width: 62, img_height: 64, colorless: false }
+                img_width: 62,
+                img_height: 64,
+                colorless: false
             },
             'Box Car': {
                 model: 6,
@@ -1074,7 +1086,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.152,
                 gear3_speed: 0.228,
-                meta: { img_width: 42, img_height: 128, colorless: true }
+                img_width: 42,
+                img_height: 128,
+                colorless: true
             },
             'Box Truck': {
                 model: 7,
@@ -1098,7 +1112,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.088,
                 gear3_speed: 0.114,
-                meta: { img_width: 52, img_height: 128, colorless: false }
+                img_width: 52,
+                img_height: 128,
+                colorless: false
             },
             'Bug': {
                 model: 8,
@@ -1122,7 +1138,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.125,
                 gear3_speed: 0.152,
-                meta: { img_width: 50, img_height: 52, colorless: false }
+                img_width: 50,
+                img_height: 52,
+                colorless: false
             },
             'Bulwark': {
                 model_corrected: 9,
@@ -1147,7 +1165,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.155,
                 gear3_speed: 0.225,
-                meta: { img_width: 64, img_height: 64, colorless: false }
+                img_width: 64,
+                img_height: 64,
+                colorless: false
             },
             'Bus': {
                 model_corrected: 10,
@@ -1172,7 +1192,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.1,
                 gear3_speed: 0.161,
-                meta: { img_width: 52, img_height: 128, colorless: true }
+                img_width: 52,
+                img_height: 128,
+                colorless: true
             },
             'Cop Car': {
                 model_corrected: 11,
@@ -1197,7 +1219,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.18,
                 gear3_speed: 0.29,
-                meta: { img_width: 58, img_height: 64, colorless: true }
+                img_width: 58,
+                img_height: 64,
+                colorless: true
             },
             'Minx': {
                 model_corrected: 12,
@@ -1222,7 +1246,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.12,
                 gear3_speed: 0.166,
-                meta: { img_width: 58, img_height: 58, colorless: false }
+                img_width: 58,
+                img_height: 58,
+                colorless: false
             },
             'Eddy': {
                 model_corrected: 13,
@@ -1247,7 +1273,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.12,
                 gear3_speed: 0.197,
-                meta: { img_width: 54, img_height: 62, colorless: true }
+                img_width: 54,
+                img_height: 62,
+                colorless: true
             },
             'Panto': {
                 model_corrected: 14,
@@ -1272,7 +1300,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.082,
                 gear3_speed: 0.12,
-                meta: { img_width: 62, img_height: 56, colorless: false }
+                img_width: 62,
+                img_height: 56,
+                colorless: false
             },
             'Fire Truck': {
                 model_corrected: 15,
@@ -1297,7 +1327,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.124,
                 gear3_speed: 0.19,
-                meta: { img_width: 58, img_height: 124, colorless: true }
+                img_width: 58,
+                img_height: 124,
+                colorless: true
             },
             'Shark': {
                 model_corrected: 16,
@@ -1322,7 +1354,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.125,
                 gear3_speed: 0.22,
-                meta: { img_width: 54, img_height: 64, colorless: false }
+                img_width: 54,
+                img_height: 64,
+                colorless: false
             },
             'GT-A1': {
                 model_corrected: 17,
@@ -1347,7 +1381,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.225,
                 gear3_speed: 0.35,
-                meta: { img_width: 54, img_height: 64, colorless: false }
+                img_width: 54,
+                img_height: 64,
+                colorless: false
             },
             'Garbage Truck': {
                 model_corrected: 18,
@@ -1372,7 +1408,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.085,
                 gear3_speed: 0.12,
-                meta: { img_width: 52, img_height: 86, colorless: true }
+                img_width: 52,
+                img_height: 86,
+                colorless: true
             },
             'Armed Land Roamer': {
                 model_corrected: 24,
@@ -1397,7 +1435,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.12,
                 gear3_speed: 0.152,
-                meta: { img_width: 42, img_height: 48, colorless: true }
+                img_width: 42,
+                img_height: 48,
+                colorless: true
             },
             'Hot Dog Van': {
                 model_corrected: 20,
@@ -1422,7 +1462,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.094,
                 gear3_speed: 0.146,
-                meta: { img_width: 58, img_height: 88, colorless: true }
+                img_width: 58,
+                img_height: 88,
+                colorless: true
             },
             'Ice-Cream Van': {
                 model_corrected: 21,
@@ -1447,7 +1489,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.08,
                 gear3_speed: 0.142,
-                meta: { img_width: 58, img_height: 88, colorless: true }
+                img_width: 58,
+                img_height: 88,
+                colorless: true
             },
             'Dementia Limousine': {
                 model_corrected: 22,
@@ -1472,7 +1516,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.111,
                 gear3_speed: 0.173,
-                meta: { img_width: 48, img_height: 78, colorless: false }
+                img_width: 48,
+                img_height: 78,
+                colorless: false
             },
             'Dementia': {
                 model_corrected: 23,
@@ -1497,7 +1543,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.125,
                 gear3_speed: 0.152,
-                meta: { img_width: 50, img_height: 46, colorless: false }
+                img_width: 50,
+                img_height: 46,
+                colorless: false
             },
             'Land Roamer': {
                 model_corrected: 24,
@@ -1522,7 +1570,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.12,
                 gear3_speed: 0.152,
-                meta: { img_width: 42, img_height: 48, colorless: true }
+                img_width: 42,
+                img_height: 48,
+                colorless: true
             },
             'Jefferson': {
                 model_corrected: 25,
@@ -1547,7 +1597,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.2,
                 gear3_speed: 0.3,
-                meta: { img_width: 46, img_height: 62, colorless: false }
+                img_width: 46,
+                img_height: 62,
+                colorless: false
             },
             'Stretch Limousine': {
                 model_corrected: 27,
@@ -1572,7 +1624,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.12,
                 gear3_speed: 0.215,
-                meta: { img_width: 60, img_height: 112, colorless: false }
+                img_width: 60,
+                img_height: 112,
+                colorless: false
             },
             'Sports Limousine': {
                 model_corrected: 28,
@@ -1597,7 +1651,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.135,
                 gear3_speed: 0.23,
-                meta: { img_width: 56, img_height: 110, colorless: false }
+                img_width: 56,
+                img_height: 110,
+                colorless: false
             },
             'Medicar': {
                 model_corrected: 29,
@@ -1622,7 +1678,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.135,
                 gear3_speed: 0.237,
-                meta: { img_width: 62, img_height: 114, colorless: true }
+                img_width: 62,
+                img_height: 114,
+                colorless: true
             },
             'Benson': {
                 model_corrected: 30,
@@ -1647,7 +1705,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.165,
                 gear3_speed: 0.251,
-                meta: { img_width: 38, img_height: 64, colorless: false }
+                img_width: 38,
+                img_height: 64,
+                colorless: false
             },
             'Schmidt': {
                 model_corrected: 31,
@@ -1672,7 +1732,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.1,
                 gear3_speed: 0.15,
-                meta: { img_width: 38, img_height: 56, colorless: false }
+                img_width: 38,
+                img_height: 56,
+                colorless: false
             },
             'Miara': {
                 model_corrected: 32,
@@ -1697,7 +1759,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.145,
                 gear3_speed: 0.245,
-                meta: { img_width: 62, img_height: 64, colorless: false }
+                img_width: 62,
+                img_height: 64,
+                colorless: false
             },
             'Big Bug': {
                 model_corrected: 33,
@@ -1722,7 +1786,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.104,
                 gear3_speed: 0.175,
-                meta: { img_width: 58, img_height: 58, colorless: false }
+                img_width: 58,
+                img_height: 58,
+                colorless: false
             },
             'Morton': {
                 model_corrected: 34,
@@ -1747,7 +1813,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.125,
                 gear3_speed: 0.19,
-                meta: { img_width: 48, img_height: 60, colorless: false }
+                img_width: 48,
+                img_height: 60,
+                colorless: false
             },
             'Maurice': {
                 model_corrected: 35,
@@ -1772,7 +1840,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.12,
                 gear3_speed: 0.175,
-                meta: { img_width: 56, img_height: 58, colorless: false }
+                img_width: 56,
+                img_height: 58,
+                colorless: false
             },
             'Pickup': {
                 model_corrected: 36,
@@ -1797,7 +1867,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.12,
                 gear3_speed: 0.19,
-                meta: { img_width: 58, img_height: 64, colorless: false }
+                img_width: 58,
+                img_height: 64,
+                colorless: false
             },
             'A-Type': {
                 model_corrected: 37,
@@ -1822,7 +1894,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.175,
                 gear3_speed: 0.272,
-                meta: { img_width: 60, img_height: 64, colorless: false }
+                img_width: 60,
+                img_height: 64,
+                colorless: false
             },
             'Arachnid': {
                 model_corrected: 38,
@@ -1847,7 +1921,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.135,
                 gear3_speed: 0.2,
-                meta: { img_width: 54, img_height: 62, colorless: false }
+                img_width: 54,
+                img_height: 62,
+                colorless: false
             },
             'Spritzer': {
                 model_corrected: 39,
@@ -1872,7 +1948,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.125,
                 gear3_speed: 0.162,
-                meta: { img_width: 60, img_height: 56, colorless: false }
+                img_width: 60,
+                img_height: 56,
+                colorless: false
             },
             'Stinger': {
                 model_corrected: 40,
@@ -1897,7 +1975,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.174,
                 gear3_speed: 0.285,
-                meta: { img_width: 52, img_height: 62, colorless: false }
+                img_width: 52,
+                img_height: 62,
+                colorless: false
             },
             'Meteor': {
                 model_corrected: 41,
@@ -1922,7 +2002,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.185,
                 gear3_speed: 0.265,
-                meta: { img_width: 60, img_height: 64, colorless: false }
+                img_width: 60,
+                img_height: 64,
+                colorless: false
             },
             'Meteor Turbo': {
                 model_corrected: 42,
@@ -1947,7 +2029,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.235,
                 gear3_speed: 0.36,
-                meta: { img_width: 60, img_height: 64, colorless: false }
+                img_width: 60,
+                img_height: 64,
+                colorless: false
             },
             'Hachura': {
                 model_corrected: 43,
@@ -1972,7 +2056,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.185,
                 gear3_speed: 0.3,
-                meta: { img_width: 64, img_height: 64, colorless: false }
+                img_width: 64,
+                img_height: 64,
+                colorless: false
             },
             'B-Type': {
                 model_corrected: 44,
@@ -1997,7 +2083,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.174,
                 gear3_speed: 0.29,
-                meta: { img_width: 56, img_height: 64, colorless: false }
+                img_width: 56,
+                img_height: 64,
+                colorless: false
             },
             'Taxi Xpress': {
                 model_corrected: 45,
@@ -2022,7 +2110,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.135,
                 gear3_speed: 0.21,
-                meta: { img_width: 56, img_height: 64, colorless: true }
+                img_width: 56,
+                img_height: 64,
+                colorless: true
             },
             'SWAT Van': {
                 model_corrected: 46,
@@ -2047,7 +2137,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.115,
                 gear3_speed: 0.166,
-                meta: { img_width: 64, img_height: 98, colorless: true }
+                img_width: 64,
+                img_height: 98,
+                colorless: true
             },
             'Michelli Roadster': {
                 model_corrected: 47,
@@ -2072,7 +2164,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.165,
                 gear3_speed: 0.275,
-                meta: { img_width: 50, img_height: 64, colorless: false }
+                img_width: 50,
+                img_height: 64,
+                colorless: false
             },
             'Tank': {
                 model_corrected: 48,
@@ -2097,7 +2191,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.05,
                 gear3_speed: 0.06,
-                meta: { img_width: 46, img_height: 82, colorless: true }
+                img_width: 46,
+                img_height: 82,
+                colorless: true
             },
             'Tanker': {
                 model: 55,
@@ -2121,7 +2217,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.152,
                 gear3_speed: 0.228,
-                meta: { img_width: 44, img_height: 128, colorless: true }
+                img_width: 44,
+                img_height: 128,
+                colorless: true
             },
             'Taxi': {
                 model_corrected: 50,
@@ -2146,7 +2244,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.125,
                 gear3_speed: 0.175,
-                meta: { img_width: 60, img_height: 64, colorless: true }
+                img_width: 60,
+                img_height: 64,
+                colorless: true
             },
             'T-Rex': {
                 model_corrected: 51,
@@ -2171,7 +2271,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.175,
                 gear3_speed: 0.255,
-                meta: { img_width: 60, img_height: 64, colorless: false }
+                img_width: 60,
+                img_height: 64,
+                colorless: false
             },
             'Tow Truck': {
                 model_corrected: 52,
@@ -2196,7 +2298,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.1,
                 gear3_speed: 0.133,
-                meta: { img_width: 58, img_height: 80, colorless: true }
+                img_width: 58,
+                img_height: 80,
+                colorless: true
             },
             'Train': {
                 model: 59,
@@ -2220,7 +2324,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.152,
                 gear3_speed: 0.228,
-                meta: { img_width: 42, img_height: 128, colorless: true }
+                img_width: 42,
+                img_height: 128,
+                colorless: true
             },
             'Train Cab': {
                 model: 60,
@@ -2244,7 +2350,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.152,
                 gear3_speed: 0.228,
-                meta: { img_width: 40, img_height: 128, colorless: true }
+                img_width: 40,
+                img_height: 128,
+                colorless: true
             },
             'Train FB': {
                 model: 61,
@@ -2268,7 +2376,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.152,
                 gear3_speed: 0.228,
-                meta: { img_width: 58, img_height: 74, colorless: true }
+                img_width: 58,
+                img_height: 74,
+                colorless: true
             },
             'Trance-Am': {
                 model_corrected: 56,
@@ -2293,7 +2403,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.152,
                 gear3_speed: 0.25,
-                meta: { img_width: 54, img_height: 64, colorless: false }
+                img_width: 54,
+                img_height: 64,
+                colorless: false
             },
             'Truck Cab': {
                 model_corrected: 57,
@@ -2318,7 +2430,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.075,
                 gear3_speed: 0.108,
-                meta: { img_width: 64, img_height: 64, colorless: false }
+                img_width: 64,
+                img_height: 64,
+                colorless: false
             },
             'Truck Cab SX': {
                 model_corrected: 58,
@@ -2343,7 +2457,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.075,
                 gear3_speed: 0.108,
-                meta: { img_width: 64, img_height: 64, colorless: false }
+                img_width: 64,
+                img_height: 64,
+                colorless: false
             },
             'Container': {
                 model_corrected: 59,
@@ -2368,7 +2484,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0,
                 gear3_speed: 0,
-                meta: { img_width: 42, img_height: 128, colorless: true }
+                img_width: 42,
+                img_height: 128,
+                colorless: true
             },
             'Transporter': {
                 model_corrected: 60,
@@ -2393,7 +2511,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0,
                 gear3_speed: 0,
-                meta: { img_width: 40, img_height: 128, colorless: true }
+                img_width: 40,
+                img_height: 128,
+                colorless: true
             },
             'TV Van': {
                 model_corrected: 61,
@@ -2418,7 +2538,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.1,
                 gear3_speed: 0.14,
-                meta: { img_width: 58, img_height: 74, colorless: false }
+                img_width: 58,
+                img_height: 74,
+                colorless: false
             },
             'Van': {
                 model: 61,
@@ -2442,7 +2564,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.1,
                 gear3_speed: 0.14,
-                meta: { img_width: 58, img_height: 74, colorless: false }
+                img_width: 58,
+                img_height: 74,
+                colorless: false
             },
             'U-Jerk Truck': {
                 model_corrected: 62,
@@ -2467,7 +2591,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.085,
                 gear3_speed: 0.15,
-                meta: { img_width: 54, img_height: 56, colorless: false }
+                img_width: 54,
+                img_height: 56,
+                colorless: false
             },
             'Z-Type': {
                 model_corrected: 44,
@@ -2492,7 +2618,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.19,
                 gear3_speed: 0.284,
-                meta: { img_width: 56, img_height: 64, colorless: false }
+                img_width: 56,
+                img_height: 64,
+                colorless: false
             },
             'Rumbler': {
                 model_corrected: 64,
@@ -2517,7 +2645,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.175,
                 gear3_speed: 0.27,
-                meta: { img_width: 56, img_height: 64, colorless: false }
+                img_width: 56,
+                img_height: 64,
+                colorless: false
             },
             /*'Wreck 0': {
     model: 72,
@@ -2792,7 +2922,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.18,
                 gear3_speed: 0.255,
-                meta: { img_width: 52, img_height: 64, colorless: false }
+                img_width: 52,
+                img_height: 64,
+                colorless: false
             },
             'Furore GT': {
                 model_corrected: 76,
@@ -2817,7 +2949,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.235,
                 gear3_speed: 0.35,
-                meta: { img_width: 50, img_height: 64, colorless: false }
+                img_width: 50,
+                img_height: 64,
+                colorless: false
             },
             'Special Agent Car': {
                 model: 84,
@@ -2841,7 +2975,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.13,
                 gear3_speed: 0.195,
-                meta: { img_width: 64, img_height: 64, colorless: false }
+                img_width: 64,
+                img_height: 64,
+                colorless: false
             },
             'Karma Bus': {
                 model_corrected: 26,
@@ -2866,7 +3002,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.115,
                 gear3_speed: 0.165,
-                meta: { img_width: 44, img_height: 100, colorless: true }
+                img_width: 44,
+                img_height: 100,
+                colorless: true
             }
         };
     })(EveryLineIsAPhysic || (EveryLineIsAPhysic = {}));
@@ -2968,15 +3106,15 @@ var gta_kill = (function (exports, THREE) {
                 const sheet = {
                     file: ``,
                     padding: 4,
-                    width: (physics.meta.img_width * 10) + 9 * 4,
-                    height: (physics.meta.img_height * 2) + 4,
+                    width: (physics.img_width * 10) + 9 * 4,
+                    height: (physics.img_height * 2) + 4,
                     nr: {
                         w: 10,
                         h: 2
                     },
                     piece: {
-                        w: physics.meta.img_width,
-                        h: physics.meta.img_height
+                        w: physics.img_width,
+                        h: physics.img_height
                     }
                 };
                 Cars.deltasSheets[name] = sheet;
@@ -3062,8 +3200,8 @@ var gta_kill = (function (exports, THREE) {
                 let mat = car.material;
                 if (!car.physics || !mat.map.image)
                     continue;
-                if (car.physics.meta.img_width != mat.map.image.width ||
-                    car.physics.meta.img_height != mat.map.image.height)
+                if (car.physics.img_width != mat.map.image.width ||
+                    car.physics.img_height != mat.map.image.height)
                     console.warn(`warning for ${car.data.car}`);
             }
         }
@@ -3079,16 +3217,16 @@ var gta_kill = (function (exports, THREE) {
             if (undefined == data.car)
                 data.car = 'Minx';
             if (undefined == data.spray)
-                data.spray = KILL$1.floorrandom(35);
+                data.spray = KILL$1.floor_random(35);
             this.lift = 1;
             this.physics = EveryLineIsAPhysic$1.get(data.car);
             const model = this.physics.model_corrected || this.physics.model;
-            if (this.physics.meta.colorless)
+            if (this.physics.colorless)
                 data.sty = `sty/car/unpainted/GTA2_CAR_${model}X.bmp`;
             else
                 data.sty = `sty/car/painted/GTA2_CAR_${model}_PAL_${data.spray}.bmp`;
-            data.width = this.physics.meta.img_width;
-            data.height = this.physics.meta.img_height;
+            data.width = this.physics.img_width;
+            data.height = this.physics.img_height;
             this.makeRectangle({
                 blur: `sty/car/blurs/GTA2_CAR_${model}.png`,
                 shadow: data.sty
@@ -3412,7 +3550,7 @@ var gta_kill = (function (exports, THREE) {
             this.timers = {};
             // Defaults
             if (!data.remap)
-                data.remap = 15 + KILL$1.floorrandom(53) - 15;
+                data.remap = 15 + KILL$1.floor_random(53) - 15;
             data.height = data.width = 33;
             if (data.sty) ;
             data.sty = `sty/ped/template_${data.remap}.png`;
@@ -4133,7 +4271,7 @@ var gta_kill = (function (exports, THREE) {
                             z: w[2],
                             r: !lane ? 3 : 1
                         };
-                        let randomCar = parkedCarNames[KILL$1.floorrandom(parkedCarNames.length)];
+                        let randomCar = parkedCarNames[KILL$1.floor_random(parkedCarNames.length)];
                         let parkedCar = {
                             type: 'Car',
                             car: randomCar,
@@ -4213,7 +4351,7 @@ var gta_kill = (function (exports, THREE) {
                             z: w[2],
                             r: 1
                         };
-                        let randomCar = parkedCarNames[KILL$1.floorrandom(parkedCarNames.length)];
+                        let randomCar = parkedCarNames[KILL$1.floor_random(parkedCarNames.length)];
                         let parkedCar = {
                             type: 'Car',
                             car: randomCar,
@@ -4338,7 +4476,7 @@ var gta_kill = (function (exports, THREE) {
                         };
                         Object.assign(pav, object);
                         if (extras.WHEEL)
-                            pav.r = KILL$1.floorrandom(4);
+                            pav.r = KILL$1.floor_random(4);
                         staging.addData(pav);
                     }
                 }
@@ -4726,7 +4864,7 @@ var gta_kill = (function (exports, THREE) {
                 for (let name of Cars$1.Names2) {
                     let physics = EveryLineIsAPhysic$1.get(name);
                     const apartness = 15;
-                    let half_size = (physics.meta.img_height + apartness) / 2 / 64;
+                    let half_size = (physics.img_height + apartness) / 2 / 64;
                     y -= half_size;
                     let car = {
                         type: 'Car',
@@ -4905,10 +5043,10 @@ var gta_kill = (function (exports, THREE) {
     var KILL;
     (function (KILL) {
         var started = false;
-        function floorrandom(n) {
+        function floor_random(n) {
             return Math.floor(Math.random() * n);
         }
-        KILL.floorrandom = floorrandom;
+        KILL.floor_random = floor_random;
         let RESOURCES;
         (function (RESOURCES) {
             RESOURCES[RESOURCES["UNDEFINED_OR_INIT"] = 0] = "UNDEFINED_OR_INIT";

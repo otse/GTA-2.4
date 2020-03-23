@@ -6,6 +6,7 @@ import Peds from "./Peds"
 import Util from "../Random"
 
 import { pedDefs } from "./Anim defs"
+
 import KILL from "../KILL"
 
 
@@ -23,7 +24,7 @@ export class Ped extends Rectangle {
 		super(data);
 
 		// Defaults
-		if (!data.remap) data.remap = 15 + KILL.floorrandom(53) - 15;
+		if (!data.remap) data.remap = 15 + KILL.floor_random(53) - 15;
 
 		data.height = data.width = 33;
 

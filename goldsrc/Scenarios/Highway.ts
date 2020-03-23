@@ -30,7 +30,7 @@ export namespace HighWayWithEveryCar {
 				let physics = EveryLineIsAPhysic.get(name);
 				
 				const apartness = 15;
-				let half_size = (physics.meta.img_height + apartness) / 2 / 64;
+				let half_size = (physics.img_height + apartness) / 2 / 64;
 
 				y -= half_size;
 

@@ -29,12 +29,10 @@ namespace EveryLineIsAPhysic {
 		gear2_speed: number
 		gear3_speed: number
 
-		meta: {
-			img_width
-			img_height
-			colorless
-			air_brakes?
-		}
+		img_width
+		img_height
+		colorless
+		air_brakes?
 	}
 
 	// mapped object type
@@ -80,7 +78,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.107,
 			gear3_speed: 0.165,
-			meta: { img_width: 62, img_height: 64, colorless: false }
+
+			img_width: 62,
+			img_height: 64,
+			colorless: false
 		},
 		'Wellard': {
 			model: 1,
@@ -104,7 +105,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.125,
 			gear3_speed: 0.228,
-			meta: { img_width: 44, img_height: 64, colorless: false }
+
+			img_width: 44,
+			img_height: 64,
+			colorless: false
 		},
 		'Aniston BD4': {
 			model: 2,
@@ -128,7 +132,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.11,
 			gear3_speed: 0.175,
-			meta: { img_width: 62, img_height: 64, colorless: false }
+
+			img_width: 62,
+			img_height: 64,
+			colorless: false
 		},
 		'Pacifier': {
 			model: 3,
@@ -152,7 +159,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.103,
 			gear3_speed: 0.192,
-			meta: { img_width: 50, img_height: 98, colorless: true }
+
+			img_width: 50,
+			img_height: 98,
+			colorless: true
 		},
 		'G4 Bank Van': {
 			model: 4,
@@ -176,7 +186,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.081,
 			gear3_speed: 0.13,
-			meta: { img_width: 60, img_height: 104, colorless: true }
+
+			img_width: 60,
+			img_height: 104,
+			colorless: true
 		},
 		'Beamer': {
 			model: 5,
@@ -200,7 +213,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.185,
 			gear3_speed: 0.275,
-			meta: { img_width: 62, img_height: 64, colorless: false }
+
+			img_width: 62,
+			img_height: 64,
+			colorless: false
 		},
 		'Box Car': {
 			model: 6,
@@ -224,7 +240,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.152,
 			gear3_speed: 0.228,
-			meta: { img_width: 42, img_height: 128, colorless: true }
+
+			img_width: 42,
+			img_height: 128,
+			colorless: true
 		},
 		'Box Truck': {
 			model: 7,
@@ -248,7 +267,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.088,
 			gear3_speed: 0.114,
-			meta: { img_width: 52, img_height: 128, colorless: false }
+
+			img_width: 52,
+			img_height: 128,
+			colorless: false
 		},
 		'Bug': {
 			model: 8,
@@ -272,7 +294,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.125,
 			gear3_speed: 0.152,
-			meta: { img_width: 50, img_height: 52, colorless: false }
+
+			img_width: 50,
+			img_height: 52,
+			colorless: false
 		},
 		'Bulwark': {
 			model_corrected: 9,
@@ -298,7 +323,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.155,
 			gear3_speed: 0.225,
-			meta: { img_width: 64, img_height: 64, colorless: false }
+
+			img_width: 64,
+			img_height: 64,
+			colorless: false
 		},
 		'Bus': {
 			model_corrected: 10,
@@ -324,7 +352,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.1,
 			gear3_speed: 0.161,
-			meta: { img_width: 52, img_height: 128, colorless: true }
+
+			img_width: 52,
+			img_height: 128,
+			colorless: true
 		},
 		'Cop Car': {
 			model_corrected: 11,
@@ -350,7 +381,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.18,
 			gear3_speed: 0.29,
-			meta: { img_width: 58, img_height: 64, colorless: true }
+
+			img_width: 58,
+			img_height: 64,
+			colorless: true
 		},
 		'Minx': {
 			model_corrected: 12,
@@ -376,7 +410,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.12,
 			gear3_speed: 0.166,
-			meta: { img_width: 58, img_height: 58, colorless: false }
+
+			img_width: 58,
+			img_height: 58,
+			colorless: false
 		},
 		'Eddy': {
 			model_corrected: 13,
@@ -402,7 +439,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.12,
 			gear3_speed: 0.197,
-			meta: { img_width: 54, img_height: 62, colorless: true }
+
+			img_width: 54,
+			img_height: 62,
+			colorless: true
 		},
 		'Panto': {
 			model_corrected: 14,
@@ -428,7 +468,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.082,
 			gear3_speed: 0.12,
-			meta: { img_width: 62, img_height: 56, colorless: false }
+
+			img_width: 62,
+			img_height: 56,
+			colorless: false
 		},
 		'Fire Truck': {
 			model_corrected: 15,
@@ -454,7 +497,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.124,
 			gear3_speed: 0.19,
-			meta: { img_width: 58, img_height: 124, colorless: true }
+
+			img_width: 58,
+			img_height: 124,
+			colorless: true
 		},
 		'Shark': {
 			model_corrected: 16,
@@ -480,7 +526,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.125,
 			gear3_speed: 0.22,
-			meta: { img_width: 54, img_height: 64, colorless: false }
+
+			img_width: 54,
+			img_height: 64,
+			colorless: false
 		},
 		'GT-A1': {
 			model_corrected: 17,
@@ -506,7 +555,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.225,
 			gear3_speed: 0.35,
-			meta: { img_width: 54, img_height: 64, colorless: false }
+
+			img_width: 54,
+			img_height: 64,
+			colorless: false
 		},
 		'Garbage Truck': {
 			model_corrected: 18,
@@ -532,7 +584,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.085,
 			gear3_speed: 0.12,
-			meta: { img_width: 52, img_height: 86, colorless: true }
+
+			img_width: 52,
+			img_height: 86,
+			colorless: true
 		},
 		'Armed Land Roamer': {
 			model_corrected: 24,
@@ -558,7 +613,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.12,
 			gear3_speed: 0.152,
-			meta: { img_width: 42, img_height: 48, colorless: true }
+
+			img_width: 42,
+			img_height: 48,
+			colorless: true
 		},
 		'Hot Dog Van': {
 			model_corrected: 20,
@@ -584,7 +642,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.094,
 			gear3_speed: 0.146,
-			meta: { img_width: 58, img_height: 88, colorless: true }
+
+			img_width: 58,
+			img_height: 88,
+			colorless: true
 		},
 		'Ice-Cream Van': {
 			model_corrected: 21,
@@ -610,7 +671,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.08,
 			gear3_speed: 0.142,
-			meta: { img_width: 58, img_height: 88, colorless: true }
+
+			img_width: 58,
+			img_height: 88,
+			colorless: true
 		},
 		'Dementia Limousine': {
 			model_corrected: 22,
@@ -636,7 +700,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.111,
 			gear3_speed: 0.173,
-			meta: { img_width: 48, img_height: 78, colorless: false }
+
+			img_width: 48,
+			img_height: 78,
+			colorless: false
 		},
 		'Dementia': {
 			model_corrected: 23,
@@ -662,7 +729,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.125,
 			gear3_speed: 0.152,
-			meta: { img_width: 50, img_height: 46, colorless: false }
+
+			img_width: 50,
+			img_height: 46,
+			colorless: false
 		},
 		'Land Roamer': {
 			model_corrected: 24,
@@ -688,7 +758,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.12,
 			gear3_speed: 0.152,
-			meta: { img_width: 42, img_height: 48, colorless: true }
+
+			img_width: 42,
+			img_height: 48,
+			colorless: true
 		},
 		'Jefferson': {
 			model_corrected: 25,
@@ -714,7 +787,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.2,
 			gear3_speed: 0.3,
-			meta: { img_width: 46, img_height: 62, colorless: false }
+
+			img_width: 46,
+			img_height: 62,
+			colorless: false
 		},
 		'Stretch Limousine': {
 			model_corrected: 27,
@@ -740,7 +816,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.12,
 			gear3_speed: 0.215,
-			meta: { img_width: 60, img_height: 112, colorless: false }
+
+			img_width: 60,
+			img_height: 112,
+			colorless: false
 		},
 		'Sports Limousine': {
 			model_corrected: 28,
@@ -766,7 +845,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.135,
 			gear3_speed: 0.23,
-			meta: { img_width: 56, img_height: 110, colorless: false }
+
+			img_width: 56,
+			img_height: 110,
+			colorless: false
 		},
 		'Medicar': {
 			model_corrected: 29,
@@ -792,7 +874,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.135,
 			gear3_speed: 0.237,
-			meta: { img_width: 62, img_height: 114, colorless: true }
+
+			img_width: 62,
+			img_height: 114,
+			colorless: true
 		},
 		'Benson': {
 			model_corrected: 30,
@@ -817,7 +902,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.165,
 			gear3_speed: 0.251,
-			meta: { img_width: 38, img_height: 64, colorless: false }
+
+			img_width: 38,
+			img_height: 64,
+			colorless: false
 		},
 		'Schmidt': {
 			model_corrected: 31,
@@ -842,7 +930,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.1,
 			gear3_speed: 0.15,
-			meta: { img_width: 38, img_height: 56, colorless: false }
+
+			img_width: 38,
+			img_height: 56,
+			colorless: false
 		},
 		'Miara': {
 			model_corrected: 32,
@@ -867,7 +958,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.145,
 			gear3_speed: 0.245,
-			meta: { img_width: 62, img_height: 64, colorless: false }
+
+			img_width: 62,
+			img_height: 64,
+			colorless: false
 		},
 		'Big Bug': {
 			model_corrected: 33,
@@ -892,7 +986,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.104,
 			gear3_speed: 0.175,
-			meta: { img_width: 58, img_height: 58, colorless: false }
+
+			img_width: 58,
+			img_height: 58,
+			colorless: false
 		},
 		'Morton': {
 			model_corrected: 34,
@@ -917,7 +1014,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.125,
 			gear3_speed: 0.19,
-			meta: { img_width: 48, img_height: 60, colorless: false }
+
+			img_width: 48,
+			img_height: 60,
+			colorless: false
 		},
 		'Maurice': {
 			model_corrected: 35,
@@ -943,7 +1043,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.12,
 			gear3_speed: 0.175,
-			meta: { img_width: 56, img_height: 58, colorless: false }
+
+			img_width: 56,
+			img_height: 58,
+			colorless: false
 		},
 		'Pickup': {
 			model_corrected: 36,
@@ -968,7 +1071,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.12,
 			gear3_speed: 0.19,
-			meta: { img_width: 58, img_height: 64, colorless: false }
+
+			img_width: 58,
+			img_height: 64,
+			colorless: false
 		},
 		'A-Type': {
 			model_corrected: 37,
@@ -994,7 +1100,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.175,
 			gear3_speed: 0.272,
-			meta: { img_width: 60, img_height: 64, colorless: false }
+
+			img_width: 60,
+			img_height: 64,
+			colorless: false
 		},
 		'Arachnid': {
 			model_corrected: 38,
@@ -1020,7 +1129,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.135,
 			gear3_speed: 0.2,
-			meta: { img_width: 54, img_height: 62, colorless: false }
+
+			img_width: 54,
+			img_height: 62,
+			colorless: false
 		},
 		'Spritzer': {
 			model_corrected: 39,
@@ -1046,7 +1158,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.125,
 			gear3_speed: 0.162,
-			meta: { img_width: 60, img_height: 56, colorless: false }
+
+			img_width: 60,
+			img_height: 56,
+			colorless: false
 		},
 		'Stinger': {
 			model_corrected: 40,
@@ -1072,7 +1187,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.174,
 			gear3_speed: 0.285,
-			meta: { img_width: 52, img_height: 62, colorless: false }
+
+			img_width: 52,
+			img_height: 62,
+			colorless: false
 		},
 		'Meteor': {
 			model_corrected: 41,
@@ -1098,7 +1216,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.185,
 			gear3_speed: 0.265,
-			meta: { img_width: 60, img_height: 64, colorless: false }
+
+			img_width: 60,
+			img_height: 64,
+			colorless: false
 		},
 		'Meteor Turbo': {
 			model_corrected: 42,
@@ -1124,7 +1245,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.235,
 			gear3_speed: 0.36,
-			meta: { img_width: 60, img_height: 64, colorless: false }
+
+			img_width: 60,
+			img_height: 64,
+			colorless: false
 		},
 		'Hachura': {
 			model_corrected: 43,
@@ -1150,7 +1274,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.185,
 			gear3_speed: 0.3,
-			meta: { img_width: 64, img_height: 64, colorless: false }
+
+			img_width: 64,
+			img_height: 64,
+			colorless: false
 		},
 		'B-Type': {
 			model_corrected: 44,
@@ -1176,7 +1303,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.174,
 			gear3_speed: 0.29,
-			meta: { img_width: 56, img_height: 64, colorless: false }
+
+			img_width: 56,
+			img_height: 64,
+			colorless: false
 		},
 		'Taxi Xpress': {
 			model_corrected: 45,
@@ -1202,7 +1332,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.135,
 			gear3_speed: 0.21,
-			meta: { img_width: 56, img_height: 64, colorless: true }
+
+			img_width: 56,
+			img_height: 64,
+			colorless: true
 		},
 		'SWAT Van': {
 			model_corrected: 46,
@@ -1228,7 +1361,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.115,
 			gear3_speed: 0.166,
-			meta: { img_width: 64, img_height: 98, colorless: true }
+
+			img_width: 64,
+			img_height: 98,
+			colorless: true
 		},
 		'Michelli Roadster': {
 			model_corrected: 47,
@@ -1254,7 +1390,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.165,
 			gear3_speed: 0.275,
-			meta: { img_width: 50, img_height: 64, colorless: false }
+
+			img_width: 50,
+			img_height: 64,
+			colorless: false
 		},
 		'Tank': {
 			model_corrected: 48,
@@ -1280,7 +1419,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.05,
 			gear3_speed: 0.06,
-			meta: { img_width: 46, img_height: 82, colorless: true }
+
+			img_width: 46,
+			img_height: 82,
+			colorless: true
 		},
 		'Tanker': {
 			model: 55,
@@ -1304,7 +1446,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.152,
 			gear3_speed: 0.228,
-			meta: { img_width: 44, img_height: 128, colorless: true }
+
+			img_width: 44,
+			img_height: 128,
+			colorless: true
 		},
 		'Taxi': {
 			model_corrected: 50,
@@ -1330,7 +1475,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.125,
 			gear3_speed: 0.175,
-			meta: { img_width: 60, img_height: 64, colorless: true }
+
+			img_width: 60,
+			img_height: 64,
+			colorless: true
 		},
 		'T-Rex': {
 			model_corrected: 51,
@@ -1356,7 +1504,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.175,
 			gear3_speed: 0.255,
-			meta: { img_width: 60, img_height: 64, colorless: false }
+
+			img_width: 60,
+			img_height: 64,
+			colorless: false
 		},
 		'Tow Truck': {
 			model_corrected: 52,
@@ -1382,7 +1533,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.1,
 			gear3_speed: 0.133,
-			meta: { img_width: 58, img_height: 80, colorless: true }
+
+			img_width: 58,
+			img_height: 80,
+			colorless: true
 		},
 		'Train': {
 			model: 59,
@@ -1406,7 +1560,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.152,
 			gear3_speed: 0.228,
-			meta: { img_width: 42, img_height: 128, colorless: true }
+
+			img_width: 42,
+			img_height: 128,
+			colorless: true
 		},
 		'Train Cab': {
 			model: 60,
@@ -1430,7 +1587,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.152,
 			gear3_speed: 0.228,
-			meta: { img_width: 40, img_height: 128, colorless: true }
+
+			img_width: 40,
+			img_height: 128,
+			colorless: true
 		},
 		'Train FB': {
 			model: 61,
@@ -1454,7 +1614,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.152,
 			gear3_speed: 0.228,
-			meta: { img_width: 58, img_height: 74, colorless: true }
+
+			img_width: 58,
+			img_height: 74,
+			colorless: true
 		},
 		'Trance-Am': {
 			model_corrected: 56,
@@ -1480,7 +1643,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.152,
 			gear3_speed: 0.25,
-			meta: { img_width: 54, img_height: 64, colorless: false }
+
+			img_width: 54,
+			img_height: 64,
+			colorless: false
 		},
 		'Truck Cab': {
 			model_corrected: 57,
@@ -1506,7 +1672,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.075,
 			gear3_speed: 0.108,
-			meta: { img_width: 64, img_height: 64, colorless: false }
+
+			img_width: 64,
+			img_height: 64,
+			colorless: false
 		},
 		'Truck Cab SX': {
 			model_corrected: 58,
@@ -1532,7 +1701,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.075,
 			gear3_speed: 0.108,
-			meta: { img_width: 64, img_height: 64, colorless: false }
+
+			img_width: 64,
+			img_height: 64,
+			colorless: false
 		},
 		'Container': {
 			model_corrected: 59,
@@ -1558,7 +1730,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0,
 			gear3_speed: 0,
-			meta: { img_width: 42, img_height: 128, colorless: true }
+
+			img_width: 42,
+			img_height: 128,
+			colorless: true
 		},
 		'Transporter': {
 			model_corrected: 60,
@@ -1584,7 +1759,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0,
 			gear3_speed: 0,
-			meta: { img_width: 40, img_height: 128, colorless: true }
+
+			img_width: 40,
+			img_height: 128,
+			colorless: true
 		},
 		'TV Van': {
 			model_corrected: 61,
@@ -1610,7 +1788,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.1,
 			gear3_speed: 0.14,
-			meta: { img_width: 58, img_height: 74, colorless: false }
+
+			img_width: 58,
+			img_height: 74,
+			colorless: false
 		},
 		'Van': {
 			model: 61,
@@ -1634,7 +1815,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.1,
 			gear3_speed: 0.14,
-			meta: { img_width: 58, img_height: 74, colorless: false }
+
+			img_width: 58,
+			img_height: 74,
+			colorless: false
 		},
 		'U-Jerk Truck': {
 			model_corrected: 62,
@@ -1660,7 +1844,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.085,
 			gear3_speed: 0.15,
-			meta: { img_width: 54, img_height: 56, colorless: false }
+
+			img_width: 54,
+			img_height: 56,
+			colorless: false
 		},
 		'Z-Type': {
 			model_corrected: 44,
@@ -1686,7 +1873,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.19,
 			gear3_speed: 0.284,
-			meta: { img_width: 56, img_height: 64, colorless: false }
+
+			img_width: 56,
+			img_height: 64,
+			colorless: false
 		},
 		'Rumbler': {
 			model_corrected: 64,
@@ -1712,7 +1902,10 @@ namespace EveryLineIsAPhysic {
 			gear3_multiplier: 1,
 			gear2_speed: 0.175,
 			gear3_speed: 0.27,
-			meta: { img_width: 56, img_height: 64, colorless: false }
+
+			img_width: 56,
+			img_height: 64,
+			colorless: false
 		},
 		/*'Wreck 0': {
 model: 72,
@@ -1988,7 +2181,10 @@ image_height: 64
 			gear3_multiplier: 1,
 			gear2_speed: 0.18,
 			gear3_speed: 0.255,
-			meta: { img_width: 52, img_height: 64, colorless: false }
+
+			img_width: 52,
+			img_height: 64,
+			colorless: false
 		},
 		'Furore GT': {
 			model_corrected: 76,
@@ -2014,7 +2210,10 @@ image_height: 64
 			gear3_multiplier: 1,
 			gear2_speed: 0.235,
 			gear3_speed: 0.35,
-			meta: { img_width: 50, img_height: 64, colorless: false }
+
+			img_width: 50,
+			img_height: 64,
+			colorless: false
 		},
 		'Special Agent Car': {
 			model: 84,
@@ -2038,7 +2237,10 @@ image_height: 64
 			gear3_multiplier: 1,
 			gear2_speed: 0.13,
 			gear3_speed: 0.195,
-			meta: { img_width: 64, img_height: 64, colorless: false }
+
+			img_width: 64,
+			img_height: 64,
+			colorless: false
 		},
 		'Karma Bus': {
 			model_corrected: 26,
@@ -2064,7 +2266,10 @@ image_height: 64
 			gear3_multiplier: 1,
 			gear2_speed: 0.115,
 			gear3_speed: 0.165,
-			meta: { img_width: 44, img_height: 100, colorless: true }
+
+			img_width: 44,
+			img_height: 100,
+			colorless: true
 		}
 	}
 }

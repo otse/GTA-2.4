@@ -31,7 +31,7 @@ export namespace KILL {
 
 	var started = false;
 
-	export function floorrandom(n) {
+	export function floor_random(n) {
 		return Math.floor(Math.random() * n)
 	}
 

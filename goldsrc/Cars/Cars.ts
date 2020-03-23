@@ -86,15 +86,15 @@ namespace Cars {
 			const sheet: Sheet = {
 				file: ``,
 				padding: 4,
-				width: (physics.meta.img_width * 10) + 9 * 4,
-				height: (physics.meta.img_height * 2) + 4,
+				width: (physics.img_width * 10) + 9 * 4,
+				height: (physics.img_height * 2) + 4,
 				nr: {
 					w: 10,
 					h: 2
 				},
 				piece: {
-					w: physics.meta.img_width,
-					h: physics.meta.img_height
+					w: physics.img_width,
+					h: physics.img_height
 				}
 			};
 
@@ -222,8 +222,8 @@ namespace Cars {
 			let mat = (car.material as any);
 			if (!car.physics || !mat.map.image)
 				continue;
-			if (car.physics.meta.img_width != mat.map.image.width ||
-				car.physics.meta.img_height != mat.map.image.height)
+			if (car.physics.img_width != mat.map.image.width ||
+				car.physics.img_height != mat.map.image.height)
 				console.warn(`warning for ${car.data.car}`);
 		}
 	}
