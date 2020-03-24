@@ -55,6 +55,8 @@ namespace Cars {
 
 	export function init() {
 		cars = []
+
+		make_sheets();
 	}
 
 	var cars: Car[]
@@ -71,7 +73,7 @@ namespace Cars {
 		cars.splice(cars.indexOf(car), 1)
 	}
 
-	// deltas
+	// deltas (damage / doors / etc)
 
 	export const deltasSheets: { [name: string]: Sheet } = {};
 
@@ -84,7 +86,7 @@ namespace Cars {
 			let physics = APhysic.get(name as any);
 
 			const sheet: Sheet = {
-				file: ``,
+				file: `sty/car/painted_deltas/D_GTA2_CAR_`,
 				padding: 4,
 				width: (physics.x_img_width * 10) + 9 * 4,
 				height: (physics.x_img_height * 2) + 4,
@@ -100,13 +102,9 @@ namespace Cars {
 
 			deltasSheets[name] = sheet;
 		}
-
-		console.log('build car delta sheets');
-
-		(window as any).carsDeltas = deltasSheets;
 	}
 
-	const deltaSquares = {
+	export const deltaSquares = {
 		dent_behind_left: { x: 1, y: 1 },
 		dent_behind_right: { x: 2, y: 1 },
 		dent_front_right: { x: 3, y: 1 },

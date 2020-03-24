@@ -746,7 +746,42 @@ var gta_kill = (function (exports, THREE) {
         function rig() {
         }
         Phong2.rig = rig;
-        function makeRectangle(phongProperties, p) {
+        function carDeltaShader(phongProperties, p) {
+            let material = new THREE.MeshPhongMaterial(phongProperties);
+            material.onBeforeCompile = function (shader) {
+                shader.uniforms.pink = { value: new THREE.Vector3(1, 0, 1) };
+                shader.fragmentShader = shader.fragmentShader.replace(`#define PHONG`, `
+				#define PHONG
+				#define CARDELTASHADER
+			`);
+                shader.fragmentShader = shader.fragmentShader.replace(`#include <map_fragment>`, `
+				#ifdef USE_MAP
+				
+					vec4 texelColor = vec4(0);
+					
+					vec4 mapColor = texture2D( map, vUv );
+
+					//#ifdef PINK
+
+					// Pink
+					if ( mapColor.rgb == vec3(1, 0, 1) ) {
+						mapColor.a = 0.0;
+						mapColor.rgb *= 0.0;
+					}
+
+					texelColor = mapColor;
+
+					texelColor = mapTexelToLinear( texelColor );
+
+					diffuseColor *= texelColor;
+
+				#endif
+			`);
+            };
+            return material;
+        }
+        Phong2.carDeltaShader = carDeltaShader;
+        function rectangleShader(phongProperties, p) {
             let customMaterial = new THREE.MeshPhongMaterial(phongProperties);
             customMaterial.onBeforeCompile = function (shader) {
                 shader.uniforms.blurMap = { value: p.blurMap };
@@ -788,8 +823,8 @@ var gta_kill = (function (exports, THREE) {
             };
             return customMaterial;
         }
-        Phong2.makeRectangle = makeRectangle;
-        function makeRectangleShadow(phongProperties, p) {
+        Phong2.rectangleShader = rectangleShader;
+        function rectangleShadowShader(phongProperties, p) {
             let customMaterial = new THREE.MeshPhongMaterial(phongProperties);
             customMaterial.onBeforeCompile = (shader) => {
                 shader.uniforms.pink = { value: new THREE.Vector3(1, 0, 1) };
@@ -823,7 +858,7 @@ var gta_kill = (function (exports, THREE) {
             }; // onBeforeCompile
             return customMaterial;
         }
-        Phong2.makeRectangleShadow = makeRectangleShadow;
+        Phong2.rectangleShadowShader = rectangleShadowShader;
     })(Phong2 || (Phong2 = {}));
     var Phong2$1 = Phong2;
 
@@ -851,7 +886,7 @@ var gta_kill = (function (exports, THREE) {
             //blurMap.magFilter = LinearFilter;
             let shadowMap = Util$1.loadTexture(info.blur);
             this.geometry = new THREE.PlaneBufferGeometry(this.data.width, this.data.height, 1);
-            this.material = Phong2$1.makeRectangle({
+            this.material = Phong2$1.rectangleShader({
                 name: 'Phong2',
                 transparent: true,
                 map: map,
@@ -859,7 +894,7 @@ var gta_kill = (function (exports, THREE) {
             }, {
                 blurMap: blurMap
             });
-            let materialShadow = Phong2$1.makeRectangleShadow({
+            let materialShadow = Phong2$1.rectangleShadowShader({
                 name: 'Phong2 Shadow',
                 transparent: true,
                 map: blurMap,
@@ -3028,6 +3063,7 @@ var gta_kill = (function (exports, THREE) {
         /// functions
         function init() {
             cars = [];
+            make_sheets();
         }
         Cars.init = init;
         var cars;
@@ -3043,14 +3079,14 @@ var gta_kill = (function (exports, THREE) {
             cars.splice(cars.indexOf(car), 1);
         }
         Cars.remove = remove;
-        // deltas
+        // deltas (damage / doors / etc)
         Cars.deltasSheets = {};
         function make_sheets() {
             const list = APhysic$1.getROList();
             for (let name in list) {
                 let physics = APhysic$1.get(name);
                 const sheet = {
-                    file: ``,
+                    file: `sty/car/painted_deltas/D_GTA2_CAR_`,
                     padding: 4,
                     width: (physics.x_img_width * 10) + 9 * 4,
                     height: (physics.x_img_height * 2) + 4,
@@ -3065,10 +3101,28 @@ var gta_kill = (function (exports, THREE) {
                 };
                 Cars.deltasSheets[name] = sheet;
             }
-            console.log('build car delta sheets');
-            window.carsDeltas = Cars.deltasSheets;
         }
         Cars.make_sheets = make_sheets;
+        Cars.deltaSquares = {
+            dent_behind_left: { x: 1, y: 1 },
+            dent_behind_right: { x: 2, y: 1 },
+            dent_front_right: { x: 3, y: 1 },
+            dent_front_left: { x: 4, y: 1 },
+            dent_in_the_roof_here: { x: 5, y: 1 },
+            tail_light_right: { x: 6, y: 1 },
+            tail_light_left: { x: 6, y: 1 },
+            head_light_right: { x: 7, y: 1 },
+            head_light_left: { x: 7, y: 1 },
+            front_door1: { x: 8, y: 1 },
+            front_door2: { x: 9, y: 1 },
+            front_door3: { x: 10, y: 1 },
+            front_door4: { x: 1, y: 2 },
+            rear_door1: { x: 2, y: 2 },
+            rear_door2: { x: 3, y: 2 },
+            rear_door3: { x: 4, y: 2 },
+            rear_door4: { x: 5, y: 2 },
+            tv_van_dish: { x: 6, y: 2 }
+        };
         Cars.scriptCodes = {
             'Aniston BD4': 'AMDB4',
             'Arachnid': 'SPIDER',
@@ -3164,32 +3218,43 @@ var gta_kill = (function (exports, THREE) {
             if (undefined == data.car)
                 data.car = 'Minx';
             this.lift = 1;
-            this.make();
+            this.make(this.data);
+            this.sheet = Cars$1.deltasSheets[data.car];
+            this.addDelta(Cars$1.deltaSquares.dent_front_left);
         }
         destroy() {
             super.destroy();
             Cars$1.remove(this);
         }
-        make() {
-            this.physics = APhysic$1.get(this.data.car);
+        make(data) {
+            this.physics = APhysic$1.get(data.car);
             const model = this.physics.model;
-            if (this.physics.x_colorless || undefined == this.data.spray)
-                this.data.sty = `sty/car/unpainted/GTA2_CAR_${model}X.bmp`;
-            else
-                this.data.sty = `sty/car/painted/GTA2_CAR_${model}_PAL_${this.data.spray}.bmp`;
-            this.data.width = this.physics.x_img_width;
-            this.data.height = this.physics.x_img_height;
+            if (this.physics.x_colorless || undefined == data.spray) {
+                data.sty = `sty/car/unpainted/GTA2_CAR_${model}X.bmp`;
+                this.deltaSty = `sty/car/pinky_deltas/D_GTA2_CAR_${model}.bmp`;
+            }
+            else {
+                let pal = `_PAL_${data.spray}`;
+                data.sty = `sty/car/painted/GTA2_CAR_${model}${pal}.bmp`;
+                this.deltaSty = `sty/car/painted_deltas/D_GTA2_CAR_${model}${pal}.bmp`;
+            }
+            data.width = this.physics.x_img_width;
+            data.height = this.physics.x_img_height;
             this.makeRectangle({
                 blur: `sty/car/blurs/GTA2_CAR_${model}.png`,
-                shadow: this.data.sty
+                shadow: data.sty
             });
         }
         // deltas
         // simple overlaying meshes
         addDelta(square) {
             let mesh;
-            mesh = new THREE.Mesh(this.geometry.clone(), this.material);
-            mesh.position.set(0, 0, 0.01);
+            let material = Phong2$1.carDeltaShader({
+                transparent: true,
+                map: Util$1.loadTexture(this.deltaSty)
+            }, {});
+            mesh = new THREE.Mesh(this.geometry.clone(), material);
+            mesh.position.set(0, 0, 0.05);
             this.mesh.add(mesh);
             Util$1.UV.fromSheet(mesh.geometry, square, this.sheet);
             return this.deltas[this.deltas.push({

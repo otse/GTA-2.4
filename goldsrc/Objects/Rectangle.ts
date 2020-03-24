@@ -58,7 +58,7 @@ class Rectangle extends Object2 {
 		this.geometry = new PlaneBufferGeometry(
 			this.data.width, this.data.height, 1);
 
-		this.material = Phong2.makeRectangle({
+		this.material = Phong2.rectangleShader({
 			name: 'Phong2',
 			transparent: true,
 			map: map,
@@ -67,7 +67,7 @@ class Rectangle extends Object2 {
 			blurMap: blurMap
 		});
 
-		let materialShadow = Phong2.makeRectangleShadow({
+		let materialShadow = Phong2.rectangleShadowShader({
 			name: 'Phong2 Shadow',
 			transparent: true,
 			map: blurMap,
