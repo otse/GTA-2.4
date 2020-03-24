@@ -8,7 +8,7 @@ import TalkingHead from "../YM/Cutscene/Talking Heads";
 import KILL from "../KILL";
 import Cars from "../Cars/Cars";
 import Points from "../Objects/Points";
-import EveryLineIsAPhysic from "../Cars/Every line is a physic";
+import APhysic from "../Cars/Every line is a physic";
 
 export namespace HighWayWithEveryCar {
 
@@ -27,16 +27,17 @@ export namespace HighWayWithEveryCar {
 
 			for (let name of Cars.Names2) {
 				
-				let physics = EveryLineIsAPhysic.get(name);
+				let physics = APhysic.get(name);
 				
 				const apartness = 15;
-				let half_size = (physics.img_height + apartness) / 2 / 64;
+				let half_size = (physics.x_img_height + apartness) / 2 / 64;
 
 				y -= half_size;
 
 				let car: Data2 = {
 					type: 'Car',
 					car: name,
+					spray: KILL.floor_random(35),
 					x: 10 + x,
 					y: y + 7,
 					z: 0

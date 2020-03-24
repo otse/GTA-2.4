@@ -1,7 +1,7 @@
 import Car from "./Car";
 import KILL from "../KILL";
 import Sheet from "../Sprites/Sheet";
-import EveryLineIsAPhysic from "./Every line is a physic";
+import APhysic from "./Every line is a physic";
 
 namespace Cars {
 
@@ -71,30 +71,30 @@ namespace Cars {
 		cars.splice(cars.indexOf(car), 1)
 	}
 
-	// sheets
+	// deltas
 
 	export const deltasSheets: { [name: string]: Sheet } = {};
 
 	export function make_sheets() {
 
-		const list = EveryLineIsAPhysic.getROList();
+		const list = APhysic.getROList();
 
 		for (let name in list) {
 
-			let physics = EveryLineIsAPhysic.get(name as any);
+			let physics = APhysic.get(name as any);
 
 			const sheet: Sheet = {
 				file: ``,
 				padding: 4,
-				width: (physics.img_width * 10) + 9 * 4,
-				height: (physics.img_height * 2) + 4,
+				width: (physics.x_img_width * 10) + 9 * 4,
+				height: (physics.x_img_height * 2) + 4,
 				nr: {
 					w: 10,
 					h: 2
 				},
 				piece: {
-					w: physics.img_width,
-					h: physics.img_height
+					w: physics.x_img_width,
+					h: physics.x_img_height
 				}
 			};
 
@@ -106,7 +106,7 @@ namespace Cars {
 		(window as any).carsDeltas = deltasSheets;
 	}
 
-	const squares = {
+	const deltaSquares = {
 		dent_behind_left: { x: 1, y: 1 },
 		dent_behind_right: { x: 2, y: 1 },
 		dent_front_right: { x: 3, y: 1 },
@@ -222,8 +222,8 @@ namespace Cars {
 			let mat = (car.material as any);
 			if (!car.physics || !mat.map.image)
 				continue;
-			if (car.physics.img_width != mat.map.image.width ||
-				car.physics.img_height != mat.map.image.height)
+			if (car.physics.x_img_width != mat.map.image.width ||
+				car.physics.x_img_height != mat.map.image.height)
 				console.warn(`warning for ${car.data.car}`);
 		}
 	}

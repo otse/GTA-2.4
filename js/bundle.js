@@ -894,19 +894,19 @@ var gta_kill = (function (exports, THREE) {
     }
 
     // joke taken from the gta wikia when it described nyc.gci
-    var EveryLineIsAPhysic;
-    (function (EveryLineIsAPhysic) {
+    var APhysic;
+    (function (APhysic) {
         function get(needle) {
             const car = list[needle];
             if (!car)
                 console.warn(`Can\'t get physics for car ${needle}`);
             return car || null;
         }
-        EveryLineIsAPhysic.get = get;
+        APhysic.get = get;
         function getROList() {
             return list;
         }
-        EveryLineIsAPhysic.getROList = getROList;
+        APhysic.getROList = getROList;
         const list = {
             'Romero': {
                 model: 0,
@@ -930,9 +930,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.107,
                 gear3_speed: 0.165,
-                img_width: 62,
-                img_height: 64,
-                colorless: false
+                x_img_width: 62,
+                x_img_height: 64,
+                x_colorless: false
             },
             'Wellard': {
                 model: 1,
@@ -956,9 +956,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.125,
                 gear3_speed: 0.228,
-                img_width: 44,
-                img_height: 64,
-                colorless: false
+                x_img_width: 44,
+                x_img_height: 64,
+                x_colorless: false
             },
             'Aniston BD4': {
                 model: 2,
@@ -982,9 +982,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.11,
                 gear3_speed: 0.175,
-                img_width: 62,
-                img_height: 64,
-                colorless: false
+                x_img_width: 62,
+                x_img_height: 64,
+                x_colorless: false
             },
             'Pacifier': {
                 model: 3,
@@ -1008,9 +1008,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.103,
                 gear3_speed: 0.192,
-                img_width: 50,
-                img_height: 98,
-                colorless: true
+                x_img_width: 50,
+                x_img_height: 98,
+                x_colorless: true
             },
             'G4 Bank Van': {
                 model: 4,
@@ -1034,9 +1034,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.081,
                 gear3_speed: 0.13,
-                img_width: 60,
-                img_height: 104,
-                colorless: true
+                x_img_width: 60,
+                x_img_height: 104,
+                x_colorless: true
             },
             'Beamer': {
                 model: 5,
@@ -1060,9 +1060,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.185,
                 gear3_speed: 0.275,
-                img_width: 62,
-                img_height: 64,
-                colorless: false
+                x_img_width: 62,
+                x_img_height: 64,
+                x_colorless: false
             },
             'Box Car': {
                 model: 6,
@@ -1086,9 +1086,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.152,
                 gear3_speed: 0.228,
-                img_width: 42,
-                img_height: 128,
-                colorless: true
+                x_img_width: 42,
+                x_img_height: 128,
+                x_colorless: true
             },
             'Box Truck': {
                 model: 7,
@@ -1112,9 +1112,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.088,
                 gear3_speed: 0.114,
-                img_width: 52,
-                img_height: 128,
-                colorless: false
+                x_img_width: 52,
+                x_img_height: 128,
+                x_colorless: false
             },
             'Bug': {
                 model: 8,
@@ -1138,13 +1138,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.125,
                 gear3_speed: 0.152,
-                img_width: 50,
-                img_height: 52,
-                colorless: false
+                x_img_width: 50,
+                x_img_height: 52,
+                x_colorless: false
             },
             'Bulwark': {
-                model_corrected: 9,
-                model: 10,
+                model: 9,
                 turbo: 0,
                 value: 50,
                 pad: 0,
@@ -1165,13 +1164,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.155,
                 gear3_speed: 0.225,
-                img_width: 64,
-                img_height: 64,
-                colorless: false
+                x_img_width: 64,
+                x_img_height: 64,
+                x_colorless: false
             },
             'Bus': {
-                model_corrected: 10,
-                model: 11,
+                model: 10,
                 turbo: 0,
                 value: 60,
                 pad: 0,
@@ -1192,13 +1190,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.1,
                 gear3_speed: 0.161,
-                img_width: 52,
-                img_height: 128,
-                colorless: true
+                x_img_width: 52,
+                x_img_height: 128,
+                x_colorless: true
             },
             'Cop Car': {
-                model_corrected: 11,
-                model: 12,
+                model: 11,
                 turbo: 1,
                 value: 60,
                 pad: 0,
@@ -1219,13 +1216,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.18,
                 gear3_speed: 0.29,
-                img_width: 58,
-                img_height: 64,
-                colorless: true
+                x_img_width: 58,
+                x_img_height: 64,
+                x_colorless: true
             },
             'Minx': {
-                model_corrected: 12,
-                model: 13,
+                model: 12,
                 turbo: 0,
                 value: 50,
                 pad: 0,
@@ -1246,13 +1242,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.12,
                 gear3_speed: 0.166,
-                img_width: 58,
-                img_height: 58,
-                colorless: false
+                x_img_width: 58,
+                x_img_height: 58,
+                x_colorless: false
             },
             'Eddy': {
-                model_corrected: 13,
-                model: 14,
+                model: 13,
                 turbo: 0,
                 value: 50,
                 pad: 0,
@@ -1273,13 +1268,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.12,
                 gear3_speed: 0.197,
-                img_width: 54,
-                img_height: 62,
-                colorless: true
+                x_img_width: 54,
+                x_img_height: 62,
+                x_colorless: true
             },
             'Panto': {
-                model_corrected: 14,
-                model: 16,
+                model: 14,
                 turbo: 0,
                 value: 10,
                 pad: 0,
@@ -1300,13 +1294,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.082,
                 gear3_speed: 0.12,
-                img_width: 62,
-                img_height: 56,
-                colorless: false
+                x_img_width: 62,
+                x_img_height: 56,
+                x_colorless: false
             },
             'Fire Truck': {
-                model_corrected: 15,
-                model: 17,
+                model: 15,
                 turbo: 0,
                 value: 60,
                 pad: 0,
@@ -1327,13 +1320,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.124,
                 gear3_speed: 0.19,
-                img_width: 58,
-                img_height: 124,
-                colorless: true
+                x_img_width: 58,
+                x_img_height: 124,
+                x_colorless: true
             },
             'Shark': {
-                model_corrected: 16,
-                model: 18,
+                model: 16,
                 turbo: 0,
                 value: 50,
                 pad: 0,
@@ -1354,13 +1346,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.125,
                 gear3_speed: 0.22,
-                img_width: 54,
-                img_height: 64,
-                colorless: false
+                x_img_width: 54,
+                x_img_height: 64,
+                x_colorless: false
             },
             'GT-A1': {
-                model_corrected: 17,
-                model: 19,
+                model: 17,
                 turbo: 1,
                 value: 60,
                 pad: 0,
@@ -1381,13 +1372,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.225,
                 gear3_speed: 0.35,
-                img_width: 54,
-                img_height: 64,
-                colorless: false
+                x_img_width: 54,
+                x_img_height: 64,
+                x_colorless: false
             },
             'Garbage Truck': {
-                model_corrected: 18,
-                model: 21,
+                model: 18,
                 turbo: 0,
                 value: 40,
                 pad: 0,
@@ -1408,13 +1398,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.085,
                 gear3_speed: 0.12,
-                img_width: 52,
-                img_height: 86,
-                colorless: true
+                x_img_width: 52,
+                x_img_height: 86,
+                x_colorless: true
             },
             'Armed Land Roamer': {
-                model_corrected: 24,
-                model: 22,
+                model: 24,
                 turbo: 0,
                 value: 30,
                 pad: 0,
@@ -1435,13 +1424,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.12,
                 gear3_speed: 0.152,
-                img_width: 42,
-                img_height: 48,
-                colorless: true
+                x_img_width: 42,
+                x_img_height: 48,
+                x_colorless: true
             },
             'Hot Dog Van': {
-                model_corrected: 20,
-                model: 23,
+                model: 20,
                 turbo: 0,
                 value: 30,
                 pad: 0,
@@ -1462,13 +1450,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.094,
                 gear3_speed: 0.146,
-                img_width: 58,
-                img_height: 88,
-                colorless: true
+                x_img_width: 58,
+                x_img_height: 88,
+                x_colorless: true
             },
             'Ice-Cream Van': {
-                model_corrected: 21,
-                model: 27,
+                model: 21,
                 turbo: 0,
                 value: 30,
                 pad: 0,
@@ -1489,13 +1476,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.08,
                 gear3_speed: 0.142,
-                img_width: 58,
-                img_height: 88,
-                colorless: true
+                x_img_width: 58,
+                x_img_height: 88,
+                x_colorless: true
             },
             'Dementia Limousine': {
-                model_corrected: 22,
-                model: 28,
+                model: 22,
                 turbo: 0,
                 value: 50,
                 pad: 0,
@@ -1516,13 +1502,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.111,
                 gear3_speed: 0.173,
-                img_width: 48,
-                img_height: 78,
-                colorless: false
+                x_img_width: 48,
+                x_img_height: 78,
+                x_colorless: false
             },
             'Dementia': {
-                model_corrected: 23,
-                model: 29,
+                model: 23,
                 turbo: 0,
                 value: 10,
                 pad: 0,
@@ -1543,13 +1528,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.125,
                 gear3_speed: 0.152,
-                img_width: 50,
-                img_height: 46,
-                colorless: false
+                x_img_width: 50,
+                x_img_height: 46,
+                x_colorless: false
             },
             'Land Roamer': {
-                model_corrected: 24,
-                model: 30,
+                model: 24,
                 turbo: 0,
                 value: 5,
                 pad: 0,
@@ -1570,13 +1554,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.12,
                 gear3_speed: 0.152,
-                img_width: 42,
-                img_height: 48,
-                colorless: true
+                x_img_width: 42,
+                x_img_height: 48,
+                x_colorless: true
             },
             'Jefferson': {
-                model_corrected: 25,
-                model: 31,
+                model: 25,
                 turbo: 1,
                 value: 50,
                 pad: 0,
@@ -1597,13 +1580,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.2,
                 gear3_speed: 0.3,
-                img_width: 46,
-                img_height: 62,
-                colorless: false
+                x_img_width: 46,
+                x_img_height: 62,
+                x_colorless: false
             },
             'Stretch Limousine': {
-                model_corrected: 27,
-                model: 32,
+                model: 27,
                 turbo: 0,
                 value: 50,
                 pad: 0,
@@ -1624,13 +1606,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.12,
                 gear3_speed: 0.215,
-                img_width: 60,
-                img_height: 112,
-                colorless: false
+                x_img_width: 60,
+                x_img_height: 112,
+                x_colorless: false
             },
             'Sports Limousine': {
-                model_corrected: 28,
-                model: 33,
+                model: 28,
                 turbo: 0,
                 value: 50,
                 pad: 0,
@@ -1651,13 +1632,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.135,
                 gear3_speed: 0.23,
-                img_width: 56,
-                img_height: 110,
-                colorless: false
+                x_img_width: 56,
+                x_img_height: 110,
+                x_colorless: false
             },
             'Medicar': {
-                model_corrected: 29,
-                model: 34,
+                model: 29,
                 turbo: 0,
                 value: 50,
                 pad: 0,
@@ -1678,13 +1658,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.135,
                 gear3_speed: 0.237,
-                img_width: 62,
-                img_height: 114,
-                colorless: true
+                x_img_width: 62,
+                x_img_height: 114,
+                x_colorless: true
             },
             'Benson': {
-                model_corrected: 30,
-                model: 35,
+                model: 30,
                 turbo: 1,
                 value: 60,
                 pad: 0,
@@ -1705,13 +1684,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.165,
                 gear3_speed: 0.251,
-                img_width: 38,
-                img_height: 64,
-                colorless: false
+                x_img_width: 38,
+                x_img_height: 64,
+                x_colorless: false
             },
             'Schmidt': {
-                model_corrected: 31,
-                model: 36,
+                model: 31,
                 turbo: 0,
                 value: 50,
                 pad: 0,
@@ -1732,13 +1710,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.1,
                 gear3_speed: 0.15,
-                img_width: 38,
-                img_height: 56,
-                colorless: false
+                x_img_width: 38,
+                x_img_height: 56,
+                x_colorless: false
             },
             'Miara': {
-                model_corrected: 32,
-                model: 37,
+                model: 32,
                 turbo: 0,
                 value: 50,
                 pad: 0,
@@ -1759,13 +1736,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.145,
                 gear3_speed: 0.245,
-                img_width: 62,
-                img_height: 64,
-                colorless: false
+                x_img_width: 62,
+                x_img_height: 64,
+                x_colorless: false
             },
             'Big Bug': {
-                model_corrected: 33,
-                model: 38,
+                model: 33,
                 turbo: 0,
                 value: 30,
                 pad: 0,
@@ -1786,13 +1762,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.104,
                 gear3_speed: 0.175,
-                img_width: 58,
-                img_height: 58,
-                colorless: false
+                x_img_width: 58,
+                x_img_height: 58,
+                x_colorless: false
             },
             'Morton': {
-                model_corrected: 34,
-                model: 39,
+                model: 34,
                 turbo: 0,
                 value: 50,
                 pad: 0,
@@ -1813,13 +1788,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.125,
                 gear3_speed: 0.19,
-                img_width: 48,
-                img_height: 60,
-                colorless: false
+                x_img_width: 48,
+                x_img_height: 60,
+                x_colorless: false
             },
             'Maurice': {
-                model_corrected: 35,
-                model: 40,
+                model: 35,
                 turbo: 0,
                 value: 50,
                 pad: 0,
@@ -1840,13 +1814,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.12,
                 gear3_speed: 0.175,
-                img_width: 56,
-                img_height: 58,
-                colorless: false
+                x_img_width: 56,
+                x_img_height: 58,
+                x_colorless: false
             },
             'Pickup': {
-                model_corrected: 36,
-                model: 41,
+                model: 36,
                 turbo: 0,
                 value: 15,
                 pad: 0,
@@ -1867,13 +1840,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.12,
                 gear3_speed: 0.19,
-                img_width: 58,
-                img_height: 64,
-                colorless: false
+                x_img_width: 58,
+                x_img_height: 64,
+                x_colorless: false
             },
             'A-Type': {
-                model_corrected: 37,
-                model: 42,
+                model: 37,
                 turbo: 1,
                 value: 50,
                 pad: 0,
@@ -1894,13 +1866,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.175,
                 gear3_speed: 0.272,
-                img_width: 60,
-                img_height: 64,
-                colorless: false
+                x_img_width: 60,
+                x_img_height: 64,
+                x_colorless: false
             },
             'Arachnid': {
-                model_corrected: 38,
-                model: 44,
+                model: 38,
                 turbo: 0,
                 value: 50,
                 pad: 0,
@@ -1921,13 +1892,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.135,
                 gear3_speed: 0.2,
-                img_width: 54,
-                img_height: 62,
-                colorless: false
+                x_img_width: 54,
+                x_img_height: 62,
+                x_colorless: false
             },
             'Spritzer': {
-                model_corrected: 39,
-                model: 45,
+                model: 39,
                 turbo: 0,
                 value: 50,
                 pad: 0,
@@ -1948,13 +1918,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.125,
                 gear3_speed: 0.162,
-                img_width: 60,
-                img_height: 56,
-                colorless: false
+                x_img_width: 60,
+                x_img_height: 56,
+                x_colorless: false
             },
             'Stinger': {
-                model_corrected: 40,
-                model: 46,
+                model: 40,
                 turbo: 1,
                 value: 50,
                 pad: 0,
@@ -1975,13 +1944,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.174,
                 gear3_speed: 0.285,
-                img_width: 52,
-                img_height: 62,
-                colorless: false
+                x_img_width: 52,
+                x_img_height: 62,
+                x_colorless: false
             },
             'Meteor': {
-                model_corrected: 41,
-                model: 47,
+                model: 41,
                 turbo: 0,
                 value: 50,
                 pad: 0,
@@ -2002,13 +1970,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.185,
                 gear3_speed: 0.265,
-                img_width: 60,
-                img_height: 64,
-                colorless: false
+                x_img_width: 60,
+                x_img_height: 64,
+                x_colorless: false
             },
             'Meteor Turbo': {
-                model_corrected: 42,
-                model: 48,
+                model: 42,
                 turbo: 1,
                 value: 60,
                 pad: 0,
@@ -2029,13 +1996,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.235,
                 gear3_speed: 0.36,
-                img_width: 60,
-                img_height: 64,
-                colorless: false
+                x_img_width: 60,
+                x_img_height: 64,
+                x_colorless: false
             },
             'Hachura': {
-                model_corrected: 43,
-                model: 49,
+                model: 43,
                 turbo: 0,
                 value: 50,
                 pad: 0,
@@ -2056,13 +2022,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.185,
                 gear3_speed: 0.3,
-                img_width: 64,
-                img_height: 64,
-                colorless: false
+                x_img_width: 64,
+                x_img_height: 64,
+                x_colorless: false
             },
             'B-Type': {
-                model_corrected: 44,
-                model: 50,
+                model: 44,
                 turbo: 1,
                 value: 50,
                 pad: 0,
@@ -2083,13 +2048,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.174,
                 gear3_speed: 0.29,
-                img_width: 56,
-                img_height: 64,
-                colorless: false
+                x_img_width: 56,
+                x_img_height: 64,
+                x_colorless: false
             },
             'Taxi Xpress': {
-                model_corrected: 45,
-                model: 51,
+                model: 45,
                 turbo: 0,
                 value: 50,
                 pad: 0,
@@ -2110,13 +2074,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.135,
                 gear3_speed: 0.21,
-                img_width: 56,
-                img_height: 64,
-                colorless: true
+                x_img_width: 56,
+                x_img_height: 64,
+                x_colorless: true
             },
             'SWAT Van': {
-                model_corrected: 46,
-                model: 52,
+                model: 46,
                 turbo: 0,
                 value: 90,
                 pad: 0,
@@ -2137,13 +2100,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.115,
                 gear3_speed: 0.166,
-                img_width: 64,
-                img_height: 98,
-                colorless: true
+                x_img_width: 64,
+                x_img_height: 98,
+                x_colorless: true
             },
             'Michelli Roadster': {
-                model_corrected: 47,
-                model: 53,
+                model: 47,
                 turbo: 0,
                 value: 50,
                 pad: 0,
@@ -2164,13 +2126,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.165,
                 gear3_speed: 0.275,
-                img_width: 50,
-                img_height: 64,
-                colorless: false
+                x_img_width: 50,
+                x_img_height: 64,
+                x_colorless: false
             },
             'Tank': {
-                model_corrected: 48,
-                model: 54,
+                model: 48,
                 turbo: 0,
                 value: 95,
                 pad: 0,
@@ -2191,9 +2152,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.05,
                 gear3_speed: 0.06,
-                img_width: 46,
-                img_height: 82,
-                colorless: true
+                x_img_width: 46,
+                x_img_height: 82,
+                x_colorless: true
             },
             'Tanker': {
                 model: 55,
@@ -2217,13 +2178,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.152,
                 gear3_speed: 0.228,
-                img_width: 44,
-                img_height: 128,
-                colorless: true
+                x_img_width: 44,
+                x_img_height: 128,
+                x_colorless: true
             },
             'Taxi': {
-                model_corrected: 50,
-                model: 56,
+                model: 50,
                 turbo: 0,
                 value: 50,
                 pad: 0,
@@ -2244,13 +2204,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.125,
                 gear3_speed: 0.175,
-                img_width: 60,
-                img_height: 64,
-                colorless: true
+                x_img_width: 60,
+                x_img_height: 64,
+                x_colorless: true
             },
             'T-Rex': {
-                model_corrected: 51,
-                model: 57,
+                model: 51,
                 turbo: 0,
                 value: 50,
                 pad: 0,
@@ -2271,13 +2230,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.175,
                 gear3_speed: 0.255,
-                img_width: 60,
-                img_height: 64,
-                colorless: false
+                x_img_width: 60,
+                x_img_height: 64,
+                x_colorless: false
             },
             'Tow Truck': {
-                model_corrected: 52,
-                model: 58,
+                model: 52,
                 turbo: 0,
                 value: 30,
                 pad: 0,
@@ -2298,9 +2256,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.1,
                 gear3_speed: 0.133,
-                img_width: 58,
-                img_height: 80,
-                colorless: true
+                x_img_width: 58,
+                x_img_height: 80,
+                x_colorless: true
             },
             'Train': {
                 model: 59,
@@ -2324,9 +2282,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.152,
                 gear3_speed: 0.228,
-                img_width: 42,
-                img_height: 128,
-                colorless: true
+                x_img_width: 42,
+                x_img_height: 128,
+                x_colorless: true
             },
             'Train Cab': {
                 model: 60,
@@ -2350,9 +2308,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.152,
                 gear3_speed: 0.228,
-                img_width: 40,
-                img_height: 128,
-                colorless: true
+                x_img_width: 40,
+                x_img_height: 128,
+                x_colorless: true
             },
             'Train FB': {
                 model: 61,
@@ -2376,13 +2334,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.152,
                 gear3_speed: 0.228,
-                img_width: 58,
-                img_height: 74,
-                colorless: true
+                x_img_width: 58,
+                x_img_height: 74,
+                x_colorless: true
             },
             'Trance-Am': {
-                model_corrected: 56,
-                model: 62,
+                model: 56,
                 turbo: 0,
                 value: 50,
                 pad: 0,
@@ -2403,13 +2360,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.152,
                 gear3_speed: 0.25,
-                img_width: 54,
-                img_height: 64,
-                colorless: false
+                x_img_width: 54,
+                x_img_height: 64,
+                x_colorless: false
             },
             'Truck Cab': {
-                model_corrected: 57,
-                model: 63,
+                model: 57,
                 turbo: 0,
                 value: 40,
                 pad: 0,
@@ -2430,13 +2386,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.075,
                 gear3_speed: 0.108,
-                img_width: 64,
-                img_height: 64,
-                colorless: false
+                x_img_width: 64,
+                x_img_height: 64,
+                x_colorless: false
             },
             'Truck Cab SX': {
-                model_corrected: 58,
-                model: 64,
+                model: 58,
                 turbo: 0,
                 value: 40,
                 pad: 0,
@@ -2457,13 +2412,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.075,
                 gear3_speed: 0.108,
-                img_width: 64,
-                img_height: 64,
-                colorless: false
+                x_img_width: 64,
+                x_img_height: 64,
+                x_colorless: false
             },
             'Container': {
-                model_corrected: 59,
-                model: 65,
+                model: 59,
                 turbo: 0,
                 value: 60,
                 pad: 0,
@@ -2484,13 +2438,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0,
                 gear3_speed: 0,
-                img_width: 42,
-                img_height: 128,
-                colorless: true
+                x_img_width: 42,
+                x_img_height: 128,
+                x_colorless: true
             },
             'Transporter': {
-                model_corrected: 60,
-                model: 66,
+                model: 60,
                 turbo: 0,
                 value: 70,
                 pad: 0,
@@ -2511,13 +2464,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0,
                 gear3_speed: 0,
-                img_width: 40,
-                img_height: 128,
-                colorless: true
+                x_img_width: 40,
+                x_img_height: 128,
+                x_colorless: true
             },
             'TV Van': {
-                model_corrected: 61,
-                model: 67,
+                model: 61,
                 turbo: 0,
                 value: 20,
                 pad: 0,
@@ -2538,9 +2490,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.1,
                 gear3_speed: 0.14,
-                img_width: 58,
-                img_height: 74,
-                colorless: false
+                x_img_width: 58,
+                x_img_height: 74,
+                x_colorless: false
             },
             'Van': {
                 model: 61,
@@ -2564,13 +2516,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.1,
                 gear3_speed: 0.14,
-                img_width: 58,
-                img_height: 74,
-                colorless: false
+                x_img_width: 58,
+                x_img_height: 74,
+                x_colorless: false
             },
             'U-Jerk Truck': {
-                model_corrected: 62,
-                model: 69,
+                model: 62,
                 turbo: 0,
                 value: 20,
                 pad: 0,
@@ -2591,13 +2542,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.085,
                 gear3_speed: 0.15,
-                img_width: 54,
-                img_height: 56,
-                colorless: false
+                x_img_width: 54,
+                x_img_height: 56,
+                x_colorless: false
             },
             'Z-Type': {
-                model_corrected: 44,
-                model: 70,
+                model: 44,
                 turbo: 1,
                 value: 50,
                 pad: 0,
@@ -2618,13 +2568,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.19,
                 gear3_speed: 0.284,
-                img_width: 56,
-                img_height: 64,
-                colorless: false
+                x_img_width: 56,
+                x_img_height: 64,
+                x_colorless: false
             },
             'Rumbler': {
-                model_corrected: 64,
-                model: 71,
+                model: 64,
                 turbo: 1,
                 value: 50,
                 pad: 0,
@@ -2645,9 +2594,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.175,
                 gear3_speed: 0.27,
-                img_width: 56,
-                img_height: 64,
-                colorless: false
+                x_img_width: 56,
+                x_img_height: 64,
+                x_colorless: false
             },
             /*'Wreck 0': {
     model: 72,
@@ -2900,8 +2849,7 @@ var gta_kill = (function (exports, THREE) {
     image_height: 64
             },*/
             'Jagular XK': {
-                model_corrected: 75,
-                model: 82,
+                model: 75,
                 turbo: 0,
                 value: 50,
                 pad: 0,
@@ -2922,13 +2870,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.18,
                 gear3_speed: 0.255,
-                img_width: 52,
-                img_height: 64,
-                colorless: false
+                x_img_width: 52,
+                x_img_height: 64,
+                x_colorless: false
             },
             'Furore GT': {
-                model_corrected: 76,
-                model: 83,
+                model: 76,
                 turbo: 1,
                 value: 50,
                 pad: 0,
@@ -2949,9 +2896,9 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.235,
                 gear3_speed: 0.35,
-                img_width: 50,
-                img_height: 64,
-                colorless: false
+                x_img_width: 50,
+                x_img_height: 64,
+                x_colorless: false
             },
             'Special Agent Car': {
                 model: 84,
@@ -2975,13 +2922,12 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.13,
                 gear3_speed: 0.195,
-                img_width: 64,
-                img_height: 64,
-                colorless: false
+                x_img_width: 64,
+                x_img_height: 64,
+                x_colorless: false
             },
             'Karma Bus': {
-                model_corrected: 26,
-                model: 86,
+                model: 26,
                 turbo: 0,
                 value: 30,
                 pad: 0,
@@ -3002,13 +2948,13 @@ var gta_kill = (function (exports, THREE) {
                 gear3_multiplier: 1,
                 gear2_speed: 0.115,
                 gear3_speed: 0.165,
-                img_width: 44,
-                img_height: 100,
-                colorless: true
+                x_img_width: 44,
+                x_img_height: 100,
+                x_colorless: true
             }
         };
-    })(EveryLineIsAPhysic || (EveryLineIsAPhysic = {}));
-    var EveryLineIsAPhysic$1 = EveryLineIsAPhysic;
+    })(APhysic || (APhysic = {}));
+    var APhysic$1 = APhysic;
 
     var Cars;
     (function (Cars) {
@@ -3097,24 +3043,24 @@ var gta_kill = (function (exports, THREE) {
             cars.splice(cars.indexOf(car), 1);
         }
         Cars.remove = remove;
-        // sheets
+        // deltas
         Cars.deltasSheets = {};
         function make_sheets() {
-            const list = EveryLineIsAPhysic$1.getROList();
+            const list = APhysic$1.getROList();
             for (let name in list) {
-                let physics = EveryLineIsAPhysic$1.get(name);
+                let physics = APhysic$1.get(name);
                 const sheet = {
                     file: ``,
                     padding: 4,
-                    width: (physics.img_width * 10) + 9 * 4,
-                    height: (physics.img_height * 2) + 4,
+                    width: (physics.x_img_width * 10) + 9 * 4,
+                    height: (physics.x_img_height * 2) + 4,
                     nr: {
                         w: 10,
                         h: 2
                     },
                     piece: {
-                        w: physics.img_width,
-                        h: physics.img_height
+                        w: physics.x_img_width,
+                        h: physics.x_img_height
                     }
                 };
                 Cars.deltasSheets[name] = sheet;
@@ -3200,8 +3146,8 @@ var gta_kill = (function (exports, THREE) {
                 let mat = car.material;
                 if (!car.physics || !mat.map.image)
                     continue;
-                if (car.physics.img_width != mat.map.image.width ||
-                    car.physics.img_height != mat.map.image.height)
+                if (car.physics.x_img_width != mat.map.image.width ||
+                    car.physics.x_img_height != mat.map.image.height)
                     console.warn(`warning for ${car.data.car}`);
             }
         }
@@ -3213,28 +3159,59 @@ var gta_kill = (function (exports, THREE) {
     class Car extends Rectangle {
         constructor(data) {
             super(data);
+            this.deltas = [];
             Cars$1.add(this);
             if (undefined == data.car)
                 data.car = 'Minx';
-            if (undefined == data.spray)
-                data.spray = KILL$1.floor_random(35);
             this.lift = 1;
-            this.physics = EveryLineIsAPhysic$1.get(data.car);
-            const model = this.physics.model_corrected || this.physics.model;
-            if (this.physics.colorless)
-                data.sty = `sty/car/unpainted/GTA2_CAR_${model}X.bmp`;
-            else
-                data.sty = `sty/car/painted/GTA2_CAR_${model}_PAL_${data.spray}.bmp`;
-            data.width = this.physics.img_width;
-            data.height = this.physics.img_height;
-            this.makeRectangle({
-                blur: `sty/car/blurs/GTA2_CAR_${model}.png`,
-                shadow: data.sty
-            });
+            this.make();
         }
         destroy() {
             super.destroy();
             Cars$1.remove(this);
+        }
+        make() {
+            this.physics = APhysic$1.get(this.data.car);
+            const model = this.physics.model;
+            if (this.physics.x_colorless || undefined == this.data.spray)
+                this.data.sty = `sty/car/unpainted/GTA2_CAR_${model}X.bmp`;
+            else
+                this.data.sty = `sty/car/painted/GTA2_CAR_${model}_PAL_${this.data.spray}.bmp`;
+            this.data.width = this.physics.x_img_width;
+            this.data.height = this.physics.x_img_height;
+            this.makeRectangle({
+                blur: `sty/car/blurs/GTA2_CAR_${model}.png`,
+                shadow: this.data.sty
+            });
+        }
+        // deltas
+        // simple overlaying meshes
+        addDelta(square) {
+            let mesh;
+            mesh = new THREE.Mesh(this.geometry.clone(), this.material);
+            mesh.position.set(0, 0, 0.01);
+            this.mesh.add(mesh);
+            Util$1.UV.fromSheet(mesh.geometry, square, this.sheet);
+            return this.deltas[this.deltas.push({
+                square: square,
+                mesh: mesh
+            }) - 1];
+        }
+        removeDelta(square) {
+            for (let delta of this.deltas) {
+                if (delta.square != square)
+                    continue;
+                this.mesh.remove(delta.mesh);
+                this.deltas.splice(this.deltas.indexOf(delta), 1);
+                return;
+            }
+        }
+        hasDelta(square) {
+            for (let delta of this.deltas) {
+                if (delta.square == square)
+                    return true;
+            }
+            return false;
         }
     }
 
@@ -4862,13 +4839,14 @@ var gta_kill = (function (exports, THREE) {
                 let y = 0;
                 let j = 0;
                 for (let name of Cars$1.Names2) {
-                    let physics = EveryLineIsAPhysic$1.get(name);
+                    let physics = APhysic$1.get(name);
                     const apartness = 15;
-                    let half_size = (physics.img_height + apartness) / 2 / 64;
+                    let half_size = (physics.x_img_height + apartness) / 2 / 64;
                     y -= half_size;
                     let car = {
                         type: 'Car',
                         car: name,
+                        spray: KILL$1.floor_random(35),
                         x: 10 + x,
                         y: y + 7,
                         z: 0
