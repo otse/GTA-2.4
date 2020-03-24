@@ -11,6 +11,7 @@ import { default as THREE, Mesh, Vector3, ShaderMaterial, PlaneBufferGeometry, M
 
 
 interface Info {
+	map: string;
 	blur: string;
 	shadow: string;
 }
@@ -49,7 +50,7 @@ class Rectangle extends Object2 {
 
 	private makeMeshes(info: Info) {
 
-		let map = Util.loadTexture(this.data.sty);
+		let map = Util.loadTexture(info.map);
 		let blurMap = Util.loadTexture(info.blur);
 		//blurMap.minFilter = LinearFilter;
 		//blurMap.magFilter = LinearFilter;

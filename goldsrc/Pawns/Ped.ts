@@ -47,6 +47,7 @@ export class Ped extends Rectangle {
 		}
 
 		this.makeRectangle({
+			map: data.sty,
 			blur: 'sty/ped/blur.png',
 			shadow: data.sty
 		});

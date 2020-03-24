@@ -880,7 +880,7 @@ var gta_kill = (function (exports, THREE) {
             Rectangles$1.show(this);
         }
         makeMeshes(info) {
-            let map = Util$1.loadTexture(this.data.sty);
+            let map = Util$1.loadTexture(info.map);
             let blurMap = Util$1.loadTexture(info.blur);
             //blurMap.minFilter = LinearFilter;
             //blurMap.magFilter = LinearFilter;
@@ -3229,42 +3229,45 @@ var gta_kill = (function (exports, THREE) {
         make(data) {
             this.physics = APhysic$1.get(data.car);
             const model = this.physics.model;
-            if (this.physics.x_colorless || undefined == data.spray) {
-                data.sty = `sty/car/unpainted/GTA2_CAR_${model}X.bmp`;
+            let unpaint = this.physics.x_colorless || undefined == data.spray;
+            if (unpaint) {
+                this.sty = `sty/car/unpainted/GTA2_CAR_${model}X.bmp`;
                 this.deltaSty = `sty/car/pinky_deltas/D_GTA2_CAR_${model}.bmp`;
             }
             else {
                 let pal = `_PAL_${data.spray}`;
-                data.sty = `sty/car/painted/GTA2_CAR_${model}${pal}.bmp`;
+                this.sty = `sty/car/painted/GTA2_CAR_${model}${pal}.bmp`;
                 this.deltaSty = `sty/car/painted_deltas/D_GTA2_CAR_${model}${pal}.bmp`;
             }
             data.width = this.physics.x_img_width;
             data.height = this.physics.x_img_height;
             this.makeRectangle({
+                map: this.sty,
                 blur: `sty/car/blurs/GTA2_CAR_${model}.png`,
                 shadow: data.sty
             });
         }
         // deltas
-        // simple overlaying meshes
         addDelta(square) {
-            let mesh;
-            let material = Phong2$1.carDeltaShader({
+            const OFFSET = 0.1;
+            let mesh, material;
+            material = Phong2$1.carDeltaShader({
                 transparent: true,
                 map: Util$1.loadTexture(this.deltaSty)
             }, {});
             mesh = new THREE.Mesh(this.geometry.clone(), material);
-            mesh.position.set(0, 0, 0.05);
+            mesh.position.set(0, 0, OFFSET);
             this.mesh.add(mesh);
             Util$1.UV.fromSheet(mesh.geometry, square, this.sheet);
-            return this.deltas[this.deltas.push({
-                square: square,
+            let length = this.deltas.push({
+                sprite: square,
                 mesh: mesh
-            }) - 1];
+            });
+            //return this.deltas[length - 1];
         }
         removeDelta(square) {
             for (let delta of this.deltas) {
-                if (delta.square != square)
+                if (delta.sprite != square)
                     continue;
                 this.mesh.remove(delta.mesh);
                 this.deltas.splice(this.deltas.indexOf(delta), 1);
@@ -3273,7 +3276,7 @@ var gta_kill = (function (exports, THREE) {
         }
         hasDelta(square) {
             for (let delta of this.deltas) {
-                if (delta.square == square)
+                if (delta.sprite == square)
                     return true;
             }
             return false;
@@ -3607,6 +3610,7 @@ var gta_kill = (function (exports, THREE) {
                     };
             }
             this.makeRectangle({
+                map: data.sty,
                 blur: 'sty/ped/blur.png',
                 shadow: data.sty
             });

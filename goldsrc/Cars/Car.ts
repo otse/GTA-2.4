@@ -11,8 +11,8 @@ import Util from "../Random";
 import Sheet from "../Sprites/Sheet";
 import Phong2 from "../Shaders/Phong2";
 
-interface Delta {
-	square: Square
+interface DeltaMesh {
+	sprite: Square
 	mesh: Mesh
 }
 
@@ -22,9 +22,10 @@ export class Car extends Rectangle {
 
 	sheet: Sheet
 
-	deltas: Delta[]
+	deltas: DeltaMesh[]
 
 	deltaSty: string
+	sty: string
 
 	constructor(data: Data2) {
 		super(data);
@@ -55,14 +56,16 @@ export class Car extends Rectangle {
 
 		const model = this.physics.model;
 
-		if (this.physics.x_colorless || undefined == data.spray) {
-			data.sty = `sty/car/unpainted/GTA2_CAR_${model}X.bmp`;
+		let unpaint = this.physics.x_colorless || undefined == data.spray;
+
+		if (unpaint) {
+			this.sty = `sty/car/unpainted/GTA2_CAR_${model}X.bmp`;
 			this.deltaSty = `sty/car/pinky_deltas/D_GTA2_CAR_${model}.bmp`;
 		}
 		else {
 			let pal = `_PAL_${data.spray}`;
 
-			data.sty = `sty/car/painted/GTA2_CAR_${model}${pal}.bmp`;
+			this.sty = `sty/car/painted/GTA2_CAR_${model}${pal}.bmp`;
 			this.deltaSty = `sty/car/painted_deltas/D_GTA2_CAR_${model}${pal}.bmp`;
 		}
 
@@ -70,33 +73,35 @@ export class Car extends Rectangle {
 		data.height = this.physics.x_img_height;
 
 		this.makeRectangle({
+			map: this.sty,
 			blur: `sty/car/blurs/GTA2_CAR_${model}.png`,
 			shadow: data.sty
 		});
 	}
 
 	// deltas
-	// simple overlaying meshes
 
-	addDelta(square: Square) {
-		let mesh;
-		let material = Phong2.carDeltaShader({
+	addDelta(square: Square): void /*Car['delta']*/ {
+		const OFFSET = 0.1;
+		let mesh, material;
+		material = Phong2.carDeltaShader({
 			transparent: true,
 			map: Util.loadTexture(this.deltaSty)
 		}, {});
 		mesh = new Mesh(this.geometry.clone(), material);
-		mesh.position.set(0, 0, 0.05);
+		mesh.position.set(0, 0, OFFSET);
 		this.mesh.add(mesh);
 		Util.UV.fromSheet(mesh.geometry, square, this.sheet);
-		return this.deltas[this.deltas.push({
-			square: square,
+		let length = this.deltas.push({
+			sprite: square,
 			mesh: mesh
-		}) - 1];
+		});
+		//return this.deltas[length - 1];
 	}
 
-	removeDelta(square: Square) {
+	removeDelta(square: Square): void {
 		for (let delta of this.deltas) {
-			if (delta.square != square)
+			if (delta.sprite != square)
 				continue;
 			this.mesh.remove(delta.mesh);
 			this.deltas.splice(this.deltas.indexOf(delta), 1);
@@ -104,9 +109,9 @@ export class Car extends Rectangle {
 		}
 	}
 
-	hasDelta(square: Square) {
+	hasDelta(square: Square): boolean {
 		for (let delta of this.deltas) {
-			if (delta.square == square)
+			if (delta.sprite == square)
 				return true;
 		}
 		return false;
