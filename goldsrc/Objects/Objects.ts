@@ -7,6 +7,7 @@ import Wall from "./Shapes/Wall";
 import Car from "../Cars/Car";
 import Datas from "./Datas";
 import Ply from "../Pawns/Ply";
+import Points from "./Points";
 
 export namespace Objects {
 	function factory(data: Data2): Object2 | null {
@@ -27,7 +28,8 @@ export namespace Objects {
 	}
 
 	export function makeNullable(data: Data2): Object2 | null {
-		if (data.object)
+		console.warn('makeNullable', data.type);
+		if (data.object2)
 			console.warn('Data', data.type, 'has object2');
 		let object = factory(data);
 		if (!object)
@@ -35,13 +37,11 @@ export namespace Objects {
 		return object || null;
 	}
 
-	export function relocate(object: Object2) {
-		let ch = Datas.getChunk(object.data);
-		if (ch != object.chunk) {
-			if (object.chunk)
-				object.chunk._remove(object.data);
-			ch._add(object.data);
-			console.log("relocating", object.data.type);
+	export function relocate(obj: Object2) {
+		let ch = Datas.getChunk(obj.data);
+		if (ch != obj.chunk) {
+			obj.chunk._remove(obj.data);
+			ch._add(obj.data);
 		}
 	}
 }

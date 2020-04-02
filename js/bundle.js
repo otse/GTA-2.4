@@ -153,18 +153,15 @@ var gta_kill = (function (exports, THREE) {
                 data.r -= 4;
             if (data.r < 0)
                 data.r += 4;
-            this.chunk = null;
             this.data = data;
+            this.chunk = Datas$1.getChunk(data);
+            data.object2 = this;
         }
         destroy() {
-            this.destroyed = true;
-            this.data.object = null;
+            this.data.object2 = null;
         }
         update() {
             //console.log('update', this.data.type);
-        }
-        endConstructor() {
-            this.chunk = Datas$1.getChunk(this.data);
         }
     }
 
@@ -776,7 +773,6 @@ var gta_kill = (function (exports, THREE) {
         }
         Rectangles.init = init;
         function show(rectangle) {
-            console.log('Rectangles add ' + rectangle.data.type);
             Four$1.scene.add(rectangle.meshShadow);
             Four$1.scene.add(rectangle.mesh);
         }
@@ -917,7 +913,6 @@ var gta_kill = (function (exports, THREE) {
         constructor(data) {
             super(data);
             this.lift = 2;
-            data.object = this;
             // the Defaults
             if (!this.data.width)
                 this.data.width = 20;
@@ -3266,6 +3261,7 @@ var gta_kill = (function (exports, THREE) {
     class Car extends Rectangle {
         constructor(data) {
             super(data);
+            console.warn('Car', data.car);
             this.deltas = [];
             Cars$1.add(this);
             if (undefined == data.car)
@@ -3274,9 +3270,9 @@ var gta_kill = (function (exports, THREE) {
             this.make(this.data);
             this.sheet = Cars$1.deltasSheets[data.car];
             this.addDelta(Cars$1.deltaSquares.dent_front_left);
-            this.endConstructor();
         }
         destroy() {
+            console.warn('Car destroy');
             super.destroy();
             Cars$1.remove(this);
         }
@@ -3496,9 +3492,9 @@ var gta_kill = (function (exports, THREE) {
     class Ply extends Ped {
         constructor(data) {
             super(data);
-            console.log('ply');
+            console.log('Ply');
             KILL$1.ply = this;
-            this.endConstructor();
+            this.updatePosition();
             window.ply = this;
         }
         update() {
@@ -3551,7 +3547,8 @@ var gta_kill = (function (exports, THREE) {
             }
         }
         function makeNullable(data) {
-            if (data.object)
+            console.warn('makeNullable', data.type);
+            if (data.object2)
                 console.warn('Data', data.type, 'has object2');
             let object = factory(data);
             if (!object)
@@ -3559,13 +3556,11 @@ var gta_kill = (function (exports, THREE) {
             return object || null;
         }
         Objects.makeNullable = makeNullable;
-        function relocate(object) {
-            let ch = Datas$1.getChunk(object.data);
-            if (ch != object.chunk) {
-                if (object.chunk)
-                    object.chunk._remove(object.data);
-                ch._add(object.data);
-                console.log("relocating", object.data.type);
+        function relocate(obj) {
+            let ch = Datas$1.getChunk(obj.data);
+            if (ch != obj.chunk) {
+                obj.chunk._remove(obj.data);
+                ch._add(obj.data);
             }
         }
         Objects.relocate = relocate;
@@ -3584,45 +3579,34 @@ var gta_kill = (function (exports, THREE) {
             Chunks$1.scaffold(this);
         }
         fabricate(data) {
-            let object = Objects$1.makeNullable(data);
-            if (object)
-                this.objects.push(object);
+            if (!data.object2)
+                Objects$1.makeNullable(data);
+            if (data.object2) {
+                data.object2.chunk = this;
+                this.objects.push(data.object2);
+            }
         }
         _update() {
             for (let object of this.objects)
                 object.update();
         }
         _add(data) {
-            let i = this.datas.indexOf(data);
-            if (i < 0)
-                this.datas.push(data);
-            if (this.isActive) {
-                if (!data.object)
-                    this.fabricate(data);
-                data.object.chunk = this;
-                this.objects.push(data.object);
-            }
+            let cat = this.datas.push(data);
+            if (this.isActive)
+                this.fabricate(data);
         }
         _remove(data) {
-            let i = this.datas.indexOf(data);
-            if (i >= 0)
-                this.datas.splice(i, 1);
-            if (data.object) {
-                i = this.objects.indexOf(data.object);
-                if (i >= 0)
-                    this.objects.splice(i, 1);
-                data.object.chunk = undefined;
-            }
+            this.datas.splice(this.datas.indexOf(data), 1);
+            let cow = this.objects.splice(this.objects.indexOf(data.object2), 1);
+            data.object2.chunk = undefined;
         }
         unearth() {
-            console.log('unearth', Points$1.string(this.w));
             this.isActive = true;
             for (let data of this.datas)
                 this.fabricate(data);
             Four$1.scene.add(this.group);
         }
         hide() {
-            console.log('hide', Points$1.string(this.w));
             for (let object of this.objects)
                 object.destroy();
             this.objects.length = 0; // Reset array
@@ -3670,7 +3654,6 @@ var gta_kill = (function (exports, THREE) {
             this.new = Datas$1.big(p);
             if (Points$1.same(this.new, this.old))
                 return;
-            console.log(`${this.old.x} & ${this.old.y} different to ${this.new.x} & ${this.new.y}`);
             this.old = Points$1.copy(this.new);
             this.off();
             this.on();
@@ -3713,7 +3696,7 @@ var gta_kill = (function (exports, THREE) {
             }
         }
     }
-    City.spanUneven = 5;
+    City.spanUneven = 3;
 
     var Sprites;
     (function (Sprites) {
@@ -4652,13 +4635,13 @@ var gta_kill = (function (exports, THREE) {
             console.log('Palm trees init');
             let my_car;
             const load = function () {
-                Generators$1.Roads.twolane(1, [10, -7000, 0], 20000, 'qualityRoads');
+                Generators$1.Roads.twolane(1, [10, -1000, 0], 2000, 'qualityRoads');
                 my_car = {
                     type: 'Car',
-                    car: 'Minx',
+                    car: 'Aniston BD4',
                     spray: Cars$1.Sprays.DARK_GREEN,
                     x: 10.5,
-                    y: 0,
+                    y: -1,
                     z: 0
                 };
                 Datas$1.deliver(my_car);
@@ -4667,7 +4650,7 @@ var gta_kill = (function (exports, THREE) {
             const update = function () {
                 {
                     KILL$1.view = my_car;
-                    my_car.y -= 0.01;
+                    my_car.y -= 0.02;
                     let w = Points$1.real_space(my_car);
                     Four$1.camera.position.x = w.x;
                     Four$1.camera.position.y = w.y;

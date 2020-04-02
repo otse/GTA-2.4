@@ -36,43 +36,33 @@ export class Chunk {
 	}
 
 	private fabricate(data: Data2) {
-		let object = Objects.makeNullable(data);
-		if (object)
-			this.objects.push(object);
+		if (!data.object2)
+			Objects.makeNullable(data);
+		if (data.object2) {
+			data.object2.chunk = this;
+			this.objects.push(data.object2);
+		}
 	}
 
 	_update() {
 		for (let object of this.objects)
 			object.update();
 	}
-	
+
 	_add(data: Data2) {
-		let i = this.datas.indexOf(data);
-		if (i < 0)
-			this.datas.push(data);
-		if (this.isActive) {
-			if (!data.object)
-				this.fabricate(data);
-			data.object.chunk = this;
-			this.objects.push(data.object);
-		}
+		let cat = this.datas.push(data);
+		if (this.isActive)
+			this.fabricate(data);
 	}
 
 	_remove(data: Data2) {
-		let i = this.datas.indexOf(data);
-		if (i >= 0)
-			this.datas.splice(i, 1);
-		if (data.object) {
-			i = this.objects.indexOf(data.object);
-			if (i >= 0)
-				this.objects.splice(i, 1);
-			data.object.chunk = undefined;
-		}
+		this.datas.splice(this.datas.indexOf(data), 1);
+		let cow = this.objects.splice(
+			this.objects.indexOf(data.object2), 1);
+		data.object2.chunk = undefined;
 	}
 
 	unearth() {
-		console.log('unearth', Points.string(this.w));
-		
 		this.isActive = true;
 		for (let data of this.datas)
 			this.fabricate(data);
@@ -80,8 +70,6 @@ export class Chunk {
 	}
 
 	hide() {
-		console.log('hide', Points.string(this.w));
-
 		for (let object of this.objects)
 			object.destroy();
 		this.objects.length = 0; // Reset array

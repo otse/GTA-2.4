@@ -78,8 +78,6 @@ export namespace Four {
 		document.body.appendChild(renderer.domElement);
 
 		window.addEventListener('resize', onWindowResize, false);
-
-
 	}
 
 	function onWindowResize() {

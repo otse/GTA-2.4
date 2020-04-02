@@ -13,11 +13,11 @@ export class Ply extends Ped {
 	constructor(data: Data2) {
 		super(data);
 
-		console.log('ply');
+		console.log('Ply');
 
 		KILL.ply = this;
 
-		this.endConstructor();
+		this.updatePosition();
 
 		(window as any).ply = this;
 	}

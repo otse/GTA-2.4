@@ -8,7 +8,7 @@ import Points from "../Objects/Points"
 
 export class City {
 
-	static spanUneven = 5
+	static spanUneven = 3
 
 	readonly chunkList: ChunkList
 	readonly chunks: Chunk[]
@@ -30,8 +30,6 @@ export class City {
 
 		if (Points.same(this.new, this.old))
 			return;
-		
-		console.log(`${this.old.x} & ${this.old.y} different to ${this.new.x} & ${this.new.y}`);
 
 		this.old = Points.copy(this.new);
 

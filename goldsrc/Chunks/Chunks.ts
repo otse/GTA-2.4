@@ -14,7 +14,7 @@ export namespace Chunks {
 	let blue: THREE.MeshBasicMaterial
 	let purple: THREE.MeshBasicMaterial
 
-	const N = 64 * tileSpan;
+	const N = 64 * tileSpan
 
 	export function init() {
 

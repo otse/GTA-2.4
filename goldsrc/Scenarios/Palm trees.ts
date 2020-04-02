@@ -20,14 +20,14 @@ export namespace PalmTrees {
 		let my_car: Data2;
 		
 		const load = function () {
-			Generators.Roads.twolane(1, [10, -7000, 0], 20000, 'qualityRoads');
+			Generators.Roads.twolane(1, [10, -1000, 0], 2000, 'qualityRoads');
 
 			my_car = {
 				type: 'Car',
-				car: 'Minx',
+				car: 'Aniston BD4',
 				spray: Cars.Sprays.DARK_GREEN,
 				x: 10.5,
-				y: 0,
+				y: -1,
 				z: 0
 			}
 
@@ -43,7 +43,7 @@ export namespace PalmTrees {
 			if (stage == 0) {
 				KILL.view = my_car;
 
-				my_car.y -= 0.01;
+				my_car.y -= 0.02;
 
 				let w = Points.real_space(my_car);
 

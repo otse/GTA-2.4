@@ -32,6 +32,8 @@ export class Car extends Rectangle {
 	constructor(data: Data2) {
 		super(data);
 
+		console.warn('Car', data.car);
+		
 		this.deltas = [];
 
 		Cars.add(this);
@@ -45,11 +47,11 @@ export class Car extends Rectangle {
 		this.sheet = Cars.deltasSheets[data.car];
 
 		this.addDelta(Cars.deltaSquares.dent_front_left);
-
-		this.endConstructor();
 	}
 
 	destroy() {
+		console.warn('Car destroy');
+		
 		super.destroy();
 
 		Cars.remove(this);

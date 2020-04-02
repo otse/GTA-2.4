@@ -32,8 +32,6 @@ class Rectangle extends Object2 {
 	constructor(data: Data2) {
 		super(data);
 
-		data.object = this;
-
 		// the Defaults
 		if (!this.data.width) this.data.width = 20;
 		if (!this.data.height) this.data.height = 20;

@@ -11,9 +11,7 @@ export class Object2 {
 	data: Data2
 
 	chunk: Chunk | null
-
-	destroyed?: boolean
-
+	
 	constructor(data: Data2) {
 		// the Defaults
 		if (!data.x) data.x = 0;
@@ -24,22 +22,19 @@ export class Object2 {
 		if (data.r > 3) data.r -= 4;
 		if (data.r < 0) data.r += 4;
 
-		this.chunk = null;
-
 		this.data = data;
+
+		this.chunk = Datas.getChunk(data);
+
+		data.object2 = this;
 	}
 
 	destroy() {
-		this.destroyed = true;
-		this.data.object = null;
+		this.data.object2 = null;
 	}
 
 	update() {
 		//console.log('update', this.data.type);
-	}
-
-	endConstructor() {
-		this.chunk = Datas.getChunk(this.data);
 	}
 }
 
