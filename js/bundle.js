@@ -4630,26 +4630,19 @@ var gta_kill = (function (exports, THREE) {
         function init() {
             console.log('Palm trees init');
             let dat;
-            let swerves = {};
             const ROADS = 2000;
             const load = function () {
                 Generators$1.Roads.twolane(1, [10, -ROADS + 10, 0], ROADS, 'qualityRoads');
                 dat = {
                     type: 'Car',
-                    car: 'Aniston BD4',
-                    spray: Cars$1.Sprays.DARK_GREEN,
+                    car: 'Miara',
+                    spray: Cars$1.Sprays.BLACK,
                     x: 10.5,
                     y: -1,
                     z: 0
                 };
                 Datas$1.deliver(dat);
                 console.log('loaded palm trees');
-                Generators$1.loop([10, -ROADS + 10, 0], [10, ROADS, 0], (w) => {
-                    let r = (Math.random() - 0.5) / 2;
-                    let p = Points$1.make(w[0], w[1]);
-                    let p2 = Points$1.make(w[0] + 0.5 + r, w[1] - 20);
-                    swerves[Points$1.string(p)] = p2;
-                });
             };
             let stage = 0;
             let swerveAt = 0;
@@ -4659,15 +4652,25 @@ var gta_kill = (function (exports, THREE) {
                 if (stage == 0) {
                     KILL$1.view = dat;
                     dat.y -= 0.07;
+                    if (car) {
+                        let f;
+                        //car.add_delta(Cars.deltaSquares.tail_light_left);
+                        //f = car.add_delta(Cars.deltaSquares.tail_light_right);
+                        //f.mesh.scale.set(-1, 1, 1);
+                        car.add_delta(Cars$1.deltaSquares.head_light_left);
+                        f = car.add_delta(Cars$1.deltaSquares.head_light_right);
+                        f.mesh.scale.set(-1, 1, 1);
+                    }
                     if (--swerveAt <= 0) {
-                        let s = Points$1.string(Points$1.floor(dat));
-                        swerve = swerves[s];
-                        swerveAt = 10;
+                        let r = (Math.random() - 0.5) / 6;
+                        let p = Points$1.make(dat.x + r, dat.y - 60);
+                        swerve = p;
+                        swerveAt = 10 + Math.random() * 5;
                     }
                     let theta = Math.atan2(dat.y - swerve.y, dat.x - swerve.x);
-                    dat.r = theta - Math.PI / 2;
-                    let cos = Math.cos(theta - Math.PI);
-                    dat.x += 0.05 * cos;
+                    let newr = theta - Math.PI / 2;
+                    dat.r = newr;
+                    dat.x += Math.cos(theta - Math.PI);
                     //if (car && my_car.y < -10) {
                     //	my_car.z += 2;
                     //}
