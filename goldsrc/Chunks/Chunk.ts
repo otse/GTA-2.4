@@ -32,7 +32,7 @@ export class Chunk {
 		this.datas = [];
 		this.objects = [];
 
-		Chunks.scaffold(this);
+		//Chunks.scaffold(this);
 	}
 
 	private fabricate(data: Data2) {

@@ -870,14 +870,12 @@ var gta_kill = (function (exports, THREE) {
     class Rectangle extends Object2 {
         constructor(data) {
             super(data);
-            this.lift = 2;
+            this.raise = 2;
             // the Defaults
             if (!this.data.width)
                 this.data.width = 20;
             if (!this.data.height)
                 this.data.height = 20;
-            this.where = new THREE.Vector3;
-            //Ready(); // used by consumer class
         }
         destroy() {
             super.destroy();
@@ -885,12 +883,12 @@ var gta_kill = (function (exports, THREE) {
             this.geometry.dispose();
             this.material.dispose();
         }
-        makeRectangle(params) {
-            this.makeMeshes(params);
-            this.updatePosition();
+        make_rectangle(params) {
+            this.make_meshes(params);
+            this.update_position();
             Rectangles$1.show(this);
         }
-        makeMeshes(info) {
+        make_meshes(info) {
             let map = Util$1.loadTexture(info.map);
             let blurMap = Util$1.loadTexture(info.blur);
             //blurMap.minFilter = LinearFilter;
@@ -921,12 +919,11 @@ var gta_kill = (function (exports, THREE) {
             super.update();
             Objects$1.relocate(this);
         }
-        updatePosition() {
-            this.where.set(this.data.x * 64, this.data.y * 64, this.data.z * 64);
-            this.mesh.position.copy(this.where);
-            this.mesh.position.z += this.lift;
-            // Shade
-            this.meshShadow.position.copy(this.where);
+        update_position() {
+            let where = new THREE.Vector3(this.data.x * 64, this.data.y * 64, this.data.z * 64);
+            this.mesh.position.copy(where);
+            this.mesh.position.z += this.raise;
+            this.meshShadow.position.copy(where);
             this.meshShadow.position.x += 3;
             this.meshShadow.position.y -= 3;
             this.mesh.rotation.z = this.data.r;
@@ -3224,10 +3221,10 @@ var gta_kill = (function (exports, THREE) {
             Cars$1.add(this);
             if (undefined == data.car)
                 data.car = 'Minx';
-            this.lift = 1;
+            this.raise = 1;
             this.make(this.data);
             this.sheet = Cars$1.deltasSheets[data.car];
-            this.addDelta(Cars$1.deltaSquares.dent_front_left);
+            //this.add_delta(Cars.deltaSquares.dent_front_left);
         }
         destroy() {
             console.warn('Car destroy');
@@ -3236,7 +3233,7 @@ var gta_kill = (function (exports, THREE) {
         }
         update() {
             super.update();
-            this.updatePosition();
+            this.update_position();
         }
         make(data) {
             this.physics = APhysic$1.get(data.car);
@@ -3253,13 +3250,13 @@ var gta_kill = (function (exports, THREE) {
             }
             data.width = this.physics.x_img_width;
             data.height = this.physics.x_img_height;
-            this.makeRectangle({
+            this.make_rectangle({
                 map: this.sty,
                 blur: `sty/car/blurs/GTA2_CAR_${model}.png`,
                 shadow: data.sty
             });
         }
-        addDelta(square) {
+        add_delta(square) {
             const OFFSET = 0.1;
             let mesh, material;
             material = Phong2$1.carDeltaShader({
@@ -3276,7 +3273,7 @@ var gta_kill = (function (exports, THREE) {
             });
             return this.deltas[length - 1];
         }
-        removeDelta(square) {
+        remove_delta(square) {
             for (let delta of this.deltas) {
                 if (delta.sprite != square)
                     continue;
@@ -3287,7 +3284,7 @@ var gta_kill = (function (exports, THREE) {
                 return;
             }
         }
-        hasDelta(square) {
+        has_delta(square) {
             for (let delta of this.deltas) {
                 if (delta.sprite == square)
                     return true;
@@ -3458,7 +3455,7 @@ var gta_kill = (function (exports, THREE) {
                         timer: 0
                     };
             }
-            this.makeRectangle({
+            this.make_rectangle({
                 map: data.sty,
                 blur: 'sty/ped/blur.png',
                 shadow: data.sty
@@ -3485,7 +3482,7 @@ var gta_kill = (function (exports, THREE) {
                 this.idle = true;
             }
             //this.Gravitate();
-            this.updatePosition();
+            this.update_position();
         }
     }
 
@@ -3526,7 +3523,7 @@ var gta_kill = (function (exports, THREE) {
                 this.idle = true;
             }
             ////this.gravitate();
-            this.updatePosition();
+            this.update_position();
         }
     }
 
@@ -3575,7 +3572,7 @@ var gta_kill = (function (exports, THREE) {
             this.w = w;
             this.datas = [];
             this.objects = [];
-            Chunks$1.scaffold(this);
+            //Chunks.scaffold(this);
         }
         fabricate(data) {
             if (!data.object)
@@ -4646,10 +4643,22 @@ var gta_kill = (function (exports, THREE) {
                 Datas$1.deliver(my_car);
                 console.log('loaded palm trees');
             };
+            let stage = 0;
             const update = function () {
-                {
+                if (stage == 0) {
                     KILL$1.view = my_car;
-                    my_car.y -= 0.02;
+                    my_car.y -= 0.07;
+                    let w = Points$1.real_space(my_car);
+                    Four$1.camera.position.x = w.x;
+                    Four$1.camera.position.y = w.y;
+                    let car = my_car.object;
+                    if (car && my_car.y < -50) {
+                        car.add_delta(Cars$1.deltaSquares.dent_front_left);
+                        car.add_delta(Cars$1.deltaSquares.dent_front_right);
+                        stage = 1;
+                    }
+                }
+                else if (stage == 1) {
                     let w = Points$1.real_space(my_car);
                     Four$1.camera.position.x = w.x;
                     Four$1.camera.position.y = w.y;

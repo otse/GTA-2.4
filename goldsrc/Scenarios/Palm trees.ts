@@ -43,15 +43,26 @@ export namespace PalmTrees {
 			if (stage == 0) {
 				KILL.view = my_car;
 
-				my_car.y -= 0.02;
+				my_car.y -= 0.07;
 
 				let w = Points.real_space(my_car);
 
 				Four.camera.position.x = w.x;
 				Four.camera.position.y = w.y;
+
+				let car = my_car.object as Car;
+
+				if (car && my_car.y < -50) {
+					car.add_delta(Cars.deltaSquares.dent_front_left);
+					car.add_delta(Cars.deltaSquares.dent_front_right);
+					stage = 1;
+				}
 			}
 			else if (stage == 1) {
+				let w = Points.real_space(my_car);
 
+				Four.camera.position.x = w.x;
+				Four.camera.position.y = w.y;
 			}
 		}
 

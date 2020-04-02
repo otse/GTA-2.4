@@ -46,7 +46,7 @@ export class Ped extends Rectangle {
 				}
 		}
 
-		this.makeRectangle({
+		this.make_rectangle({
 			map: data.sty,
 			blur: 'sty/ped/blur.png',
 			shadow: data.sty
@@ -86,7 +86,7 @@ export class Ped extends Rectangle {
 
 		//this.Gravitate();
 
-		this.updatePosition();
+		this.update_position();
 	}
 
 }

@@ -65,7 +65,7 @@ export class Ply extends Ped {
 
 		////this.gravitate();
 
-		this.updatePosition();
+		this.update_position();
 	}
 }
 

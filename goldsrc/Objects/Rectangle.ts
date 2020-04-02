@@ -25,9 +25,7 @@ class Rectangle extends Object2 {
 	material: ShaderMaterial | MeshPhongMaterial
 	geometry: PlaneBufferGeometry
 
-	where: THREE.Vector3
-
-	lift = 2
+	raise = 2
 
 	constructor(data: Data2) {
 		super(data);
@@ -35,10 +33,6 @@ class Rectangle extends Object2 {
 		// the Defaults
 		if (!this.data.width) this.data.width = 20;
 		if (!this.data.height) this.data.height = 20;
-
-		this.where = new Vector3;
-
-		//Ready(); // used by consumer class
 	}
 
 	destroy() {
@@ -50,15 +44,15 @@ class Rectangle extends Object2 {
 		this.material.dispose();
 	}
 
-	makeRectangle(params: Info) {
-		this.makeMeshes(params);
+	make_rectangle(params: Info) {
+		this.make_meshes(params);
 
-		this.updatePosition();
+		this.update_position();
 
 		Rectangles.show(this);
 	}
 
-	private makeMeshes(info: Info) {
+	private make_meshes(info: Info) {
 
 		let map = Util.loadTexture(info.map);
 		let blurMap = Util.loadTexture(info.blur);
@@ -102,15 +96,13 @@ class Rectangle extends Object2 {
 		Objects.relocate(this);
 	}
 
-	updatePosition() {
-		this.where.set(
+	update_position() {
+		let where = new Vector3(
 			this.data.x * 64, this.data.y * 64, this.data.z * 64);
 
-		this.mesh.position.copy(this.where);
-		this.mesh.position.z += this.lift;
-
-		// Shade
-		this.meshShadow.position.copy(this.where);
+		this.mesh.position.copy(where);
+		this.mesh.position.z += this.raise;
+		this.meshShadow.position.copy(where);
 
 		this.meshShadow.position.x += 3;
 		this.meshShadow.position.y -= 3;
