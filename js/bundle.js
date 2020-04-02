@@ -4647,29 +4647,27 @@ var gta_kill = (function (exports, THREE) {
                 Generators$1.loop([10, -ROADS + 10, 0], [10, ROADS, 0], (w) => {
                     let r = (Math.random() - 0.5) / 2;
                     let p = Points$1.make(w[0], w[1]);
-                    let p2 = Points$1.make(w[0] + 0.5 + r, w[1] - 2);
+                    let p2 = Points$1.make(w[0] + 0.5 + r, w[1] - 20);
                     swerves[Points$1.string(p)] = p2;
                 });
             };
             let stage = 0;
-            let radians = -Math.PI / 2;
+            let swerveAt = 0;
+            let swerve;
             const update = function () {
                 let car = dat.object;
                 if (stage == 0) {
                     KILL$1.view = dat;
                     dat.y -= 0.07;
-                    let s = Points$1.string(Points$1.floor(dat));
-                    let swerve = swerves[s];
-                    let theta = Math.atan2(dat.y - swerve.y, dat.x - swerve.x) - Math.PI / 2;
-                    dat.r = theta;
-                    let cos = Math.cos(radians);
-                    let sin = Math.sin(radians);
-                    dat.x += 0.1 * cos;
-                    dat.y += 0.1 * sin;
-                    if (dat.x > 10.5) {
-                        dat.x += dat.x - 10.5 / 10;
+                    if (--swerveAt <= 0) {
+                        let s = Points$1.string(Points$1.floor(dat));
+                        swerve = swerves[s];
+                        swerveAt = 10;
                     }
-                    if (dat.x < 10.5) ;
+                    let theta = Math.atan2(dat.y - swerve.y, dat.x - swerve.x);
+                    dat.r = theta - Math.PI / 2;
+                    let cos = Math.cos(theta - Math.PI);
+                    dat.x += 0.05 * cos;
                     //if (car && my_car.y < -10) {
                     //	my_car.z += 2;
                     //}
