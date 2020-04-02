@@ -98,6 +98,8 @@ class Rectangle extends Object2 {
 
 	update() {
 		super.update();
+
+		Objects.relocate(this);
 	}
 
 	updatePosition() {
@@ -115,8 +117,6 @@ class Rectangle extends Object2 {
 		
 		this.mesh.rotation.z = this.data.r!;
 		this.meshShadow.rotation.z = this.data.r!;
-
-		Objects.relocate(this);
 	}
 }
 

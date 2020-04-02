@@ -17,8 +17,6 @@ export class Ply extends Ped {
 
 		KILL.ply = this;
 
-		this.updatePosition();
-
 		(window as any).ply = this;
 	}
 

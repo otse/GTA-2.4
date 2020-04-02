@@ -94,48 +94,7 @@ var gta_kill = (function (exports, THREE) {
     })(Chunks || (Chunks = {}));
     var Chunks$1 = Chunks;
 
-    // aka data maker
-    var Datas;
-    (function (Datas) {
-        function big(data) {
-            let w = Points$1.floor2(data.x / Chunks$1.tileSpan, data.y / Chunks$1.tileSpan);
-            return w;
-        }
-        Datas.big = big;
-        function getChunk(data) {
-            let w = big(data);
-            let chunk = KILL$1.city.chunkList.getCreate(w);
-            return chunk;
-        }
-        Datas.getChunk = getChunk;
-        function deliver(data) {
-            let chunk = getChunk(data);
-            chunk._add(data);
-        }
-        Datas.deliver = deliver;
-        function replaceDeliver(A) {
-            let chunk = getChunk(A);
-            let C;
-            for (let B of chunk.datas) {
-                if (B.type == 'Car')
-                    continue;
-                if (A.x == B.x &&
-                    A.y == B.y &&
-                    A.z == B.z) {
-                    C = B;
-                    chunk._remove(B);
-                }
-            }
-            if (C && C.sheet && A.adapt_sheet)
-                A.sheet = C.sheet;
-            chunk._add(A);
-        }
-        Datas.replaceDeliver = replaceDeliver;
-        // for testing
-        window.Datas__ = Datas;
-    })(Datas || (Datas = {}));
-    var Datas$1 = Datas;
-
+    // in 22 this separation was called the whatsit-thing;
     class Object2 {
         constructor(data) {
             // the Defaults
@@ -154,11 +113,10 @@ var gta_kill = (function (exports, THREE) {
             if (data.r < 0)
                 data.r += 4;
             this.data = data;
-            this.chunk = Datas$1.getChunk(data);
-            data.object2 = this;
+            data.object = this;
         }
         destroy() {
-            this.data.object2 = null;
+            this.data.object = null;
         }
         update() {
             //console.log('update', this.data.type);
@@ -961,6 +919,7 @@ var gta_kill = (function (exports, THREE) {
         }
         update() {
             super.update();
+            Objects$1.relocate(this);
         }
         updatePosition() {
             this.where.set(this.data.x * 64, this.data.y * 64, this.data.z * 64);
@@ -972,7 +931,6 @@ var gta_kill = (function (exports, THREE) {
             this.meshShadow.position.y -= 3;
             this.mesh.rotation.z = this.data.r;
             this.meshShadow.rotation.z = this.data.r;
-            Objects$1.relocate(this);
         }
     }
 
@@ -3338,6 +3296,48 @@ var gta_kill = (function (exports, THREE) {
         }
     }
 
+    // aka data maker
+    var Datas;
+    (function (Datas) {
+        function big(data) {
+            let w = Points$1.floor2(data.x / Chunks$1.tileSpan, data.y / Chunks$1.tileSpan);
+            return w;
+        }
+        Datas.big = big;
+        function getChunk(data) {
+            let w = big(data);
+            let chunk = KILL$1.city.chunkList.getCreate(w);
+            return chunk;
+        }
+        Datas.getChunk = getChunk;
+        function deliver(data) {
+            let chunk = getChunk(data);
+            chunk._add(data);
+        }
+        Datas.deliver = deliver;
+        function replaceDeliver(A) {
+            let chunk = getChunk(A);
+            let C;
+            for (let B of chunk.datas) {
+                if (B.type == 'Car')
+                    continue;
+                if (A.x == B.x &&
+                    A.y == B.y &&
+                    A.z == B.z) {
+                    C = B;
+                    chunk._remove(B);
+                }
+            }
+            if (C && C.sheet && A.adapt_sheet)
+                A.sheet = C.sheet;
+            chunk._add(A);
+        }
+        Datas.replaceDeliver = replaceDeliver;
+        // for testing
+        window.Datas__ = Datas;
+    })(Datas || (Datas = {}));
+    var Datas$1 = Datas;
+
     var Anims;
     (function (Anims) {
         function zero(a) {
@@ -3494,7 +3494,6 @@ var gta_kill = (function (exports, THREE) {
             super(data);
             console.log('Ply');
             KILL$1.ply = this;
-            this.updatePosition();
             window.ply = this;
         }
         update() {
@@ -3548,19 +3547,19 @@ var gta_kill = (function (exports, THREE) {
         }
         function makeNullable(data) {
             console.warn('makeNullable', data.type);
-            if (data.object2)
-                console.warn('Data', data.type, 'has object2');
+            if (data.object)
+                console.warn('Data', data.type, 'already has object2');
             let object = factory(data);
             if (!object)
                 console.warn('Object2 not typable');
             return object || null;
         }
         Objects.makeNullable = makeNullable;
-        function relocate(obj) {
-            let ch = Datas$1.getChunk(obj.data);
-            if (ch != obj.chunk) {
-                obj.chunk._remove(obj.data);
-                ch._add(obj.data);
+        function relocate(object) {
+            let chunk = Datas$1.getChunk(object.data);
+            if (chunk != object.chunk) {
+                object.chunk._remove(object.data);
+                chunk._add(object.data);
             }
         }
         Objects.relocate = relocate;
@@ -3579,11 +3578,11 @@ var gta_kill = (function (exports, THREE) {
             Chunks$1.scaffold(this);
         }
         fabricate(data) {
-            if (!data.object2)
+            if (!data.object)
                 Objects$1.makeNullable(data);
-            if (data.object2) {
-                data.object2.chunk = this;
-                this.objects.push(data.object2);
+            if (data.object) {
+                data.object.chunk = this;
+                this.objects.push(data.object);
             }
         }
         _update() {
@@ -3591,14 +3590,14 @@ var gta_kill = (function (exports, THREE) {
                 object.update();
         }
         _add(data) {
-            let cat = this.datas.push(data);
+            this.datas.push(data);
             if (this.isActive)
                 this.fabricate(data);
         }
         _remove(data) {
             this.datas.splice(this.datas.indexOf(data), 1);
-            let cow = this.objects.splice(this.objects.indexOf(data.object2), 1);
-            data.object2.chunk = undefined;
+            this.objects.splice(this.objects.indexOf(data.object), 1);
+            data.object.chunk = undefined;
         }
         unearth() {
             this.isActive = true;

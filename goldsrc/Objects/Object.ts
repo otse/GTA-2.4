@@ -10,7 +10,7 @@ var ignoreData: Data2 = { x: 0, y: 0, z: 0, r: 0, type: 'Ignore' };
 export class Object2 {
 	data: Data2
 
-	chunk: Chunk | null
+	chunk: Chunk
 	
 	constructor(data: Data2) {
 		// the Defaults
@@ -24,13 +24,11 @@ export class Object2 {
 
 		this.data = data;
 
-		this.chunk = Datas.getChunk(data);
-
-		data.object2 = this;
+		data.object = this;
 	}
 
 	destroy() {
-		this.data.object2 = null;
+		this.data.object = null;
 	}
 
 	update() {

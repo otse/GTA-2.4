@@ -36,11 +36,11 @@ export class Chunk {
 	}
 
 	private fabricate(data: Data2) {
-		if (!data.object2)
+		if (!data.object)
 			Objects.makeNullable(data);
-		if (data.object2) {
-			data.object2.chunk = this;
-			this.objects.push(data.object2);
+		if (data.object) {
+			data.object.chunk = this;
+			this.objects.push(data.object);
 		}
 	}
 
@@ -50,16 +50,17 @@ export class Chunk {
 	}
 
 	_add(data: Data2) {
-		let cat = this.datas.push(data);
+		this.datas.push(data);
 		if (this.isActive)
 			this.fabricate(data);
 	}
 
 	_remove(data: Data2) {
-		this.datas.splice(this.datas.indexOf(data), 1);
-		let cow = this.objects.splice(
-			this.objects.indexOf(data.object2), 1);
-		data.object2.chunk = undefined;
+		this.datas.splice(
+			this.datas.indexOf(data), 1);
+		this.objects.splice(
+			this.objects.indexOf(data.object), 1);
+		data.object.chunk = undefined;
 	}
 
 	unearth() {

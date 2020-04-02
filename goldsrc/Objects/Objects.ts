@@ -29,19 +29,19 @@ export namespace Objects {
 
 	export function makeNullable(data: Data2): Object2 | null {
 		console.warn('makeNullable', data.type);
-		if (data.object2)
-			console.warn('Data', data.type, 'has object2');
+		if (data.object)
+			console.warn('Data', data.type, 'already has object2');
 		let object = factory(data);
 		if (!object)
 			console.warn('Object2 not typable');
 		return object || null;
 	}
 
-	export function relocate(obj: Object2) {
-		let ch = Datas.getChunk(obj.data);
-		if (ch != obj.chunk) {
-			obj.chunk._remove(obj.data);
-			ch._add(obj.data);
+	export function relocate(object: Object2) {
+		let chunk = Datas.getChunk(object.data);
+		if (chunk != object.chunk) {
+			object.chunk._remove(object.data);
+			chunk._add(object.data);
 		}
 	}
 }
