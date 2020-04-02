@@ -114,14 +114,14 @@ export namespace KILL {
 
 		started = true;
 
-		if (window.location.href.indexOf("#highway") != -1)
-			HighWayWithEveryCar.init();
+		//if (window.location.href.indexOf("#highway") != -1)
+			//HighWayWithEveryCar.init();
 		
-		else if (window.location.href.indexOf("#palmtrees") != -1)
+		//else if (window.location.href.indexOf("#palmtrees") != -1)
 			PalmTrees.init();
 
-		else
-			BridgeScenario.init();
+		//else
+			//BridgeScenario.init();
 
 		let data: Data2 = {
 			type: 'Ply',
