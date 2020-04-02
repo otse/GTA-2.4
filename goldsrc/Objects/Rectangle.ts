@@ -8,6 +8,7 @@ import Util from "../Random";
 
 import Four from "../Four";
 import { default as THREE, Mesh, Vector3, ShaderMaterial, PlaneBufferGeometry, MeshPhongMaterial, MeshBasicMaterial, NearestFilter, LinearFilter } from 'three';
+import Objects from "./Objects";
 
 
 interface Info {
@@ -31,6 +32,8 @@ class Rectangle extends Object2 {
 	constructor(data: Data2) {
 		super(data);
 
+		data.object = this;
+
 		// the Defaults
 		if (!this.data.width) this.data.width = 20;
 		if (!this.data.height) this.data.height = 20;
@@ -38,6 +41,15 @@ class Rectangle extends Object2 {
 		this.where = new Vector3;
 
 		//Ready(); // used by consumer class
+	}
+
+	destroy() {
+		super.destroy();
+
+		Rectangles.hide(this);
+
+		this.geometry.dispose();
+		this.material.dispose();
 	}
 
 	makeRectangle(params: Info) {
@@ -86,15 +98,6 @@ class Rectangle extends Object2 {
 		this.meshShadow.frustumCulled = false;
 	}
 
-	destroy() {
-		super.destroy();
-
-		Rectangles.hide(this);
-
-		this.geometry.dispose();
-		this.material.dispose();
-	}
-
 	update() {
 		super.update();
 	}
@@ -114,6 +117,8 @@ class Rectangle extends Object2 {
 		
 		this.mesh.rotation.z = this.data.r!;
 		this.meshShadow.rotation.z = this.data.r!;
+
+		Objects.relocate(this);
 	}
 }
 

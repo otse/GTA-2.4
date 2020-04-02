@@ -53,8 +53,8 @@ export namespace GenTools {
 					Object.assign(data, assign);
 
 					// Rebuild idiom
-					chunk.remove(data);
-					chunk.add(data);
+					chunk._remove(data);
+					chunk._add(data);
 				}
 
 			}

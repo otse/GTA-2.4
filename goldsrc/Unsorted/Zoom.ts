@@ -12,7 +12,7 @@ import App from "../App"
 
 namespace Zoom {
 	export var stage = 2
-	export var stages = [150, 300, 600, 1200]
+	export var stages = [150, 300, 600, 1200, 2400]
 
 	let broom = 600
 	let zoom = 600

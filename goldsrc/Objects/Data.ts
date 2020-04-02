@@ -1,4 +1,4 @@
-//import { Object2 } from './object';
+import { Object2 } from './Object';
 
 // todo, obviously simplify this someday
 
@@ -54,7 +54,7 @@ export interface Data2 {
 
 	// meta
 	celled?: boolean;
-	object2?: Object2 | null;
+	object?: Object2 | null;
 	stacked?: boolean;
 
 	// road blend settings

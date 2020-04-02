@@ -23,8 +23,12 @@ import Water from "./Unsorted/Water";
 import Mist from "./Unsorted/Mist";
 import Cars from "./Cars/Cars";
 import YM from "./YM/You me";
+import Datas from "./Objects/Datas";
+import Chunks from "./Chunks/Chunks";
 
 export namespace KILL {
+
+	export var view: Data2;
 
 	export var ply: Ply | null;
 	export var city: City;
@@ -83,6 +87,7 @@ export namespace KILL {
 		Surfaces.init();
 		Blocks.init();
 		BoxCutter.init();
+		Chunks.init();
 		Cars.init();
 		Sprites.init();
 		Sheets.init();
@@ -111,6 +116,9 @@ export namespace KILL {
 
 		if (window.location.href.indexOf("#highway") != -1)
 			HighWayWithEveryCar.init();
+		
+		else if (window.location.href.indexOf("#palmtrees") != -1)
+			PalmTrees.init();
 
 		else
 			BridgeScenario.init();
@@ -122,9 +130,11 @@ export namespace KILL {
 			y: 1,
 			z: 0
 		};
+		view = data;
+		Datas.deliver(data);
 		//data.remap = [40, 46, 47, 49, 50, 51][Math.floor(Math.random() * 6)];
 
-		ply = new Ply(data);
+		//ply = new Ply(data);
 
 		city.chunkList.get2(0, 0);
 		city.chunkList.get2(0, 1);
@@ -135,8 +145,8 @@ export namespace KILL {
 		if (!started)
 			return;
 
-		if (ply)
-			ply.update();
+		//if (ply)
+			//ply.update();
 
 		Water.update();
 		Mist.update();
@@ -145,7 +155,9 @@ export namespace KILL {
 
 		Scenarios.update();
 
-		city.update(ply!.data);
+		city.shift(view);
+		
+		city.update();
 	}
 
 }

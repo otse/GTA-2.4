@@ -1,4 +1,5 @@
 import Chunks from "../Chunks/Chunks";
+import Object2 from "../Objects/Object";
 
 // uneven works well
 const CELL_SPAN = 7;

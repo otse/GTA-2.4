@@ -9,12 +9,7 @@ import KILL from "../KILL";
 // aka data maker
 
 namespace Datas {
-	type z = number;
-
-	//export function Floor(data: Data2) {
-	//	data.x = Math.floor(data.x);
-	//	data.y = Math.floor(data.y);
-	//}
+	type Z = number;
 
 	export function big(data: Point): Point {
 		let w = Points.floor2(
@@ -27,7 +22,7 @@ namespace Datas {
 	export function getChunk(data: Point): Chunk {
 		let w = big(data);
 
-		let chunk = KILL.city.chunkList.get(w);
+		let chunk = KILL.city.chunkList.getCreate(w);
 
 		return chunk;
 	}
@@ -35,7 +30,7 @@ namespace Datas {
 	export function deliver(data: Data2): void {
 		let chunk = getChunk(data);
 
-		chunk.add(data);
+		chunk._add(data);
 	}
 
 	export function replaceDeliver(A: Data2): void {
@@ -50,14 +45,14 @@ namespace Datas {
 				A.y == B.y &&
 				A.z == B.z) {
 				C = B;
-				chunk.remove(B);
+				chunk._remove(B);
 			}
 		}
 
 		if (C && C.sheet && A.adapt_sheet)
 			A.sheet = C.sheet;
 
-		chunk.add(A);
+		chunk._add(A);
 	}
 
 	// for testing

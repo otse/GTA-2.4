@@ -38,14 +38,17 @@ var gta_kill = (function (exports, THREE) {
         }
         Points.string = string;
         function multp(a, n) {
-            let b = copy(a);
-            return make(b.x * n, b.y * n);
+            return make(a.x * n, a.y * n);
         }
         Points.multp = multp;
         function region(a, n) {
             return floor2(a.x / n, a.y / n);
         }
         Points.region = region;
+        function real_space(a) {
+            return multp(a, 64);
+        }
+        Points.real_space = real_space;
         function dist(a, b) {
             const dx = a.x - b.x, dy = a.y - b.y;
             return dx * dx + dy * dy;
@@ -62,20 +65,21 @@ var gta_kill = (function (exports, THREE) {
         let blue;
         let purple;
         const N = 64 * Chunks.tileSpan;
-        function Init() {
+        function init() {
             geometry = new THREE.BoxGeometry(N, N, 0);
             blue = new THREE.MeshBasicMaterial({ wireframe: true, color: 'blue' });
             purple = new THREE.MeshBasicMaterial({ wireframe: true, color: 'purple' });
         }
-        Chunks.Init = Init;
-        function Scaffold(chunk) {
-            chunk.wireframe = new THREE.Mesh(geometry, purple);
-            chunk.wireframe.position.set(((chunk.w.x + 1) * N) - N / 2, ((chunk.w.y + 1) * N) - N / 2, 0);
-            chunk.group.add(chunk.wireframe);
+        Chunks.init = init;
+        function scaffold(chunk) {
+            let nany = chunk;
+            nany.wireframe = new THREE.Mesh(geometry, purple);
+            nany.wireframe.position.set(((chunk.w.x + 1) * N) - N / 2, ((chunk.w.y + 1) * N) - N / 2, 0);
+            chunk.group.add(nany.wireframe);
         }
-        Chunks.Scaffold = Scaffold;
-        // This is the visibility test
-        function Vis(chunk, p) {
+        Chunks.scaffold = scaffold;
+        // The Test
+        function vis(chunk, p) {
             const m = Math.ceil(City.spanUneven / 2);
             const d = Points$1.make(Math.abs(p.x - chunk.w.x), Math.abs(p.y - chunk.w.y));
             const outside = !(d.x > m || d.y > m);
@@ -86,11 +90,52 @@ var gta_kill = (function (exports, THREE) {
                     wideSpan ? purple : blue;
             return insideSpan;
         }
-        Chunks.Vis = Vis;
+        Chunks.vis = vis;
     })(Chunks || (Chunks = {}));
     var Chunks$1 = Chunks;
 
-    // in 22 this separation was called the whatsit-thing;
+    // aka data maker
+    var Datas;
+    (function (Datas) {
+        function big(data) {
+            let w = Points$1.floor2(data.x / Chunks$1.tileSpan, data.y / Chunks$1.tileSpan);
+            return w;
+        }
+        Datas.big = big;
+        function getChunk(data) {
+            let w = big(data);
+            let chunk = KILL$1.city.chunkList.getCreate(w);
+            return chunk;
+        }
+        Datas.getChunk = getChunk;
+        function deliver(data) {
+            let chunk = getChunk(data);
+            chunk._add(data);
+        }
+        Datas.deliver = deliver;
+        function replaceDeliver(A) {
+            let chunk = getChunk(A);
+            let C;
+            for (let B of chunk.datas) {
+                if (B.type == 'Car')
+                    continue;
+                if (A.x == B.x &&
+                    A.y == B.y &&
+                    A.z == B.z) {
+                    C = B;
+                    chunk._remove(B);
+                }
+            }
+            if (C && C.sheet && A.adapt_sheet)
+                A.sheet = C.sheet;
+            chunk._add(A);
+        }
+        Datas.replaceDeliver = replaceDeliver;
+        // for testing
+        window.Datas__ = Datas;
+    })(Datas || (Datas = {}));
+    var Datas$1 = Datas;
+
     class Object2 {
         constructor(data) {
             // the Defaults
@@ -108,13 +153,18 @@ var gta_kill = (function (exports, THREE) {
                 data.r -= 4;
             if (data.r < 0)
                 data.r += 4;
+            this.chunk = null;
             this.data = data;
         }
         destroy() {
             this.destroyed = true;
-            this.data.object2 = null;
+            this.data.object = null;
         }
         update() {
+            //console.log('update', this.data.type);
+        }
+        endConstructor() {
+            this.chunk = Datas$1.getChunk(this.data);
         }
     }
 
@@ -586,6 +636,7 @@ var gta_kill = (function (exports, THREE) {
             delete this.geometry;
             delete this.material;
         }
+        update() { }
         make() {
             this.geometry = Surfaces$1.geometry.clone();
             const hasSheet = this.data.sheet && this.data.sprite;
@@ -866,6 +917,7 @@ var gta_kill = (function (exports, THREE) {
         constructor(data) {
             super(data);
             this.lift = 2;
+            data.object = this;
             // the Defaults
             if (!this.data.width)
                 this.data.width = 20;
@@ -873,6 +925,12 @@ var gta_kill = (function (exports, THREE) {
                 this.data.height = 20;
             this.where = new THREE.Vector3;
             //Ready(); // used by consumer class
+        }
+        destroy() {
+            super.destroy();
+            Rectangles$1.hide(this);
+            this.geometry.dispose();
+            this.material.dispose();
         }
         makeRectangle(params) {
             this.makeMeshes(params);
@@ -906,12 +964,6 @@ var gta_kill = (function (exports, THREE) {
             this.meshShadow = new THREE__default.Mesh(this.geometry, materialShadow);
             this.meshShadow.frustumCulled = false;
         }
-        destroy() {
-            super.destroy();
-            Rectangles$1.hide(this);
-            this.geometry.dispose();
-            this.material.dispose();
-        }
         update() {
             super.update();
         }
@@ -925,6 +977,7 @@ var gta_kill = (function (exports, THREE) {
             this.meshShadow.position.y -= 3;
             this.mesh.rotation.z = this.data.r;
             this.meshShadow.rotation.z = this.data.r;
+            Objects$1.relocate(this);
         }
     }
 
@@ -3221,10 +3274,15 @@ var gta_kill = (function (exports, THREE) {
             this.make(this.data);
             this.sheet = Cars$1.deltasSheets[data.car];
             this.addDelta(Cars$1.deltaSquares.dent_front_left);
+            this.endConstructor();
         }
         destroy() {
             super.destroy();
             Cars$1.remove(this);
+        }
+        update() {
+            super.update();
+            this.updatePosition();
         }
         make(data) {
             this.physics = APhysic$1.get(data.car);
@@ -3247,7 +3305,6 @@ var gta_kill = (function (exports, THREE) {
                 shadow: data.sty
             });
         }
-        // deltas
         addDelta(square) {
             const OFFSET = 0.1;
             let mesh, material;
@@ -3263,7 +3320,7 @@ var gta_kill = (function (exports, THREE) {
                 sprite: square,
                 mesh: mesh
             });
-            //return this.deltas[length - 1];
+            return this.deltas[length - 1];
         }
         removeDelta(square) {
             for (let delta of this.deltas) {
@@ -3271,6 +3328,8 @@ var gta_kill = (function (exports, THREE) {
                     continue;
                 this.mesh.remove(delta.mesh);
                 this.deltas.splice(this.deltas.indexOf(delta), 1);
+                delta.mesh.geometry.dispose();
+                delta.mesh.material.dispose();
                 return;
             }
         }
@@ -3282,212 +3341,6 @@ var gta_kill = (function (exports, THREE) {
             return false;
         }
     }
-
-    var Objects;
-    (function (Objects) {
-        function factory(data) {
-            switch (data.type) {
-                //case 'Ped': return new Ped(data);
-                //case 'Player': return new Player(data);
-                case 'Car': return new Car(data);
-                case 'Block': return new Block(data);
-                case 'Surface': return new Surface(data);
-                case 'Wall': return new Wall(data);
-                //case 'Lamp': return new Lamp(data);
-                default:
-                    return null;
-            }
-        }
-        function makeNullable(data) {
-            if (data.object2)
-                console.warn('Data has object2');
-            let object = factory(data);
-            if (!object)
-                console.warn('Object2 not typable');
-            data.object2 = object;
-            return object || null;
-        }
-        Objects.makeNullable = makeNullable;
-    })(Objects || (Objects = {}));
-    var Objects$1 = Objects;
-
-    // A chunk makes / destroys its datas / objects
-    class Chunk {
-        constructor(w) {
-            //console.log(`chunk ${w.x} & ${w.y}`);
-            this.currentlyActive = false;
-            this.group = new THREE.Group;
-            this.w = w;
-            this.datas = [];
-            this.objects = [];
-            //Chunks.Scaffold(this);
-        }
-        update() {
-            for (let object of this.objects)
-                object.update();
-        }
-        fabricate(data) {
-            let object = Objects$1.makeNullable(data);
-            if (!object)
-                return;
-            this.objects.push(object);
-        }
-        add(data) {
-            this.datas.push(data);
-            if (this.currentlyActive) {
-                this.fabricate(data);
-                console.warn('active add');
-            }
-        }
-        remove(data) {
-            this.datas.splice(this.datas.indexOf(data), 1);
-            let object = data.object2;
-            if (!object)
-                return;
-            object.destroy();
-            this.objects.splice(this.objects.indexOf(object), 1);
-        }
-        makeAdd() {
-            //console.log('Chunk make add');
-            for (let data of this.datas)
-                this.fabricate(data);
-            this.currentlyActive = true;
-            Four$1.scene.add(this.group);
-        }
-        destroyRemove() {
-            //console.log('Chunk destroy remove');
-            for (let object of this.objects)
-                object.destroy();
-            this.objects.length = 0; // Reset array
-            this.currentlyActive = false;
-            Four$1.scene.remove(this.group);
-        }
-    }
-    Chunk._tileSpan = 7; // use Chunks.tileSpan
-
-    // Simple getters and chunk creation
-    class ChunkList {
-        constructor() {
-            this.dict = {};
-        }
-        getNullable(w) {
-            let z = `${w.x} & ${w.y}`;
-            let chunk = this.dict[z];
-            return chunk || null;
-        }
-        get2(x, y) {
-            return this.get({ x: x, y: y });
-        }
-        get(w) {
-            let z = `${w.x} & ${w.y}`;
-            let chunk = this.dict[z];
-            if (!chunk) {
-                chunk = new Chunk(w);
-                this.dict[z] = chunk;
-            }
-            return chunk;
-        }
-    }
-
-    // aka data maker
-    var Datas;
-    (function (Datas) {
-        //export function Floor(data: Data2) {
-        //	data.x = Math.floor(data.x);
-        //	data.y = Math.floor(data.y);
-        //}
-        function big(data) {
-            let w = Points$1.floor2(data.x / Chunks$1.tileSpan, data.y / Chunks$1.tileSpan);
-            return w;
-        }
-        Datas.big = big;
-        function getChunk(data) {
-            let w = big(data);
-            let chunk = KILL$1.city.chunkList.get(w);
-            return chunk;
-        }
-        Datas.getChunk = getChunk;
-        function deliver(data) {
-            let chunk = getChunk(data);
-            chunk.add(data);
-        }
-        Datas.deliver = deliver;
-        function replaceDeliver(A) {
-            let chunk = getChunk(A);
-            let C;
-            for (let B of chunk.datas) {
-                if (B.type == 'Car')
-                    continue;
-                if (A.x == B.x &&
-                    A.y == B.y &&
-                    A.z == B.z) {
-                    C = B;
-                    chunk.remove(B);
-                }
-            }
-            if (C && C.sheet && A.adapt_sheet)
-                A.sheet = C.sheet;
-            chunk.add(A);
-        }
-        Datas.replaceDeliver = replaceDeliver;
-        // for testing
-        window.Datas__ = Datas;
-    })(Datas || (Datas = {}));
-    var Datas$1 = Datas;
-
-    class City {
-        constructor() {
-            this.chunks = [];
-            this.chunkList = new ChunkList;
-            this.new = Points$1.make(0, 0);
-            this.old = Points$1.make(100, 100);
-        }
-        update(p) {
-            this.new = Datas$1.big(p);
-            if (Points$1.same(this.new, this.old))
-                return;
-            console.log(`${this.old.x} & ${this.old.y} different to ${this.new.x} & ${this.new.y}`);
-            this.old = Points$1.copy(this.new);
-            this.off();
-            this.on();
-            for (let chunk of this.chunks) {
-                chunk.update();
-            }
-        }
-        // Find chunks outside the wide span
-        // and turn them off with a negative for-loop
-        off() {
-            const to = this.new;
-            let i = this.chunks.length;
-            while (i--) {
-                let ch = this.chunks[i];
-                if (!Chunks$1.Vis(ch, to)) {
-                    this.chunks.splice(i, 1);
-                    ch.destroyRemove();
-                }
-            }
-        }
-        // Now turn on any new areas inside
-        // the small span
-        on() {
-            const to = this.new;
-            const m = Math.floor(City.spanUneven / 2);
-            for (let y = 0; y < City.spanUneven; y++) {
-                for (let x = 0; x < City.spanUneven; x++) {
-                    let z = Points$1.make(x - m + to.x, y - m + to.y);
-                    let ch = this.chunkList.getNullable(z);
-                    if (!ch)
-                        continue;
-                    if (!ch.currentlyActive) {
-                        this.chunks.push(ch);
-                        ch.makeAdd();
-                        Chunks$1.Vis(ch, to);
-                    }
-                }
-            }
-        }
-    }
-    City.spanUneven = 5;
 
     var Anims;
     (function (Anims) {
@@ -3644,6 +3497,8 @@ var gta_kill = (function (exports, THREE) {
         constructor(data) {
             super(data);
             console.log('ply');
+            KILL$1.ply = this;
+            this.endConstructor();
             window.ply = this;
         }
         update() {
@@ -3679,6 +3534,186 @@ var gta_kill = (function (exports, THREE) {
             this.updatePosition();
         }
     }
+
+    var Objects;
+    (function (Objects) {
+        function factory(data) {
+            switch (data.type) {
+                //case 'Ped': return new Ped(data);
+                case 'Ply': return new Ply(data);
+                case 'Car': return new Car(data);
+                case 'Block': return new Block(data);
+                case 'Surface': return new Surface(data);
+                case 'Wall': return new Wall(data);
+                //case 'Lamp': return new Lamp(data);
+                default:
+                    return null;
+            }
+        }
+        function makeNullable(data) {
+            if (data.object)
+                console.warn('Data', data.type, 'has object2');
+            let object = factory(data);
+            if (!object)
+                console.warn('Object2 not typable');
+            return object || null;
+        }
+        Objects.makeNullable = makeNullable;
+        function relocate(object) {
+            let ch = Datas$1.getChunk(object.data);
+            if (ch != object.chunk) {
+                if (object.chunk)
+                    object.chunk._remove(object.data);
+                ch._add(object.data);
+                console.log("relocating", object.data.type);
+            }
+        }
+        Objects.relocate = relocate;
+    })(Objects || (Objects = {}));
+    var Objects$1 = Objects;
+
+    // A chunk makes / destroys its datas / objects
+    class Chunk {
+        constructor(w) {
+            //console.log(`chunk`, Points.string(w));
+            this.isActive = false;
+            this.group = new THREE.Group;
+            this.w = w;
+            this.datas = [];
+            this.objects = [];
+            Chunks$1.scaffold(this);
+        }
+        fabricate(data) {
+            let object = Objects$1.makeNullable(data);
+            if (object)
+                this.objects.push(object);
+        }
+        _update() {
+            for (let object of this.objects)
+                object.update();
+        }
+        _add(data) {
+            let i = this.datas.indexOf(data);
+            if (i < 0)
+                this.datas.push(data);
+            if (this.isActive) {
+                if (!data.object)
+                    this.fabricate(data);
+                data.object.chunk = this;
+                this.objects.push(data.object);
+            }
+        }
+        _remove(data) {
+            let i = this.datas.indexOf(data);
+            if (i >= 0)
+                this.datas.splice(i, 1);
+            if (data.object) {
+                i = this.objects.indexOf(data.object);
+                if (i >= 0)
+                    this.objects.splice(i, 1);
+                data.object.chunk = undefined;
+            }
+        }
+        unearth() {
+            console.log('unearth', Points$1.string(this.w));
+            this.isActive = true;
+            for (let data of this.datas)
+                this.fabricate(data);
+            Four$1.scene.add(this.group);
+        }
+        hide() {
+            console.log('hide', Points$1.string(this.w));
+            for (let object of this.objects)
+                object.destroy();
+            this.objects.length = 0; // Reset array
+            this.isActive = false;
+            Four$1.scene.remove(this.group);
+        }
+    }
+    Chunk._tileSpan = 7; // use Chunks.tileSpan
+
+    // Simple getters and chunk creation
+    class ChunkList {
+        constructor() {
+            this.dict = {};
+        }
+        key(w) {
+            return `${w.x} & ${w.y}`;
+        }
+        getNullable(w) {
+            let z = this.key(w);
+            let chunk = this.dict[z];
+            return chunk || null;
+        }
+        get2(x, y) {
+            return this.getCreate({ x: x, y: y });
+        }
+        getCreate(w) {
+            let z = this.key(w);
+            let chunk = this.dict[z];
+            if (!chunk) {
+                chunk = new Chunk(w);
+                this.dict[z] = chunk;
+            }
+            return chunk;
+        }
+    }
+
+    class City {
+        constructor() {
+            this.chunks = [];
+            this.chunkList = new ChunkList;
+            this.new = Points$1.make(0, 0);
+            this.old = Points$1.make(100, 100);
+        }
+        shift(p) {
+            this.new = Datas$1.big(p);
+            if (Points$1.same(this.new, this.old))
+                return;
+            console.log(`${this.old.x} & ${this.old.y} different to ${this.new.x} & ${this.new.y}`);
+            this.old = Points$1.copy(this.new);
+            this.off();
+            this.on();
+        }
+        update() {
+            for (let chunk of this.chunks) {
+                chunk._update();
+            }
+        }
+        // Find chunks outside the wide span
+        // and turn them off with a negative for-loop
+        off() {
+            const to = this.new;
+            let i = this.chunks.length;
+            while (i--) {
+                let ch = this.chunks[i];
+                if (!Chunks$1.vis(ch, to)) {
+                    this.chunks.splice(i, 1);
+                    ch.hide();
+                }
+            }
+        }
+        // Now turn on any new areas inside
+        // the small span
+        on() {
+            const to = this.new;
+            const m = Math.floor(City.spanUneven / 2);
+            for (let y = 0; y < City.spanUneven; y++) {
+                for (let x = 0; x < City.spanUneven; x++) {
+                    let z = Points$1.make(x - m + to.x, y - m + to.y);
+                    let ch = this.chunkList.getNullable(z);
+                    if (!ch)
+                        continue;
+                    if (!ch.isActive) {
+                        this.chunks.push(ch);
+                        ch.unearth();
+                        Chunks$1.vis(ch, to);
+                    }
+                }
+            }
+        }
+    }
+    City.spanUneven = 5;
 
     var Sprites;
     (function (Sprites) {
@@ -3801,7 +3836,7 @@ var gta_kill = (function (exports, THREE) {
     var Zoom;
     (function (Zoom) {
         Zoom.stage = 2;
-        Zoom.stages = [150, 300, 600, 1200];
+        Zoom.stages = [150, 300, 600, 1200, 2400];
         let broom = 600;
         let zoom = 600;
         let t = 0;
@@ -4611,6 +4646,44 @@ var gta_kill = (function (exports, THREE) {
     })(Scenarios || (Scenarios = {}));
     var Scenarios$1 = Scenarios;
 
+    var PalmTrees;
+    (function (PalmTrees) {
+        function init() {
+            console.log('Palm trees init');
+            let my_car;
+            const load = function () {
+                Generators$1.Roads.twolane(1, [10, -7000, 0], 20000, 'qualityRoads');
+                my_car = {
+                    type: 'Car',
+                    car: 'Minx',
+                    spray: Cars$1.Sprays.DARK_GREEN,
+                    x: 10.5,
+                    y: 0,
+                    z: 0
+                };
+                Datas$1.deliver(my_car);
+                console.log('loaded palm trees');
+            };
+            const update = function () {
+                {
+                    KILL$1.view = my_car;
+                    my_car.y -= 0.01;
+                    let w = Points$1.real_space(my_car);
+                    Four$1.camera.position.x = w.x;
+                    Four$1.camera.position.y = w.y;
+                }
+            };
+            let palmTrees = {
+                name: 'Palm Trees',
+                loadCb: load,
+                updateCb: update
+            };
+            Scenarios.load(palmTrees);
+        }
+        PalmTrees.init = init;
+    })(PalmTrees || (PalmTrees = {}));
+    var PalmTrees$1 = PalmTrees;
+
     var FontsSpelling;
     (function (FontsSpelling) {
         function symbol(a, b, c, d, e, f, g, h) {
@@ -5130,6 +5203,7 @@ var gta_kill = (function (exports, THREE) {
             Surfaces$1.init();
             Blocks$1.init();
             BoxCutter$1.init();
+            Chunks$1.init();
             Cars$1.init();
             Sprites$1.init();
             Sheets$1.init();
@@ -5149,6 +5223,8 @@ var gta_kill = (function (exports, THREE) {
             started = true;
             if (window.location.href.indexOf("#highway") != -1)
                 HighWayWithEveryCar$1.init();
+            else if (window.location.href.indexOf("#palmtrees") != -1)
+                PalmTrees$1.init();
             else
                 BridgeScenario$1.init();
             let data = {
@@ -5158,8 +5234,10 @@ var gta_kill = (function (exports, THREE) {
                 y: 1,
                 z: 0
             };
+            KILL.view = data;
+            Datas$1.deliver(data);
             //data.remap = [40, 46, 47, 49, 50, 51][Math.floor(Math.random() * 6)];
-            KILL.ply = new Ply(data);
+            //ply = new Ply(data);
             KILL.city.chunkList.get2(0, 0);
             KILL.city.chunkList.get2(0, 1);
         }
@@ -5167,13 +5245,14 @@ var gta_kill = (function (exports, THREE) {
         function update() {
             if (!started)
                 return;
-            if (KILL.ply)
-                KILL.ply.update();
+            //if (ply)
+            //ply.update();
             Water$1.update();
             Mist$1.update();
             Zoom$1.update();
             Scenarios$1.update();
-            KILL.city.update(KILL.ply.data);
+            KILL.city.shift(KILL.view);
+            KILL.city.update();
         }
         KILL.update = update;
     })(KILL || (KILL = {}));
@@ -5201,7 +5280,7 @@ var gta_kill = (function (exports, THREE) {
         function init() {
             console.log('four init');
             Four.clock = new THREE.Clock();
-            Four.camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 2000);
+            Four.camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 3000);
             Four.aspect = Four.camera.aspect;
             Four.camera.position.z = 200;
             Four.scene = new THREE.Scene();

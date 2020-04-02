@@ -6,6 +6,7 @@ import Peds from "./Peds";
 import App from "../App";
 import Util from "../Random";
 import Anims from "../Sprites/Anims";
+import KILL from "../KILL";
 
 export class Ply extends Ped {
 
@@ -13,6 +14,10 @@ export class Ply extends Ped {
 		super(data);
 
 		console.log('ply');
+
+		KILL.ply = this;
+
+		this.endConstructor();
 
 		(window as any).ply = this;
 	}

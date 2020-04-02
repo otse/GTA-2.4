@@ -4,7 +4,9 @@ import Data2 from "../Objects/Data"
 import Object2 from "../Objects/Object"
 import Objects from "../Objects/Objects"
 
+import Chunks from "./Chunks"
 import Four from "../Four"
+import Points from "../Objects/Points"
 
 // A chunk makes / destroys its datas / objects
 
@@ -12,7 +14,7 @@ export class Chunk {
 
 	static readonly _tileSpan = 7 // use Chunks.tileSpan
 
-	currentlyActive = false
+	isActive = false
 
 	readonly datas: Data2[]
 	readonly objects: Object2[]
@@ -22,7 +24,7 @@ export class Chunk {
 	readonly w: Point
 
 	constructor(w: Point) {
-		//console.log(`chunk ${w.x} & ${w.y}`);
+		//console.log(`chunk`, Points.string(w));
 
 		this.group = new Group;
 
@@ -30,65 +32,60 @@ export class Chunk {
 		this.datas = [];
 		this.objects = [];
 
-		//Chunks.Scaffold(this);
+		Chunks.scaffold(this);
 	}
 
-	update() {
+	private fabricate(data: Data2) {
+		let object = Objects.makeNullable(data);
+		if (object)
+			this.objects.push(object);
+	}
+
+	_update() {
 		for (let object of this.objects)
 			object.update();
 	}
-
-	fabricate(data: Data2) {
-		let object = Objects.makeNullable(data);
-
-		if (!object)
-			return;
-
-		this.objects.push(object);
-	}
-
-	add(data: Data2) {
-		this.datas.push(data);
-
-		if (this.currentlyActive) {
-			this.fabricate(data);
-			console.warn('active add');
+	
+	_add(data: Data2) {
+		let i = this.datas.indexOf(data);
+		if (i < 0)
+			this.datas.push(data);
+		if (this.isActive) {
+			if (!data.object)
+				this.fabricate(data);
+			data.object.chunk = this;
+			this.objects.push(data.object);
 		}
 	}
 
-	remove(data: Data2) {
-		this.datas.splice(this.datas.indexOf(data), 1);
-
-		let object = data.object2;
-
-		if (!object)
-			return;
-
-		object.destroy();
-
-		this.objects.splice(this.objects.indexOf(object), 1);
+	_remove(data: Data2) {
+		let i = this.datas.indexOf(data);
+		if (i >= 0)
+			this.datas.splice(i, 1);
+		if (data.object) {
+			i = this.objects.indexOf(data.object);
+			if (i >= 0)
+				this.objects.splice(i, 1);
+			data.object.chunk = undefined;
+		}
 	}
 
-	makeAdd() {
-		//console.log('Chunk make add');
-
+	unearth() {
+		console.log('unearth', Points.string(this.w));
+		
+		this.isActive = true;
 		for (let data of this.datas)
 			this.fabricate(data);
-
-		this.currentlyActive = true;
-
 		Four.scene.add(this.group);
 	}
 
-	destroyRemove() {
-		//console.log('Chunk destroy remove');
+	hide() {
+		console.log('hide', Points.string(this.w));
 
 		for (let object of this.objects)
 			object.destroy();
-
 		this.objects.length = 0; // Reset array
-		this.currentlyActive = false;
-
+		this.isActive = false;
 		Four.scene.remove(this.group);
 	}
 }

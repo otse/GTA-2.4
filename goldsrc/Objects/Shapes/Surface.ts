@@ -44,6 +44,8 @@ export class Surface extends Object2 {
 		delete this.material;
 	}
 
+	update() {}
+
 	make() {
 		this.geometry = Surfaces.geometry.clone();
 

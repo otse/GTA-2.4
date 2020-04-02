@@ -1,4 +1,6 @@
 import Data2 from "./Data";
+import Chunk from "../Chunks/Chunk";
+import Datas from "./Datas";
 
 // in 22 this separation was called the whatsit-thing;
 // for 2.3 its renamed object-data
@@ -7,6 +9,8 @@ var ignoreData: Data2 = { x: 0, y: 0, z: 0, r: 0, type: 'Ignore' };
 
 export class Object2 {
 	data: Data2
+
+	chunk: Chunk | null
 
 	destroyed?: boolean
 
@@ -20,16 +24,22 @@ export class Object2 {
 		if (data.r > 3) data.r -= 4;
 		if (data.r < 0) data.r += 4;
 
+		this.chunk = null;
+
 		this.data = data;
 	}
 
 	destroy() {
 		this.destroyed = true;
-		this.data.object2 = null;
+		this.data.object = null;
 	}
 
 	update() {
+		//console.log('update', this.data.type);
+	}
 
+	endConstructor() {
+		this.chunk = Datas.getChunk(this.data);
 	}
 }
 

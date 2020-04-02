@@ -16,7 +16,7 @@ export namespace Chunks {
 
 	const N = 64 * tileSpan;
 
-	export function Init() {
+	export function init() {
 
 		geometry = new BoxGeometry(N, N, 0);
 
@@ -27,17 +27,19 @@ export namespace Chunks {
 			{ wireframe: true, color: 'purple' });
 	}
 
-	export function Scaffold(chunk: Chunk) {
-		(chunk as any).wireframe = new Mesh(geometry, purple);
+	export function scaffold(chunk: Chunk) {
+		let nany = chunk as any;
 
-		(chunk as any).wireframe.position.set(
+		nany.wireframe = new Mesh(geometry, purple);
+
+		nany.wireframe.position.set(
 			((chunk.w.x + 1) * N) - N / 2, ((chunk.w.y + 1) * N) - N / 2, 0);
 
-		chunk.group.add((chunk as any).wireframe);
+		chunk.group.add(nany.wireframe);
 	}
 
-	// This is the visibility test
-	export function Vis(chunk: Chunk, p: Point) {
+	// The Test
+	export function vis(chunk: Chunk, p: Point) {
 		const m = Math.ceil(City.spanUneven / 2);
 
 		const d = Points.make(

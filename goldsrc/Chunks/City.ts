@@ -25,7 +25,7 @@ export class City {
 		this.old = Points.make(100, 100);
 	}
 
-	update(p: Point) {
+	shift(p: Point) {
 		this.new = Datas.big(p);
 
 		if (Points.same(this.new, this.old))
@@ -37,9 +37,11 @@ export class City {
 
 		this.off();
 		this.on();
+	}
 
+	update() {
 		for (let chunk of this.chunks) {
-			chunk.update();
+			chunk._update();
 		}
 	}
 
@@ -51,9 +53,9 @@ export class City {
 		let i = this.chunks.length;
 		while (i--) {
 			let ch = this.chunks[i];
-			if (!Chunks.Vis(ch, to)) {
+			if (!Chunks.vis(ch, to)) {
 				this.chunks.splice(i, 1);
-				ch.destroyRemove();
+				ch.hide();
 			}
 		}
 
@@ -76,10 +78,10 @@ export class City {
 				if (!ch)
 					continue;
 
-				if (!ch.currentlyActive) {
+				if (!ch.isActive) {
 					this.chunks.push(ch);
-					ch.makeAdd();
-					Chunks.Vis(ch, to);
+					ch.unearth();
+					Chunks.vis(ch, to);
 				}
 			}
 		}

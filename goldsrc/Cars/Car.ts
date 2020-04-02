@@ -6,10 +6,12 @@ import Cars from "./Cars";
 
 import KILL from "../KILL";
 
-import { Mesh, MeshBasicMaterial } from "three";
+import { Mesh, MeshBasicMaterial, Material } from "three";
 import Util from "../Random";
 import Sheet from "../Sprites/Sheet";
 import Phong2 from "../Shaders/Phong2";
+import Objects from "../Objects/Objects";
+import Datas from "../Objects/Datas";
 
 interface DeltaMesh {
 	sprite: Square
@@ -43,12 +45,20 @@ export class Car extends Rectangle {
 		this.sheet = Cars.deltasSheets[data.car];
 
 		this.addDelta(Cars.deltaSquares.dent_front_left);
+
+		this.endConstructor();
 	}
 
 	destroy() {
 		super.destroy();
 
 		Cars.remove(this);
+	}
+
+	update() {		
+		super.update();
+
+		this.updatePosition();
 	}
 
 	make(data: Data2) {
@@ -77,11 +87,9 @@ export class Car extends Rectangle {
 			blur: `sty/car/blurs/GTA2_CAR_${model}.png`,
 			shadow: data.sty
 		});
-	}
+	} 
 
-	// deltas
-
-	addDelta(square: Square): void /*Car['delta']*/ {
+	addDelta(square: Square): DeltaMesh {
 		const OFFSET = 0.1;
 		let mesh, material;
 		material = Phong2.carDeltaShader({
@@ -96,7 +104,7 @@ export class Car extends Rectangle {
 			sprite: square,
 			mesh: mesh
 		});
-		//return this.deltas[length - 1];
+		return this.deltas[length - 1];
 	}
 
 	removeDelta(square: Square): void {
@@ -105,6 +113,8 @@ export class Car extends Rectangle {
 				continue;
 			this.mesh.remove(delta.mesh);
 			this.deltas.splice(this.deltas.indexOf(delta), 1);
+			delta.mesh.geometry.dispose();
+			delta.mesh.material.dispose();
 			return;
 		}
 	}
@@ -116,8 +126,7 @@ export class Car extends Rectangle {
 		}
 		return false;
 	}
-
-
+	
 }
 
 export default Car;

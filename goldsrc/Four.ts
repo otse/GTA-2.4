@@ -51,7 +51,7 @@ export namespace Four {
 		clock = new Clock();
 
 		camera = new PerspectiveCamera(
-			70, window.innerWidth / window.innerHeight, 1, 2000);
+			70, window.innerWidth / window.innerHeight, 1, 3000);
 		aspect = camera.aspect;
 		camera.position.z = 200;
 

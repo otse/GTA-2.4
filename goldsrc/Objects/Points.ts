@@ -5,6 +5,8 @@ export namespace Points {
 		y: number;
 	}*/
 
+	
+
 	export function make(x: number, y: number) {
 		return { x: x, y: y }
 	}
@@ -36,16 +38,20 @@ export namespace Points {
 
 
 	export function multp(a: Point, n: number): Point {
-		let b = copy(a);
 		return make(
-			b.x * n,
-			b.y * n);
+			a.x * n,
+			a.y * n);
 	}
 
 	export function region(a: Point, n: number): Point {
 		return floor2(
 			a.x / n,
 			a.y / n);
+	}
+
+	export function real_space(a: Point): Point {
+		return multp(
+			a, 64);
 	}
 
 	export function dist(a: Point, b: Point): number {
