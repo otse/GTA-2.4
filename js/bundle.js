@@ -4629,10 +4629,12 @@ var gta_kill = (function (exports, THREE) {
     (function (PalmTrees) {
         function init() {
             console.log('Palm trees init');
-            let my_car;
+            let dat;
+            let swerves = {};
+            const ROADS = 2000;
             const load = function () {
-                Generators$1.Roads.twolane(1, [10, -1000, 0], 2000, 'qualityRoads');
-                my_car = {
+                Generators$1.Roads.twolane(1, [10, -ROADS + 10, 0], ROADS, 'qualityRoads');
+                dat = {
                     type: 'Car',
                     car: 'Aniston BD4',
                     spray: Cars$1.Sprays.DARK_GREEN,
@@ -4640,26 +4642,48 @@ var gta_kill = (function (exports, THREE) {
                     y: -1,
                     z: 0
                 };
-                Datas$1.deliver(my_car);
+                Datas$1.deliver(dat);
                 console.log('loaded palm trees');
+                Generators$1.loop([10, -ROADS + 10, 0], [10, ROADS, 0], (w) => {
+                    let r = (Math.random() - 0.5) / 2;
+                    let p = Points$1.make(w[0], w[1]);
+                    let p2 = Points$1.make(w[0] + 0.5 + r, w[1] - 2);
+                    swerves[Points$1.string(p)] = p2;
+                });
             };
             let stage = 0;
+            let radians = -Math.PI / 2;
             const update = function () {
+                let car = dat.object;
                 if (stage == 0) {
-                    KILL$1.view = my_car;
-                    my_car.y -= 0.07;
-                    let w = Points$1.real_space(my_car);
-                    Four$1.camera.position.x = w.x;
-                    Four$1.camera.position.y = w.y;
-                    let car = my_car.object;
-                    if (car && my_car.y < -50) {
+                    KILL$1.view = dat;
+                    dat.y -= 0.07;
+                    let s = Points$1.string(Points$1.floor(dat));
+                    let swerve = swerves[s];
+                    let theta = Math.atan2(dat.y - swerve.y, dat.x - swerve.x) - Math.PI / 2;
+                    dat.r = theta;
+                    let cos = Math.cos(radians);
+                    let sin = Math.sin(radians);
+                    dat.x += 0.1 * cos;
+                    dat.y += 0.1 * sin;
+                    if (dat.x > 10.5) {
+                        dat.x += dat.x - 10.5 / 10;
+                    }
+                    if (dat.x < 10.5) ;
+                    //if (car && my_car.y < -10) {
+                    //	my_car.z += 2;
+                    //}
+                    if (car && dat.y < -50) {
                         car.add_delta(Cars$1.deltaSquares.dent_front_left);
                         car.add_delta(Cars$1.deltaSquares.dent_front_right);
                         stage = 1;
                     }
+                    let w = Points$1.real_space(dat);
+                    Four$1.camera.position.x = w.x;
+                    Four$1.camera.position.y = w.y;
                 }
                 else if (stage == 1) {
-                    let w = Points$1.real_space(my_car);
+                    let w = Points$1.real_space(dat);
                     Four$1.camera.position.x = w.x;
                     Four$1.camera.position.y = w.y;
                 }

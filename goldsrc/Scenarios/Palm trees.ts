@@ -17,12 +17,16 @@ export namespace PalmTrees {
 	export function init() {
 		console.log('Palm trees init');
 
-		let my_car: Data2;
-		
-		const load = function () {
-			Generators.Roads.twolane(1, [10, -1000, 0], 2000, 'qualityRoads');
+		let dat: Data2;
+		let swerves = {};
 
-			my_car = {
+		const ROADS = 2000;
+
+		const load = function () {
+
+			Generators.Roads.twolane(1, [10, -ROADS + 10, 0], ROADS, 'qualityRoads');
+
+			dat = {
 				type: 'Car',
 				car: 'Aniston BD4',
 				spray: Cars.Sprays.DARK_GREEN,
@@ -31,35 +35,66 @@ export namespace PalmTrees {
 				z: 0
 			}
 
-			Datas.deliver(my_car);
+			Datas.deliver(dat);
 
 			console.log('loaded palm trees');
-			
+
+			Generators.loop([10, -ROADS + 10, 0], [10, ROADS, 0], (w: [number, number, number]) => {
+				let r = (Math.random() - 0.5) / 2;
+				let p = Points.make(w[0], w[1]);
+				let p2 = Points.make(w[0] + 0.5 + r, w[1] - 2);
+				swerves[Points.string(p)] = p2;
+			});
 		};
 
 		let stage = 0;
+		let radians = -Math.PI / 2;
 
 		const update = function () {
+			let car = dat.object as Car;
+
 			if (stage == 0) {
-				KILL.view = my_car;
+				KILL.view = dat;
 
-				my_car.y -= 0.07;
+				dat.y -= 0.07;
 
-				let w = Points.real_space(my_car);
+				let s = Points.string(Points.floor(dat));
+				let swerve = swerves[s];
 
-				Four.camera.position.x = w.x;
-				Four.camera.position.y = w.y;
+				let theta = Math.atan2(dat.y - swerve.y, dat.x - swerve.x) - Math.PI / 2;
 
-				let car = my_car.object as Car;
+				dat.r = theta;
 
-				if (car && my_car.y < -50) {
+				let cos = Math.cos(radians);
+				let sin = Math.sin(radians);
+
+				dat.x += 0.1 * cos;
+				dat.y += 0.1 * sin;
+
+				if (dat.x > 10.5) {
+					dat.x += dat.x - 10.5 / 10;
+				}
+				if (dat.x < 10.5) {
+					//car_data.x -= car_data.x + 10.5 / 10;
+				}
+
+				//if (car && my_car.y < -10) {
+				//	my_car.z += 2;
+				//}
+
+				if (car && dat.y < -50) {
 					car.add_delta(Cars.deltaSquares.dent_front_left);
 					car.add_delta(Cars.deltaSquares.dent_front_right);
 					stage = 1;
 				}
+
+				let w = Points.real_space(dat);
+
+				Four.camera.position.x = w.x;
+				Four.camera.position.y = w.y;
 			}
 			else if (stage == 1) {
-				let w = Points.real_space(my_car);
+				let w = Points.real_space(dat);
 
 				Four.camera.position.x = w.x;
 				Four.camera.position.y = w.y;

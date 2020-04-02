@@ -59,7 +59,7 @@ export namespace Points {
 		
 		return dx * dx + dy * dy;
 	}
-
+	
 }
 
 export default Points;
