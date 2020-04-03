@@ -1,4 +1,4 @@
-import Zoom from "./Zoom";
+import Cameraz from "./Cameraz";
 import Four from "../Four";
 
 import { default as THREE, Vector2 } from "three";
@@ -13,7 +13,7 @@ export namespace Shift {
 	export var renderPass;
 
 	export function cityView() {
-		Zoom.set(2);
+		Cameraz.set(2);
 		Shift.effect.uniforms["pixelSize"].value = 1.0;
 		Shift.effect.uniforms["zoom"].value = 0.0;
 	}

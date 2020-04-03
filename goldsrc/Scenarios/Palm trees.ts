@@ -11,6 +11,7 @@ import Car from "../Cars/Car";
 import Four from "../Four";
 import Points from "../Objects/Points";
 import KILL from "../KILL";
+import Cameraz from "../Unsorted/Cameraz";
 
 export namespace PalmTrees {
 
@@ -28,14 +29,21 @@ export namespace PalmTrees {
 
 			dat = {
 				type: 'Car',
-				car: 'Miara',
-				spray: Cars.Sprays.BLACK,
+				car: 'Michelli Roadster',
+				spray: Cars.Sprays.DARK_BLUE,
 				x: 10.5,
 				y: -1,
 				z: 0
 			}
 
 			Datas.deliver(dat);
+
+			Four.camera.position.z = 60;
+
+			Cameraz.allowManual = true;
+			Cameraz.set2(100);
+
+			Cameraz.ZOOMDUR = 20;
 
 			console.log('loaded palm trees');
 		};
@@ -45,6 +53,8 @@ export namespace PalmTrees {
 
 		let swerveAt = 0;
 		let swerve;
+		let gaveLights = false;
+		let secondZooming = false;
 
 		const update = function () {
 			let car = dat.object as Car;
@@ -54,7 +64,8 @@ export namespace PalmTrees {
 
 				dat.y -= 0.07;
 
-				if (car) {
+				if (car && !gaveLights) {
+					gaveLights = true;
 					let f;
 					//car.add_delta(Cars.deltaSquares.tail_light_left);
 					//f = car.add_delta(Cars.deltaSquares.tail_light_right);
@@ -65,10 +76,10 @@ export namespace PalmTrees {
 				}
 
 				if (--swerveAt <= 0) {
-					let r = (Math.random() - 0.5) / 6;
-					let p = Points.make(dat.x + r, dat.y - 60);
+					let r = (Math.random() - 0.5) / 10;
+					let p = Points.make(dat.x + r, dat.y - 70);
 					swerve = p;
-					swerveAt = 10 + Math.random() * 5;
+					swerveAt = 15 + Math.random() * 15;
 				}
 				let theta = Math.atan2(dat.y - swerve.y, dat.x - swerve.x);
 
@@ -81,7 +92,7 @@ export namespace PalmTrees {
 				//	my_car.z += 2;
 				//}
 
-				if (car && dat.y < -50) {
+				if (car && dat.y < -100) {
 					car.add_delta(Cars.deltaSquares.dent_front_left);
 					car.add_delta(Cars.deltaSquares.dent_front_right);
 					stage = 1;
@@ -91,6 +102,19 @@ export namespace PalmTrees {
 
 				Four.camera.position.x = w.x;
 				Four.camera.position.y = w.y;
+				
+				if (!secondZooming && car && dat.y < -30 && Four.camera.position.z < 300) {
+					
+					secondZooming = true;
+
+					//Cameraz.set2(150);
+
+					//Cameraz.ZOOMDUR = 10;
+				}
+				//}
+				//else if (Four.camera.position.z < 60)
+				//	Four.camera.position.z += 10 * Four.delta;
+
 			}
 			else if (stage == 1) {
 				let w = Points.real_space(dat);

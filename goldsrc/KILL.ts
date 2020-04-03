@@ -12,7 +12,7 @@ import Sheets from "./Sprites/Sheets";
 
 import Levels from "./Generators/Levels";
 
-import Zoom from "./Unsorted/Zoom";
+import Cameraz from "./Unsorted/Cameraz";
 import { Shift } from "./Unsorted/Shift";
 import PalmTrees from "./Scenarios/Palm trees";
 import HighWayWithEveryCar from "./Scenarios/Highway";
@@ -114,10 +114,11 @@ export namespace KILL {
 
 		started = true;
 
-		//if (window.location.href.indexOf("#highway") != -1)
-			//HighWayWithEveryCar.init();
+		if (window.location.href.indexOf("#highway") != -1)
+			HighWayWithEveryCar.init();
 		
 		//else if (window.location.href.indexOf("#palmtrees") != -1)
+		else
 			PalmTrees.init();
 
 		//else
@@ -151,7 +152,7 @@ export namespace KILL {
 		Water.update();
 		Mist.update();
 
-		Zoom.update();
+		Cameraz.update();
 
 		Scenarios.update();
 

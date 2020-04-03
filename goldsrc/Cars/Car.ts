@@ -91,6 +91,7 @@ export class Car extends Rectangle {
 		});
 	} 
 
+	// todo, cleanup
 	add_delta(square: Square): DeltaMesh {
 		const OFFSET = 0.1;
 		let mesh, material;

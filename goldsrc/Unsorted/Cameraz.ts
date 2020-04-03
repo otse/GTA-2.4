@@ -10,20 +10,30 @@ import App from "../App"
 
 // http://www.typescriptlang.org/docs/handbook/advanced-types.html
 
-namespace Zoom {
+namespace Cameraz {
+	export var dontZoom = false;
+	export var allowManual = false;
 	export var stage = 2
 	export var stages = [150, 300, 600, 1200, 2400]
 
-	let broom = 600
-	let zoom = 600
+	export let zoomCur = 600
+	export let zoomTarget = 600
+	export let zoom = 600
 
 	let t = 0
 
-	const SECONDS = 1
+	export var ZOOMDUR = 1
+
+	export function set2(target) {
+		t = 0;
+		zoomTarget = target;
+		zoomCur = Four.camera.position.z;
+		dontZoom = false;
+	}
 
 	export function set(st: 0 | 1 | 2 | 3) {
 		t = 0;
-		broom = zoom;
+		zoomCur = zoom;
 		stage = st;
 	}
 
@@ -34,21 +44,27 @@ namespace Zoom {
 
 		const z = App.map[90] == 1;
 
-		if (z) {
+		if (z && !allowManual) {
+			dontZoom = false;
 			t = 0;
-			broom = zoom;
+			zoomCur = zoom;
 			stage =
 				stage < stages.length - 1 ? stage + 1 : 0;
+			zoomTarget = stages[stage];
+			console.log('z stage', stage);
 		}
 
-		t += Four.delta / SECONDS;
+		if (dontZoom)
+			return;
+
+		t += Four.delta / ZOOMDUR;
 
 		t = Math.min(Math.max(t, 0.0), 1.0);
 
-		const difference = stages[stage] - broom;
+		const difference = zoomTarget - zoomCur;
 
 		const T = EasingFunctions.inOutCubic(t);
-		zoom = broom + (T * difference);
+		zoom = zoomCur + (T * difference);
 
 		const data = KILL.ply.data;
 		Four.camera.position.set(data.x * 64, data.y * 64, zoom);
@@ -56,4 +72,4 @@ namespace Zoom {
 	}
 }
 
-export default Zoom;
+export default Cameraz;
