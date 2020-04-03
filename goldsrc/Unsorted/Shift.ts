@@ -82,8 +82,8 @@ export namespace Shift {
 	export var retroShader = {
 
 		uniforms: {
-			"tDiffuse": { value: null },
-			"tDiffuse2": { value: null },
+			"tDiffuse": { value: null }, // implicit
+			"tUI": { value: null }, // 
 			"redblue": { value: 0.005 },
 			"angle": { value: 0.0 },
 			"resolution": { value: null },
@@ -113,11 +113,10 @@ export namespace Shift {
 
 		fragmentShader: `
 			uniform sampler2D tDiffuse;
-			uniform sampler2D tDiffuse2;
+			uniform sampler2D tUI;
 			uniform float redblue;
 			uniform float angle;
-
-
+			
 			varying vec2 vUv;
 
 			vec4 siift(sampler2D texture) {
@@ -132,9 +131,8 @@ export namespace Shift {
 
 			void main() {
 
-				
 				vec4 a = siift(tDiffuse);
-				vec4 b = siift(tDiffuse2);
+				vec4 b = siift(tUI);
 
 				gl_FragColor = a + b;
 			}`

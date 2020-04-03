@@ -43,6 +43,21 @@ export namespace Fonts {
 		get_font(`mission`, `FONT_MISSION`, (e) => fonts.mission = e);
 	}
 
+	export function textOnto(inCanvas, text: string, width: number, height: number) {
+		
+		let symbols = FontsSpelling.symbolize(inCanvas, text, 'small');
+
+		const context = inCanvas.getContext("2d");
+
+		for (let s of symbols) {
+
+			let font = s.colorize ? Fonts.fonts.yellow : Fonts.fonts.white;
+
+			context.drawImage(
+				font, s.x2, s.y2, s.w, s.h, s.x, s.y, s.w, s.h);
+		}
+	}
+
 	export function textTexture(text: string, width: number, height: number): Texture {
 
 		canvas.width = width;

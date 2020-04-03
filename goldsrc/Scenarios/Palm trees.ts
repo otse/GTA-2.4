@@ -18,7 +18,8 @@ export namespace PalmTrees {
 	export function init() {
 		console.log('Palm trees init');
 
-		let dat: Data2;
+		let cat: Data2;
+		let dog: Data2;
 		let swerves = {};
 
 		const ROADS = 2000;
@@ -27,7 +28,7 @@ export namespace PalmTrees {
 
 			Generators.Roads.twolane(1, [10, -ROADS + 10, 0], ROADS, 'qualityRoads');
 
-			dat = {
+			cat = {
 				type: 'Car',
 				car: 'Michelli Roadster',
 				spray: Cars.Sprays.DARK_BLUE,
@@ -36,7 +37,18 @@ export namespace PalmTrees {
 				z: 0
 			}
 
-			Datas.deliver(dat);
+			Datas.deliver(cat);
+
+			dog = {
+				type: 'Car',
+				car: 'Van',
+				spray: Cars.Sprays.PINK_RED,
+				x: 10.5,
+				y: -101.1,
+				z: 0
+			}
+
+			Datas.deliver(dog);
 
 			Four.camera.position.z = 60;
 
@@ -53,16 +65,20 @@ export namespace PalmTrees {
 
 		let swerveAt = 0;
 		let swerve;
+		let carSpeed = 0.14;
 		let gaveLights = false;
-		let secondZooming = false;
+		let brakeHard = false;
+		let zoomCrash = false;
+		let lookAhead = 50;
 
 		const update = function () {
-			let car = dat.object as Car;
+			let car = cat.object as Car;
+			let van = dog.object as Car;
 
 			if (stage == 0) {
-				KILL.view = dat;
+				KILL.view = cat;
 
-				dat.y -= 0.07;
+				cat.y -= carSpeed;
 
 				if (car && !gaveLights) {
 					gaveLights = true;
@@ -76,51 +92,63 @@ export namespace PalmTrees {
 				}
 
 				if (--swerveAt <= 0) {
-					let r = (Math.random() - 0.5) / 10;
-					let p = Points.make(dat.x + r, dat.y - 70);
+					let r = (Math.random() - 0.5) / 12;
+					let p = Points.make(cat.x + r, cat.y - lookAhead);
 					swerve = p;
-					swerveAt = 15 + Math.random() * 15;
+					swerveAt = 10 + Math.random() * 15;
 				}
-				let theta = Math.atan2(dat.y - swerve.y, dat.x - swerve.x);
+				let theta = Math.atan2(cat.y - swerve.y, cat.x - swerve.x);
 
 				let newr = theta - Math.PI / 2;
-				dat.r = newr;
+				cat.r = newr;
 
-				dat.x += Math.cos(theta - Math.PI);
+				cat.x += Math.cos(theta - Math.PI);
 
 				//if (car && my_car.y < -10) {
 				//	my_car.z += 2;
 				//}
+				if (!brakeHard && car && cat.y < -80) {
+					brakeHard = true;
 
-				if (car && dat.y < -100) {
+					lookAhead = 70;
+
+					Cameraz.set2(150);
+
+					Cameraz.ZOOMDUR = 3;
+				}
+				if (brakeHard) {
+					carSpeed -= 0.01 * Four.delta;
+				}
+
+				if (car && cat.y < -100) {
 					car.add_delta(Cars.deltaSquares.dent_front_left);
 					car.add_delta(Cars.deltaSquares.dent_front_right);
+
+					van.add_delta(Cars.deltaSquares.dent_behind_left);
+					van.add_delta(Cars.deltaSquares.dent_behind_right);
+
 					stage = 1;
 				}
 
-				let w = Points.real_space(dat);
+				let w = Points.real_space(cat);
 
 				Four.camera.position.x = w.x;
 				Four.camera.position.y = w.y;
-				
-				if (!secondZooming && car && dat.y < -30 && Four.camera.position.z < 300) {
-					
-					secondZooming = true;
-
-					//Cameraz.set2(150);
-
-					//Cameraz.ZOOMDUR = 10;
-				}
-				//}
-				//else if (Four.camera.position.z < 60)
-				//	Four.camera.position.z += 10 * Four.delta;
 
 			}
 			else if (stage == 1) {
-				let w = Points.real_space(dat);
+				let w = Points.real_space(cat);
 
 				Four.camera.position.x = w.x;
 				Four.camera.position.y = w.y;
+
+				if (!zoomCrash) {
+
+					//Cameraz.set2(200);
+
+					//Cameraz.ZOOMDUR = 3;
+					zoomCrash = true;
+				}
 			}
 		}
 

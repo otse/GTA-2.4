@@ -5,6 +5,7 @@ import Points from './Objects/Points';
 import { Shift } from './Unsorted/Shift';
 import App from './App';
 import Util from './Random';
+import YM from './YM/You me';
 
 //export { THREE };
 
@@ -87,6 +88,7 @@ export namespace Four {
 		camera.updateProjectionMatrix();
 
 		Shift.resize();
+		YM.resize();
 
 		renderer.setSize(
 			window.innerWidth, window.innerHeight);

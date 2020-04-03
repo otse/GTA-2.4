@@ -3924,7 +3924,7 @@ var gta_kill = (function (exports, THREE) {
         Shift.retroShader = {
             uniforms: {
                 "tDiffuse": { value: null },
-                "tDiffuse2": { value: null },
+                "tUI": { value: null },
                 "redblue": { value: 0.005 },
                 "angle": { value: 0.0 },
                 "resolution": { value: null },
@@ -3951,11 +3951,10 @@ var gta_kill = (function (exports, THREE) {
 			}`,
             fragmentShader: `
 			uniform sampler2D tDiffuse;
-			uniform sampler2D tDiffuse2;
+			uniform sampler2D tUI;
 			uniform float redblue;
 			uniform float angle;
-
-
+			
 			varying vec2 vUv;
 
 			vec4 siift(sampler2D texture) {
@@ -3970,9 +3969,8 @@ var gta_kill = (function (exports, THREE) {
 
 			void main() {
 
-				
 				vec4 a = siift(tDiffuse);
-				vec4 b = siift(tDiffuse2);
+				vec4 b = siift(tUI);
 
 				gl_FragColor = a + b;
 			}`
@@ -4645,11 +4643,12 @@ var gta_kill = (function (exports, THREE) {
     (function (PalmTrees) {
         function init() {
             console.log('Palm trees init');
-            let dat;
+            let cat;
+            let dog;
             const ROADS = 2000;
             const load = function () {
                 Generators$1.Roads.twolane(1, [10, -ROADS + 10, 0], ROADS, 'qualityRoads');
-                dat = {
+                cat = {
                     type: 'Car',
                     car: 'Michelli Roadster',
                     spray: Cars$1.Sprays.DARK_BLUE,
@@ -4657,7 +4656,16 @@ var gta_kill = (function (exports, THREE) {
                     y: -1,
                     z: 0
                 };
-                Datas$1.deliver(dat);
+                Datas$1.deliver(cat);
+                dog = {
+                    type: 'Car',
+                    car: 'Van',
+                    spray: Cars$1.Sprays.PINK_RED,
+                    x: 10.5,
+                    y: -101.1,
+                    z: 0
+                };
+                Datas$1.deliver(dog);
                 Four$1.camera.position.z = 60;
                 Cameraz$1.allowManual = true;
                 Cameraz$1.set2(100);
@@ -4667,13 +4675,16 @@ var gta_kill = (function (exports, THREE) {
             let stage = 0;
             let swerveAt = 0;
             let swerve;
+            let carSpeed = 0.14;
             let gaveLights = false;
-            let secondZooming = false;
+            let brakeHard = false;
+            let lookAhead = 50;
             const update = function () {
-                let car = dat.object;
+                let car = cat.object;
+                let van = dog.object;
                 if (stage == 0) {
-                    KILL$1.view = dat;
-                    dat.y -= 0.07;
+                    KILL$1.view = cat;
+                    cat.y -= carSpeed;
                     if (car && !gaveLights) {
                         gaveLights = true;
                         let f;
@@ -4685,37 +4696,40 @@ var gta_kill = (function (exports, THREE) {
                         f.mesh.scale.set(-1, 1, 1);
                     }
                     if (--swerveAt <= 0) {
-                        let r = (Math.random() - 0.5) / 10;
-                        let p = Points$1.make(dat.x + r, dat.y - 70);
+                        let r = (Math.random() - 0.5) / 12;
+                        let p = Points$1.make(cat.x + r, cat.y - lookAhead);
                         swerve = p;
-                        swerveAt = 15 + Math.random() * 15;
+                        swerveAt = 10 + Math.random() * 15;
                     }
-                    let theta = Math.atan2(dat.y - swerve.y, dat.x - swerve.x);
+                    let theta = Math.atan2(cat.y - swerve.y, cat.x - swerve.x);
                     let newr = theta - Math.PI / 2;
-                    dat.r = newr;
-                    dat.x += Math.cos(theta - Math.PI);
+                    cat.r = newr;
+                    cat.x += Math.cos(theta - Math.PI);
                     //if (car && my_car.y < -10) {
                     //	my_car.z += 2;
                     //}
-                    if (car && dat.y < -100) {
+                    if (!brakeHard && car && cat.y < -80) {
+                        brakeHard = true;
+                        lookAhead = 70;
+                        Cameraz$1.set2(150);
+                        Cameraz$1.ZOOMDUR = 3;
+                    }
+                    if (brakeHard) {
+                        carSpeed -= 0.01 * Four$1.delta;
+                    }
+                    if (car && cat.y < -100) {
                         car.add_delta(Cars$1.deltaSquares.dent_front_left);
                         car.add_delta(Cars$1.deltaSquares.dent_front_right);
+                        van.add_delta(Cars$1.deltaSquares.dent_behind_left);
+                        van.add_delta(Cars$1.deltaSquares.dent_behind_right);
                         stage = 1;
                     }
-                    let w = Points$1.real_space(dat);
+                    let w = Points$1.real_space(cat);
                     Four$1.camera.position.x = w.x;
                     Four$1.camera.position.y = w.y;
-                    if (!secondZooming && car && dat.y < -30 && Four$1.camera.position.z < 300) {
-                        secondZooming = true;
-                        //Cameraz.set2(150);
-                        //Cameraz.ZOOMDUR = 10;
-                    }
-                    //}
-                    //else if (Four.camera.position.z < 60)
-                    //	Four.camera.position.z += 10 * Four.delta;
                 }
                 else if (stage == 1) {
-                    let w = Points$1.real_space(dat);
+                    let w = Points$1.real_space(cat);
                     Four$1.camera.position.x = w.x;
                     Four$1.camera.position.y = w.y;
                 }
@@ -4731,122 +4745,6 @@ var gta_kill = (function (exports, THREE) {
     })(PalmTrees || (PalmTrees = {}));
     var PalmTrees$1 = PalmTrees;
 
-    var FontsSpelling;
-    (function (FontsSpelling) {
-        function symbol(a, b, c, d, e, f, g, h) {
-            return { char: a, x: b, y: c, x2: d, y2: e, w: f, h: g, colorize: h };
-        }
-        const characters = [
-            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
-            'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', ' ',
-            '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
-            '.', ',', '?', '!',
-            ';', '~', '\'', '"', '$', '(', ')', '-', '_'
-        ];
-        const typefaces = {
-            small: {
-                positions: [
-                    0, 11, 22, 33, 44, 55, 66, 77, 88, 96, 108, 121, 132, 148,
-                    //A B  C   D   E   F   G   H   I   J   K    L    M    N
-                    159, 170, 181, 192, 203, 214, 224, 235, 247, 263, 274, 286, 296,
-                    //O  P    Q    R    S    T    U    V    W    X    Y    Z
-                    304, 313, 325, 337, 350, 362, 374, 386, 398, 410,
-                    //1  2    3    4    5    6    7    8    9    0    
-                    422, 429, 435, 446,
-                    //.  ,    ?    !
-                    452, 458, 471, 477, 488, 500, 509, 518, 529, 540
-                    //;  ~    '    "    $    (    )    -    _
-                ],
-                space: 9,
-                line_height: 23,
-            },
-            mission: {
-                positions: [],
-                space: 33,
-                line_height: 64,
-            }
-        };
-        // https://gtamp.com/text/?bg=0&font=1&color=6&shiny=0&imgtype=0&text=ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.%2C%3F%21%3B%7E%27%22%60%24%28%29-
-        function symbolize(canvas, text, font) {
-            let typeface = typefaces[font];
-            text = text.toUpperCase();
-            let last_x = 0;
-            let last_y = canvas.height / 2 - typeface.line_height;
-            let symbols = [];
-            let colorize = false;
-            for (let i = 0; i < text.length; i++) {
-                let char = text[i];
-                if (' ' == char) {
-                    last_x += typeface.space;
-                    continue;
-                }
-                if ('\n' == char) {
-                    last_y += typeface.line_height;
-                    last_x = 0;
-                    continue;
-                }
-                if ('#' == char) {
-                    colorize = !colorize;
-                    continue;
-                }
-                let index = characters.indexOf(char);
-                if (index == -1)
-                    continue;
-                let x = typeface.positions[index];
-                let y = 0;
-                let w = typeface.positions[index + 1] - x;
-                symbols.push(symbol(char, last_x, last_y, x, y, w, typeface.line_height, colorize));
-                last_x += w;
-            }
-            return symbols;
-        }
-        FontsSpelling.symbolize = symbolize;
-    })(FontsSpelling || (FontsSpelling = {}));
-    var FontsSpelling$1 = FontsSpelling;
-
-    var Fonts;
-    (function (Fonts) {
-        Fonts.fonts = {
-            white: undefined,
-            yellow: undefined,
-            mission: undefined
-        };
-        function init() {
-            Fonts.canvas = document.createElement('canvas');
-            console.log('fonts init');
-            load();
-        }
-        Fonts.init = init;
-        function load() {
-            const get_font = (name, rs, func) => {
-                new THREE.ImageLoader().load(`sty/fonts/${name}.png`, (img) => {
-                    func(img);
-                    KILL$1.resourced(rs);
-                }, () => { }, () => KILL$1.critical(rs));
-            };
-            get_font(`white`, `FONT_WHITE`, (e) => Fonts.fonts.white = e);
-            get_font(`yellow`, `FONT_YELLOW`, (e) => Fonts.fonts.yellow = e);
-            get_font(`mission`, `FONT_MISSION`, (e) => Fonts.fonts.mission = e);
-        }
-        function textTexture(text, width, height) {
-            Fonts.canvas.width = width;
-            Fonts.canvas.height = height;
-            let symbols = FontsSpelling$1.symbolize(Fonts.canvas, text, 'small');
-            let texture = new THREE.CanvasTexture(Fonts.canvas);
-            texture.magFilter = THREE.NearestFilter;
-            texture.minFilter = THREE.NearestFilter;
-            const context = Fonts.canvas.getContext("2d");
-            for (let s of symbols) {
-                let font = s.colorize ? Fonts.fonts.yellow : Fonts.fonts.white;
-                context.drawImage(font, s.x2, s.y2, s.w, s.h, s.x, s.y, s.w, s.h);
-            }
-            texture.needsUpdate = true;
-            return texture;
-        }
-        Fonts.textTexture = textTexture;
-    })(Fonts || (Fonts = {}));
-    var Fonts$1 = Fonts;
-
     class WordBox {
         constructor() {
             console.log('new talking head');
@@ -4856,7 +4754,7 @@ var gta_kill = (function (exports, THREE) {
         setText(text, delay = 650) {
             if (this.texture)
                 this.texture.dispose();
-            this.texture = Fonts.textTexture(text, 512, 128);
+            //this.texture = Fonts.textTexture(null, text, 512, 128);
             if (this.mesh) {
                 this.material.map = this.texture;
                 this.materialShadow.map = this.texture;
@@ -5096,6 +4994,131 @@ var gta_kill = (function (exports, THREE) {
     })(HighWayWithEveryCar || (HighWayWithEveryCar = {}));
     var HighWayWithEveryCar$1 = HighWayWithEveryCar;
 
+    var FontsSpelling;
+    (function (FontsSpelling) {
+        function symbol(a, b, c, d, e, f, g, h) {
+            return { char: a, x: b, y: c, x2: d, y2: e, w: f, h: g, colorize: h };
+        }
+        const characters = [
+            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+            'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', ' ',
+            '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
+            '.', ',', '?', '!',
+            ';', '~', '\'', '"', '$', '(', ')', '-', '_'
+        ];
+        const typefaces = {
+            small: {
+                positions: [
+                    0, 11, 22, 33, 44, 55, 66, 77, 88, 96, 108, 121, 132, 148,
+                    //A B  C   D   E   F   G   H   I   J   K    L    M    N
+                    159, 170, 181, 192, 203, 214, 224, 235, 247, 263, 274, 286, 296,
+                    //O  P    Q    R    S    T    U    V    W    X    Y    Z
+                    304, 313, 325, 337, 350, 362, 374, 386, 398, 410,
+                    //1  2    3    4    5    6    7    8    9    0    
+                    422, 429, 435, 446,
+                    //.  ,    ?    !
+                    452, 458, 471, 477, 488, 500, 509, 518, 529, 540
+                    //;  ~    '    "    $    (    )    -    _
+                ],
+                space: 9,
+                line_height: 23,
+            },
+            mission: {
+                positions: [],
+                space: 33,
+                line_height: 64,
+            }
+        };
+        // https://gtamp.com/text/?bg=0&font=1&color=6&shiny=0&imgtype=0&text=ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.%2C%3F%21%3B%7E%27%22%60%24%28%29-
+        function symbolize(canvas, text, font) {
+            let typeface = typefaces[font];
+            text = text.toUpperCase();
+            let last_x = 0;
+            let last_y = canvas.height / 2 - typeface.line_height;
+            let symbols = [];
+            let colorize = false;
+            for (let i = 0; i < text.length; i++) {
+                let char = text[i];
+                if (' ' == char) {
+                    last_x += typeface.space;
+                    continue;
+                }
+                if ('\n' == char) {
+                    last_y += typeface.line_height;
+                    last_x = 0;
+                    continue;
+                }
+                if ('#' == char) {
+                    colorize = !colorize;
+                    continue;
+                }
+                let index = characters.indexOf(char);
+                if (index == -1)
+                    continue;
+                let x = typeface.positions[index];
+                let y = 0;
+                let w = typeface.positions[index + 1] - x;
+                symbols.push(symbol(char, last_x, last_y, x, y, w, typeface.line_height, colorize));
+                last_x += w;
+            }
+            return symbols;
+        }
+        FontsSpelling.symbolize = symbolize;
+    })(FontsSpelling || (FontsSpelling = {}));
+    var FontsSpelling$1 = FontsSpelling;
+
+    var Fonts;
+    (function (Fonts) {
+        Fonts.fonts = {
+            white: undefined,
+            yellow: undefined,
+            mission: undefined
+        };
+        function init() {
+            Fonts.canvas = document.createElement('canvas');
+            console.log('fonts init');
+            load();
+        }
+        Fonts.init = init;
+        function load() {
+            const get_font = (name, rs, func) => {
+                new THREE.ImageLoader().load(`sty/fonts/${name}.png`, (img) => {
+                    func(img);
+                    KILL$1.resourced(rs);
+                }, () => { }, () => KILL$1.critical(rs));
+            };
+            get_font(`white`, `FONT_WHITE`, (e) => Fonts.fonts.white = e);
+            get_font(`yellow`, `FONT_YELLOW`, (e) => Fonts.fonts.yellow = e);
+            get_font(`mission`, `FONT_MISSION`, (e) => Fonts.fonts.mission = e);
+        }
+        function textOnto(inCanvas, text, width, height) {
+            let symbols = FontsSpelling$1.symbolize(inCanvas, text, 'small');
+            const context = inCanvas.getContext("2d");
+            for (let s of symbols) {
+                let font = s.colorize ? Fonts.fonts.yellow : Fonts.fonts.white;
+                context.drawImage(font, s.x2, s.y2, s.w, s.h, s.x, s.y, s.w, s.h);
+            }
+        }
+        Fonts.textOnto = textOnto;
+        function textTexture(text, width, height) {
+            Fonts.canvas.width = width;
+            Fonts.canvas.height = height;
+            let symbols = FontsSpelling$1.symbolize(Fonts.canvas, text, 'small');
+            let texture = new THREE.CanvasTexture(Fonts.canvas);
+            texture.magFilter = THREE.NearestFilter;
+            texture.minFilter = THREE.NearestFilter;
+            const context = Fonts.canvas.getContext("2d");
+            for (let s of symbols) {
+                let font = s.colorize ? Fonts.fonts.yellow : Fonts.fonts.white;
+                context.drawImage(font, s.x2, s.y2, s.w, s.h, s.x, s.y, s.w, s.h);
+            }
+            texture.needsUpdate = true;
+            return texture;
+        }
+        Fonts.textTexture = textTexture;
+    })(Fonts || (Fonts = {}));
+    var Fonts$1 = Fonts;
+
     // http://kitfox.com/projects/perlinNoiseMaker/
     var Mist;
     (function (Mist) {
@@ -5118,14 +5141,26 @@ var gta_kill = (function (exports, THREE) {
             document.body.appendChild(YM.canvas);
             YM.context = YM.canvas.getContext("2d");
             YM.canvasTexture = new THREE.CanvasTexture(YM.canvas);
-            drawth();
+            YM.canvasTexture.magFilter = THREE.NearestFilter;
+            YM.canvasTexture.minFilter = THREE.NearestFilter;
+            Shift.effect.uniforms['tUI'].value = YM.canvasTexture;
+            resize();
             refresh();
         }
         YM.init = init;
         function resize() {
+            YM.canvas.width = window.innerWidth;
+            YM.canvas.height = window.innerHeight;
         }
         YM.resize = resize;
+        let firstUpdate = true;
         function update() {
+            if (firstUpdate) {
+                console.log('first update');
+                drawth();
+                YM.canvasTexture.needsUpdate = true;
+                firstUpdate = false;
+            }
         }
         YM.update = update;
         function refresh() {
@@ -5135,8 +5170,9 @@ var gta_kill = (function (exports, THREE) {
         }
         YM.refresh = refresh;
         function drawth(th) {
-            YM.context.fillStyle = 'rgba(1, 0, 1, 1)';
+            YM.context.fillStyle = 'rgba(255, 0, 255, 1)';
             YM.context.fillRect(0, 0, 100, 100);
+            Fonts$1.textOnto(YM.canvas, "Bearing too much weight, will eventually cause the collapse of everything.", 512, 128);
             //context.drawImage(, s.x2, s.y2, s.w, s.h, s.x, s.y, s.w, s.h);
         }
         YM.drawth = drawth;
@@ -5190,11 +5226,11 @@ var gta_kill = (function (exports, THREE) {
             Cars$1.init();
             Sprites$1.init();
             Sheets$1.init();
-            YM$1.init();
             Fonts$1.init();
             Water$1.init();
             Mist$1.init();
             Shift.init();
+            YM$1.init();
             KILL.city = new City;
             window.KILL = KILL;
         }
@@ -5221,7 +5257,6 @@ var gta_kill = (function (exports, THREE) {
             KILL.view = data;
             Datas$1.deliver(data);
             //data.remap = [40, 46, 47, 49, 50, 51][Math.floor(Math.random() * 6)];
-            //ply = new Ply(data);
             KILL.city.chunkList.get2(0, 0);
             KILL.city.chunkList.get2(0, 1);
         }
@@ -5231,6 +5266,7 @@ var gta_kill = (function (exports, THREE) {
                 return;
             //if (ply)
             //ply.update();
+            YM$1.update();
             Water$1.update();
             Mist$1.update();
             Cameraz$1.update();
@@ -5289,6 +5325,7 @@ var gta_kill = (function (exports, THREE) {
             Four.aspect = Four.camera.aspect = window.innerWidth / window.innerHeight;
             Four.camera.updateProjectionMatrix();
             Shift.resize();
+            YM$1.resize();
             Four.renderer.setSize(window.innerWidth, window.innerHeight);
             console.log('aspect ', Four.aspect);
         }

@@ -92,13 +92,13 @@ export namespace KILL {
 		Sprites.init();
 		Sheets.init();
 
-		YM.init();
 		Fonts.init();
 		
 		Water.init();
 		Mist.init();
 		
 		Shift.init();
+		YM.init();
 
 		city = new City;
 
@@ -132,10 +132,9 @@ export namespace KILL {
 			z: 0
 		};
 		view = data;
+
 		Datas.deliver(data);
 		//data.remap = [40, 46, 47, 49, 50, 51][Math.floor(Math.random() * 6)];
-
-		//ply = new Ply(data);
 
 		city.chunkList.get2(0, 0);
 		city.chunkList.get2(0, 1);
@@ -149,6 +148,8 @@ export namespace KILL {
 		//if (ply)
 			//ply.update();
 
+		YM.update();
+
 		Water.update();
 		Mist.update();
 
@@ -157,7 +158,7 @@ export namespace KILL {
 		Scenarios.update();
 
 		city.shift(view);
-		
+	
 		city.update();
 	}
 

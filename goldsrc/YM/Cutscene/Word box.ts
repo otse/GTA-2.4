@@ -27,7 +27,7 @@ export class WordBox {
 	setText(text: string, delay = 650) {
 		if (this.texture)
 			this.texture.dispose();
-		this.texture = Fonts.textTexture(text, 512, 128);
+		//this.texture = Fonts.textTexture(null, text, 512, 128);
 		if (this.mesh) {
 			this.material.map = this.texture;
 			this.materialShadow.map = this.texture;			
