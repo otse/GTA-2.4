@@ -12,7 +12,7 @@ import App from "../App"
 
 namespace Cameraz {
 	export var dontZoom = false;
-	export var allowManual = false;
+	export var allowManual = true;
 	export var stage = 2
 	export var stages = [150, 300, 600, 1200, 2400]
 
@@ -39,12 +39,9 @@ namespace Cameraz {
 
 	export function update() {
 
-		if (!KILL.ply)
-			return;
-
 		const z = App.map[90] == 1;
 
-		if (z && !allowManual) {
+		if (z && allowManual) {
 			dontZoom = false;
 			t = 0;
 			zoomCur = zoom;
@@ -66,7 +63,7 @@ namespace Cameraz {
 		const T = EasingFunctions.inOutCubic(t);
 		zoom = zoomCur + (T * difference);
 
-		const data = KILL.ply.data;
+		const data = KILL.view;
 		Four.camera.position.set(data.x * 64, data.y * 64, zoom);
 
 	}

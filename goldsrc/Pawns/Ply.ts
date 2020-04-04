@@ -21,6 +21,10 @@ export class Ply extends Ped {
 	}
 
 	update() {
+		this.update_position();
+	}
+
+	manual_update() {
 		//super.Update();
 
 		const skooma = App.map[88]; // x

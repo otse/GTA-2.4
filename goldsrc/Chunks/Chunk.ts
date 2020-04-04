@@ -24,7 +24,7 @@ export class Chunk {
 	readonly w: Point
 
 	constructor(w: Point) {
-		//console.log(`chunk`, Points.string(w));
+		console.log(`chunk`, Points.string(w));
 
 		this.group = new Group;
 
@@ -38,6 +38,7 @@ export class Chunk {
 	private fabricate(data: Data2) {
 		if (!data.object)
 			Objects.makeNullable(data);
+
 		if (data.object) {
 			data.object.chunk = this;
 			this.objects.push(data.object);
@@ -50,17 +51,24 @@ export class Chunk {
 	}
 
 	_add(data: Data2) {
+		console.log('add', data.type);
+		
 		this.datas.push(data);
 		if (this.isActive)
 			this.fabricate(data);
 	}
 
 	_remove(data: Data2) {
-		this.datas.splice(
-			this.datas.indexOf(data), 1);
-		this.objects.splice(
-			this.objects.indexOf(data.object), 1);
-		data.object.chunk = undefined;
+		let i;
+		i = this.datas.indexOf(data);
+		if (i >= 0)
+			this.datas.splice(i, 1);
+		if (data.object) {
+			i = this.objects.indexOf(data.object);
+			if (i >= 0)
+				this.objects.splice(i, 1);
+			data.object.chunk = undefined;
+		}
 	}
 
 	unearth() {

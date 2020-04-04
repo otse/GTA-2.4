@@ -12,12 +12,95 @@ import Four from "../Four";
 import Points from "../Objects/Points";
 import KILL from "../KILL";
 import Cameraz from "../Unsorted/Cameraz";
+import Sprites from "../Sprites/Sprites";
+import GenTools from "../Generators/Tools";
+import City from "../Chunks/City";
 
 export namespace PalmTrees {
+
+	function gas_station() {
+		let offset_y = 0;
+		// Fill the landscape
+		// sty/nature/tracks/514.bmp
+		// sty/nature/park original/216.bmp
+		// sty/nature/evergreen/836.bmp - Turtoise wasteland
+
+		Generators.Fill.fill([-500, -500, 0], [1000, 1000, 0], { sty: 'sty/nature/evergreen/836.bmp' }, { WHEEL: true });
+
+		//Generators.Fill.fill([10, -25, 0], [10+1000, -25+1000, 0], {sty: 'sty/nature/tracks/512.bmp'}, {RANDOM_ROTATION: true});
+
+		//Generators.Fill.fill([12, -25, 0], 1, 50, {r: 3, sty: 'sty/nature/evergreen/839.bmp'});
+
+		// Side of roads:
+		// 'sty/nature/evergreen/839.bmp'
+		Generators.Fill.fill([8, -500, 0], [9, 1000, 0], { r: 1, sty: 'sty/nature/evergreen/839.bmp' });
+		Generators.Fill.fill([9, -500, 0], [9, 1000, 0], { r: 1, sty: 'sty/floors/mixed/64.bmp' });
+		Generators.Fill.fill([12, -500, 0], [12, 1000, 0], { r: 3, sty: 'sty/nature/evergreen/839.bmp' });
+		Generators.Fill.fill([-25, 6, 0], [8, 6, 0], { r: 2, sty: 'sty/nature/evergreen/839.bmp' });
+		Generators.Fill.fill1([8, 6, 0], { r: 2, sty: 'sty/nature/evergreen/852.bmp' }); // 838
+		Generators.Fill.fill([-25, -1, 0], [8, -1, 0], { r: 0, sty: 'sty/nature/evergreen/839.bmp' });
+		Generators.Fill.fill1([8, -1, 0], { r: 1, sty: 'sty/nature/evergreen/852.bmp' }); // 838
+
+
+		// Big main road:
+		Generators.Roads.twolane(1, [10, 0, 0], 100, 'greyRoads');
+		//return;
+
+		//Generators.Fill.fill([12, -25, 0], 1, 50, {r: 2, sty: 'sty/nature/tracks/520.bmp'});
+		Generators.Roads.oneway(0, [2, 5, 0], 9, 'greyRoads'); // Parking entry
+		Generators.Roads.oneway(0, [7, 0, 0], 4, 'greyRoads'); // Parking exit
+
+		// Deco in between road and parking
+		Generators.Fill.fill([8, 1 + offset_y, 0], [9, 4 + offset_y, 0], { r: 0, sty: 'sty/floors/mixed/64.bmp' });
+		//Generators.Fill.fill([9, 1, 0], [9, 4, 0], { r: 1, sty: 'sty/nature/evergreen/836.bmp' });
+
+		// Turq evergreen planter
+		//Generators.Fill.fill1([9, 1, 0], { r: 2, sty: 'sty/nature/evergreen/840.bmp' });
+		//Generators.Fill.fill1([9, 2, 0], { r: 2, sty: 'sty/nature/evergreen/859.bmp' });
+		//Generators.Fill.fill1([9, 3, 0], { r: 2, sty: 'sty/nature/evergreen/859.bmp' });
+		//Generators.Fill.fill1([9, 4, 0], { r: 0, sty: 'sty/nature/evergreen/840.bmp' });
+
+		// Deline exits
+
+		//GenTools.Deline.horz([2, 4, 0], 10, 3, 0);
+		//GenTools.Deline.horz([2, -1, 0], 9, 3, 0);
+
+		//GenTools.Deline.aabb([2, -1, 0], [2, 4+10, 0+9], 0);
+		GenTools.Deline.aabb([9, -1 + offset_y, 0], [13, 7 + offset_y, 0], 0); // Deline success
+
+		//Generators.Fill.fill([6, 0, 0], [6, 4, 0], { r: 3, sty: 'sty/floors/yellow/933.bmp' }, { WHEEL: false });
+		Generators.Fill.fill([6, 0 + offset_y, 0], [6, 4 + offset_y, 0], { r: 1, sty: 'sty/floors/mixed/64.bmp' }, { WHEEL: true });
+
+		// Gas station
+		Generators.Interiors.generate([3, 0 + offset_y, 0], [5, 4 + offset_y, 0], 'green');
+		//Generators.Buildings.type1([3, 0, 0], [5, 4, 0]); // Gas station
+		//Gen1.GenRoads.highway(1, [5, 0, 0], 6, 2, 'greyRoads'); // Pumps road
+
+		//Gen1.GenRoads.twolane(0, [2, 5, 0], 9, 'greenRoads'); // horz
+		//Gen1.GenRoads.twolane(0, [2, -2, 0], 9, 'greenRoads'); // horz
+
+		//GenDeline.mixedToBad([2, 4, 0], 9, 4);
+		//GenDeline.mixedToBad([2, -3, 0], 9, 4);
+
+		Generators.Parking.onewayRight([7, 0 + offset_y, 0], 6, 2, 'greyRoads');
+
+		//GenTools.swap([7, 1, 0], [7, 4, 0], { sheet: 'badRoads' });
+		//GenTools.swap([6, 2, 0], [6, 3, 0], { sheet: 'badRoads'} );
+
+		//Gen2.GenDeline.horz([4, 0, 0], 6, 6);
+
+		let gas_station_corner = GenTools.getDataOfType([7, 5 + offset_y, 0], 'Surface');
+		let gas_station_corner2 = GenTools.getDataOfType([7, 0 + offset_y, 0], 'Surface');
+
+		gas_station_corner!.sprite = Sprites.ROADS.SINGLE_EXIT;
+		gas_station_corner2!.sprite = Sprites.ROADS.SINGLE_CORNER;
+		gas_station_corner2!.r! += 1;
+	}
 
 	export function init() {
 		console.log('Palm trees init');
 
+		let ply: Data2;
 		let cat: Data2;
 		let dog: Data2;
 		let swerves = {};
@@ -26,14 +109,20 @@ export namespace PalmTrees {
 
 		const load = function () {
 
-			Generators.Roads.twolane(1, [10, -ROADS + 10, 0], ROADS, 'qualityRoads');
+			//Generators.Fill.fill([-500, -500, -3], [1000, 1000, 0], { sty: 'sty/special/water/1.bmp' }, { WHEEL: false });
+
+			//Generators.Roads.twolane(1, [10, -ROADS + 10, 0], ROADS, 'greyRoads');
+
+			gas_station();
+
+			let randomCar = Cars.Names2[KILL.floor_random(Cars.Names2.length)];
 
 			cat = {
 				type: 'Car',
-				car: 'Michelli Roadster',
-				spray: Cars.Sprays.DARK_BLUE,
+				car: randomCar,
+				spray: KILL.floor_random(Cars.Sprays.YELLOW_GREEN),
 				x: 10.5,
-				y: -1,
+				y: 97,
 				z: 0
 			}
 
@@ -44,7 +133,7 @@ export namespace PalmTrees {
 				car: 'Van',
 				spray: Cars.Sprays.PINK_RED,
 				x: 10.5,
-				y: -101.1,
+				y: 3,
 				z: 0
 			}
 
@@ -52,7 +141,7 @@ export namespace PalmTrees {
 
 			Four.camera.position.z = 60;
 
-			Cameraz.allowManual = true;
+			Cameraz.allowManual = false;
 			Cameraz.set2(100);
 
 			Cameraz.ZOOMDUR = 20;
@@ -71,14 +160,30 @@ export namespace PalmTrees {
 		let zoomCrash = false;
 		let lookAhead = 50;
 
+		let makeTh = true;
+		let talkingHead: TalkingHead;
+		let wordBox: WordBox;
+
 		const update = function () {
 			let car = cat.object as Car;
 			let van = dog.object as Car;
 
 			if (stage == 0) {
 				KILL.view = cat;
+				KILL.city.shift(cat);
 
 				cat.y -= carSpeed;
+
+				if (makeTh) {
+					talkingHead = new TalkingHead('elmo');
+					talkingHead.speak_after(900);
+					talkingHead.quiet_after(8000);
+
+					wordBox = new WordBox();
+					wordBox.setText(`Blah blah\nblah`, 1000);
+
+					makeTh = false;
+				}
 
 				if (car && !gaveLights) {
 					gaveLights = true;
@@ -107,8 +212,19 @@ export namespace PalmTrees {
 				//if (car && my_car.y < -10) {
 				//	my_car.z += 2;
 				//}
-				if (!brakeHard && car && cat.y < -80) {
+				if (!brakeHard && car && cat.y < dog.y + 25) {
 					brakeHard = true;
+
+					wordBox.setText("Oh no!\n...", 0)
+
+					talkingHead.should_blink(false);
+					talkingHead.set_speed(0.13);
+					talkingHead.set_limit(4);
+					talkingHead.speak_after(0);
+					talkingHead.disappear_after(2500);
+					talkingHead.set_shock_after(1200);
+
+					//talkingHead.widget.toggle();
 
 					lookAhead = 70;
 
@@ -120,7 +236,7 @@ export namespace PalmTrees {
 					carSpeed -= 0.01 * Four.delta;
 				}
 
-				if (car && cat.y < -100) {
+				if (car && cat.y < dog.y + 1) {
 					car.add_delta(Cars.deltaSquares.dent_front_left);
 					car.add_delta(Cars.deltaSquares.dent_front_right);
 
@@ -137,12 +253,29 @@ export namespace PalmTrees {
 
 			}
 			else if (stage == 1) {
+
 				let w = Points.real_space(cat);
 
-				Four.camera.position.x = w.x;
-				Four.camera.position.y = w.y;
+				if (KILL.view == cat) {
+					Four.camera.position.x = w.x;
+					Four.camera.position.y = w.y;
+				}
 
 				if (!zoomCrash) {
+
+					ply = {
+						type: 'Ply',
+						//remap: 16,
+						x: cat.x + .3,
+						y: cat.y,
+						z: 0
+					};
+					KILL.view = ply;
+
+					Cameraz.allowManual = true;
+					Cameraz.ZOOMDUR = 2;
+
+					Datas.deliver(ply);
 
 					//Cameraz.set2(200);
 
@@ -150,6 +283,12 @@ export namespace PalmTrees {
 					zoomCrash = true;
 				}
 			}
+
+			if (talkingHead)
+				talkingHead.update();
+
+			if (wordBox)
+				wordBox.update();
 		}
 
 		let palmTrees: Scenario = {

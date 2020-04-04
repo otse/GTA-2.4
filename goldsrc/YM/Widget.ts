@@ -6,8 +6,8 @@ import { MeshBasicMaterial, PlaneBufferGeometry, Mesh, Texture, Color } from "th
 import Four from "../Four";
 import Util from "../Random";
 
-
 // we use canvas now tho
+
 export class Widget {
 
 	pos: {
@@ -15,11 +15,13 @@ export class Widget {
 		w; h;
 	}
 
-    mesh: Mesh
-    texture: Texture
-    material: MeshBasicMaterial
+	scale = 1
+
+	mesh: Mesh
+	texture: Texture
+	material: MeshBasicMaterial
 	geometry: PlaneBufferGeometry
-    
+
 	constructor(pos: Widget['pos']) {
 		console.log('ui element');
 
@@ -31,6 +33,10 @@ export class Widget {
 	destroy() {
 		this.geometry.dispose();
 		this.material.dispose();
+	}
+
+	toggle(see: boolean = false) {
+		this.mesh.visible = see;
 	}
 
 	make() {
@@ -59,11 +65,11 @@ export class Widget {
 		let cam = Four.camera.position.clone();
 
 		// x / y range to -500 to 500
-		let x = cam.x + this.pos.x * Four.aspect;
-		let y = cam.y + this.pos.y * Four.aspect;
+		let x = cam.x + this.pos.x;// * Four.aspect;
+		let y = cam.y + this.pos.y;// * Four.aspect;
 		let z = cam.z + this.pos.z - 680; // magic number
 
-		const scale = Four.aspect;
+		const scale = this.scale;///Four.aspect;
 
 		this.mesh.position.set(x, y, z);
 		this.mesh.scale.set(scale, scale, scale);

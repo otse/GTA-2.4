@@ -5,8 +5,6 @@ export namespace Points {
 		y: number;
 	}*/
 
-	
-
 	export function make(x: number, y: number) {
 		return { x: x, y: y }
 	}
@@ -35,8 +33,7 @@ export namespace Points {
 	export function string(a: Point) {
 		return `${a.x},${a!.y}`
 	}
-
-
+	
 	export function multp(a: Point, n: number): Point {
 		return make(
 			a.x * n,

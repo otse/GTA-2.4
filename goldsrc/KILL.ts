@@ -145,8 +145,8 @@ export namespace KILL {
 		if (!started)
 			return;
 
-		//if (ply)
-			//ply.update();
+		if (ply)
+			ply.manual_update();
 
 		YM.update();
 

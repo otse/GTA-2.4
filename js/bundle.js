@@ -3495,6 +3495,9 @@ var gta_kill = (function (exports, THREE) {
             window.ply = this;
         }
         update() {
+            this.update_position();
+        }
+        manual_update() {
             //super.Update();
             const skooma = App.map[88]; // x
             if (App.map[16] == 1)
@@ -3567,8 +3570,8 @@ var gta_kill = (function (exports, THREE) {
     // A chunk makes / destroys its datas / objects
     class Chunk {
         constructor(w) {
-            //console.log(`chunk`, Points.string(w));
             this.isActive = false;
+            console.log(`chunk`, Points$1.string(w));
             this.group = new THREE.Group;
             this.w = w;
             this.datas = [];
@@ -3588,14 +3591,22 @@ var gta_kill = (function (exports, THREE) {
                 object.update();
         }
         _add(data) {
+            console.log('add', data.type);
             this.datas.push(data);
             if (this.isActive)
                 this.fabricate(data);
         }
         _remove(data) {
-            this.datas.splice(this.datas.indexOf(data), 1);
-            this.objects.splice(this.objects.indexOf(data.object), 1);
-            data.object.chunk = undefined;
+            let i;
+            i = this.datas.indexOf(data);
+            if (i >= 0)
+                this.datas.splice(i, 1);
+            if (data.object) {
+                i = this.objects.indexOf(data.object);
+                if (i >= 0)
+                    this.objects.splice(i, 1);
+                data.object.chunk = undefined;
+            }
         }
         unearth() {
             this.isActive = true;
@@ -3681,9 +3692,7 @@ var gta_kill = (function (exports, THREE) {
             for (let y = 0; y < City.spanUneven; y++) {
                 for (let x = 0; x < City.spanUneven; x++) {
                     let z = Points$1.make(x - m + to.x, y - m + to.y);
-                    let ch = this.chunkList.getNullable(z);
-                    if (!ch)
-                        continue;
+                    let ch = this.chunkList.getCreate(z);
                     if (!ch.isActive) {
                         this.chunks.push(ch);
                         ch.unearth();
@@ -3693,7 +3702,7 @@ var gta_kill = (function (exports, THREE) {
             }
         }
     }
-    City.spanUneven = 3;
+    City.spanUneven = 5;
 
     var Sprites;
     (function (Sprites) {
@@ -3816,7 +3825,7 @@ var gta_kill = (function (exports, THREE) {
     var Cameraz;
     (function (Cameraz) {
         Cameraz.dontZoom = false;
-        Cameraz.allowManual = false;
+        Cameraz.allowManual = true;
         Cameraz.stage = 2;
         Cameraz.stages = [150, 300, 600, 1200, 2400];
         Cameraz.zoomCur = 600;
@@ -3838,10 +3847,8 @@ var gta_kill = (function (exports, THREE) {
         }
         Cameraz.set = set;
         function update() {
-            if (!KILL$1.ply)
-                return;
             const z = App.map[90] == 1;
-            if (z && !Cameraz.allowManual) {
+            if (z && Cameraz.allowManual) {
                 Cameraz.dontZoom = false;
                 t = 0;
                 Cameraz.zoomCur = Cameraz.zoom;
@@ -3857,7 +3864,7 @@ var gta_kill = (function (exports, THREE) {
             const difference = Cameraz.zoomTarget - Cameraz.zoomCur;
             const T = EasingFunctions$1.inOutCubic(t);
             Cameraz.zoom = Cameraz.zoomCur + (T * difference);
-            const data = KILL$1.ply.data;
+            const data = KILL$1.view;
             Four$1.camera.position.set(data.x * 64, data.y * 64, Cameraz.zoom);
         }
         Cameraz.update = update;
@@ -4639,175 +4646,10 @@ var gta_kill = (function (exports, THREE) {
     })(Scenarios || (Scenarios = {}));
     var Scenarios$1 = Scenarios;
 
-    var PalmTrees;
-    (function (PalmTrees) {
-        function init() {
-            console.log('Palm trees init');
-            let cat;
-            let dog;
-            const ROADS = 2000;
-            const load = function () {
-                Generators$1.Roads.twolane(1, [10, -ROADS + 10, 0], ROADS, 'qualityRoads');
-                cat = {
-                    type: 'Car',
-                    car: 'Michelli Roadster',
-                    spray: Cars$1.Sprays.DARK_BLUE,
-                    x: 10.5,
-                    y: -1,
-                    z: 0
-                };
-                Datas$1.deliver(cat);
-                dog = {
-                    type: 'Car',
-                    car: 'Van',
-                    spray: Cars$1.Sprays.PINK_RED,
-                    x: 10.5,
-                    y: -101.1,
-                    z: 0
-                };
-                Datas$1.deliver(dog);
-                Four$1.camera.position.z = 60;
-                Cameraz$1.allowManual = true;
-                Cameraz$1.set2(100);
-                Cameraz$1.ZOOMDUR = 20;
-                console.log('loaded palm trees');
-            };
-            let stage = 0;
-            let swerveAt = 0;
-            let swerve;
-            let carSpeed = 0.14;
-            let gaveLights = false;
-            let brakeHard = false;
-            let lookAhead = 50;
-            const update = function () {
-                let car = cat.object;
-                let van = dog.object;
-                if (stage == 0) {
-                    KILL$1.view = cat;
-                    cat.y -= carSpeed;
-                    if (car && !gaveLights) {
-                        gaveLights = true;
-                        let f;
-                        //car.add_delta(Cars.deltaSquares.tail_light_left);
-                        //f = car.add_delta(Cars.deltaSquares.tail_light_right);
-                        //f.mesh.scale.set(-1, 1, 1);
-                        car.add_delta(Cars$1.deltaSquares.head_light_left);
-                        f = car.add_delta(Cars$1.deltaSquares.head_light_right);
-                        f.mesh.scale.set(-1, 1, 1);
-                    }
-                    if (--swerveAt <= 0) {
-                        let r = (Math.random() - 0.5) / 12;
-                        let p = Points$1.make(cat.x + r, cat.y - lookAhead);
-                        swerve = p;
-                        swerveAt = 10 + Math.random() * 15;
-                    }
-                    let theta = Math.atan2(cat.y - swerve.y, cat.x - swerve.x);
-                    let newr = theta - Math.PI / 2;
-                    cat.r = newr;
-                    cat.x += Math.cos(theta - Math.PI);
-                    //if (car && my_car.y < -10) {
-                    //	my_car.z += 2;
-                    //}
-                    if (!brakeHard && car && cat.y < -80) {
-                        brakeHard = true;
-                        lookAhead = 70;
-                        Cameraz$1.set2(150);
-                        Cameraz$1.ZOOMDUR = 3;
-                    }
-                    if (brakeHard) {
-                        carSpeed -= 0.01 * Four$1.delta;
-                    }
-                    if (car && cat.y < -100) {
-                        car.add_delta(Cars$1.deltaSquares.dent_front_left);
-                        car.add_delta(Cars$1.deltaSquares.dent_front_right);
-                        van.add_delta(Cars$1.deltaSquares.dent_behind_left);
-                        van.add_delta(Cars$1.deltaSquares.dent_behind_right);
-                        stage = 1;
-                    }
-                    let w = Points$1.real_space(cat);
-                    Four$1.camera.position.x = w.x;
-                    Four$1.camera.position.y = w.y;
-                }
-                else if (stage == 1) {
-                    let w = Points$1.real_space(cat);
-                    Four$1.camera.position.x = w.x;
-                    Four$1.camera.position.y = w.y;
-                }
-            };
-            let palmTrees = {
-                name: 'Palm Trees',
-                loadCb: load,
-                updateCb: update
-            };
-            Scenarios.load(palmTrees);
-        }
-        PalmTrees.init = init;
-    })(PalmTrees || (PalmTrees = {}));
-    var PalmTrees$1 = PalmTrees;
-
-    class WordBox {
-        constructor() {
-            console.log('new talking head');
-            //Sheets.center(`sty/talking heads/${name}_1.bmp`);
-            this.make();
-        }
-        setText(text, delay = 650) {
-            if (this.texture)
-                this.texture.dispose();
-            //this.texture = Fonts.textTexture(null, text, 512, 128);
-            if (this.mesh) {
-                this.material.map = this.texture;
-                this.materialShadow.map = this.texture;
-                this.mesh.visible = false;
-                this.meshShadow.visible = false;
-                setTimeout(() => {
-                    this.mesh.visible = true;
-                    this.meshShadow.visible = true;
-                }, delay);
-            }
-        }
-        destroy() {
-            this.geometry.dispose();
-            this.material.dispose();
-        }
-        make() {
-            this.material = new THREE.MeshPhongMaterial({
-                map: this.texture,
-                transparent: true,
-                shininess: 0,
-                depthTest: false
-            });
-            this.materialShadow = this.material.clone();
-            this.materialShadow.opacity = 0.35;
-            this.materialShadow.color = new THREE.Color(0x0);
-            this.geometry = new THREE.PlaneBufferGeometry(64, 16, 1);
-            const scale = 6;
-            this.mesh = new THREE.Mesh(this.geometry, this.material);
-            this.mesh.renderOrder = 2;
-            this.mesh.scale.set(scale, scale, scale);
-            this.mesh.visible = false;
-            this.meshShadow = new THREE.Mesh(this.geometry, this.materialShadow);
-            this.meshShadow.renderOrder = 1;
-            this.meshShadow.scale.set(scale, scale, scale);
-            this.meshShadow.visible = false;
-            Four$1.scene.add(this.mesh);
-            //Four.scene.add(this.meshShadow);
-            console.log('make word box');
-        }
-        update() {
-            let pos = Four$1.camera.position.clone();
-            let x = pos.x + 100 * Four$1.aspect;
-            let y = pos.y - 80;
-            let z = pos.z - 200;
-            this.mesh.position.set(x, y, z);
-            this.meshShadow.position.set(x + 1, y - 1, z);
-        }
-    }
-    window.WordBox = WordBox;
-
     // we use canvas now tho
     class Widget {
         constructor(pos) {
+            this.scale = 1;
             console.log('ui element');
             this.pos = pos;
             this.make();
@@ -4815,6 +4657,9 @@ var gta_kill = (function (exports, THREE) {
         destroy() {
             this.geometry.dispose();
             this.material.dispose();
+        }
+        toggle(see = false) {
+            this.mesh.visible = see;
         }
         make() {
             this.material = new THREE.MeshBasicMaterial({
@@ -4834,10 +4679,10 @@ var gta_kill = (function (exports, THREE) {
         update() {
             let cam = Four$1.camera.position.clone();
             // x / y range to -500 to 500
-            let x = cam.x + this.pos.x * Four$1.aspect;
-            let y = cam.y + this.pos.y * Four$1.aspect;
+            let x = cam.x + this.pos.x; // * Four.aspect;
+            let y = cam.y + this.pos.y; // * Four.aspect;
             let z = cam.z + this.pos.z - 680; // magic number
-            const scale = Four$1.aspect;
+            const scale = this.scale; ///Four.aspect;
             this.mesh.position.set(x, y, z);
             this.mesh.scale.set(scale, scale, scale);
         }
@@ -4847,59 +4692,87 @@ var gta_kill = (function (exports, THREE) {
     // Apparently a band
     class TalkingHead {
         constructor(name) {
-            console.log('new talking head');
-            this.talkTime = 0;
-            this.blinkTime = 0;
-            this.blinkDelay = 3;
+            this.t = .11;
+            this.speed = 0.19;
+            this.limit = 0;
+            this.wordsSpoken = 0;
+            this.blink = true;
+            this.blinkDelay = 2;
             this.openEyesDelay = 0.1;
             this.img = 0;
             this.imgs = [];
+            this.talk = false;
+            console.log('new talking head');
             this.imgs.push(Util$1.loadTexture(`sty/talking heads/${name}_1.png`));
             this.imgs.push(Util$1.loadTexture(`sty/talking heads/${name}_2.png`));
             this.imgs.push(Util$1.loadTexture(`sty/talking heads/${name}_3.png`));
-            this.animateMouth = true;
             //Sheets.center(`sty/talking heads/${name}_1.bmp`);
             this.make();
         }
-        talk(aye, delay = 0) {
-            if (aye)
-                this.animateMouth = true;
-            else
-                setTimeout(() => {
-                    this.animateMouth = false;
-                    this.blinkTime = .11;
-                    this.blinkDelay = 3;
-                    this.widget.material.map = this.imgs[0];
-                }, delay);
+        set_speed(speed = 0.2) {
+            this.speed = speed;
+        }
+        speak_after(after = 20) {
+            setTimeout(() => {
+                this.t = 0;
+                this.talk = true;
+                this.wordsSpoken = 0;
+            }, after);
+        }
+        set_shock_after(after = 20) {
+            setTimeout(() => this.img = 2, after);
+        }
+        quiet_after(after = 20) {
+            setTimeout(() => {
+                this.talk = false;
+                this.img = 0;
+            }, after);
+        }
+        // uneven to keep mouth open
+        set_limit(words = 0) {
+            this.limit = words;
+            this.wordsSpoken = 0;
+        }
+        disappear_after(after = 20) {
+            setTimeout(() => {
+                this.widget.mesh.visible = false;
+            }, after);
+        }
+        should_blink(so) {
+            this.blink = so;
         }
         destroy() {
             this.widget.destroy();
         }
         make() {
             this.widget = new Widget({ x: 350, y: -200, z: 0, w: 200, h: 200 });
+            this.widget.scale = 1.5;
         }
         update() {
-            if (this.animateMouth) {
-                this.talkTime += Four$1.delta;
-                if (this.talkTime > 0.2) {
-                    this.img = this.img < 2 ? this.img + 2 : 0;
-                    this.widget.material.map = this.imgs[this.img];
-                    this.talkTime = 0;
+            if (this.talk) {
+                this.t += Four$1.delta;
+                if (this.t > this.speed) {
+                    if (!this.limit || this.wordsSpoken < this.limit) {
+                        this.img = this.img < 2 ? this.img + 2 : 0;
+                        this.t = 0;
+                        this.wordsSpoken++;
+                    }
                 }
             }
-            else {
-                this.blinkTime += Four$1.delta;
-                if (this.blinkTime > this.blinkDelay) {
-                    this.blinkTime = 0;
-                    this.blinkDelay = 3 + Math.random() * 3;
+            else if (this.blink) {
+                this.t += Four$1.delta;
+                if (this.t > this.blinkDelay) {
+                    this.t = 0;
+                    this.blinkDelay = 2 + Math.random() * 2;
                 }
-                else if (this.blinkTime > 0.11) {
-                    this.widget.material.map = this.imgs[0];
+                else if (this.t > 0.11) {
+                    this.img = 0;
                 }
-                else if (this.blinkTime > 0) {
-                    this.widget.material.map = this.imgs[1];
+                else if (this.t > 0) {
+                    this.img = 1;
                 }
             }
+            this.widget.material.map = this.imgs[this.img];
             this.widget.update();
             const s = 10;
             if (App.map[39]) // right
@@ -4914,85 +4787,6 @@ var gta_kill = (function (exports, THREE) {
         }
     }
     window.TalkingHead = TalkingHead;
-
-    var HighWayWithEveryCar;
-    (function (HighWayWithEveryCar) {
-        function init() {
-            console.log('Highway with every car init');
-            const load = function () {
-                Generators$1.Fill.fill([-500, -500, -3], [1000, 1000, 0], { sty: 'sty/special/water/1.bmp' }, { WHEEL: false });
-                Generators$1.Roads.highway(1, [10, -7000, 0], 8000, 4, 'qualityRoads');
-                let x = .5;
-                let y = 0;
-                let j = 0;
-                for (let name of Cars$1.Names2) {
-                    let physics = APhysic$1.get(name);
-                    const apartness = 15;
-                    let half_size = (physics.x_img_height + apartness) / 2 / 64;
-                    y -= half_size;
-                    let car = {
-                        type: 'Car',
-                        car: name,
-                        spray: KILL$1.floor_random(35),
-                        x: 10 + x,
-                        y: y + 7,
-                        z: 0
-                    };
-                    y -= half_size;
-                    j++;
-                    if (j > 16) {
-                        j = 0;
-                        // Begin spawning at new lane
-                        y = 0;
-                        x += 1;
-                    }
-                    Datas$1.deliver(car);
-                }
-                console.log('loaded bridge scenario');
-            };
-            let stage = 0;
-            let talkingHead;
-            let wordBox;
-            let viewingCar;
-            const update = function () {
-                if (stage == 0) {
-                    talkingHead = new TalkingHead('johny_zoo');
-                    wordBox = new WordBox();
-                    wordBox.setText(`The highway has every car.\nI will tell you which.`, 1000);
-                    setTimeout(() => stage++, 5000);
-                    stage++;
-                }
-                else if (stage == 2) {
-                    let chunk = Datas$1.getChunk(KILL$1.ply.data);
-                    const carArray = Cars$1.getCars();
-                    let closest = 200;
-                    let closestCar = null;
-                    for (let car of carArray) {
-                        let dist = Points$1.dist(car.data, KILL$1.ply.data);
-                        if (dist < closest) {
-                            closest = dist;
-                            closestCar = car;
-                        }
-                    }
-                    if (closestCar != viewingCar) {
-                        viewingCar = closestCar;
-                        let d = closestCar.data;
-                        wordBox.setText(`${d.car},\n${Cars$1.getSpray(d.spray)} ${d.spray}`);
-                    }
-                }
-                talkingHead.update();
-                wordBox.update();
-            };
-            let highwayWithEveryCar = {
-                name: 'Highway with every car',
-                loadCb: load,
-                updateCb: update
-            };
-            Scenarios.load(highwayWithEveryCar);
-        }
-        HighWayWithEveryCar.init = init;
-    })(HighWayWithEveryCar || (HighWayWithEveryCar = {}));
-    var HighWayWithEveryCar$1 = HighWayWithEveryCar;
 
     var FontsSpelling;
     (function (FontsSpelling) {
@@ -5119,6 +4913,451 @@ var gta_kill = (function (exports, THREE) {
     })(Fonts || (Fonts = {}));
     var Fonts$1 = Fonts;
 
+    class WordBox {
+        constructor() {
+            this.make();
+        }
+        destroy() {
+            this.widget.destroy();
+        }
+        make() {
+            this.widget = new Widget({
+                x: 250,
+                y: -250,
+                z: 0,
+                w: 512,
+                h: 128
+            });
+            this.widget.scale = 3;
+            this.widget.material.map = this.texture;
+            console.log('make word box');
+        }
+        setText(text, delay = 650) {
+            if (this.texture)
+                this.texture.dispose();
+            this.texture = Fonts.textTexture(text, 512, 128);
+            //if (this.mesh) {
+            this.widget.material.map = this.texture;
+            this.widget.mesh.visible = false;
+            setTimeout(() => {
+                this.widget.mesh.visible = true;
+            }, delay);
+            //}
+        }
+        update() {
+            this.widget.update();
+            //let pos = Four.camera.position.clone();
+            //let x = pos.x + 100 * Four.aspect;
+            //let y = pos.y - 80;
+            //let z = pos.z - 200;
+            //this.mesh.position.set(x, y, z);
+            //this.meshShadow.position.set(x + 1, y - 1, z);
+        }
+    }
+    window.WordBox = WordBox;
+
+    var GenTools;
+    (function (GenTools) {
+        // To swap tile at ply in console
+        // ~ Deline__.edit([Math.floor(ply.data.x), Math.floor(ply.data.y), 0], 'sideDash')
+        function getDataOfType(w, type) {
+            let point = { x: w[0], y: w[1], z: w[2] };
+            let chunk = Datas$1.getChunk(point);
+            for (let data of chunk.datas) {
+                if (data.type != type)
+                    continue;
+                if (Points$1.different(data, point))
+                    continue;
+                return data;
+            }
+        }
+        GenTools.getDataOfType = getDataOfType;
+        function swap2(min, assign) {
+            swap(min, min, assign);
+        }
+        GenTools.swap2 = swap2;
+        function swap(min, max, assign) {
+            let x = min[0];
+            for (; x <= max[0]; x++) {
+                let y = min[1];
+                for (; y <= max[1]; y++) {
+                    let point = Points$1.make(x, y);
+                    let chunk = Datas$1.getChunk(point);
+                    for (let data of chunk.datas) {
+                        if (Points$1.different(data, point))
+                            continue;
+                        //data.color = 'pink';
+                        Object.assign(data, assign);
+                        // Rebuild idiom
+                        chunk._remove(data);
+                        chunk._add(data);
+                    }
+                }
+            }
+        }
+        GenTools.swap = swap;
+        let Deline;
+        (function (Deline) {
+            function simple(w, width, height) {
+                let x = 0;
+                for (; x < width; x++) {
+                    let y = 0;
+                    for (; y < height; y++) {
+                        let point = Points$1.make(w[0] + x, w[1] + y);
+                        let chunk = Datas$1.getChunk(point);
+                        for (let data of chunk.datas) {
+                            if ('Surface' != data.type)
+                                continue;
+                            if (Points$1.different(data, point))
+                                continue;
+                            if (data.sprite == Sprites$1.ROADS.SIDE_LINE) {
+                                data.sprite = Sprites$1.ROADS.SIDE_CLEAR;
+                            }
+                            if (data.sprite == Sprites$1.ROADS.CONVEX_LINE)
+                                data.sprite = Sprites$1.ROADS.CONVEX;
+                            if (data.sprite == Sprites$1.ROADS.SIDE_STOP_LINE) {
+                                data.sprite = Sprites$1.ROADS.SIDE_STOP;
+                            }
+                        }
+                    }
+                }
+            }
+            Deline.simple = simple;
+            function aabb(min, max, axis) {
+                horz(min, max[0] - min[0], max[1] - min[1], axis);
+            }
+            Deline.aabb = aabb;
+            function horz(w, width, height, axis) {
+                let x = 0;
+                for (; x < width; x++) {
+                    let y = 0;
+                    for (; y < height; y++) {
+                        let p = { x: w[0] + x, y: w[1] + y };
+                        let chunk = Datas$1.getChunk(p);
+                        //if (chunked.includes(chunk))
+                        //continue;
+                        //chunked.push(chunk);
+                        for (let data of chunk.datas) {
+                            if ('Surface' != data.type)
+                                continue;
+                            if (Points$1.different(data, p))
+                                continue;
+                            //data.color = 'red';
+                            if (data.sprite == Sprites$1.ROADS.SIDE_LINE) {
+                                data.sprite = Sprites$1.ROADS.SIDE_CLEAR;
+                                if (axis == 0) {
+                                    if (p.y == w[1] || p.y == w[1] + height - 1) {
+                                        data.sprite = Sprites$1.ROADS.SIDE_DASH;
+                                        //data.color = 'pink';
+                                        if ((data.r == 1) && p.y == w[1] + height - 1)
+                                            data.f = true;
+                                        if ((data.r == 3) && p.y == w[1])
+                                            data.f = true;
+                                    }
+                                }
+                            }
+                            if (data.sprite == Sprites$1.ROADS.CONVEX_LINE)
+                                data.sprite = Sprites$1.ROADS.CONVEX;
+                            if (data.sprite == Sprites$1.ROADS.SIDE_STOP_LINE) {
+                                data.sprite = Sprites$1.ROADS.SIDE_STOP;
+                            }
+                        }
+                    }
+                }
+            }
+            Deline.horz = horz;
+        })(Deline = GenTools.Deline || (GenTools.Deline = {}));
+    })(GenTools || (GenTools = {}));
+    var GenTools$1 = GenTools;
+
+    var PalmTrees;
+    (function (PalmTrees) {
+        function gas_station() {
+            let offset_y = 0;
+            // Fill the landscape
+            // sty/nature/tracks/514.bmp
+            // sty/nature/park original/216.bmp
+            // sty/nature/evergreen/836.bmp - Turtoise wasteland
+            Generators$1.Fill.fill([-500, -500, 0], [1000, 1000, 0], { sty: 'sty/nature/evergreen/836.bmp' }, { WHEEL: true });
+            //Generators.Fill.fill([10, -25, 0], [10+1000, -25+1000, 0], {sty: 'sty/nature/tracks/512.bmp'}, {RANDOM_ROTATION: true});
+            //Generators.Fill.fill([12, -25, 0], 1, 50, {r: 3, sty: 'sty/nature/evergreen/839.bmp'});
+            // Side of roads:
+            // 'sty/nature/evergreen/839.bmp'
+            Generators$1.Fill.fill([8, -500, 0], [9, 1000, 0], { r: 1, sty: 'sty/nature/evergreen/839.bmp' });
+            Generators$1.Fill.fill([9, -500, 0], [9, 1000, 0], { r: 1, sty: 'sty/floors/mixed/64.bmp' });
+            Generators$1.Fill.fill([12, -500, 0], [12, 1000, 0], { r: 3, sty: 'sty/nature/evergreen/839.bmp' });
+            Generators$1.Fill.fill([-25, 6, 0], [8, 6, 0], { r: 2, sty: 'sty/nature/evergreen/839.bmp' });
+            Generators$1.Fill.fill1([8, 6, 0], { r: 2, sty: 'sty/nature/evergreen/852.bmp' }); // 838
+            Generators$1.Fill.fill([-25, -1, 0], [8, -1, 0], { r: 0, sty: 'sty/nature/evergreen/839.bmp' });
+            Generators$1.Fill.fill1([8, -1, 0], { r: 1, sty: 'sty/nature/evergreen/852.bmp' }); // 838
+            // Big main road:
+            Generators$1.Roads.twolane(1, [10, 0, 0], 100, 'greyRoads');
+            //return;
+            //Generators.Fill.fill([12, -25, 0], 1, 50, {r: 2, sty: 'sty/nature/tracks/520.bmp'});
+            Generators$1.Roads.oneway(0, [2, 5, 0], 9, 'greyRoads'); // Parking entry
+            Generators$1.Roads.oneway(0, [7, 0, 0], 4, 'greyRoads'); // Parking exit
+            // Deco in between road and parking
+            Generators$1.Fill.fill([8, 1 + offset_y, 0], [9, 4 + offset_y, 0], { r: 0, sty: 'sty/floors/mixed/64.bmp' });
+            //Generators.Fill.fill([9, 1, 0], [9, 4, 0], { r: 1, sty: 'sty/nature/evergreen/836.bmp' });
+            // Turq evergreen planter
+            //Generators.Fill.fill1([9, 1, 0], { r: 2, sty: 'sty/nature/evergreen/840.bmp' });
+            //Generators.Fill.fill1([9, 2, 0], { r: 2, sty: 'sty/nature/evergreen/859.bmp' });
+            //Generators.Fill.fill1([9, 3, 0], { r: 2, sty: 'sty/nature/evergreen/859.bmp' });
+            //Generators.Fill.fill1([9, 4, 0], { r: 0, sty: 'sty/nature/evergreen/840.bmp' });
+            // Deline exits
+            //GenTools.Deline.horz([2, 4, 0], 10, 3, 0);
+            //GenTools.Deline.horz([2, -1, 0], 9, 3, 0);
+            //GenTools.Deline.aabb([2, -1, 0], [2, 4+10, 0+9], 0);
+            GenTools$1.Deline.aabb([9, -1 + offset_y, 0], [13, 7 + offset_y, 0], 0); // Deline success
+            //Generators.Fill.fill([6, 0, 0], [6, 4, 0], { r: 3, sty: 'sty/floors/yellow/933.bmp' }, { WHEEL: false });
+            Generators$1.Fill.fill([6, 0 + offset_y, 0], [6, 4 + offset_y, 0], { r: 1, sty: 'sty/floors/mixed/64.bmp' }, { WHEEL: true });
+            // Gas station
+            Generators$1.Interiors.generate([3, 0 + offset_y, 0], [5, 4 + offset_y, 0], 'green');
+            //Generators.Buildings.type1([3, 0, 0], [5, 4, 0]); // Gas station
+            //Gen1.GenRoads.highway(1, [5, 0, 0], 6, 2, 'greyRoads'); // Pumps road
+            //Gen1.GenRoads.twolane(0, [2, 5, 0], 9, 'greenRoads'); // horz
+            //Gen1.GenRoads.twolane(0, [2, -2, 0], 9, 'greenRoads'); // horz
+            //GenDeline.mixedToBad([2, 4, 0], 9, 4);
+            //GenDeline.mixedToBad([2, -3, 0], 9, 4);
+            Generators$1.Parking.onewayRight([7, 0 + offset_y, 0], 6, 2, 'greyRoads');
+            //GenTools.swap([7, 1, 0], [7, 4, 0], { sheet: 'badRoads' });
+            //GenTools.swap([6, 2, 0], [6, 3, 0], { sheet: 'badRoads'} );
+            //Gen2.GenDeline.horz([4, 0, 0], 6, 6);
+            let gas_station_corner = GenTools$1.getDataOfType([7, 5 + offset_y, 0], 'Surface');
+            let gas_station_corner2 = GenTools$1.getDataOfType([7, 0 + offset_y, 0], 'Surface');
+            gas_station_corner.sprite = Sprites$1.ROADS.SINGLE_EXIT;
+            gas_station_corner2.sprite = Sprites$1.ROADS.SINGLE_CORNER;
+            gas_station_corner2.r += 1;
+        }
+        function init() {
+            console.log('Palm trees init');
+            let ply;
+            let cat;
+            let dog;
+            const load = function () {
+                //Generators.Fill.fill([-500, -500, -3], [1000, 1000, 0], { sty: 'sty/special/water/1.bmp' }, { WHEEL: false });
+                //Generators.Roads.twolane(1, [10, -ROADS + 10, 0], ROADS, 'greyRoads');
+                gas_station();
+                let randomCar = Cars$1.Names2[KILL$1.floor_random(Cars$1.Names2.length)];
+                cat = {
+                    type: 'Car',
+                    car: randomCar,
+                    spray: KILL$1.floor_random(Cars$1.Sprays.YELLOW_GREEN),
+                    x: 10.5,
+                    y: 97,
+                    z: 0
+                };
+                Datas$1.deliver(cat);
+                dog = {
+                    type: 'Car',
+                    car: 'Van',
+                    spray: Cars$1.Sprays.PINK_RED,
+                    x: 10.5,
+                    y: 3,
+                    z: 0
+                };
+                Datas$1.deliver(dog);
+                Four$1.camera.position.z = 60;
+                Cameraz$1.allowManual = false;
+                Cameraz$1.set2(100);
+                Cameraz$1.ZOOMDUR = 20;
+                console.log('loaded palm trees');
+            };
+            let stage = 0;
+            let swerveAt = 0;
+            let swerve;
+            let carSpeed = 0.14;
+            let gaveLights = false;
+            let brakeHard = false;
+            let zoomCrash = false;
+            let lookAhead = 50;
+            let makeTh = true;
+            let talkingHead;
+            let wordBox;
+            const update = function () {
+                let car = cat.object;
+                let van = dog.object;
+                if (stage == 0) {
+                    KILL$1.view = cat;
+                    KILL$1.city.shift(cat);
+                    cat.y -= carSpeed;
+                    if (makeTh) {
+                        talkingHead = new TalkingHead('elmo');
+                        talkingHead.speak_after(900);
+                        talkingHead.quiet_after(8000);
+                        wordBox = new WordBox();
+                        wordBox.setText(`Blah blah\nblah`, 1000);
+                        makeTh = false;
+                    }
+                    if (car && !gaveLights) {
+                        gaveLights = true;
+                        let f;
+                        //car.add_delta(Cars.deltaSquares.tail_light_left);
+                        //f = car.add_delta(Cars.deltaSquares.tail_light_right);
+                        //f.mesh.scale.set(-1, 1, 1);
+                        car.add_delta(Cars$1.deltaSquares.head_light_left);
+                        f = car.add_delta(Cars$1.deltaSquares.head_light_right);
+                        f.mesh.scale.set(-1, 1, 1);
+                    }
+                    if (--swerveAt <= 0) {
+                        let r = (Math.random() - 0.5) / 12;
+                        let p = Points$1.make(cat.x + r, cat.y - lookAhead);
+                        swerve = p;
+                        swerveAt = 10 + Math.random() * 15;
+                    }
+                    let theta = Math.atan2(cat.y - swerve.y, cat.x - swerve.x);
+                    let newr = theta - Math.PI / 2;
+                    cat.r = newr;
+                    cat.x += Math.cos(theta - Math.PI);
+                    //if (car && my_car.y < -10) {
+                    //	my_car.z += 2;
+                    //}
+                    if (!brakeHard && car && cat.y < dog.y + 25) {
+                        brakeHard = true;
+                        wordBox.setText("Oh no!\n...", 0);
+                        talkingHead.should_blink(false);
+                        talkingHead.set_speed(0.13);
+                        talkingHead.set_limit(4);
+                        talkingHead.speak_after(0);
+                        talkingHead.disappear_after(2500);
+                        talkingHead.set_shock_after(1200);
+                        //talkingHead.widget.toggle();
+                        lookAhead = 70;
+                        Cameraz$1.set2(150);
+                        Cameraz$1.ZOOMDUR = 3;
+                    }
+                    if (brakeHard) {
+                        carSpeed -= 0.01 * Four$1.delta;
+                    }
+                    if (car && cat.y < dog.y + 1) {
+                        car.add_delta(Cars$1.deltaSquares.dent_front_left);
+                        car.add_delta(Cars$1.deltaSquares.dent_front_right);
+                        van.add_delta(Cars$1.deltaSquares.dent_behind_left);
+                        van.add_delta(Cars$1.deltaSquares.dent_behind_right);
+                        stage = 1;
+                    }
+                    let w = Points$1.real_space(cat);
+                    Four$1.camera.position.x = w.x;
+                    Four$1.camera.position.y = w.y;
+                }
+                else if (stage == 1) {
+                    let w = Points$1.real_space(cat);
+                    if (KILL$1.view == cat) {
+                        Four$1.camera.position.x = w.x;
+                        Four$1.camera.position.y = w.y;
+                    }
+                    if (!zoomCrash) {
+                        ply = {
+                            type: 'Ply',
+                            //remap: 16,
+                            x: cat.x + .3,
+                            y: cat.y,
+                            z: 0
+                        };
+                        KILL$1.view = ply;
+                        Cameraz$1.allowManual = true;
+                        Cameraz$1.ZOOMDUR = 2;
+                        Datas$1.deliver(ply);
+                        //Cameraz.set2(200);
+                        //Cameraz.ZOOMDUR = 3;
+                        zoomCrash = true;
+                    }
+                }
+                if (talkingHead)
+                    talkingHead.update();
+                if (wordBox)
+                    wordBox.update();
+            };
+            let palmTrees = {
+                name: 'Palm Trees',
+                loadCb: load,
+                updateCb: update
+            };
+            Scenarios.load(palmTrees);
+        }
+        PalmTrees.init = init;
+    })(PalmTrees || (PalmTrees = {}));
+    var PalmTrees$1 = PalmTrees;
+
+    var HighWayWithEveryCar;
+    (function (HighWayWithEveryCar) {
+        function init() {
+            console.log('Highway with every car init');
+            const load = function () {
+                Generators$1.Fill.fill([-500, -500, -3], [1000, 1000, 0], { sty: 'sty/special/water/1.bmp' }, { WHEEL: false });
+                Generators$1.Roads.highway(1, [10, -7000, 0], 8000, 4, 'qualityRoads');
+                let x = .5;
+                let y = 0;
+                let j = 0;
+                for (let name of Cars$1.Names2) {
+                    let physics = APhysic$1.get(name);
+                    const apartness = 15;
+                    let half_size = (physics.x_img_height + apartness) / 2 / 64;
+                    y -= half_size;
+                    let car = {
+                        type: 'Car',
+                        car: name,
+                        spray: KILL$1.floor_random(35),
+                        x: 10 + x,
+                        y: y + 7,
+                        z: 0
+                    };
+                    y -= half_size;
+                    j++;
+                    if (j > 16) {
+                        j = 0;
+                        // Begin spawning at new lane
+                        y = 0;
+                        x += 1;
+                    }
+                    Datas$1.deliver(car);
+                }
+                console.log('loaded bridge scenario');
+            };
+            let stage = 0;
+            let talkingHead;
+            let wordBox;
+            let viewingCar;
+            const update = function () {
+                if (stage == 0) {
+                    talkingHead = new TalkingHead('johny_zoo');
+                    wordBox = new WordBox();
+                    wordBox.setText(`The highway has every car.\nI will tell you which.`, 1000);
+                    setTimeout(() => stage++, 5000);
+                    stage++;
+                }
+                else if (stage == 2) {
+                    let chunk = Datas$1.getChunk(KILL$1.ply.data);
+                    const carArray = Cars$1.getCars();
+                    let closest = 200;
+                    let closestCar = null;
+                    for (let car of carArray) {
+                        let dist = Points$1.dist(car.data, KILL$1.ply.data);
+                        if (dist < closest) {
+                            closest = dist;
+                            closestCar = car;
+                        }
+                    }
+                    if (closestCar != viewingCar) {
+                        viewingCar = closestCar;
+                        let d = closestCar.data;
+                        wordBox.setText(`${d.car},\n${Cars$1.getSpray(d.spray)} ${d.spray}`);
+                    }
+                }
+                talkingHead.update();
+                wordBox.update();
+            };
+            let highwayWithEveryCar = {
+                name: 'Highway with every car',
+                loadCb: load,
+                updateCb: update
+            };
+            Scenarios.load(highwayWithEveryCar);
+        }
+        HighWayWithEveryCar.init = init;
+    })(HighWayWithEveryCar || (HighWayWithEveryCar = {}));
+    var HighWayWithEveryCar$1 = HighWayWithEveryCar;
+
     // http://kitfox.com/projects/perlinNoiseMaker/
     var Mist;
     (function (Mist) {
@@ -5143,7 +5382,7 @@ var gta_kill = (function (exports, THREE) {
             YM.canvasTexture = new THREE.CanvasTexture(YM.canvas);
             YM.canvasTexture.magFilter = THREE.NearestFilter;
             YM.canvasTexture.minFilter = THREE.NearestFilter;
-            Shift.effect.uniforms['tUI'].value = YM.canvasTexture;
+            //Shift.effect.uniforms['tUI'].value = canvasTexture;
             resize();
             refresh();
         }
@@ -5157,7 +5396,6 @@ var gta_kill = (function (exports, THREE) {
         function update() {
             if (firstUpdate) {
                 console.log('first update');
-                drawth();
                 YM.canvasTexture.needsUpdate = true;
                 firstUpdate = false;
             }
@@ -5170,9 +5408,9 @@ var gta_kill = (function (exports, THREE) {
         }
         YM.refresh = refresh;
         function drawth(th) {
-            YM.context.fillStyle = 'rgba(255, 0, 255, 1)';
-            YM.context.fillRect(0, 0, 100, 100);
-            Fonts$1.textOnto(YM.canvas, "Bearing too much weight, will eventually cause the collapse of everything.", 512, 128);
+            //context.fillStyle = 'rgba(255, 0, 255, 1)';
+            //context.fillRect(0, 0, 100, 100);
+            //Fonts.textOnto(canvas, "Bearing too much weight, will eventually cause the collapse of everything.", 512, 128);
             //context.drawImage(, s.x2, s.y2, s.w, s.h, s.x, s.y, s.w, s.h);
         }
         YM.drawth = drawth;
@@ -5264,8 +5502,8 @@ var gta_kill = (function (exports, THREE) {
         function update() {
             if (!started)
                 return;
-            //if (ply)
-            //ply.update();
+            if (KILL.ply)
+                KILL.ply.manual_update();
             YM$1.update();
             Water$1.update();
             Mist$1.update();

@@ -8,7 +8,7 @@ import Points from "../Objects/Points"
 
 export class City {
 
-	static spanUneven = 3
+	static spanUneven = 5
 
 	readonly chunkList: ChunkList
 	readonly chunks: Chunk[]
@@ -72,9 +72,7 @@ export class City {
 
 				let z = Points.make(x - m + to.x, y - m + to.y);
 
-				let ch = this.chunkList.getNullable(z);
-				if (!ch)
-					continue;
+				let ch = this.chunkList.getCreate(z);
 
 				if (!ch.isActive) {
 					this.chunks.push(ch);
