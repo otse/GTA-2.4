@@ -29,11 +29,10 @@ export class WordBox {
 				w: 512,
 				h: 128
 			});
+			
 		this.widget.scale = 3;
 
 		this.widget.material.map = this.texture;
-
-		console.log('make word box');
 	}
 
 	setText(text: string, delay = 650) {

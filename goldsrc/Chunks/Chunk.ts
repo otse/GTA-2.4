@@ -24,7 +24,7 @@ export class Chunk {
 	readonly w: Point
 
 	constructor(w: Point) {
-		console.log(`chunk`, Points.string(w));
+		//console.log(`chunk`, Points.string(w));
 
 		this.group = new Group;
 
@@ -51,7 +51,7 @@ export class Chunk {
 	}
 
 	_add(data: Data2) {
-		console.log('add', data.type);
+		//console.log('add', data.type);
 		
 		this.datas.push(data);
 		if (this.isActive)

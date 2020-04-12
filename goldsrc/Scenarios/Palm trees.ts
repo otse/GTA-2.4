@@ -15,6 +15,7 @@ import Cameraz from "../Unsorted/Cameraz";
 import Sprites from "../Sprites/Sprites";
 import GenTools from "../Generators/Tools";
 import City from "../Chunks/City";
+import { Shift } from "../Unsorted/Shift";
 
 export namespace PalmTrees {
 
@@ -119,7 +120,7 @@ export namespace PalmTrees {
 
 			cat = {
 				type: 'Car',
-				car: randomCar,
+				car: 'Hachura',
 				spray: KILL.floor_random(Cars.Sprays.YELLOW_GREEN),
 				x: 10.5,
 				y: 97,
@@ -139,12 +140,12 @@ export namespace PalmTrees {
 
 			Datas.deliver(dog);
 
-			Four.camera.position.z = 60;
+			Four.camera.position.z = 40;
 
 			Cameraz.allowManual = false;
-			Cameraz.set2(100);
+			Cameraz.set2(150);
 
-			Cameraz.ZOOMDUR = 20;
+			Cameraz.ZOOMDUR = 15;
 
 			console.log('loaded palm trees');
 		};
@@ -154,13 +155,13 @@ export namespace PalmTrees {
 
 		let swerveAt = 0;
 		let swerve;
-		let carSpeed = 0.14;
+		let carSpeed = 0.15;
 		let gaveLights = false;
 		let brakeHard = false;
 		let zoomCrash = false;
 		let lookAhead = 50;
 
-		let makeTh = true;
+		let setThingsUp = true;
 		let talkingHead: TalkingHead;
 		let wordBox: WordBox;
 
@@ -174,15 +175,18 @@ export namespace PalmTrees {
 
 				cat.y -= carSpeed;
 
-				if (makeTh) {
-					talkingHead = new TalkingHead('elmo');
-					talkingHead.speak_after(900);
+				if (setThingsUp) {
+					Shift.set_intensity(.5);
+
+					talkingHead = new TalkingHead('guider');
+					talkingHead.speak_after(2500);
 					talkingHead.quiet_after(8000);
 
 					wordBox = new WordBox();
-					wordBox.setText(`Blah blah\nblah`, 1000);
+					//wordBox.setText(`Blah blah\nblah`, 1000);
+					wordBox.setText(`What is the speed limit?`, 3000);
 
-					makeTh = false;
+					setThingsUp = false;
 				}
 
 				if (car && !gaveLights) {
@@ -212,9 +216,12 @@ export namespace PalmTrees {
 				//if (car && my_car.y < -10) {
 				//	my_car.z += 2;
 				//}
-				if (!brakeHard && car && cat.y < dog.y + 25) {
+				if (!brakeHard && car && cat.y < dog.y + 26.5) {
 					brakeHard = true;
 
+					Shift.set_intensity(1);
+
+					City.spanUneven = 5;
 					wordBox.setText("Oh no!\n...", 0)
 
 					talkingHead.should_blink(false);
@@ -228,12 +235,20 @@ export namespace PalmTrees {
 
 					lookAhead = 70;
 
-					Cameraz.set2(150);
+					Cameraz.set2(600);
 
-					Cameraz.ZOOMDUR = 3;
+					Cameraz.ZOOMDUR = 2.5;
 				}
 				if (brakeHard) {
 					carSpeed -= 0.01 * Four.delta;
+				}
+
+				if (brakeHard && Cameraz.ZOOMDUR == 2.5 && car && cat.y < dog.y + 8) {
+					console.log('zoom back in');
+					
+					Cameraz.ZOOMDUR = 1.7;
+
+					Cameraz.set2(100);
 				}
 
 				if (car && cat.y < dog.y + 1) {
@@ -263,6 +278,14 @@ export namespace PalmTrees {
 
 				if (!zoomCrash) {
 
+					Four.camera.position.y = 100;
+
+					Cameraz.ZOOMDUR = 10;
+
+					Cameraz.set2(300);
+
+					Shift.set_intensity(2);
+
 					ply = {
 						type: 'Ply',
 						//remap: 16,
@@ -271,9 +294,6 @@ export namespace PalmTrees {
 						z: 0
 					};
 					KILL.view = ply;
-
-					Cameraz.allowManual = true;
-					Cameraz.ZOOMDUR = 2;
 
 					Datas.deliver(ply);
 

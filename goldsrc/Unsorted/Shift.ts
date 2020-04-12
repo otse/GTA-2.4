@@ -30,6 +30,12 @@ export namespace Shift {
 	let orange = 0;
 	let meat = 0;
 
+	let intensity = 1;
+
+	export function set_intensity(n) {
+		intensity = n;
+	}
+
 	export function update() {
 
 		//updateHyper();
@@ -43,6 +49,10 @@ export namespace Shift {
 		let x = Math.sin(strawberry);
 		let y = Math.cos(orange) / 2;
 		let z = Math.sin(meat) + 1 / 4;
+
+		//x *= intensity;
+		y *= intensity;
+		z *= intensity;
 
 		effect.uniforms['angle'].value = x * strawberry;
 		effect.uniforms['redblue'].value = y * z * 0.0045;

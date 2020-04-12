@@ -5,10 +5,61 @@ import Sprites from "../Sprites/Sprites";
 import GenTools from "./Tools";
 import Datas from "../Objects/Datas";
 import Cars from "../Cars/Cars";
+import { Shift } from "../Unsorted/Shift";
 
 export namespace Levels {
 
-	export function aptsOffice() {
+	export function AptsOffice() {
+		// Note: Generate roads that merge last
+		Shift.set_intensity(0.5);
+
+		// This section is called Apts
+		// Big roads on either side
+		Generators.Pavements.fill([-1, -50, 0], 100, 1);
+		Generators.Pavements.fill([3, -50, 0], 100, 1);
+		
+		Generators.Pavements.fill([12, -50, 0], 100, 1);
+		Generators.Pavements.fill([9, -50, 0], 100, 1);
+
+		Generators.Roads.highway(1, [0, -25, 0], 50, 3, 'badRoads');
+		Generators.Roads.twolane(1, [10, -25, 0], 50, 'badRoads'); // vert
+
+		Generators.Buildings.type1([4, 7, 0], [6, 6, 3]); // Apts above
+		Generators.Buildings.type1([4, 0, 0], [7, 4, 4]); // Office
+		Generators.Pavements.fill([4, 4, 0], 4, 1);
+		
+		// The roads around the vert office
+		Generators.Roads.twolane(0, [2, 5, 0], 9, 'mixedRoads'); // horz
+		Generators.Roads.twolane(0, [2, -2, 0], 9, 'mixedRoads'); // horz
+		
+		//Deline.mixedToBad([2, 4, 0], 9, 4);
+		//Deline.mixedToBad([2, -3, 0], 9, 4);
+		
+		Generators.Parking.onewayRight([8, -1, 0], 7, 2, 'mixedRoads');
+		GenTools.Deline.horz([7, 0, 0], 3, 4, 0);
+
+		// Deline around the apts
+		GenTools.Deline.horz([2, 4, 0], 9, 4, 0);
+		GenTools.Deline.horz([2, -3, 0], 9, 4, 0);
+
+		//Pavements.Horz(3, -50, 0, 100, 1);
+		//FillerBuildings.Type1([13, 5, 0], [5, 2, 2]);
+		
+		// Big parking lot with skyscraper
+		Generators.Buildings.type1([13, 6, 0], [21, 14, 16]);
+
+		//Generators.Pavements.vert(21, -50, 0, 100, 1);
+		//Generators.Pavements.fill([12, 0, 0], 10, 6);
+		Generators.Parking.leftBigHorz([11, 1, 0], 10, 3, 'greyRoads');
+		GenTools.Deline.horz([11, 1, 0], 3, 4, 0); // Dash It!
+
+		Generators.Roads.twolane(1, [22, -25, 0], 50, 'badRoads');
+
+		Generators.Roads.twolane(0, [11, -2, 0], 12, 'badRoads');
+		Generators.Pavements.fill([12, -3, 0], 9, 1);
+	}
+
+	export function gas_station() {
 
 		Generators.roadMode = 'Adapt';
 

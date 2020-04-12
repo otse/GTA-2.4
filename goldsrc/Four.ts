@@ -61,7 +61,7 @@ export namespace Four {
 		directionalLight = new DirectionalLight(0x355886, 1.0);
 		directionalLight.position.set(0, 0, 1);
 		ambientLight = new AmbientLight('#ffffff'); // #5187cd
-		//ambientLight = new AmbientLight('#c1c1c1'); // #5187cd
+		//ambientLight = new AmbientLight('#5187cd'); // #5187cd
 
 		//scene.add(directionalLight);
 		scene.add(directionalLight.target);

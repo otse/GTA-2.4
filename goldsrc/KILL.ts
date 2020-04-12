@@ -118,8 +118,9 @@ export namespace KILL {
 			HighWayWithEveryCar.init();
 		
 		//else if (window.location.href.indexOf("#palmtrees") != -1)
-		else
-			PalmTrees.init();
+		//else
+			//PalmTrees.init();
+		Levels.AptsOffice();
 
 		//else
 			//BridgeScenario.init();

@@ -8,7 +8,7 @@ import Points from "../Objects/Points"
 
 export class City {
 
-	static spanUneven = 5
+	static spanUneven = 3
 
 	readonly chunkList: ChunkList
 	readonly chunks: Chunk[]

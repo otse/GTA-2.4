@@ -3570,8 +3570,8 @@ var gta_kill = (function (exports, THREE) {
     // A chunk makes / destroys its datas / objects
     class Chunk {
         constructor(w) {
+            //console.log(`chunk`, Points.string(w));
             this.isActive = false;
-            console.log(`chunk`, Points$1.string(w));
             this.group = new THREE.Group;
             this.w = w;
             this.datas = [];
@@ -3591,7 +3591,7 @@ var gta_kill = (function (exports, THREE) {
                 object.update();
         }
         _add(data) {
-            console.log('add', data.type);
+            //console.log('add', data.type);
             this.datas.push(data);
             if (this.isActive)
                 this.fabricate(data);
@@ -3702,7 +3702,7 @@ var gta_kill = (function (exports, THREE) {
             }
         }
     }
-    City.spanUneven = 5;
+    City.spanUneven = 3;
 
     var Sprites;
     (function (Sprites) {
@@ -3747,242 +3747,6 @@ var gta_kill = (function (exports, THREE) {
         Sprites.init = init;
     })(Sprites || (Sprites = {}));
     var Sprites$1 = Sprites;
-
-    var EasingFunctions;
-    (function (EasingFunctions) {
-        // no easing, no acceleration
-        function linear(t) {
-            return t;
-        }
-        EasingFunctions.linear = linear;
-        // Accelerating from zero velocity
-        function inQuad(t) {
-            return t * t;
-        }
-        EasingFunctions.inQuad = inQuad;
-        // Decelerating to zero velocity
-        function easeOutQuad(t) {
-            return t * (2 - t);
-        }
-        EasingFunctions.easeOutQuad = easeOutQuad;
-        // Acceleration until halfway, then deceleration
-        function inOutQuad(t) {
-            return t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-        }
-        EasingFunctions.inOutQuad = inOutQuad;
-        // Accelerating from zero velocity 
-        function inCubic(t) {
-            return t * t * t;
-        }
-        EasingFunctions.inCubic = inCubic;
-        // Decelerating to zero velocity 
-        function outCubic(t) {
-            return (--t) * t * t + 1;
-        }
-        EasingFunctions.outCubic = outCubic;
-        // Acceleration until halfway, then deceleration 
-        function inOutCubic(t) {
-            return t < .5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
-        }
-        EasingFunctions.inOutCubic = inOutCubic;
-        // Accelerating from zero velocity 
-        function inQuart(t) {
-            return t * t * t * t;
-        }
-        EasingFunctions.inQuart = inQuart;
-        // Decelerating to zero velocity 
-        function outQuart(t) {
-            return 1 - (--t) * t * t * t;
-        }
-        EasingFunctions.outQuart = outQuart;
-        // Acceleration until halfway, then deceleration
-        function inOutQuart(t) {
-            return t < .5 ? 8 * t * t * t * t : 1 - 8 * (--t) * t * t * t;
-        }
-        EasingFunctions.inOutQuart = inOutQuart;
-        // Accelerating from zero velocity
-        function inQuint(t) {
-            return t * t * t * t * t;
-        }
-        EasingFunctions.inQuint = inQuint;
-        // Decelerating to zero velocity
-        function outQuint(t) {
-            return 1 + (--t) * t * t * t * t;
-        }
-        EasingFunctions.outQuint = outQuint;
-        // Acceleration until halfway, then deceleration 
-        function inOutQuint(t) {
-            return t < .5 ? 16 * t * t * t * t * t : 1 + 16 * (--t) * t * t * t * t;
-        }
-        EasingFunctions.inOutQuint = inOutQuint;
-    })(EasingFunctions || (EasingFunctions = {}));
-    var EasingFunctions$1 = EasingFunctions;
-
-    // todo construct a utility type from the length of the stages array,
-    // so that we can make a cool tuple for the Zoom.Set so that we dont
-    // have to write 0 | 1 | 2 | 3
-    // http://www.typescriptlang.org/docs/handbook/advanced-types.html
-    var Cameraz;
-    (function (Cameraz) {
-        Cameraz.dontZoom = false;
-        Cameraz.allowManual = true;
-        Cameraz.stage = 2;
-        Cameraz.stages = [150, 300, 600, 1200, 2400];
-        Cameraz.zoomCur = 600;
-        Cameraz.zoomTarget = 600;
-        Cameraz.zoom = 600;
-        let t = 0;
-        Cameraz.ZOOMDUR = 1;
-        function set2(target) {
-            t = 0;
-            Cameraz.zoomTarget = target;
-            Cameraz.zoomCur = Four$1.camera.position.z;
-            Cameraz.dontZoom = false;
-        }
-        Cameraz.set2 = set2;
-        function set(st) {
-            t = 0;
-            Cameraz.zoomCur = Cameraz.zoom;
-            Cameraz.stage = st;
-        }
-        Cameraz.set = set;
-        function update() {
-            const z = App.map[90] == 1;
-            if (z && Cameraz.allowManual) {
-                Cameraz.dontZoom = false;
-                t = 0;
-                Cameraz.zoomCur = Cameraz.zoom;
-                Cameraz.stage =
-                    Cameraz.stage < Cameraz.stages.length - 1 ? Cameraz.stage + 1 : 0;
-                Cameraz.zoomTarget = Cameraz.stages[Cameraz.stage];
-                console.log('z stage', Cameraz.stage);
-            }
-            if (Cameraz.dontZoom)
-                return;
-            t += Four$1.delta / Cameraz.ZOOMDUR;
-            t = Math.min(Math.max(t, 0.0), 1.0);
-            const difference = Cameraz.zoomTarget - Cameraz.zoomCur;
-            const T = EasingFunctions$1.inOutCubic(t);
-            Cameraz.zoom = Cameraz.zoomCur + (T * difference);
-            const data = KILL$1.view;
-            Four$1.camera.position.set(data.x * 64, data.y * 64, Cameraz.zoom);
-        }
-        Cameraz.update = update;
-    })(Cameraz || (Cameraz = {}));
-    var Cameraz$1 = Cameraz;
-
-    const TWO = THREE__default;
-    var Shift;
-    (function (Shift) {
-        Shift.enabled = true;
-        function cityView() {
-            Cameraz$1.set(2);
-            Shift.effect.uniforms["pixelSize"].value = 1.0;
-            Shift.effect.uniforms["zoom"].value = 0.0;
-        }
-        Shift.cityView = cityView;
-        function cart(a, n) {
-            if (a < Math.PI * 2)
-                a += n * Four$1.delta;
-            if (a > Math.PI * 2)
-                a -= Math.PI * 2;
-            return a;
-        }
-        let strawberry = 0;
-        let orange = 0;
-        let meat = 0;
-        function update() {
-            //updateHyper();
-            //return;
-            strawberry = cart(strawberry, 0.9);
-            orange = cart(orange, 1.5);
-            meat = cart(meat, 0.4);
-            let x = Math.sin(strawberry);
-            let y = Math.cos(orange) / 2;
-            let z = Math.sin(meat) + 1 / 4;
-            Shift.effect.uniforms['angle'].value = x * strawberry;
-            Shift.effect.uniforms['redblue'].value = y * z * 0.0045;
-        }
-        Shift.update = update;
-        let bat = 0;
-        function updateHyper() {
-            bat = cart(bat, 5);
-            Shift.effect.uniforms['angle'].value = bat;
-            Shift.effect.uniforms['redblue'].value = bat * 0.5;
-        }
-        Shift.updateHyper = updateHyper;
-        function resize() {
-            Shift.effect.uniforms["resolution"].value.set(window.innerWidth, window.innerHeight).multiplyScalar(window.devicePixelRatio);
-        }
-        Shift.resize = resize;
-        function init() {
-            Shift.composer = new TWO.EffectComposer(Four$1.renderer);
-            Shift.renderPass = new TWO.RenderPass(Four$1.scene, Four$1.camera);
-            Shift.composer.addPass(Shift.renderPass);
-            Shift.effect = new TWO.ShaderPass(Shift.retroShader);
-            Shift.effect.uniforms['redblue'].value = 0.0015 * 0.5;
-            Shift.effect.uniforms["resolution"].value =
-                new THREE.Vector2(window.innerWidth, window.innerHeight);
-            Shift.effect.uniforms["resolution"].value.multiplyScalar(window.devicePixelRatio);
-            Shift.effect.renderToScreen = true;
-            Shift.composer.addPass(Shift.effect);
-        }
-        Shift.init = init;
-        Shift.retroShader = {
-            uniforms: {
-                "tDiffuse": { value: null },
-                "tUI": { value: null },
-                "redblue": { value: 0.005 },
-                "angle": { value: 0.0 },
-                "resolution": { value: null },
-                "pixelSize": { value: 3.0 },
-                "zoom": { value: 1.0 }
-            },
-            defines: {
-                'XXX': '',
-            },
-            vertexShader: `
-			varying vec2 vUv;
-			uniform float zoom;
-
-			void main() {
-
-				vUv = uv;
-
-				//if (zoom > 0.0) {
-				//    vUv.x -= zoom / 300.0;
-				//}
-
-				gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
-
-			}`,
-            fragmentShader: `
-			uniform sampler2D tDiffuse;
-			uniform sampler2D tUI;
-			uniform float redblue;
-			uniform float angle;
-			
-			varying vec2 vUv;
-
-			vec4 siift(sampler2D texture) {
-				vec2 offset = redblue * vec2( cos(angle), sin(angle));
-				
-				vec4 cr = texture2D(texture, vUv + offset);
-				vec4 cga = texture2D(texture, vUv);
-				vec4 cb = texture2D(texture, vUv - offset);
-
-				return vec4(cr.r, cga.g, cb.b, cga.a);
-			}
-
-			void main() {
-
-				vec4 a = siift(tDiffuse);
-				vec4 b = siift(tUI);
-
-				gl_FragColor = a + b;
-			}`
-        };
-    })(Shift || (Shift = {}));
 
     // For making vertical ~> horizontal
     // So you only need to make one
@@ -4631,6 +4395,477 @@ var gta_kill = (function (exports, THREE) {
     })(Generators || (Generators = {}));
     var Generators$1 = Generators;
 
+    var GenTools;
+    (function (GenTools) {
+        // To swap tile at ply in console
+        // ~ Deline__.edit([Math.floor(ply.data.x), Math.floor(ply.data.y), 0], 'sideDash')
+        function getDataOfType(w, type) {
+            let point = { x: w[0], y: w[1], z: w[2] };
+            let chunk = Datas$1.getChunk(point);
+            for (let data of chunk.datas) {
+                if (data.type != type)
+                    continue;
+                if (Points$1.different(data, point))
+                    continue;
+                return data;
+            }
+        }
+        GenTools.getDataOfType = getDataOfType;
+        function swap2(min, assign) {
+            swap(min, min, assign);
+        }
+        GenTools.swap2 = swap2;
+        function swap(min, max, assign) {
+            let x = min[0];
+            for (; x <= max[0]; x++) {
+                let y = min[1];
+                for (; y <= max[1]; y++) {
+                    let point = Points$1.make(x, y);
+                    let chunk = Datas$1.getChunk(point);
+                    for (let data of chunk.datas) {
+                        if (Points$1.different(data, point))
+                            continue;
+                        //data.color = 'pink';
+                        Object.assign(data, assign);
+                        // Rebuild idiom
+                        chunk._remove(data);
+                        chunk._add(data);
+                    }
+                }
+            }
+        }
+        GenTools.swap = swap;
+        let Deline;
+        (function (Deline) {
+            function simple(w, width, height) {
+                let x = 0;
+                for (; x < width; x++) {
+                    let y = 0;
+                    for (; y < height; y++) {
+                        let point = Points$1.make(w[0] + x, w[1] + y);
+                        let chunk = Datas$1.getChunk(point);
+                        for (let data of chunk.datas) {
+                            if ('Surface' != data.type)
+                                continue;
+                            if (Points$1.different(data, point))
+                                continue;
+                            if (data.sprite == Sprites$1.ROADS.SIDE_LINE) {
+                                data.sprite = Sprites$1.ROADS.SIDE_CLEAR;
+                            }
+                            if (data.sprite == Sprites$1.ROADS.CONVEX_LINE)
+                                data.sprite = Sprites$1.ROADS.CONVEX;
+                            if (data.sprite == Sprites$1.ROADS.SIDE_STOP_LINE) {
+                                data.sprite = Sprites$1.ROADS.SIDE_STOP;
+                            }
+                        }
+                    }
+                }
+            }
+            Deline.simple = simple;
+            function aabb(min, max, axis) {
+                horz(min, max[0] - min[0], max[1] - min[1], axis);
+            }
+            Deline.aabb = aabb;
+            function horz(w, width, height, axis) {
+                let x = 0;
+                for (; x < width; x++) {
+                    let y = 0;
+                    for (; y < height; y++) {
+                        let p = { x: w[0] + x, y: w[1] + y };
+                        let chunk = Datas$1.getChunk(p);
+                        //if (chunked.includes(chunk))
+                        //continue;
+                        //chunked.push(chunk);
+                        for (let data of chunk.datas) {
+                            if ('Surface' != data.type)
+                                continue;
+                            if (Points$1.different(data, p))
+                                continue;
+                            //data.color = 'red';
+                            if (data.sprite == Sprites$1.ROADS.SIDE_LINE) {
+                                data.sprite = Sprites$1.ROADS.SIDE_CLEAR;
+                                if (axis == 0) {
+                                    if (p.y == w[1] || p.y == w[1] + height - 1) {
+                                        data.sprite = Sprites$1.ROADS.SIDE_DASH;
+                                        //data.color = 'pink';
+                                        if ((data.r == 1) && p.y == w[1] + height - 1)
+                                            data.f = true;
+                                        if ((data.r == 3) && p.y == w[1])
+                                            data.f = true;
+                                    }
+                                }
+                            }
+                            if (data.sprite == Sprites$1.ROADS.CONVEX_LINE)
+                                data.sprite = Sprites$1.ROADS.CONVEX;
+                            if (data.sprite == Sprites$1.ROADS.SIDE_STOP_LINE) {
+                                data.sprite = Sprites$1.ROADS.SIDE_STOP;
+                            }
+                        }
+                    }
+                }
+            }
+            Deline.horz = horz;
+        })(Deline = GenTools.Deline || (GenTools.Deline = {}));
+    })(GenTools || (GenTools = {}));
+    var GenTools$1 = GenTools;
+
+    var EasingFunctions;
+    (function (EasingFunctions) {
+        // no easing, no acceleration
+        function linear(t) {
+            return t;
+        }
+        EasingFunctions.linear = linear;
+        // Accelerating from zero velocity
+        function inQuad(t) {
+            return t * t;
+        }
+        EasingFunctions.inQuad = inQuad;
+        // Decelerating to zero velocity
+        function easeOutQuad(t) {
+            return t * (2 - t);
+        }
+        EasingFunctions.easeOutQuad = easeOutQuad;
+        // Acceleration until halfway, then deceleration
+        function inOutQuad(t) {
+            return t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+        }
+        EasingFunctions.inOutQuad = inOutQuad;
+        // Accelerating from zero velocity 
+        function inCubic(t) {
+            return t * t * t;
+        }
+        EasingFunctions.inCubic = inCubic;
+        // Decelerating to zero velocity 
+        function outCubic(t) {
+            return (--t) * t * t + 1;
+        }
+        EasingFunctions.outCubic = outCubic;
+        // Acceleration until halfway, then deceleration 
+        function inOutCubic(t) {
+            return t < .5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
+        }
+        EasingFunctions.inOutCubic = inOutCubic;
+        // Accelerating from zero velocity 
+        function inQuart(t) {
+            return t * t * t * t;
+        }
+        EasingFunctions.inQuart = inQuart;
+        // Decelerating to zero velocity 
+        function outQuart(t) {
+            return 1 - (--t) * t * t * t;
+        }
+        EasingFunctions.outQuart = outQuart;
+        // Acceleration until halfway, then deceleration
+        function inOutQuart(t) {
+            return t < .5 ? 8 * t * t * t * t : 1 - 8 * (--t) * t * t * t;
+        }
+        EasingFunctions.inOutQuart = inOutQuart;
+        // Accelerating from zero velocity
+        function inQuint(t) {
+            return t * t * t * t * t;
+        }
+        EasingFunctions.inQuint = inQuint;
+        // Decelerating to zero velocity
+        function outQuint(t) {
+            return 1 + (--t) * t * t * t * t;
+        }
+        EasingFunctions.outQuint = outQuint;
+        // Acceleration until halfway, then deceleration 
+        function inOutQuint(t) {
+            return t < .5 ? 16 * t * t * t * t * t : 1 + 16 * (--t) * t * t * t * t;
+        }
+        EasingFunctions.inOutQuint = inOutQuint;
+    })(EasingFunctions || (EasingFunctions = {}));
+    var EasingFunctions$1 = EasingFunctions;
+
+    // todo construct a utility type from the length of the stages array,
+    // so that we can make a cool tuple for the Zoom.Set so that we dont
+    // have to write 0 | 1 | 2 | 3
+    // http://www.typescriptlang.org/docs/handbook/advanced-types.html
+    var Cameraz;
+    (function (Cameraz) {
+        Cameraz.dontZoom = false;
+        Cameraz.allowManual = true;
+        Cameraz.stage = 2;
+        Cameraz.stages = [150, 300, 600, 1200, 2400];
+        Cameraz.zoomCur = 600;
+        Cameraz.zoomTarget = 600;
+        Cameraz.zoom = 600;
+        let t = 0;
+        Cameraz.ZOOMDUR = 1;
+        function set2(target) {
+            t = 0;
+            Cameraz.zoomTarget = target;
+            Cameraz.zoomCur = Four$1.camera.position.z;
+            Cameraz.dontZoom = false;
+        }
+        Cameraz.set2 = set2;
+        function set(st) {
+            t = 0;
+            Cameraz.zoomCur = Cameraz.zoom;
+            Cameraz.stage = st;
+        }
+        Cameraz.set = set;
+        function update() {
+            const z = App.map[90] == 1;
+            if (z && Cameraz.allowManual) {
+                Cameraz.dontZoom = false;
+                t = 0;
+                Cameraz.zoomCur = Cameraz.zoom;
+                Cameraz.stage =
+                    Cameraz.stage < Cameraz.stages.length - 1 ? Cameraz.stage + 1 : 0;
+                Cameraz.zoomTarget = Cameraz.stages[Cameraz.stage];
+                console.log('z stage', Cameraz.stage);
+            }
+            if (Cameraz.dontZoom)
+                return;
+            t += Four$1.delta / Cameraz.ZOOMDUR;
+            t = Math.min(Math.max(t, 0.0), 1.0);
+            const difference = Cameraz.zoomTarget - Cameraz.zoomCur;
+            const T = EasingFunctions$1.inOutCubic(t);
+            Cameraz.zoom = Cameraz.zoomCur + (T * difference);
+            const data = KILL$1.view;
+            Four$1.camera.position.set(data.x * 64, data.y * 64, Cameraz.zoom);
+        }
+        Cameraz.update = update;
+    })(Cameraz || (Cameraz = {}));
+    var Cameraz$1 = Cameraz;
+
+    const TWO = THREE__default;
+    var Shift;
+    (function (Shift) {
+        Shift.enabled = true;
+        function cityView() {
+            Cameraz$1.set(2);
+            Shift.effect.uniforms["pixelSize"].value = 1.0;
+            Shift.effect.uniforms["zoom"].value = 0.0;
+        }
+        Shift.cityView = cityView;
+        function cart(a, n) {
+            if (a < Math.PI * 2)
+                a += n * Four$1.delta;
+            if (a > Math.PI * 2)
+                a -= Math.PI * 2;
+            return a;
+        }
+        let strawberry = 0;
+        let orange = 0;
+        let meat = 0;
+        let intensity = 1;
+        function set_intensity(n) {
+            intensity = n;
+        }
+        Shift.set_intensity = set_intensity;
+        function update() {
+            //updateHyper();
+            //return;
+            strawberry = cart(strawberry, 0.9);
+            orange = cart(orange, 1.5);
+            meat = cart(meat, 0.4);
+            let x = Math.sin(strawberry);
+            let y = Math.cos(orange) / 2;
+            let z = Math.sin(meat) + 1 / 4;
+            //x *= intensity;
+            y *= intensity;
+            z *= intensity;
+            Shift.effect.uniforms['angle'].value = x * strawberry;
+            Shift.effect.uniforms['redblue'].value = y * z * 0.0045;
+        }
+        Shift.update = update;
+        let bat = 0;
+        function updateHyper() {
+            bat = cart(bat, 5);
+            Shift.effect.uniforms['angle'].value = bat;
+            Shift.effect.uniforms['redblue'].value = bat * 0.5;
+        }
+        Shift.updateHyper = updateHyper;
+        function resize() {
+            Shift.effect.uniforms["resolution"].value.set(window.innerWidth, window.innerHeight).multiplyScalar(window.devicePixelRatio);
+        }
+        Shift.resize = resize;
+        function init() {
+            Shift.composer = new TWO.EffectComposer(Four$1.renderer);
+            Shift.renderPass = new TWO.RenderPass(Four$1.scene, Four$1.camera);
+            Shift.composer.addPass(Shift.renderPass);
+            Shift.effect = new TWO.ShaderPass(Shift.retroShader);
+            Shift.effect.uniforms['redblue'].value = 0.0015 * 0.5;
+            Shift.effect.uniforms["resolution"].value =
+                new THREE.Vector2(window.innerWidth, window.innerHeight);
+            Shift.effect.uniforms["resolution"].value.multiplyScalar(window.devicePixelRatio);
+            Shift.effect.renderToScreen = true;
+            Shift.composer.addPass(Shift.effect);
+        }
+        Shift.init = init;
+        Shift.retroShader = {
+            uniforms: {
+                "tDiffuse": { value: null },
+                "tUI": { value: null },
+                "redblue": { value: 0.005 },
+                "angle": { value: 0.0 },
+                "resolution": { value: null },
+                "pixelSize": { value: 3.0 },
+                "zoom": { value: 1.0 }
+            },
+            defines: {
+                'XXX': '',
+            },
+            vertexShader: `
+			varying vec2 vUv;
+			uniform float zoom;
+
+			void main() {
+
+				vUv = uv;
+
+				//if (zoom > 0.0) {
+				//    vUv.x -= zoom / 300.0;
+				//}
+
+				gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+
+			}`,
+            fragmentShader: `
+			uniform sampler2D tDiffuse;
+			uniform sampler2D tUI;
+			uniform float redblue;
+			uniform float angle;
+			
+			varying vec2 vUv;
+
+			vec4 siift(sampler2D texture) {
+				vec2 offset = redblue * vec2( cos(angle), sin(angle));
+				
+				vec4 cr = texture2D(texture, vUv + offset);
+				vec4 cga = texture2D(texture, vUv);
+				vec4 cb = texture2D(texture, vUv - offset);
+
+				return vec4(cr.r, cga.g, cb.b, cga.a);
+			}
+
+			void main() {
+
+				vec4 a = siift(tDiffuse);
+				vec4 b = siift(tUI);
+
+				gl_FragColor = a + b;
+			}`
+        };
+    })(Shift || (Shift = {}));
+
+    var Levels;
+    (function (Levels) {
+        function AptsOffice() {
+            // Note: Generate roads that merge last
+            Shift.set_intensity(0.5);
+            // This section is called Apts
+            // Big roads on either side
+            Generators$1.Pavements.fill([-1, -50, 0], 100, 1);
+            Generators$1.Pavements.fill([3, -50, 0], 100, 1);
+            Generators$1.Pavements.fill([12, -50, 0], 100, 1);
+            Generators$1.Pavements.fill([9, -50, 0], 100, 1);
+            Generators$1.Roads.highway(1, [0, -25, 0], 50, 3, 'badRoads');
+            Generators$1.Roads.twolane(1, [10, -25, 0], 50, 'badRoads'); // vert
+            Generators$1.Buildings.type1([4, 7, 0], [6, 6, 3]); // Apts above
+            Generators$1.Buildings.type1([4, 0, 0], [7, 4, 4]); // Office
+            Generators$1.Pavements.fill([4, 4, 0], 4, 1);
+            // The roads around the vert office
+            Generators$1.Roads.twolane(0, [2, 5, 0], 9, 'mixedRoads'); // horz
+            Generators$1.Roads.twolane(0, [2, -2, 0], 9, 'mixedRoads'); // horz
+            //Deline.mixedToBad([2, 4, 0], 9, 4);
+            //Deline.mixedToBad([2, -3, 0], 9, 4);
+            Generators$1.Parking.onewayRight([8, -1, 0], 7, 2, 'mixedRoads');
+            GenTools$1.Deline.horz([7, 0, 0], 3, 4, 0);
+            // Deline around the apts
+            GenTools$1.Deline.horz([2, 4, 0], 9, 4, 0);
+            GenTools$1.Deline.horz([2, -3, 0], 9, 4, 0);
+            //Pavements.Horz(3, -50, 0, 100, 1);
+            //FillerBuildings.Type1([13, 5, 0], [5, 2, 2]);
+            // Big parking lot with skyscraper
+            Generators$1.Buildings.type1([13, 6, 0], [21, 14, 16]);
+            //Generators.Pavements.vert(21, -50, 0, 100, 1);
+            //Generators.Pavements.fill([12, 0, 0], 10, 6);
+            Generators$1.Parking.leftBigHorz([11, 1, 0], 10, 3, 'greyRoads');
+            GenTools$1.Deline.horz([11, 1, 0], 3, 4, 0); // Dash It!
+            Generators$1.Roads.twolane(1, [22, -25, 0], 50, 'badRoads');
+            Generators$1.Roads.twolane(0, [11, -2, 0], 12, 'badRoads');
+            Generators$1.Pavements.fill([12, -3, 0], 9, 1);
+        }
+        Levels.AptsOffice = AptsOffice;
+        function gas_station() {
+            Generators$1.roadMode = 'Adapt';
+            // Fill the landscape
+            // sty/nature/tracks/514.bmp
+            // sty/nature/park original/216.bmp
+            // sty/nature/evergreen/836.bmp - Turtoise wasteland
+            //Generators.Fill.fill([-500, -500, 0], [1000, 1000, 0], { sty: 'sty/nature/evergreen/836.bmp' }, { WHEEL: true });
+            //Generators.Fill.fill([10, -25, 0], [10+1000, -25+1000, 0], {sty: 'sty/nature/tracks/512.bmp'}, {RANDOM_ROTATION: true});
+            //Generators.Fill.fill([12, -25, 0], 1, 50, {r: 3, sty: 'sty/nature/evergreen/839.bmp'});
+            // Side of roads:
+            // 'sty/nature/evergreen/839.bmp'
+            //Generators.Fill.fill([9, -25, 0], [9, -25 + 50, 0], { r: 1, sty: 'sty/nature/evergreen/839.bmp' });
+            //Generators.Fill.fill([9, -25, 0], [9, -25 + 50, 0], { r: 1, sty: 'sty/floors/mixed/64.bmp' });
+            //Generators.Fill.fill([12, -25, 0], [12, -25 + 50, 0], { r: 3, sty: 'sty/nature/evergreen/839.bmp' });
+            //Generators.Fill.fill([-25, 6, 0], [9, 6, 0], { r: 2, sty: 'sty/nature/evergreen/839.bmp' });
+            //Generators.Fill.fill1([9, 6, 0], { r: 2, sty: 'sty/nature/evergreen/852.bmp' }); // 838
+            //Generators.Fill.fill([-25, -1, 0], [9, -1, 0], { r: 0, sty: 'sty/nature/evergreen/839.bmp' });
+            //Generators.Fill.fill1([9, -1, 0], { r: 1, sty: 'sty/nature/evergreen/852.bmp' }); // 838
+            // Big main road:
+            Generators$1.Roads.twolane(1, [10, -25, 0], 50, 'qualityRoads');
+            //Generators.Fill.fill([12, -25, 0], 1, 50, {r: 2, sty: 'sty/nature/tracks/520.bmp'});
+            Generators$1.Roads.oneway(0, [2, 5, 0], 9, 'qualityRoads'); // Parking entry
+            Generators$1.Roads.oneway(0, [7, 0, 0], 4, 'qualityRoads'); // Parking exit
+            // Deco in between road and parking
+            Generators$1.Fill.fill([8, 1, 0], [9, 4, 0], { r: 0, sty: 'sty/floors/mixed/64.bmp' });
+            //Generators.Fill.fill([9, 1, 0], [9, 4, 0], { r: 1, sty: 'sty/nature/evergreen/836.bmp' });
+            // Turq evergreen planter
+            //Generators.Fill.fill1([9, 1, 0], { r: 2, sty: 'sty/nature/evergreen/840.bmp' });
+            //Generators.Fill.fill1([9, 2, 0], { r: 2, sty: 'sty/nature/evergreen/859.bmp' });
+            //Generators.Fill.fill1([9, 3, 0], { r: 2, sty: 'sty/nature/evergreen/859.bmp' });
+            //Generators.Fill.fill1([9, 4, 0], { r: 0, sty: 'sty/nature/evergreen/840.bmp' });
+            // Deline exits
+            //GenTools.Deline.horz([2, 4, 0], 10, 3, 0);
+            //GenTools.Deline.horz([2, -1, 0], 9, 3, 0);
+            //GenTools.Deline.aabb([2, -1, 0], [2, 4+10, 0+9], 0);
+            GenTools$1.Deline.aabb([9, -1, 0], [13, 7, 0], 0); // Deline success
+            //Generators.Fill.fill([6, 0, 0], [6, 4, 0], { r: 3, sty: 'sty/floors/yellow/933.bmp' }, { WHEEL: false });
+            Generators$1.Fill.fill([6, 0, 0], [6, 4, 0], { r: 1, sty: 'sty/floors/mixed/64.bmp' }, { WHEEL: true });
+            // Gas station
+            Generators$1.Interiors.generate([3, 0, 0], [5, 4, 0], 'green');
+            //Generators.Buildings.type1([3, 0, 0], [5, 4, 0]); // Gas station
+            //Gen1.GenRoads.highway(1, [5, 0, 0], 6, 2, 'greyRoads'); // Pumps road
+            //Gen1.GenRoads.twolane(0, [2, 5, 0], 9, 'greenRoads'); // horz
+            //Gen1.GenRoads.twolane(0, [2, -2, 0], 9, 'greenRoads'); // horz
+            //GenDeline.mixedToBad([2, 4, 0], 9, 4);
+            //GenDeline.mixedToBad([2, -3, 0], 9, 4);
+            Generators$1.Parking.onewayRight([7, 0, 0], 6, 2, 'qualityRoads');
+            //GenTools.swap([7, 1, 0], [7, 4, 0], { sheet: 'badRoads' });
+            //GenTools.swap([6, 2, 0], [6, 3, 0], { sheet: 'badRoads'} );
+            //Gen2.GenDeline.horz([4, 0, 0], 6, 6);
+            let gas_station_corner = GenTools$1.getDataOfType([7, 5, 0], 'Surface');
+            let gas_station_corner2 = GenTools$1.getDataOfType([7, 0, 0], 'Surface');
+            gas_station_corner.sprite = Sprites$1.ROADS.SINGLE_EXIT;
+            gas_station_corner2.sprite = Sprites$1.ROADS.SINGLE_CORNER;
+            gas_station_corner2.r += 1;
+            return;
+        }
+        Levels.gas_station = gas_station;
+        function longLonesome() {
+            Generators$1.Roads.twolane(1, [10, -7000, 0], 8000, 'qualityRoads');
+            let car = {
+                type: 'Car',
+                car: 'Minx',
+                spray: Cars$1.Sprays.DARK_GREEN,
+                x: 10.5,
+                y: 0,
+                z: 0
+            };
+            Datas$1.deliver(car);
+        }
+        Levels.longLonesome = longLonesome;
+    })(Levels || (Levels = {}));
+    var Levels$1 = Levels;
+
     var Scenarios;
     (function (Scenarios) {
         function load(p) {
@@ -4645,148 +4880,6 @@ var gta_kill = (function (exports, THREE) {
         Scenarios.update = update;
     })(Scenarios || (Scenarios = {}));
     var Scenarios$1 = Scenarios;
-
-    // we use canvas now tho
-    class Widget {
-        constructor(pos) {
-            this.scale = 1;
-            console.log('ui element');
-            this.pos = pos;
-            this.make();
-        }
-        destroy() {
-            this.geometry.dispose();
-            this.material.dispose();
-        }
-        toggle(see = false) {
-            this.mesh.visible = see;
-        }
-        make() {
-            this.material = new THREE.MeshBasicMaterial({
-                map: Util$1.loadTexture(`sty/a square.png`),
-                transparent: true,
-                depthTest: false
-            });
-            this.geometry = new THREE.PlaneBufferGeometry(this.pos.w, this.pos.h, 1);
-            const scale = 1;
-            this.mesh = new THREE.Mesh(this.geometry, this.material);
-            this.mesh.renderOrder = 2;
-            this.mesh.scale.set(scale, scale, scale);
-            this.update();
-            console.log('adding ui element');
-            Four$1.scene.add(this.mesh);
-        }
-        update() {
-            let cam = Four$1.camera.position.clone();
-            // x / y range to -500 to 500
-            let x = cam.x + this.pos.x; // * Four.aspect;
-            let y = cam.y + this.pos.y; // * Four.aspect;
-            let z = cam.z + this.pos.z - 680; // magic number
-            const scale = this.scale; ///Four.aspect;
-            this.mesh.position.set(x, y, z);
-            this.mesh.scale.set(scale, scale, scale);
-        }
-    }
-    window.Widget = Widget;
-
-    // Apparently a band
-    class TalkingHead {
-        constructor(name) {
-            this.t = .11;
-            this.speed = 0.19;
-            this.limit = 0;
-            this.wordsSpoken = 0;
-            this.blink = true;
-            this.blinkDelay = 2;
-            this.openEyesDelay = 0.1;
-            this.img = 0;
-            this.imgs = [];
-            this.talk = false;
-            console.log('new talking head');
-            this.imgs.push(Util$1.loadTexture(`sty/talking heads/${name}_1.png`));
-            this.imgs.push(Util$1.loadTexture(`sty/talking heads/${name}_2.png`));
-            this.imgs.push(Util$1.loadTexture(`sty/talking heads/${name}_3.png`));
-            //Sheets.center(`sty/talking heads/${name}_1.bmp`);
-            this.make();
-        }
-        set_speed(speed = 0.2) {
-            this.speed = speed;
-        }
-        speak_after(after = 20) {
-            setTimeout(() => {
-                this.t = 0;
-                this.talk = true;
-                this.wordsSpoken = 0;
-            }, after);
-        }
-        set_shock_after(after = 20) {
-            setTimeout(() => this.img = 2, after);
-        }
-        quiet_after(after = 20) {
-            setTimeout(() => {
-                this.talk = false;
-                this.img = 0;
-            }, after);
-        }
-        // uneven to keep mouth open
-        set_limit(words = 0) {
-            this.limit = words;
-            this.wordsSpoken = 0;
-        }
-        disappear_after(after = 20) {
-            setTimeout(() => {
-                this.widget.mesh.visible = false;
-            }, after);
-        }
-        should_blink(so) {
-            this.blink = so;
-        }
-        destroy() {
-            this.widget.destroy();
-        }
-        make() {
-            this.widget = new Widget({ x: 350, y: -200, z: 0, w: 200, h: 200 });
-            this.widget.scale = 1.5;
-        }
-        update() {
-            if (this.talk) {
-                this.t += Four$1.delta;
-                if (this.t > this.speed) {
-                    if (!this.limit || this.wordsSpoken < this.limit) {
-                        this.img = this.img < 2 ? this.img + 2 : 0;
-                        this.t = 0;
-                        this.wordsSpoken++;
-                    }
-                }
-            }
-            else if (this.blink) {
-                this.t += Four$1.delta;
-                if (this.t > this.blinkDelay) {
-                    this.t = 0;
-                    this.blinkDelay = 2 + Math.random() * 2;
-                }
-                else if (this.t > 0.11) {
-                    this.img = 0;
-                }
-                else if (this.t > 0) {
-                    this.img = 1;
-                }
-            }
-            this.widget.material.map = this.imgs[this.img];
-            this.widget.update();
-            const s = 10;
-            if (App.map[39]) // right
-                this.widget.pos.x += s;
-            if (App.map[37]) // left
-                this.widget.pos.x -= s;
-            if (App.map[38]) // up
-                this.widget.pos.y += s;
-            if (App.map[40]) // down
-                this.widget.pos.y -= s;
-            //console.log(this.widget.pos);
-        }
-    }
-    window.TalkingHead = TalkingHead;
 
     var FontsSpelling;
     (function (FontsSpelling) {
@@ -4913,6 +5006,49 @@ var gta_kill = (function (exports, THREE) {
     })(Fonts || (Fonts = {}));
     var Fonts$1 = Fonts;
 
+    // we use canvas now tho
+    class Widget {
+        constructor(pos) {
+            this.scale = 1;
+            console.log('ui element');
+            this.pos = pos;
+            this.make();
+        }
+        destroy() {
+            this.geometry.dispose();
+            this.material.dispose();
+        }
+        toggle(see = false) {
+            this.mesh.visible = see;
+        }
+        make() {
+            this.material = new THREE.MeshBasicMaterial({
+                map: Util$1.loadTexture(`sty/a square.png`),
+                transparent: true,
+                depthTest: false
+            });
+            this.geometry = new THREE.PlaneBufferGeometry(this.pos.w, this.pos.h, 1);
+            const scale = 1;
+            this.mesh = new THREE.Mesh(this.geometry, this.material);
+            this.mesh.renderOrder = 2;
+            this.mesh.scale.set(scale, scale, scale);
+            this.update();
+            console.log('adding ui element');
+            Four$1.scene.add(this.mesh);
+        }
+        update() {
+            let cam = Four$1.camera.position.clone();
+            // x / y range to -500 to 500
+            let x = cam.x + this.pos.x; // * Four.aspect;
+            let y = cam.y + this.pos.y; // * Four.aspect;
+            let z = cam.z + this.pos.z - 680; // magic number
+            const scale = this.scale; ///Four.aspect;
+            this.mesh.position.set(x, y, z);
+            this.mesh.scale.set(scale, scale, scale);
+        }
+    }
+    window.Widget = Widget;
+
     class WordBox {
         constructor() {
             this.make();
@@ -4930,7 +5066,6 @@ var gta_kill = (function (exports, THREE) {
             });
             this.widget.scale = 3;
             this.widget.material.map = this.texture;
-            console.log('make word box');
         }
         setText(text, delay = 650) {
             if (this.texture)
@@ -4956,328 +5091,104 @@ var gta_kill = (function (exports, THREE) {
     }
     window.WordBox = WordBox;
 
-    var GenTools;
-    (function (GenTools) {
-        // To swap tile at ply in console
-        // ~ Deline__.edit([Math.floor(ply.data.x), Math.floor(ply.data.y), 0], 'sideDash')
-        function getDataOfType(w, type) {
-            let point = { x: w[0], y: w[1], z: w[2] };
-            let chunk = Datas$1.getChunk(point);
-            for (let data of chunk.datas) {
-                if (data.type != type)
-                    continue;
-                if (Points$1.different(data, point))
-                    continue;
-                return data;
-            }
+    // Apparently a band
+    class TalkingHead {
+        constructor(name) {
+            this.t = .11;
+            this.speed = 0.19;
+            this.limit = 0;
+            this.wordsSpoken = 0;
+            this.blink = true;
+            this.blinkDelay = 2;
+            this.openEyesDelay = 0.1;
+            this.img = 0;
+            this.imgs = [];
+            this.talk = false;
+            console.log('new talking head');
+            this.imgs.push(Util$1.loadTexture(`sty/talking heads/${name}_1.png`));
+            this.imgs.push(Util$1.loadTexture(`sty/talking heads/${name}_2.png`));
+            this.imgs.push(Util$1.loadTexture(`sty/talking heads/${name}_3.png`));
+            //Sheets.center(`sty/talking heads/${name}_1.bmp`);
+            this.make();
         }
-        GenTools.getDataOfType = getDataOfType;
-        function swap2(min, assign) {
-            swap(min, min, assign);
+        set_speed(speed = 0.2) {
+            this.speed = speed;
         }
-        GenTools.swap2 = swap2;
-        function swap(min, max, assign) {
-            let x = min[0];
-            for (; x <= max[0]; x++) {
-                let y = min[1];
-                for (; y <= max[1]; y++) {
-                    let point = Points$1.make(x, y);
-                    let chunk = Datas$1.getChunk(point);
-                    for (let data of chunk.datas) {
-                        if (Points$1.different(data, point))
-                            continue;
-                        //data.color = 'pink';
-                        Object.assign(data, assign);
-                        // Rebuild idiom
-                        chunk._remove(data);
-                        chunk._add(data);
+        speak_after(after = 20) {
+            setTimeout(() => {
+                this.t = 0;
+                this.talk = true;
+                this.wordsSpoken = 0;
+            }, after);
+        }
+        set_shock_after(after = 20) {
+            setTimeout(() => this.img = 2, after);
+        }
+        quiet_after(after = 20) {
+            setTimeout(() => {
+                this.talk = false;
+                this.img = 0;
+            }, after);
+        }
+        // uneven to keep mouth open
+        set_limit(words = 0) {
+            this.limit = words;
+            this.wordsSpoken = 0;
+        }
+        disappear_after(after = 20) {
+            setTimeout(() => {
+                this.widget.mesh.visible = false;
+            }, after);
+        }
+        should_blink(so) {
+            this.blink = so;
+        }
+        destroy() {
+            this.widget.destroy();
+        }
+        make() {
+            this.widget = new Widget({ x: 350, y: -200, z: 0, w: 200, h: 200 });
+            this.widget.scale = 1.5;
+        }
+        update() {
+            if (this.talk) {
+                this.t += Four$1.delta;
+                if (this.t > this.speed) {
+                    if (!this.limit || this.wordsSpoken < this.limit) {
+                        this.img = this.img < 2 ? this.img + 2 : 0;
+                        this.t = 0;
+                        this.wordsSpoken++;
                     }
                 }
             }
-        }
-        GenTools.swap = swap;
-        let Deline;
-        (function (Deline) {
-            function simple(w, width, height) {
-                let x = 0;
-                for (; x < width; x++) {
-                    let y = 0;
-                    for (; y < height; y++) {
-                        let point = Points$1.make(w[0] + x, w[1] + y);
-                        let chunk = Datas$1.getChunk(point);
-                        for (let data of chunk.datas) {
-                            if ('Surface' != data.type)
-                                continue;
-                            if (Points$1.different(data, point))
-                                continue;
-                            if (data.sprite == Sprites$1.ROADS.SIDE_LINE) {
-                                data.sprite = Sprites$1.ROADS.SIDE_CLEAR;
-                            }
-                            if (data.sprite == Sprites$1.ROADS.CONVEX_LINE)
-                                data.sprite = Sprites$1.ROADS.CONVEX;
-                            if (data.sprite == Sprites$1.ROADS.SIDE_STOP_LINE) {
-                                data.sprite = Sprites$1.ROADS.SIDE_STOP;
-                            }
-                        }
-                    }
+            else if (this.blink) {
+                this.t += Four$1.delta;
+                if (this.t > this.blinkDelay) {
+                    this.t = 0;
+                    this.blinkDelay = 2 + Math.random() * 2;
+                }
+                else if (this.t > 0.11) {
+                    this.img = 0;
+                }
+                else if (this.t > 0) {
+                    this.img = 1;
                 }
             }
-            Deline.simple = simple;
-            function aabb(min, max, axis) {
-                horz(min, max[0] - min[0], max[1] - min[1], axis);
-            }
-            Deline.aabb = aabb;
-            function horz(w, width, height, axis) {
-                let x = 0;
-                for (; x < width; x++) {
-                    let y = 0;
-                    for (; y < height; y++) {
-                        let p = { x: w[0] + x, y: w[1] + y };
-                        let chunk = Datas$1.getChunk(p);
-                        //if (chunked.includes(chunk))
-                        //continue;
-                        //chunked.push(chunk);
-                        for (let data of chunk.datas) {
-                            if ('Surface' != data.type)
-                                continue;
-                            if (Points$1.different(data, p))
-                                continue;
-                            //data.color = 'red';
-                            if (data.sprite == Sprites$1.ROADS.SIDE_LINE) {
-                                data.sprite = Sprites$1.ROADS.SIDE_CLEAR;
-                                if (axis == 0) {
-                                    if (p.y == w[1] || p.y == w[1] + height - 1) {
-                                        data.sprite = Sprites$1.ROADS.SIDE_DASH;
-                                        //data.color = 'pink';
-                                        if ((data.r == 1) && p.y == w[1] + height - 1)
-                                            data.f = true;
-                                        if ((data.r == 3) && p.y == w[1])
-                                            data.f = true;
-                                    }
-                                }
-                            }
-                            if (data.sprite == Sprites$1.ROADS.CONVEX_LINE)
-                                data.sprite = Sprites$1.ROADS.CONVEX;
-                            if (data.sprite == Sprites$1.ROADS.SIDE_STOP_LINE) {
-                                data.sprite = Sprites$1.ROADS.SIDE_STOP;
-                            }
-                        }
-                    }
-                }
-            }
-            Deline.horz = horz;
-        })(Deline = GenTools.Deline || (GenTools.Deline = {}));
-    })(GenTools || (GenTools = {}));
-    var GenTools$1 = GenTools;
-
-    var PalmTrees;
-    (function (PalmTrees) {
-        function gas_station() {
-            let offset_y = 0;
-            // Fill the landscape
-            // sty/nature/tracks/514.bmp
-            // sty/nature/park original/216.bmp
-            // sty/nature/evergreen/836.bmp - Turtoise wasteland
-            Generators$1.Fill.fill([-500, -500, 0], [1000, 1000, 0], { sty: 'sty/nature/evergreen/836.bmp' }, { WHEEL: true });
-            //Generators.Fill.fill([10, -25, 0], [10+1000, -25+1000, 0], {sty: 'sty/nature/tracks/512.bmp'}, {RANDOM_ROTATION: true});
-            //Generators.Fill.fill([12, -25, 0], 1, 50, {r: 3, sty: 'sty/nature/evergreen/839.bmp'});
-            // Side of roads:
-            // 'sty/nature/evergreen/839.bmp'
-            Generators$1.Fill.fill([8, -500, 0], [9, 1000, 0], { r: 1, sty: 'sty/nature/evergreen/839.bmp' });
-            Generators$1.Fill.fill([9, -500, 0], [9, 1000, 0], { r: 1, sty: 'sty/floors/mixed/64.bmp' });
-            Generators$1.Fill.fill([12, -500, 0], [12, 1000, 0], { r: 3, sty: 'sty/nature/evergreen/839.bmp' });
-            Generators$1.Fill.fill([-25, 6, 0], [8, 6, 0], { r: 2, sty: 'sty/nature/evergreen/839.bmp' });
-            Generators$1.Fill.fill1([8, 6, 0], { r: 2, sty: 'sty/nature/evergreen/852.bmp' }); // 838
-            Generators$1.Fill.fill([-25, -1, 0], [8, -1, 0], { r: 0, sty: 'sty/nature/evergreen/839.bmp' });
-            Generators$1.Fill.fill1([8, -1, 0], { r: 1, sty: 'sty/nature/evergreen/852.bmp' }); // 838
-            // Big main road:
-            Generators$1.Roads.twolane(1, [10, 0, 0], 100, 'greyRoads');
-            //return;
-            //Generators.Fill.fill([12, -25, 0], 1, 50, {r: 2, sty: 'sty/nature/tracks/520.bmp'});
-            Generators$1.Roads.oneway(0, [2, 5, 0], 9, 'greyRoads'); // Parking entry
-            Generators$1.Roads.oneway(0, [7, 0, 0], 4, 'greyRoads'); // Parking exit
-            // Deco in between road and parking
-            Generators$1.Fill.fill([8, 1 + offset_y, 0], [9, 4 + offset_y, 0], { r: 0, sty: 'sty/floors/mixed/64.bmp' });
-            //Generators.Fill.fill([9, 1, 0], [9, 4, 0], { r: 1, sty: 'sty/nature/evergreen/836.bmp' });
-            // Turq evergreen planter
-            //Generators.Fill.fill1([9, 1, 0], { r: 2, sty: 'sty/nature/evergreen/840.bmp' });
-            //Generators.Fill.fill1([9, 2, 0], { r: 2, sty: 'sty/nature/evergreen/859.bmp' });
-            //Generators.Fill.fill1([9, 3, 0], { r: 2, sty: 'sty/nature/evergreen/859.bmp' });
-            //Generators.Fill.fill1([9, 4, 0], { r: 0, sty: 'sty/nature/evergreen/840.bmp' });
-            // Deline exits
-            //GenTools.Deline.horz([2, 4, 0], 10, 3, 0);
-            //GenTools.Deline.horz([2, -1, 0], 9, 3, 0);
-            //GenTools.Deline.aabb([2, -1, 0], [2, 4+10, 0+9], 0);
-            GenTools$1.Deline.aabb([9, -1 + offset_y, 0], [13, 7 + offset_y, 0], 0); // Deline success
-            //Generators.Fill.fill([6, 0, 0], [6, 4, 0], { r: 3, sty: 'sty/floors/yellow/933.bmp' }, { WHEEL: false });
-            Generators$1.Fill.fill([6, 0 + offset_y, 0], [6, 4 + offset_y, 0], { r: 1, sty: 'sty/floors/mixed/64.bmp' }, { WHEEL: true });
-            // Gas station
-            Generators$1.Interiors.generate([3, 0 + offset_y, 0], [5, 4 + offset_y, 0], 'green');
-            //Generators.Buildings.type1([3, 0, 0], [5, 4, 0]); // Gas station
-            //Gen1.GenRoads.highway(1, [5, 0, 0], 6, 2, 'greyRoads'); // Pumps road
-            //Gen1.GenRoads.twolane(0, [2, 5, 0], 9, 'greenRoads'); // horz
-            //Gen1.GenRoads.twolane(0, [2, -2, 0], 9, 'greenRoads'); // horz
-            //GenDeline.mixedToBad([2, 4, 0], 9, 4);
-            //GenDeline.mixedToBad([2, -3, 0], 9, 4);
-            Generators$1.Parking.onewayRight([7, 0 + offset_y, 0], 6, 2, 'greyRoads');
-            //GenTools.swap([7, 1, 0], [7, 4, 0], { sheet: 'badRoads' });
-            //GenTools.swap([6, 2, 0], [6, 3, 0], { sheet: 'badRoads'} );
-            //Gen2.GenDeline.horz([4, 0, 0], 6, 6);
-            let gas_station_corner = GenTools$1.getDataOfType([7, 5 + offset_y, 0], 'Surface');
-            let gas_station_corner2 = GenTools$1.getDataOfType([7, 0 + offset_y, 0], 'Surface');
-            gas_station_corner.sprite = Sprites$1.ROADS.SINGLE_EXIT;
-            gas_station_corner2.sprite = Sprites$1.ROADS.SINGLE_CORNER;
-            gas_station_corner2.r += 1;
+            this.widget.material.map = this.imgs[this.img];
+            this.widget.update();
+            const s = 10;
+            if (App.map[39]) // right
+                this.widget.pos.x += s;
+            if (App.map[37]) // left
+                this.widget.pos.x -= s;
+            if (App.map[38]) // up
+                this.widget.pos.y += s;
+            if (App.map[40]) // down
+                this.widget.pos.y -= s;
+            //console.log(this.widget.pos);
         }
-        function init() {
-            console.log('Palm trees init');
-            let ply;
-            let cat;
-            let dog;
-            const load = function () {
-                //Generators.Fill.fill([-500, -500, -3], [1000, 1000, 0], { sty: 'sty/special/water/1.bmp' }, { WHEEL: false });
-                //Generators.Roads.twolane(1, [10, -ROADS + 10, 0], ROADS, 'greyRoads');
-                gas_station();
-                let randomCar = Cars$1.Names2[KILL$1.floor_random(Cars$1.Names2.length)];
-                cat = {
-                    type: 'Car',
-                    car: randomCar,
-                    spray: KILL$1.floor_random(Cars$1.Sprays.YELLOW_GREEN),
-                    x: 10.5,
-                    y: 97,
-                    z: 0
-                };
-                Datas$1.deliver(cat);
-                dog = {
-                    type: 'Car',
-                    car: 'Van',
-                    spray: Cars$1.Sprays.PINK_RED,
-                    x: 10.5,
-                    y: 3,
-                    z: 0
-                };
-                Datas$1.deliver(dog);
-                Four$1.camera.position.z = 60;
-                Cameraz$1.allowManual = false;
-                Cameraz$1.set2(100);
-                Cameraz$1.ZOOMDUR = 20;
-                console.log('loaded palm trees');
-            };
-            let stage = 0;
-            let swerveAt = 0;
-            let swerve;
-            let carSpeed = 0.14;
-            let gaveLights = false;
-            let brakeHard = false;
-            let zoomCrash = false;
-            let lookAhead = 50;
-            let makeTh = true;
-            let talkingHead;
-            let wordBox;
-            const update = function () {
-                let car = cat.object;
-                let van = dog.object;
-                if (stage == 0) {
-                    KILL$1.view = cat;
-                    KILL$1.city.shift(cat);
-                    cat.y -= carSpeed;
-                    if (makeTh) {
-                        talkingHead = new TalkingHead('elmo');
-                        talkingHead.speak_after(900);
-                        talkingHead.quiet_after(8000);
-                        wordBox = new WordBox();
-                        wordBox.setText(`Blah blah\nblah`, 1000);
-                        makeTh = false;
-                    }
-                    if (car && !gaveLights) {
-                        gaveLights = true;
-                        let f;
-                        //car.add_delta(Cars.deltaSquares.tail_light_left);
-                        //f = car.add_delta(Cars.deltaSquares.tail_light_right);
-                        //f.mesh.scale.set(-1, 1, 1);
-                        car.add_delta(Cars$1.deltaSquares.head_light_left);
-                        f = car.add_delta(Cars$1.deltaSquares.head_light_right);
-                        f.mesh.scale.set(-1, 1, 1);
-                    }
-                    if (--swerveAt <= 0) {
-                        let r = (Math.random() - 0.5) / 12;
-                        let p = Points$1.make(cat.x + r, cat.y - lookAhead);
-                        swerve = p;
-                        swerveAt = 10 + Math.random() * 15;
-                    }
-                    let theta = Math.atan2(cat.y - swerve.y, cat.x - swerve.x);
-                    let newr = theta - Math.PI / 2;
-                    cat.r = newr;
-                    cat.x += Math.cos(theta - Math.PI);
-                    //if (car && my_car.y < -10) {
-                    //	my_car.z += 2;
-                    //}
-                    if (!brakeHard && car && cat.y < dog.y + 25) {
-                        brakeHard = true;
-                        wordBox.setText("Oh no!\n...", 0);
-                        talkingHead.should_blink(false);
-                        talkingHead.set_speed(0.13);
-                        talkingHead.set_limit(4);
-                        talkingHead.speak_after(0);
-                        talkingHead.disappear_after(2500);
-                        talkingHead.set_shock_after(1200);
-                        //talkingHead.widget.toggle();
-                        lookAhead = 70;
-                        Cameraz$1.set2(150);
-                        Cameraz$1.ZOOMDUR = 3;
-                    }
-                    if (brakeHard) {
-                        carSpeed -= 0.01 * Four$1.delta;
-                    }
-                    if (car && cat.y < dog.y + 1) {
-                        car.add_delta(Cars$1.deltaSquares.dent_front_left);
-                        car.add_delta(Cars$1.deltaSquares.dent_front_right);
-                        van.add_delta(Cars$1.deltaSquares.dent_behind_left);
-                        van.add_delta(Cars$1.deltaSquares.dent_behind_right);
-                        stage = 1;
-                    }
-                    let w = Points$1.real_space(cat);
-                    Four$1.camera.position.x = w.x;
-                    Four$1.camera.position.y = w.y;
-                }
-                else if (stage == 1) {
-                    let w = Points$1.real_space(cat);
-                    if (KILL$1.view == cat) {
-                        Four$1.camera.position.x = w.x;
-                        Four$1.camera.position.y = w.y;
-                    }
-                    if (!zoomCrash) {
-                        ply = {
-                            type: 'Ply',
-                            //remap: 16,
-                            x: cat.x + .3,
-                            y: cat.y,
-                            z: 0
-                        };
-                        KILL$1.view = ply;
-                        Cameraz$1.allowManual = true;
-                        Cameraz$1.ZOOMDUR = 2;
-                        Datas$1.deliver(ply);
-                        //Cameraz.set2(200);
-                        //Cameraz.ZOOMDUR = 3;
-                        zoomCrash = true;
-                    }
-                }
-                if (talkingHead)
-                    talkingHead.update();
-                if (wordBox)
-                    wordBox.update();
-            };
-            let palmTrees = {
-                name: 'Palm Trees',
-                loadCb: load,
-                updateCb: update
-            };
-            Scenarios.load(palmTrees);
-        }
-        PalmTrees.init = init;
-    })(PalmTrees || (PalmTrees = {}));
-    var PalmTrees$1 = PalmTrees;
+    }
+    window.TalkingHead = TalkingHead;
 
     var HighWayWithEveryCar;
     (function (HighWayWithEveryCar) {
@@ -5481,8 +5392,9 @@ var gta_kill = (function (exports, THREE) {
             if (window.location.href.indexOf("#highway") != -1)
                 HighWayWithEveryCar$1.init();
             //else if (window.location.href.indexOf("#palmtrees") != -1)
-            else
-                PalmTrees$1.init();
+            //else
+            //PalmTrees.init();
+            Levels$1.AptsOffice();
             //else
             //BridgeScenario.init();
             let data = {
@@ -5545,7 +5457,7 @@ var gta_kill = (function (exports, THREE) {
             Four.directionalLight = new THREE.DirectionalLight(0x355886, 1.0);
             Four.directionalLight.position.set(0, 0, 1);
             Four.ambientLight = new THREE.AmbientLight('#ffffff'); // #5187cd
-            //ambientLight = new AmbientLight('#c1c1c1'); // #5187cd
+            //ambientLight = new AmbientLight('#5187cd'); // #5187cd
             //scene.add(directionalLight);
             Four.scene.add(Four.directionalLight.target);
             Four.scene.add(Four.ambientLight);
