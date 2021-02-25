@@ -1,5 +1,5 @@
 # GTA KILL
- its a kill based gta game
+i made so many gta 2 clones this is the fourth one i think
 
 listening to this music while coding:
 o s t o v ъ - Nightwave 
