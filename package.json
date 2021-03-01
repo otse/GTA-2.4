@@ -9,6 +9,6 @@
         "bmp-js": "^0.1.0",
         "canvas": "^2.6.1",
         "stackblur-canvas": "^2.2.0",
-        "three": "^0.114.0"
+        "three": "^0.125.0"
     }
 }
