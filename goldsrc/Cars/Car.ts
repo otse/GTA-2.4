@@ -117,7 +117,7 @@ export class Car extends Rectangle {
 			this.mesh.remove(delta.mesh);
 			this.deltas.splice(this.deltas.indexOf(delta), 1);
 			delta.mesh.geometry.dispose();
-			delta.mesh.material.dispose();
+			delta.mesh.material[0].dispose();
 			return;
 		}
 	}

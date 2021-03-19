@@ -1,7 +1,9 @@
 var gta_kill = (function (exports, THREE) {
     'use strict';
 
-    var THREE__default = 'default' in THREE ? THREE['default'] : THREE;
+    function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
+
+    var THREE__default = /*#__PURE__*/_interopDefaultLegacy(THREE);
 
     var Points;
     (function (Points) {
@@ -430,7 +432,7 @@ var gta_kill = (function (exports, THREE) {
     var Surfaces;
     (function (Surfaces) {
         function init() {
-            this.geometry = new THREE__default.PlaneBufferGeometry(64, 64, 1, 1);
+            this.geometry = new THREE__default['default'].PlaneBufferGeometry(64, 64, 1, 1);
         }
         Surfaces.init = init;
         function show(plane) {
@@ -668,7 +670,7 @@ var gta_kill = (function (exports, THREE) {
             super.destroy();
         }
         make() {
-            this.geometry = new THREE__default.PlaneBufferGeometry(64, 64, 1, 1);
+            this.geometry = new THREE__default['default'].PlaneBufferGeometry(64, 64, 1, 1);
             let style = `sty/interiors/${this.data.style}`;
             let sty, mask;
             if ('concave' == this.data.wall) {
@@ -899,7 +901,7 @@ var gta_kill = (function (exports, THREE) {
                 name: 'Phong2',
                 transparent: true,
                 map: map,
-                blending: THREE__default.NormalBlending
+                blending: THREE__default['default'].NormalBlending
             }, {
                 blurMap: blurMap
             });
@@ -909,10 +911,10 @@ var gta_kill = (function (exports, THREE) {
                 map: blurMap,
             }, {});
             materialShadow.opacity = 0.25;
-            materialShadow.color = new THREE__default.Color(0x0);
-            this.mesh = new THREE__default.Mesh(this.geometry, this.material);
+            materialShadow.color = new THREE__default['default'].Color(0x0);
+            this.mesh = new THREE__default['default'].Mesh(this.geometry, this.material);
             this.mesh.frustumCulled = false;
-            this.meshShadow = new THREE__default.Mesh(this.geometry, materialShadow);
+            this.meshShadow = new THREE__default['default'].Mesh(this.geometry, materialShadow);
             this.meshShadow.frustumCulled = false;
         }
         update() {
@@ -3281,7 +3283,7 @@ var gta_kill = (function (exports, THREE) {
                 this.mesh.remove(delta.mesh);
                 this.deltas.splice(this.deltas.indexOf(delta), 1);
                 delta.mesh.geometry.dispose();
-                delta.mesh.material.dispose();
+                delta.mesh.material[0].dispose();
                 return;
             }
         }
@@ -4632,7 +4634,7 @@ var gta_kill = (function (exports, THREE) {
     })(Cameraz || (Cameraz = {}));
     var Cameraz$1 = Cameraz;
 
-    const TWO = THREE__default;
+    const TWO = THREE__default['default'];
     var Shift;
     (function (Shift) {
         Shift.enabled = true;
@@ -4733,12 +4735,12 @@ var gta_kill = (function (exports, THREE) {
 			
 			varying vec2 vUv;
 
-			vec4 siift(sampler2D texture) {
-				vec2 offset = redblue * vec2( cos(angle), sin(angle));
+			vec4 siift(sampler2D t) {
+				vec2 offset = redblue * vec2( cos(angle), sin(angle) );
 				
-				vec4 cr = texture2D(texture, vUv + offset);
-				vec4 cga = texture2D(texture, vUv);
-				vec4 cb = texture2D(texture, vUv - offset);
+				vec4 cr = texture2D(t, vUv + offset);
+				vec4 cga = texture2D(t, vUv);
+				vec4 cb = texture2D(t, vUv - offset);
 
 				return vec4(cr.r, cga.g, cb.b, cga.a);
 			}

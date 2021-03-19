@@ -129,12 +129,12 @@ export namespace Shift {
 			
 			varying vec2 vUv;
 
-			vec4 siift(sampler2D texture) {
-				vec2 offset = redblue * vec2( cos(angle), sin(angle));
+			vec4 siift(sampler2D t) {
+				vec2 offset = redblue * vec2( cos(angle), sin(angle) );
 				
-				vec4 cr = texture2D(texture, vUv + offset);
-				vec4 cga = texture2D(texture, vUv);
-				vec4 cb = texture2D(texture, vUv - offset);
+				vec4 cr = texture2D(t, vUv + offset);
+				vec4 cga = texture2D(t, vUv);
+				vec4 cb = texture2D(t, vUv - offset);
 
 				return vec4(cr.r, cga.g, cb.b, cga.a);
 			}
